@@ -1,9 +1,9 @@
 package com.easyui.core.domain.model
 
 enum class ProtectedAction {
-    ENTER_EDIT_MODE,
-    MANAGE_HOME_DISPLAY,
-    MANAGE_APP_VISIBILITY,
+    OPEN_CAREGIVER_SETTINGS,
+    MANAGE_LAYOUT_PAGES,
+    MANAGE_ALLOWED_APPS,
     MANAGE_FAVORITE_CONTACTS,
     RESET_LAUNCHER,
     CHANGE_PIN,

@@ -18,11 +18,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easyui.feature.apps.AppListScreen
+import com.easyui.feature.caregiver.AllowedAppsScreen
 import com.easyui.feature.caregiver.CaregiverToolsScreen
-import com.easyui.feature.caregiver.EditLayoutScreen
 import com.easyui.feature.caregiver.FavoriteContactsScreen
-import com.easyui.feature.caregiver.HiddenAppsScreen
-import com.easyui.feature.caregiver.HomeDisplayScreen
+import com.easyui.feature.caregiver.LayoutPagesScreen
 import com.easyui.feature.caregiver.PinEntryScreen
 import com.easyui.feature.caregiver.ResetLauncherScreen
 import com.easyui.feature.home.HomeScreen
@@ -103,7 +102,8 @@ fun EasyUiNavGraph(
                     HomeScreen(
                         timeText = homeState.timeText,
                         dateText = homeState.dateText,
-                        tiles = homeState.tiles,
+                        batterySummary = homeState.batterySummary,
+                        pages = homeState.pages,
                         readabilityPreset = homeState.readabilityPreset,
                         verySimpleModeEnabled = homeState.verySimpleModeEnabled,
                         fallbackTitle = homeState.fallbackTitle,
@@ -113,7 +113,9 @@ fun EasyUiNavGraph(
                                 navController.navigate(Routes.AppList.route)
                             }
                         },
-                        onCaregiverToolsClick = { navController.navigate(Routes.CaregiverTools.route) },
+                        onCaregiverAccessRequested = {
+                            navController.navigate(caregiverViewModel.requestCaregiverAccess())
+                        },
                     )
                 }
                 composable(Routes.AppList.route) {
@@ -127,92 +129,107 @@ fun EasyUiNavGraph(
                     )
                 }
                 composable(Routes.CaregiverTools.route) {
-                    CaregiverToolsScreen(
-                        protectionEnabled = caregiverState.settings.caregiverProtectionEnabled,
-                        layoutLocked = caregiverState.settings.layoutLocked,
-                        hasPinConfigured = caregiverState.settings.pinHashHex != null && caregiverState.settings.pinSaltHex != null,
-                        currentPresetName = caregiverState.settings.appVisibilityPreset,
-                        homeReadabilityPresetName = caregiverState.settings.homeReadabilityPreset,
-                        verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
-                        favoriteContactCount = caregiverViewModel.contactTiles().size,
-                        onSetupPin = { navController.navigate(Routes.PinSetup.route) },
-                        onChangePin = {
-                            val destination = caregiverViewModel.beginProtectedAction(ProtectedAction.CHANGE_PIN)
-                            navController.navigate(destination)
-                        },
-                        onToggleProtection = {
-                            if (caregiverState.settings.pinHashHex == null) {
-                                navController.navigate(Routes.PinSetup.route)
-                            } else if (!caregiverState.settings.caregiverProtectionEnabled) {
-                                caregiverViewModel.toggleProtectionEnabled()
-                            } else {
-                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.TOGGLE_PROTECTION))
-                            }
-                        },
-                        onToggleLayoutLock = {
-                            if (!caregiverState.settings.caregiverProtectionEnabled) {
-                                caregiverViewModel.toggleLayoutLock()
-                            } else {
-                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.TOGGLE_LAYOUT_LOCK))
-                            }
-                        },
-                        onEditHome = {
-                            navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.ENTER_EDIT_MODE))
-                        },
-                        onHomeDisplay = {
-                            navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_HOME_DISPLAY))
-                        },
-                        onManageFavoriteContacts = {
-                            navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_FAVORITE_CONTACTS))
-                        },
-                        onManageHiddenApps = {
-                            navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_APP_VISIBILITY))
-                        },
-                        onFinishSetup = {
-                            navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.CaregiverTools.route) { inclusive = false }
-                            }
-                        },
-                        onResetLauncher = {
-                            navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.RESET_LAUNCHER))
-                        },
-                    )
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        CaregiverToolsScreen(
+                            protectionEnabled = caregiverState.settings.caregiverProtectionEnabled,
+                            layoutLocked = caregiverState.settings.layoutLocked,
+                            hasPinConfigured = caregiverState.settings.pinHashHex != null && caregiverState.settings.pinSaltHex != null,
+                            currentPageCount = caregiverViewModel.effectivePageCount(),
+                            showBatteryInfo = caregiverState.settings.showBatteryInfo,
+                            homeReadabilityPresetName = caregiverState.settings.homeReadabilityPreset,
+                            verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
+                            favoriteContactCount = caregiverViewModel.contactTiles().size,
+                            allowedAppCount = caregiverViewModel.assignedAppPackages().size,
+                            onSetupPin = { navController.navigate(Routes.PinSetup.route) },
+                            onChangePin = {
+                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.CHANGE_PIN))
+                            },
+                            onToggleProtection = {
+                                if (caregiverState.settings.pinHashHex == null) {
+                                    navController.navigate(Routes.PinSetup.route)
+                                } else {
+                                    caregiverViewModel.toggleProtectionEnabled()
+                                }
+                            },
+                            onToggleLayoutLock = { caregiverViewModel.toggleLayoutLock() },
+                            onToggleBatteryInfo = caregiverViewModel::setBatteryInfoVisible,
+                            onOpenLayoutPages = {
+                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_LAYOUT_PAGES))
+                            },
+                            onOpenAllowedApps = {
+                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_ALLOWED_APPS))
+                            },
+                            onManageFavoriteContacts = {
+                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_FAVORITE_CONTACTS))
+                            },
+                            onFinishSetup = {
+                                caregiverViewModel.endCaregiverSession()
+                                navController.navigate(Routes.Home.route) {
+                                    popUpTo(Routes.CaregiverTools.route) { inclusive = true }
+                                }
+                            },
+                            onResetLauncher = {
+                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.RESET_LAUNCHER))
+                            },
+                        )
+                    }
                 }
-                composable(Routes.HomeDisplay.route) {
-                    HomeDisplayScreen(
-                        currentPresetName = caregiverState.settings.homeReadabilityPreset,
-                        verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
-                        onSelectPreset = caregiverViewModel::updateHomeReadabilityPreset,
-                        onToggleVerySimpleMode = caregiverViewModel::setVerySimpleModeEnabled,
-                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
-                        onFinishSetup = {
-                            navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.CaregiverTools.route) { inclusive = false }
-                            }
-                        },
-                    )
+                composable(Routes.LayoutPages.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        LayoutPagesScreen(
+                            currentPageCount = caregiverViewModel.effectivePageCount(),
+                            currentPresetName = caregiverState.settings.homeReadabilityPreset,
+                            verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
+                            onIncreasePageCount = {
+                                caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() + 1)
+                            },
+                            onDecreasePageCount = {
+                                caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() - 1)
+                            },
+                            onSelectPreset = caregiverViewModel::updateHomeReadabilityPreset,
+                            onToggleVerySimpleMode = caregiverViewModel::setVerySimpleModeEnabled,
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                            onFinishSetup = {
+                                caregiverViewModel.endCaregiverSession()
+                                navController.navigate(Routes.Home.route) {
+                                    popUpTo(Routes.CaregiverTools.route) { inclusive = true }
+                                }
+                            },
+                        )
+                    }
                 }
                 composable(Routes.PinSetup.route) {
-                    PinEntryScreen(
-                        title = if (caregiverState.settings.pinHashHex == null) "Set Caregiver PIN" else "Change Caregiver PIN",
-                        description = "This PIN is a local barrier against accidental changes. It does not lock Android itself.",
-                        pin = caregiverState.pinInput,
-                        confirmPin = caregiverState.confirmPinInput,
-                        errorMessage = caregiverState.pinError,
-                        submitLabel = "Save PIN",
-                        onPinChange = caregiverViewModel::updatePinInput,
-                        onConfirmPinChange = caregiverViewModel::updateConfirmPinInput,
-                        onSubmit = {
-                            if (caregiverViewModel.submitPinSetup()) {
-                                navController.popBackStack(Routes.CaregiverTools.route, false)
-                            }
-                        },
-                    )
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        PinEntryScreen(
+                            title = if (caregiverState.settings.pinHashHex == null) "Set Caregiver PIN" else "Change Caregiver PIN",
+                            description = "This PIN is a local barrier against accidental changes. It does not lock Android itself.",
+                            pin = caregiverState.pinInput,
+                            confirmPin = caregiverState.confirmPinInput,
+                            errorMessage = caregiverState.pinError,
+                            submitLabel = "Save PIN",
+                            onPinChange = caregiverViewModel::updatePinInput,
+                            onConfirmPinChange = caregiverViewModel::updateConfirmPinInput,
+                            onSubmit = {
+                                if (caregiverViewModel.submitPinSetup()) {
+                                    navController.popBackStack(Routes.CaregiverTools.route, false)
+                                }
+                            },
+                        )
+                    }
                 }
                 composable(Routes.PinVerify.route) {
                     PinEntryScreen(
                         title = "Enter Caregiver PIN",
-                        description = "This change needs the caregiver PIN.",
+                        description = "Open caregiver settings with the local caregiver PIN.",
                         pin = caregiverState.pinInput,
                         confirmPin = null,
                         errorMessage = caregiverState.pinError,
@@ -229,63 +246,82 @@ fun EasyUiNavGraph(
                         },
                     )
                 }
-                composable(Routes.EditLayout.route) {
-                    EditLayoutScreen(
-                        tiles = caregiverViewModel.editableTiles(),
-                        availableApps = caregiverViewModel.availableAppsForLayout(),
-                        onMoveUp = caregiverViewModel::moveTileUp,
-                        onMoveDown = caregiverViewModel::moveTileDown,
-                        onRemove = caregiverViewModel::removeTile,
-                        onAdd = caregiverViewModel::addAppTile,
-                        onManageFavoriteContacts = { navController.navigate(Routes.ManageContacts.route) },
-                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
-                        onFinishSetup = {
-                            navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.CaregiverTools.route) { inclusive = false }
-                            }
-                        },
-                    )
+                composable(Routes.AllowedApps.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        AllowedAppsScreen(
+                            pageCount = caregiverViewModel.effectivePageCount(),
+                            pages = caregiverViewModel.homePages(),
+                            installedApps = caregiverViewModel.installedAppsForAllowedApps(),
+                            assignedAppPackages = caregiverViewModel.assignedAppPackages(),
+                            onAssignApp = caregiverViewModel::assignAllowedApp,
+                            onRemoveApp = caregiverViewModel::removeAllowedApp,
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                            onFinishSetup = {
+                                caregiverViewModel.endCaregiverSession()
+                                navController.navigate(Routes.Home.route) {
+                                    popUpTo(Routes.CaregiverTools.route) { inclusive = true }
+                                }
+                            },
+                        )
+                    }
                 }
                 composable(Routes.ManageContacts.route) {
-                    FavoriteContactsScreen(
-                        tiles = caregiverViewModel.contactTiles(),
-                        onMoveUp = caregiverViewModel::moveTileUp,
-                        onMoveDown = caregiverViewModel::moveTileDown,
-                        onEdit = caregiverViewModel::saveContactTile,
-                        onRemove = caregiverViewModel::removeTile,
-                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
-                        onFinishSetup = {
-                            navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.CaregiverTools.route) { inclusive = false }
-                            }
-                        },
-                    )
-                }
-                composable(Routes.HiddenApps.route) {
-                    HiddenAppsScreen(
-                        apps = caregiverViewModel.visibleAppsForHiddenSettings(),
-                        hiddenPackages = caregiverState.hiddenPackages,
-                        currentPresetName = caregiverState.settings.appVisibilityPreset,
-                        onApplyPreset = caregiverViewModel::applyVisibilityPreset,
-                        onToggleHidden = caregiverViewModel::setHidden,
-                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
-                        onFinishSetup = {
-                            navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.CaregiverTools.route) { inclusive = false }
-                            }
-                        },
-                    )
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        FavoriteContactsScreen(
+                            tiles = caregiverViewModel.contactTiles(),
+                            onMoveUp = caregiverViewModel::moveTileUp,
+                            onMoveDown = caregiverViewModel::moveTileDown,
+                            onEdit = caregiverViewModel::saveContactTile,
+                            onRemove = caregiverViewModel::removeTile,
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                            onFinishSetup = {
+                                caregiverViewModel.endCaregiverSession()
+                                navController.navigate(Routes.Home.route) {
+                                    popUpTo(Routes.CaregiverTools.route) { inclusive = true }
+                                }
+                            },
+                        )
+                    }
                 }
                 composable(Routes.ResetLauncher.route) {
-                    ResetLauncherScreen(
-                        onConfirm = {
-                            caregiverViewModel.resetLauncher()
-                            navController.popBackStack(Routes.CaregiverTools.route, false)
-                        },
-                        onCancel = { navController.popBackStack(Routes.CaregiverTools.route, false) },
-                    )
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        ResetLauncherScreen(
+                            onConfirm = {
+                                caregiverViewModel.resetLauncher()
+                                navController.popBackStack(Routes.CaregiverTools.route, false)
+                            },
+                            onCancel = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun RequireCaregiverSession(
+    caregiverSessionActive: Boolean,
+    navController: NavHostController,
+    content: @Composable () -> Unit,
+) {
+    if (!caregiverSessionActive) {
+        LaunchedEffect(Unit) {
+            navController.navigate(Routes.Home.route) {
+                popUpTo(Routes.Home.route) { inclusive = false }
+            }
+        }
+        Text("Returning home…")
+        return
+    }
+    content()
 }

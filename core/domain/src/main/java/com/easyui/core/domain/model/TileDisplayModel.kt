@@ -12,6 +12,7 @@ data class TileDisplayModel(
 
 enum class TileDisplayKind {
     APP,
+    DIALER,
     APPS_LIST,
     FLASHLIGHT,
     EMERGENCY,

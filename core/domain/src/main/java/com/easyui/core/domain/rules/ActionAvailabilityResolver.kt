@@ -10,6 +10,13 @@ object ActionAvailabilityResolver {
             LauncherActionState(enabled = false, fallbackMessage = "Flashlight is not available on this device.")
         }
 
+    fun dialer(hasDialer: Boolean): LauncherActionState =
+        if (hasDialer) {
+            LauncherActionState(enabled = true)
+        } else {
+            LauncherActionState(enabled = false, fallbackMessage = "No dialer app is available on this device.")
+        }
+
     fun emergency(hasDialer: Boolean, phoneNumber: String): LauncherActionState =
         if (!hasDialer) {
             LauncherActionState(enabled = false, fallbackMessage = "No dialer app is available on this device.")

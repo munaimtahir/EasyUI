@@ -1,34 +1,19 @@
 package com.easyui.launcher.caregiver
 
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
-import com.easyui.core.domain.model.AppVisibilityPreset
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.HomeTile
+import com.easyui.core.domain.model.HomeTileAction
 import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.InstalledApp
-import com.easyui.core.domain.rules.AppCatalogRules
-import com.easyui.core.domain.rules.AppVisibilityPresetRules
-import com.easyui.core.domain.rules.HiddenAppRules
 import com.easyui.core.ui.theme.EasyUiTheme
-import com.easyui.feature.apps.AppListScreen
+import com.easyui.feature.caregiver.AllowedAppsScreen
 import com.easyui.feature.caregiver.CaregiverToolsScreen
-import com.easyui.feature.caregiver.FavoriteContactsScreen
-import com.easyui.feature.caregiver.HiddenAppsScreen
-import com.easyui.feature.caregiver.HomeDisplayScreen
-import com.easyui.feature.home.HomeScreen
+import com.easyui.feature.caregiver.LayoutPagesScreen
 import org.junit.Rule
 import org.junit.Test
 
@@ -37,132 +22,52 @@ class CaregiverQolSmokeTest {
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun caregiverHubCanOpenFavoriteContactsManager() {
+    fun caregiverSettingsShowsNewSections() {
         composeRule.setContent {
-            var showContacts by remember { mutableStateOf(false) }
             EasyUiTheme {
-                if (showContacts) {
-                    FavoriteContactsScreen(
-                        tiles = emptyList(),
-                        onMoveUp = {},
-                        onMoveDown = {},
-                        onEdit = { _, _, _, _ -> null },
-                        onRemove = {},
-                        onDone = {},
-                        onFinishSetup = {},
-                    )
-                } else {
-                    CaregiverToolsScreen(
-                        protectionEnabled = true,
-                        layoutLocked = true,
-                        hasPinConfigured = true,
-                        currentPresetName = "CUSTOM",
-                        homeReadabilityPresetName = "STANDARD",
-                        verySimpleModeEnabled = false,
-                        favoriteContactCount = 1,
-                        onSetupPin = {},
-                        onChangePin = {},
-                        onToggleProtection = {},
-                        onToggleLayoutLock = {},
-                        onEditHome = {},
-                        onHomeDisplay = {},
-                        onManageFavoriteContacts = { showContacts = true },
-                        onManageHiddenApps = {},
-                        onFinishSetup = {},
-                        onResetLauncher = {},
-                    )
-                }
-            }
-        }
-
-        composeRule.onNodeWithText("Manage Favorite Contacts").performClick()
-        composeRule.onNodeWithTag("favorite_contacts_screen").assertIsDisplayed()
-    }
-
-    @Test
-    fun favoriteContactsScreenCanAddAndRemoveContactTile() {
-        composeRule.setContent {
-            val tiles = remember { mutableStateListOf<HomeTile>() }
-            EasyUiTheme {
-                FavoriteContactsScreen(
-                    tiles = tiles,
-                    onMoveUp = {},
-                    onMoveDown = {},
-                    onEdit = { tileId, name, phone, photoUri ->
-                        val id = tileId ?: "contact-1"
-                        tiles.removeAll { it.id == id }
-                        tiles.add(HomeTile(id, tiles.size, name, HomeTileType.CONTACT, phoneNumber = phone, photoUri = photoUri))
-                        null
-                    },
-                    onRemove = { tileId -> tiles.removeAll { it.id == tileId } },
-                    onDone = {},
+                CaregiverToolsScreen(
+                    protectionEnabled = true,
+                    layoutLocked = true,
+                    hasPinConfigured = true,
+                    currentPageCount = 2,
+                    showBatteryInfo = true,
+                    homeReadabilityPresetName = "STANDARD",
+                    verySimpleModeEnabled = false,
+                    favoriteContactCount = 2,
+                    allowedAppCount = 4,
+                    onSetupPin = {},
+                    onChangePin = {},
+                    onToggleProtection = {},
+                    onToggleLayoutLock = {},
+                    onToggleBatteryInfo = {},
+                    onOpenLayoutPages = {},
+                    onOpenAllowedApps = {},
+                    onManageFavoriteContacts = {},
                     onFinishSetup = {},
+                    onResetLauncher = {},
                 )
             }
         }
 
-        composeRule.onNodeWithText("Name").performTextInput("Grace Hopper")
-        composeRule.onNodeWithText("Phone number").performTextInput("5550100")
-        composeRule.onNodeWithText("Add Contact Tile").performClick()
-
-        composeRule.onNodeWithText("Grace Hopper").assertIsDisplayed()
-        composeRule.onNodeWithText("5550100").assertIsDisplayed()
-
-        composeRule.onNodeWithText("Remove").performClick()
-        composeRule.onAllNodesWithText("Grace Hopper").assertCountEquals(0)
+        composeRule.onNodeWithTag("caregiver_tools_screen").assertIsDisplayed()
+        composeRule.onNodeWithText("Layout / Pages").assertIsDisplayed()
+        composeRule.onNodeWithText("Allowed Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Call Shortcuts").assertIsDisplayed()
+        composeRule.onNodeWithText("Lock / Protection").assertIsDisplayed()
+        composeRule.onNodeWithText("Battery Display").assertIsDisplayed()
     }
 
     @Test
-    fun hiddenAppsScreenAppliesPresetAndHidesAppsFromLauncherList() {
+    fun layoutPagesScreenShowsPageControls() {
         composeRule.setContent {
-            var query by remember { mutableStateOf("") }
-            var preset by remember { mutableStateOf(AppVisibilityPreset.CUSTOM) }
-            val apps = listOf(
-                InstalledApp("com.android.dialer", "PhoneActivity", "Phone"),
-                InstalledApp("com.google.android.apps.messaging", "MessagesActivity", "Messages"),
-                InstalledApp("com.fun.game", "GameActivity", "Game"),
-            )
-            val hiddenPackages = AppVisibilityPresetRules.hiddenPackagesForPreset(apps, preset)
             EasyUiTheme {
-                if (preset == AppVisibilityPreset.CUSTOM) {
-                    HiddenAppsScreen(
-                        apps = apps,
-                        hiddenPackages = hiddenPackages,
-                        currentPresetName = preset.name,
-                        onApplyPreset = { preset = it },
-                        onToggleHidden = { _, _ -> },
-                        onDone = {},
-                        onFinishSetup = {},
-                    )
-                } else {
-                    AppListScreen(
-                        query = query,
-                        apps = AppCatalogRules.filterByQuery(HiddenAppRules.visibleApps(apps, hiddenPackages), query),
-                        emptyTitle = null,
-                        emptyBody = null,
-                        onQueryChange = { query = it },
-                        onAppClick = {},
-                    )
-                }
-            }
-        }
-
-        composeRule.onNodeWithText("Essentials Only").performClick()
-        composeRule.onNodeWithTag("app_list_screen").assertIsDisplayed()
-        composeRule.onNodeWithText("Phone").assertIsDisplayed()
-        composeRule.onNodeWithText("Messages").assertIsDisplayed()
-        composeRule.onAllNodesWithText("Game").assertCountEquals(0)
-    }
-
-    @Test
-    fun caregiverCanApplyReadabilityPreset() {
-        composeRule.setContent {
-            var preset by remember { mutableStateOf(HomeReadabilityPreset.STANDARD) }
-            EasyUiTheme {
-                HomeDisplayScreen(
-                    currentPresetName = preset.name,
+                LayoutPagesScreen(
+                    currentPageCount = 2,
+                    currentPresetName = HomeReadabilityPreset.STANDARD.name,
                     verySimpleModeEnabled = false,
-                    onSelectPreset = { preset = it },
+                    onIncreasePageCount = {},
+                    onDecreasePageCount = {},
+                    onSelectPreset = {},
                     onToggleVerySimpleMode = {},
                     onDone = {},
                     onFinishSetup = {},
@@ -170,52 +75,47 @@ class CaregiverQolSmokeTest {
             }
         }
 
-        composeRule.onNodeWithText("Use Larger Text").performClick()
-        composeRule.onNodeWithText("Current choice").assertIsDisplayed()
+        composeRule.onNodeWithTag("layout_pages_screen").assertIsDisplayed()
+        composeRule.onNodeWithText("Add Page").assertIsDisplayed()
+        composeRule.onNodeWithText("Use Fewer").assertIsDisplayed()
+        composeRule.onNodeWithText("Very simple home mode").assertIsDisplayed()
     }
 
     @Test
-    fun finishSetupCanReturnToHome() {
+    fun allowedAppsScreenKeepsFixedAndAllowedAppsSeparate() {
         composeRule.setContent {
-            var finished by remember { mutableStateOf(false) }
             EasyUiTheme {
-                if (finished) {
-                    HomeScreen(
-                        timeText = "9:41",
-                        dateText = "Sunday, Mar 15",
-                        tiles = emptyList(),
-                        readabilityPreset = HomeReadabilityPreset.STANDARD,
-                        verySimpleModeEnabled = false,
-                        fallbackTitle = "Home is ready",
-                        fallbackBody = "Use All Apps to see everything else.",
-                        onTileClick = {},
-                        onCaregiverToolsClick = {},
-                    )
-                } else {
-                    CaregiverToolsScreen(
-                        protectionEnabled = true,
-                        layoutLocked = true,
-                        hasPinConfigured = true,
-                        currentPresetName = "CUSTOM",
-                        homeReadabilityPresetName = "STANDARD",
-                        verySimpleModeEnabled = false,
-                        favoriteContactCount = 1,
-                        onSetupPin = {},
-                        onChangePin = {},
-                        onToggleProtection = {},
-                        onToggleLayoutLock = {},
-                        onEditHome = {},
-                        onHomeDisplay = {},
-                        onManageFavoriteContacts = {},
-                        onManageHiddenApps = {},
-                        onFinishSetup = { finished = true },
-                        onResetLauncher = {},
-                    )
-                }
+                AllowedAppsScreen(
+                    pageCount = 2,
+                    pages = listOf(
+                        listOf(
+                            HomeTile("phone", 0, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
+                            HomeTile("apps-list", 1, "All Apps", HomeTileType.ACTION, action = HomeTileAction.OPEN_APP_LIST),
+                            HomeTile("app-camera", 2, "Camera", HomeTileType.APP, packageName = "com.camera"),
+                            null,
+                            null,
+                            HomeTile("flashlight", 5, "Flashlight", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
+                        ),
+                        listOf(null, null, null, null, null, null),
+                    ),
+                    installedApps = listOf(
+                        InstalledApp("com.camera", "CameraActivity", "Camera"),
+                        InstalledApp("com.maps", "MapsActivity", "Maps"),
+                    ),
+                    assignedAppPackages = setOf("com.camera"),
+                    onAssignApp = { _, _ -> },
+                    onRemoveApp = {},
+                    onDone = {},
+                    onFinishSetup = {},
+                )
             }
         }
 
-        composeRule.onNodeWithText("Finish Setup").performClick()
-        composeRule.onNodeWithTag("home_screen").assertIsDisplayed()
+        composeRule.onNodeWithTag("allowed_apps_screen").assertIsDisplayed()
+        composeRule.onNodeWithText("Allowed Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Installed Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Phone").assertIsDisplayed()
+        composeRule.onNodeWithText("All Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Maps").assertIsDisplayed()
     }
 }

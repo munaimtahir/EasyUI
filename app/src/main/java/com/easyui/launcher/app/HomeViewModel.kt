@@ -9,9 +9,10 @@ import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
+import com.easyui.core.domain.rules.BatteryDisplayRules
 import com.easyui.core.domain.rules.ContactTileRules
 import com.easyui.core.domain.rules.FallbackStateRules
-import com.easyui.core.domain.rules.HiddenAppRules
+import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.domain.rules.VerySimpleModeRules
 import com.easyui.launcher.di.AppContainer
 import java.time.LocalDateTime
@@ -40,13 +41,14 @@ class HomeViewModel(
         combine(
             container.homeLayoutRepository.observeTiles(),
             container.appCatalogRepository.observeInstalledApps(),
-            container.hiddenAppRepository.observeHiddenPackages(),
             settingsState,
+            container.batteryStatusRepository.observeBatteryStatus(),
             timeFlow(),
-        ) { tiles, apps, hiddenPackages, settings, now ->
+        ) { tiles, apps, settings, batteryStatus, now ->
             val readabilityPreset = settings.homeReadabilityPreset.asReadabilityPreset()
+            val effectivePageCount = HomeLayoutRules.effectivePageCount(settings.homePageCount, tiles)
             val visibleTiles = VerySimpleModeRules.simplify(
-                tiles = HiddenAppRules.visibleHomeTiles(tiles, hiddenPackages),
+                tiles = HomeLayoutRules.ensureRequiredActions(tiles, effectivePageCount),
                 enabled = settings.verySimpleModeEnabled,
             )
             val fallback = FallbackStateRules.home(
@@ -62,11 +64,18 @@ class HomeViewModel(
                     },
                 ),
                 dateText = now.format(DateTimeFormatter.ofPattern("EEEE, MMM d", Locale.getDefault())),
-                tiles = toDisplayModels(
-                    tiles = visibleTiles,
-                    apps = HiddenAppRules.visibleApps(apps, hiddenPackages),
-                    settings = settings,
-                ),
+                batterySummary = if (settings.showBatteryInfo) BatteryDisplayRules.summary(batteryStatus) else null,
+                pages = HomeLayoutRules.pages(visibleTiles, effectivePageCount).map { pageTiles ->
+                    pageTiles.map { tile ->
+                        tile?.let {
+                            toDisplayModel(
+                                tile = it,
+                                apps = apps,
+                                settings = settings,
+                            )
+                        }
+                    }
+                },
                 readabilityPreset = readabilityPreset,
                 verySimpleModeEnabled = settings.verySimpleModeEnabled,
                 fallbackTitle = fallback?.title,
@@ -79,10 +88,15 @@ class HomeViewModel(
         )
 
     fun onTileClick(tileId: String, onOpenApps: () -> Unit) {
-        val tile = state.value.tiles.firstOrNull { it.id == tileId } ?: return
+        val tile = state.value.pages.flatten().filterNotNull().firstOrNull { it.id == tileId } ?: return
         viewModelScope.launch {
             when (tile.kind) {
                 TileDisplayKind.APPS_LIST -> onOpenApps()
+                TileDisplayKind.DIALER -> {
+                    if (!container.emergencyActionHandler.launchDialer(null)) {
+                        messages.emit("The dialer is not available on this device.")
+                    }
+                }
                 TileDisplayKind.FLASHLIGHT -> {
                     val result = container.flashlightController.performToggle()
                     result.fallbackMessage?.let { messages.emit(it) }
@@ -95,9 +109,8 @@ class HomeViewModel(
                     }
                 }
                 TileDisplayKind.APP -> {
-                    val app = state.value.tiles.firstOrNull { it.id == tileId }
                     val domainTile = container.homeLayoutRepository.getTiles().firstOrNull { it.id == tileId }
-                    if (app == null || domainTile?.packageName == null) {
+                    if (domainTile?.packageName == null) {
                         messages.emit("That app is no longer available.")
                     } else {
                         val installedApp = container.appCatalogRepository.getInstalledApps()
@@ -127,66 +140,74 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun toDisplayModels(
-        tiles: List<HomeTile>,
+    private suspend fun toDisplayModel(
+        tile: HomeTile,
         apps: List<InstalledApp>,
         settings: LauncherSettings,
-    ): List<TileDisplayModel> =
-        tiles.map { tile ->
-            when (tile.action) {
-                HomeTileAction.OPEN_APP_LIST -> TileDisplayModel(
+    ): TileDisplayModel =
+        when (tile.action) {
+            HomeTileAction.OPEN_DIALER -> {
+                val state = container.emergencyActionHandler.currentState(null)
+                TileDisplayModel(
                     id = tile.id,
                     title = tile.title,
-                    subtitle = "Browse every app",
-                    enabled = true,
-                    kind = TileDisplayKind.APPS_LIST,
+                    subtitle = if (state.enabled) "Open the dialer" else state.fallbackMessage.orEmpty(),
+                    enabled = state.enabled,
+                    kind = TileDisplayKind.DIALER,
                 )
-                HomeTileAction.FLASHLIGHT -> {
-                    val state = container.flashlightController.currentState()
+            }
+            HomeTileAction.OPEN_APP_LIST -> TileDisplayModel(
+                id = tile.id,
+                title = tile.title,
+                subtitle = "Browse every app",
+                enabled = true,
+                kind = TileDisplayKind.APPS_LIST,
+            )
+            HomeTileAction.FLASHLIGHT -> {
+                val state = container.flashlightController.currentState()
+                TileDisplayModel(
+                    id = tile.id,
+                    title = tile.title,
+                    subtitle = if (state.enabled) "Turn light on or off" else state.fallbackMessage.orEmpty(),
+                    enabled = state.enabled,
+                    kind = TileDisplayKind.FLASHLIGHT,
+                )
+            }
+            HomeTileAction.EMERGENCY -> {
+                val state = container.emergencyActionHandler.currentState(settings.emergencyPhoneNumber)
+                TileDisplayModel(
+                    id = tile.id,
+                    title = tile.title,
+                    subtitle = if (state.enabled) "Open the dialer" else state.fallbackMessage.orEmpty(),
+                    enabled = state.enabled,
+                    kind = TileDisplayKind.EMERGENCY,
+                )
+            }
+            null -> {
+                if (tile.type == com.easyui.core.domain.model.HomeTileType.CONTACT) {
+                    val state = container.emergencyActionHandler.currentState(tile.phoneNumber)
                     TileDisplayModel(
                         id = tile.id,
                         title = tile.title,
-                        subtitle = if (state.enabled) "Turn light on or off" else state.fallbackMessage.orEmpty(),
+                        subtitle = if (state.enabled) {
+                            tile.phoneNumber ?: "Open the dialer"
+                        } else {
+                            state.fallbackMessage.orEmpty()
+                        },
                         enabled = state.enabled,
-                        kind = TileDisplayKind.FLASHLIGHT,
+                        kind = TileDisplayKind.CONTACT,
+                        avatarImageUri = tile.photoUri,
+                        avatarFallback = ContactTileRules.photoFallback(tile.photoUri, tile.title),
                     )
-                }
-                HomeTileAction.EMERGENCY -> {
-                    val state = container.emergencyActionHandler.currentState(settings.emergencyPhoneNumber)
+                } else {
+                    val installedApp = apps.firstOrNull { it.packageName == tile.packageName }
                     TileDisplayModel(
                         id = tile.id,
                         title = tile.title,
-                        subtitle = if (state.enabled) "Open the dialer" else state.fallbackMessage.orEmpty(),
-                        enabled = state.enabled,
-                        kind = TileDisplayKind.EMERGENCY,
+                        subtitle = installedApp?.let { "Open ${it.label}" } ?: "App not installed",
+                        enabled = installedApp != null,
+                        kind = TileDisplayKind.APP,
                     )
-                }
-                null -> {
-                    if (tile.type == com.easyui.core.domain.model.HomeTileType.CONTACT) {
-                        val state = container.emergencyActionHandler.currentState(tile.phoneNumber.orEmpty())
-                        TileDisplayModel(
-                            id = tile.id,
-                            title = tile.title,
-                            subtitle = if (state.enabled) {
-                                tile.phoneNumber ?: "Open the dialer"
-                            } else {
-                                state.fallbackMessage.orEmpty()
-                            },
-                            enabled = state.enabled,
-                            kind = TileDisplayKind.CONTACT,
-                            avatarImageUri = tile.photoUri,
-                            avatarFallback = ContactTileRules.photoFallback(tile.photoUri, tile.title),
-                        )
-                    } else {
-                        val installedApp = apps.firstOrNull { it.packageName == tile.packageName }
-                        TileDisplayModel(
-                            id = tile.id,
-                            title = tile.title,
-                            subtitle = installedApp?.let { "Open ${it.label}" } ?: "App not installed",
-                            enabled = installedApp != null,
-                            kind = TileDisplayKind.APP,
-                        )
-                    }
                 }
             }
         }

@@ -12,12 +12,16 @@ Add the caregiver features that justify payment and create a stable long-term pr
 - lock icon positions
 - prevent accidental rearrangement
 - optional disable long-press editing
+- hidden caregiver entry from home
+- caregiver-only settings area outside the normal senior flow
 
 ### App visibility control
 
 - hide unused or confusing apps
 - show only selected apps on home or app list
 - optionally hide settings from normal view
+- separate `Allowed Apps` home management from senior-facing `All Apps`
+- assign home apps to a bounded page and slot model
 
 ### Contacts and quick access
 

@@ -10,6 +10,7 @@ data class CaregiverUiState(
     val hiddenPackages: Set<String> = emptySet(),
     val installedApps: List<InstalledApp> = emptyList(),
     val layoutTiles: List<HomeTile> = emptyList(),
+    val caregiverSessionActive: Boolean = false,
     val pinInput: String = "",
     val confirmPinInput: String = "",
     val pinError: String? = null,

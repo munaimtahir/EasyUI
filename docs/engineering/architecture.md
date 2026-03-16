@@ -67,9 +67,19 @@ intro -> set default launcher guidance -> optional permission explanation -> sta
 
 open phone -> see large main actions -> tap app or photo contact -> optionally return home
 
+- `Phone` and `All Apps` stay obvious on home
+- caregiver settings are not visible on home
+- caregiver entry uses a deliberate hidden gesture on the home header
+- home pages are bounded and fixed, not draggable
+
 ### Caregiver edit flow
 
 open caregiver area -> enter PIN -> edit layout -> hide or show apps -> save -> relock
+
+- caregiver session starts from hidden home entry
+- if caregiver PIN protection is enabled, PIN is required before caregiver settings open
+- caregiver manages `Allowed Apps` separately from senior-facing `All Apps`
+- caregiver assigns home apps to fixed page and slot positions
 
 ## Crash sensitivity
 

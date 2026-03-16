@@ -2,10 +2,9 @@ package com.easyui.launcher.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.easyui.core.domain.rules.FallbackStateRules
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.rules.AppCatalogRules
-import com.easyui.core.domain.rules.HiddenAppRules
+import com.easyui.core.domain.rules.FallbackStateRules
 import com.easyui.launcher.di.AppContainer
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,12 +31,8 @@ class AppListViewModel(
         combine(
             query,
             container.appCatalogRepository.observeInstalledApps(),
-            container.hiddenAppRepository.observeHiddenPackages(),
-        ) { currentQuery, apps, hiddenPackages ->
-            val visibleApps = AppCatalogRules.filterByQuery(
-                HiddenAppRules.visibleApps(apps, hiddenPackages),
-                currentQuery,
-            )
+        ) { currentQuery, apps ->
+            val visibleApps = AppCatalogRules.filterByQuery(apps, currentQuery)
             val fallbackState = FallbackStateRules.appList(currentQuery, visibleApps.size)
             AppListUiState(
                 query = currentQuery,

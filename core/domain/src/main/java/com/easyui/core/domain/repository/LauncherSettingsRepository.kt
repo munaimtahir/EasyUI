@@ -13,5 +13,7 @@ interface LauncherSettingsRepository {
     suspend fun updateAppVisibilityPreset(presetName: String)
     suspend fun updateHomeReadabilityPreset(presetName: String)
     suspend fun updateVerySimpleModeEnabled(enabled: Boolean)
+    suspend fun updateShowBatteryInfo(enabled: Boolean)
+    suspend fun updateHomePageCount(pageCount: Int)
     suspend fun storePinCredential(credential: com.easyui.core.domain.model.PinCredential)
 }

@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -24,8 +28,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,12 +38,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import com.easyui.core.domain.model.AppVisibilityPreset
-import com.easyui.core.domain.model.HomeTile
+import androidx.compose.ui.unit.dp
 import com.easyui.core.domain.model.HomeReadabilityPreset
+import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.rules.ContactTileRules
+import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.ui.components.AvatarBadge
 import com.easyui.core.ui.theme.EasyUiSpacing
 
@@ -48,95 +53,145 @@ fun CaregiverToolsScreen(
     protectionEnabled: Boolean,
     layoutLocked: Boolean,
     hasPinConfigured: Boolean,
-    currentPresetName: String,
+    currentPageCount: Int,
+    showBatteryInfo: Boolean,
     homeReadabilityPresetName: String,
     verySimpleModeEnabled: Boolean,
     favoriteContactCount: Int,
+    allowedAppCount: Int,
     onSetupPin: () -> Unit,
     onChangePin: () -> Unit,
     onToggleProtection: () -> Unit,
     onToggleLayoutLock: () -> Unit,
-    onEditHome: () -> Unit,
-    onHomeDisplay: () -> Unit,
+    onToggleBatteryInfo: (Boolean) -> Unit,
+    onOpenLayoutPages: () -> Unit,
+    onOpenAllowedApps: () -> Unit,
     onManageFavoriteContacts: () -> Unit,
-    onManageHiddenApps: () -> Unit,
     onFinishSetup: () -> Unit,
     onResetLauncher: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(EasyUiSpacing.lg)
                 .testTag("caregiver_tools_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
-            Text("Caregiver Tools", style = MaterialTheme.typography.headlineLarge)
-            Text(
-                "Set up EasyUI without changing how Android works outside this launcher.",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-
-            StatusCard(
-                title = "Protection",
-                lines = listOf(
-                    if (hasPinConfigured) "Caregiver PIN is ready." else "No caregiver PIN is set yet.",
-                    if (protectionEnabled) "Protected changes ask for the PIN." else "Protected changes are off until you turn them on.",
-                ),
-            )
-            StatusCard(
-                title = "Home stability",
-                lines = listOf(
-                    if (layoutLocked) "Home layout is locked for daily use." else "Home layout can be edited right now.",
-                    "Favorite contacts: $favoriteContactCount",
-                    "App visibility preset: ${presetLabel(currentPresetName)}",
-                    "Home readability: ${readabilityLabel(runCatching { HomeReadabilityPreset.valueOf(homeReadabilityPresetName) }.getOrDefault(HomeReadabilityPreset.STANDARD))}",
-                    if (verySimpleModeEnabled) "Very simple home mode is on." else "Very simple home mode is off.",
-                ),
-            )
-
-            Button(onClick = if (hasPinConfigured) onChangePin else onSetupPin, modifier = Modifier.fillMaxWidth()) {
-                Text(if (hasPinConfigured) "Change Caregiver PIN" else "Set Caregiver PIN")
+            item {
+                Text("Caregiver Settings", style = MaterialTheme.typography.headlineLarge)
             }
-
-            SettingToggleRow(
-                label = "Require PIN for caregiver changes",
-                checked = protectionEnabled,
-                onToggle = onToggleProtection,
-            )
-            SettingToggleRow(
-                label = "Lock home layout",
-                checked = layoutLocked,
-                onToggle = onToggleLayoutLock,
-            )
-
-            Button(onClick = onEditHome, modifier = Modifier.fillMaxWidth()) {
-                Text("Edit Home Screen")
+            item {
+                Text(
+                    "These settings change EasyUI only. They do not lock or manage Android outside this launcher.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
             }
-            Button(onClick = onHomeDisplay, modifier = Modifier.fillMaxWidth()) {
-                Text("Home Readability")
+            item {
+                SectionCard(
+                    title = "Layout / Pages",
+                    body = listOf(
+                        "Home pages: $currentPageCount",
+                        "Readability: ${readabilityLabel(runCatching { HomeReadabilityPreset.valueOf(homeReadabilityPresetName) }.getOrDefault(HomeReadabilityPreset.STANDARD))}",
+                        if (verySimpleModeEnabled) "Very simple mode is on." else "Very simple mode is off.",
+                    ),
+                    primaryLabel = "Layout and Pages",
+                    onPrimaryClick = onOpenLayoutPages,
+                )
             }
-            Button(onClick = onManageFavoriteContacts, modifier = Modifier.fillMaxWidth()) {
-                Text("Manage Favorite Contacts")
+            item {
+                SectionCard(
+                    title = "Allowed Apps",
+                    body = listOf(
+                        "Home apps placed: $allowedAppCount",
+                        "Assign apps to a fixed page and slot without changing All Apps.",
+                    ),
+                    primaryLabel = "Manage Allowed Apps",
+                    onPrimaryClick = onOpenAllowedApps,
+                )
             }
-            Button(onClick = onManageHiddenApps, modifier = Modifier.fillMaxWidth()) {
-                Text("Show or Hide Apps")
+            item {
+                SectionCard(
+                    title = "Call Shortcuts",
+                    body = listOf(
+                        "The Phone tile always opens the system dialer.",
+                        "Call shortcuts on home: $favoriteContactCount",
+                    ),
+                    primaryLabel = "Manage Call Shortcuts",
+                    onPrimaryClick = onManageFavoriteContacts,
+                )
             }
-            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Finish Setup")
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(EasyUiSpacing.md),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                    ) {
+                        Text("Lock / Protection", style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            if (hasPinConfigured) "Caregiver PIN is ready." else "No caregiver PIN is set yet.",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Button(
+                            onClick = if (hasPinConfigured) onChangePin else onSetupPin,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(if (hasPinConfigured) "Change Caregiver PIN" else "Set Caregiver PIN")
+                        }
+                        SettingToggleRow(
+                            label = "Require PIN for caregiver access",
+                            checked = protectionEnabled,
+                            onCheckedChange = { onToggleProtection() },
+                        )
+                        SettingToggleRow(
+                            label = "Lock launcher settings and layout",
+                            checked = layoutLocked,
+                            onCheckedChange = { onToggleLayoutLock() },
+                        )
+                    }
+                }
             }
-            OutlinedButton(onClick = onResetLauncher, modifier = Modifier.fillMaxWidth()) {
-                Text("Reset to Safe Default")
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(EasyUiSpacing.md),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                    ) {
+                        Text("Battery Display", style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            "Show simple battery details on the EasyUI home screen when helpful.",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        SettingToggleRow(
+                            label = "Show battery on home",
+                            checked = showBatteryInfo,
+                            onCheckedChange = onToggleBatteryInfo,
+                        )
+                    }
+                }
+            }
+            item {
+                Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
+                    Text("Back to Home")
+                }
+            }
+            item {
+                OutlinedButton(onClick = onResetLauncher, modifier = Modifier.fillMaxWidth()) {
+                    Text("Reset to Safe Default")
+                }
             }
         }
     }
 }
 
 @Composable
-fun HomeDisplayScreen(
+fun LayoutPagesScreen(
+    currentPageCount: Int,
     currentPresetName: String,
     verySimpleModeEnabled: Boolean,
+    onIncreasePageCount: () -> Unit,
+    onDecreasePageCount: () -> Unit,
     onSelectPreset: (HomeReadabilityPreset) -> Unit,
     onToggleVerySimpleMode: (Boolean) -> Unit,
     onDone: () -> Unit,
@@ -147,19 +202,55 @@ fun HomeDisplayScreen(
         runCatching { HomeReadabilityPreset.valueOf(currentPresetName) }.getOrDefault(HomeReadabilityPreset.STANDARD)
     }
     Surface(modifier = modifier.fillMaxSize()) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(EasyUiSpacing.lg)
-                .testTag("home_display_screen"),
+                .testTag("layout_pages_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
-            Text("Home Readability", style = MaterialTheme.typography.headlineLarge)
-            Text(
-                "Choose one simple display style for the EasyUI home screen.",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            HomeReadabilityPreset.entries.forEach { preset ->
+            item {
+                Text("Layout and Pages", style = MaterialTheme.typography.headlineLarge)
+            }
+            item {
+                Text(
+                    "Keep home simple. Use one to three fixed pages with large slots that do not move during daily use.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(EasyUiSpacing.md),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                    ) {
+                        Text("Home Pages", style = MaterialTheme.typography.titleLarge)
+                        Text("Current pages: $currentPageCount", style = MaterialTheme.typography.bodyLarge)
+                        Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+                            OutlinedButton(
+                                onClick = onDecreasePageCount,
+                                modifier = Modifier.weight(1f),
+                            ) {
+                                Text("Use Fewer")
+                            }
+                            Button(
+                                onClick = onIncreasePageCount,
+                                modifier = Modifier.weight(1f),
+                            ) {
+                                Text("Add Page")
+                            }
+                        }
+                        Text(
+                            "Page 1 always keeps Phone, All Apps, and Flashlight easy to reach.",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
+            item {
+                Text("Readability", style = MaterialTheme.typography.titleLarge)
+            }
+            items(HomeReadabilityPreset.entries) { preset ->
                 val selected = preset == currentPreset
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
@@ -178,38 +269,225 @@ fun HomeDisplayScreen(
                     }
                 }
             }
-            SettingToggleRow(
-                label = "Very simple home mode",
-                checked = verySimpleModeEnabled,
-                onToggle = { onToggleVerySimpleMode(!verySimpleModeEnabled) },
-            )
-            Text(
-                "Very simple mode only changes the EasyUI home view. It does not simplify Android outside this launcher.",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Finish Setup")
+            item {
+                SettingToggleRow(
+                    label = "Very simple home mode",
+                    checked = verySimpleModeEnabled,
+                    onCheckedChange = onToggleVerySimpleMode,
+                )
             }
-            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Caregiver Tools")
+            item {
+                Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
+                    Text("Back to Home")
+                }
+            }
+            item {
+                OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                    Text("Back to Caregiver Settings")
+                }
             }
         }
     }
 }
 
 @Composable
-private fun StatusCard(
+fun AllowedAppsScreen(
+    pageCount: Int,
+    pages: List<List<HomeTile?>>,
+    installedApps: List<InstalledApp>,
+    assignedAppPackages: Set<String>,
+    onAssignApp: (String, Int) -> Unit,
+    onRemoveApp: (String) -> Unit,
+    onDone: () -> Unit,
+    onFinishSetup: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var selectedPageIndex by rememberSaveable { mutableIntStateOf(0) }
+    var selectedPosition by rememberSaveable { mutableStateOf<Int?>(null) }
+    val currentPage = pages.getOrElse(selectedPageIndex) { List(HomeLayoutRules.SLOTS_PER_PAGE) { null } }
+
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(EasyUiSpacing.lg)
+                .testTag("allowed_apps_screen"),
+            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+        ) {
+            Text("Allowed Apps", style = MaterialTheme.typography.headlineLarge)
+            Text(
+                "Choose which apps appear on EasyUI home and place each app into a fixed slot.",
+                style = MaterialTheme.typography.bodyLarge,
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+                repeat(pageCount) { pageIndex ->
+                    val selected = pageIndex == selectedPageIndex
+                    if (selected) {
+                        Button(onClick = {
+                            selectedPageIndex = pageIndex
+                            selectedPosition = null
+                        }, modifier = Modifier.weight(1f)) {
+                            Text("Page ${pageIndex + 1}")
+                        }
+                    } else {
+                        OutlinedButton(onClick = {
+                            selectedPageIndex = pageIndex
+                            selectedPosition = null
+                        }, modifier = Modifier.weight(1f)) {
+                            Text("Page ${pageIndex + 1}")
+                        }
+                    }
+                }
+            }
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                itemsIndexed(currentPage, key = { slotIndex, tile -> tile?.id ?: "slot-$slotIndex" }) { slotIndex, tile ->
+                    val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
+                    AllowedAppSlotCard(
+                        tile = tile,
+                        position = position,
+                        selected = selectedPosition == position,
+                        onSelect = { selectedPosition = position },
+                        onRemove = {
+                            tile?.packageName?.let(onRemoveApp)
+                            if (selectedPosition == position) selectedPosition = null
+                        },
+                    )
+                }
+            }
+
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(EasyUiSpacing.md),
+                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                ) {
+                    Text("Installed Apps", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        selectedPosition?.let { "Selected home slot: ${slotLabel(it)}" }
+                            ?: "Select a home slot above before placing an app.",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    LazyColumn(
+                        modifier = Modifier.height(220.dp),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                    ) {
+                        items(installedApps, key = { it.packageName }) { app ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(app.label, style = MaterialTheme.typography.bodyLarge)
+                                    if (app.packageName in assignedAppPackages) {
+                                        Text("Already on home", style = MaterialTheme.typography.bodyMedium)
+                                    }
+                                }
+                                Button(
+                                    onClick = { selectedPosition?.let { onAssignApp(app.packageName, it) } },
+                                    enabled = selectedPosition != null,
+                                ) {
+                                    Text("Place Here")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
+                Text("Back to Home")
+            }
+            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                Text("Back to Caregiver Settings")
+            }
+        }
+    }
+}
+
+@Composable
+private fun AllowedAppSlotCard(
+    tile: HomeTile?,
+    position: Int,
+    selected: Boolean,
+    onSelect: () -> Unit,
+    onRemove: () -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .padding(EasyUiSpacing.md),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+                Text(slotLabel(position), style = MaterialTheme.typography.labelLarge)
+                when {
+                    tile == null -> {
+                        Text("Empty slot", style = MaterialTheme.typography.titleLarge)
+                        Text("Ready for a home app.", style = MaterialTheme.typography.bodyLarge)
+                    }
+                    tile.action != null -> {
+                        Text(tile.title, style = MaterialTheme.typography.titleLarge)
+                        Text("Fixed for daily use.", style = MaterialTheme.typography.bodyLarge)
+                    }
+                    tile.type == HomeTileType.CONTACT -> {
+                        Text(tile.title, style = MaterialTheme.typography.titleLarge)
+                        Text("Managed in Call Shortcuts.", style = MaterialTheme.typography.bodyLarge)
+                    }
+                    else -> {
+                        Text(tile.title, style = MaterialTheme.typography.titleLarge)
+                        Text("Allowed home app.", style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+                if (tile == null || tile.type == HomeTileType.APP) {
+                    if (selected) {
+                        Button(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
+                            Text("Selected")
+                        }
+                    } else {
+                        OutlinedButton(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
+                            Text("Use This Slot")
+                        }
+                    }
+                }
+                if (tile?.type == HomeTileType.APP) {
+                    OutlinedButton(onClick = onRemove, modifier = Modifier.fillMaxWidth()) {
+                        Text("Remove App")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionCard(
     title: String,
-    lines: List<String>,
+    body: List<String>,
+    primaryLabel: String,
+    onPrimaryClick: () -> Unit,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(EasyUiSpacing.md),
-            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
         ) {
             Text(title, style = MaterialTheme.typography.titleLarge)
-            lines.forEach { line ->
+            body.forEach { line ->
                 Text(line, style = MaterialTheme.typography.bodyLarge)
+            }
+            Button(onClick = onPrimaryClick, modifier = Modifier.fillMaxWidth()) {
+                Text(primaryLabel)
             }
         }
     }
@@ -219,7 +497,7 @@ private fun StatusCard(
 private fun SettingToggleRow(
     label: String,
     checked: Boolean,
-    onToggle: () -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -227,7 +505,7 @@ private fun SettingToggleRow(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = { onToggle() })
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
 
@@ -282,97 +560,6 @@ fun PinEntryScreen(
 }
 
 @Composable
-fun EditLayoutScreen(
-    tiles: List<HomeTile>,
-    availableApps: List<InstalledApp>,
-    onMoveUp: (String) -> Unit,
-    onMoveDown: (String) -> Unit,
-    onRemove: (String) -> Unit,
-    onAdd: (InstalledApp) -> Unit,
-    onManageFavoriteContacts: () -> Unit,
-    onDone: () -> Unit,
-    onFinishSetup: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.primaryContainer) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(EasyUiSpacing.lg)
-                .testTag("edit_layout_screen"),
-            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
-        ) {
-            Text("Edit Home Screen", style = MaterialTheme.typography.headlineLarge)
-            Text(
-                "Caregiver mode is active. Move tiles earlier or later and keep the home screen simple.",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(EasyUiSpacing.md),
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                ) {
-                    Text("Add Tiles", style = MaterialTheme.typography.titleLarge)
-                    Text("App tiles and favorite contact tiles are added separately so setup stays clear.", style = MaterialTheme.typography.bodyLarge)
-                    Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                        Button(onClick = onManageFavoriteContacts, modifier = Modifier.weight(1f)) {
-                            Text("Favorite Contacts")
-                        }
-                        Box(modifier = Modifier.weight(1f))
-                    }
-                }
-            }
-
-            if (tiles.isEmpty()) {
-                EmptyState(
-                    title = "Home is empty",
-                    body = "Add a favorite contact or app tile to rebuild the home screen.",
-                )
-            }
-
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-            ) {
-                items(tiles, key = { it.id }) { tile ->
-                    EditableTileRow(
-                        tile = tile,
-                        onMoveUp = { onMoveUp(tile.id) },
-                        onMoveDown = { onMoveDown(tile.id) },
-                        onRemove = if (tile.action == null) ({ onRemove(tile.id) }) else null,
-                    )
-                }
-                item {
-                    Spacer(modifier = Modifier.height(EasyUiSpacing.lg))
-                    Text("Add App Tile", style = MaterialTheme.typography.titleLarge)
-                    if (availableApps.isEmpty()) {
-                        Text("All visible apps already appear on the home screen.", style = MaterialTheme.typography.bodyLarge)
-                    }
-                }
-                items(availableApps, key = { it.packageName }) { app ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(app.label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                        Button(onClick = { onAdd(app) }) { Text("Add") }
-                    }
-                }
-            }
-
-            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Finish Setup")
-            }
-            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Caregiver Tools")
-            }
-        }
-    }
-}
-
-@Composable
 fun FavoriteContactsScreen(
     tiles: List<HomeTile>,
     onMoveUp: (String) -> Unit,
@@ -410,9 +597,9 @@ fun FavoriteContactsScreen(
                 .testTag("favorite_contacts_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
-            Text("Favorite Contacts", style = MaterialTheme.typography.headlineLarge)
+            Text("Call Shortcuts", style = MaterialTheme.typography.headlineLarge)
             Text(
-                "These tiles stay on EasyUI home and open the dialer. They do not place a direct call.",
+                "These shortcuts stay on EasyUI home and open the dialer with the saved number.",
                 style = MaterialTheme.typography.bodyLarge,
             )
 
@@ -452,7 +639,7 @@ fun FavoriteContactsScreen(
 
             if (tiles.isEmpty()) {
                 EmptyState(
-                    title = "No favorite contacts yet",
+                    title = "No call shortcuts yet",
                     body = "Add one or two people the senior may call often.",
                 )
             }
@@ -479,10 +666,10 @@ fun FavoriteContactsScreen(
             }
 
             Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Finish Setup")
+                Text("Back to Home")
             }
             OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Caregiver Tools")
+                Text("Back to Caregiver Settings")
             }
         }
     }
@@ -507,7 +694,7 @@ private fun ContactEditorCard(
             modifier = Modifier.padding(EasyUiSpacing.md),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
         ) {
-            Text(if (editing) "Edit Favorite Contact" else "Add Favorite Contact", style = MaterialTheme.typography.titleLarge)
+            Text(if (editing) "Edit Call Shortcut" else "Add Call Shortcut", style = MaterialTheme.typography.titleLarge)
             Row(
                 horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
                 verticalAlignment = Alignment.CenterVertically,
@@ -546,42 +733,13 @@ private fun ContactEditorCard(
             }
             Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                 Button(onClick = onSave, modifier = Modifier.weight(1f)) {
-                    Text(if (editing) "Save Contact" else "Add Contact Tile")
+                    Text(if (editing) "Save Shortcut" else "Add Call Shortcut")
                 }
                 if (editing) {
                     OutlinedButton(onClick = onCancelEdit, modifier = Modifier.weight(1f)) {
                         Text("Cancel")
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun EditableTileRow(
-    tile: HomeTile,
-    onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit,
-    onRemove: (() -> Unit)?,
-) {
-    val phoneNumber = tile.phoneNumber
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(EasyUiSpacing.md),
-            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-        ) {
-            Text(tileTypeLabel(tile), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-            Text(tile.title, style = MaterialTheme.typography.titleLarge)
-            if (!phoneNumber.isNullOrBlank()) {
-                Text(phoneNumber, style = MaterialTheme.typography.bodyMedium)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                OutlinedButton(onClick = onMoveUp, modifier = Modifier.weight(1f)) { Text("Earlier") }
-                OutlinedButton(onClick = onMoveDown, modifier = Modifier.weight(1f)) { Text("Later") }
-            }
-            onRemove?.let {
-                OutlinedButton(onClick = it, modifier = Modifier.fillMaxWidth()) { Text("Remove Tile") }
             }
         }
     }
@@ -612,6 +770,7 @@ private fun ContactTileRow(
             ) {
                 Text(tile.title, style = MaterialTheme.typography.titleLarge)
                 Text(phoneNumber, style = MaterialTheme.typography.bodyLarge)
+                Text(slotLabel(tile.position), style = MaterialTheme.typography.bodyMedium)
                 Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                     OutlinedButton(onClick = onMoveUp) { Text("Earlier") }
                     OutlinedButton(onClick = onMoveDown) { Text("Later") }
@@ -620,72 +779,6 @@ private fun ContactTileRow(
                     OutlinedButton(onClick = onEdit) { Text("Edit") }
                     OutlinedButton(onClick = onRemove) { Text("Remove") }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun HiddenAppsScreen(
-    apps: List<InstalledApp>,
-    hiddenPackages: Set<String>,
-    currentPresetName: String,
-    onApplyPreset: (AppVisibilityPreset) -> Unit,
-    onToggleHidden: (String, Boolean) -> Unit,
-    onDone: () -> Unit,
-    onFinishSetup: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(EasyUiSpacing.lg)
-                .testTag("hidden_apps_screen"),
-            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
-        ) {
-            Text("Show or Hide Apps", style = MaterialTheme.typography.headlineLarge)
-            Text("App visibility changes only what appears inside EasyUI. They do not block apps on the phone.", style = MaterialTheme.typography.bodyLarge)
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(EasyUiSpacing.md),
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                ) {
-                    Text("Quick setup presets", style = MaterialTheme.typography.titleLarge)
-                    Text("Current preset: ${presetLabel(currentPresetName)}", style = MaterialTheme.typography.bodyLarge)
-                    Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                        Button(onClick = { onApplyPreset(AppVisibilityPreset.ESSENTIALS_ONLY) }, modifier = Modifier.weight(1f)) {
-                            Text("Essentials Only")
-                        }
-                        Button(onClick = { onApplyPreset(AppVisibilityPreset.MINIMAL_COMMON_APPS) }, modifier = Modifier.weight(1f)) {
-                            Text("Minimal Common Apps")
-                        }
-                    }
-                    OutlinedButton(onClick = { onApplyPreset(AppVisibilityPreset.CUSTOM) }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Keep Custom Current Setup")
-                    }
-                }
-            }
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                items(apps, key = { it.packageName }) { app ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(app.label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                        Switch(
-                            checked = app.packageName in hiddenPackages,
-                            onCheckedChange = { checked -> onToggleHidden(app.packageName, checked) },
-                        )
-                    }
-                }
-            }
-            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Finish Setup")
-            }
-            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Caregiver Tools")
             }
         }
     }
@@ -707,7 +800,7 @@ fun ResetLauncherScreen(
         ) {
             Text("Reset to Safe Default", style = MaterialTheme.typography.headlineLarge)
             Text(
-                "This resets the home layout to the starter tiles, removes favorite contact tiles, and shows hidden apps again inside EasyUI. It does not change Android system settings.",
+                "This resets the home layout to the starter EasyUI tiles and removes call shortcuts from home. It does not change Android system settings.",
                 style = MaterialTheme.typography.bodyLarge,
             )
             Button(onClick = onConfirm, modifier = Modifier.fillMaxWidth()) {
@@ -740,19 +833,11 @@ private fun EmptyState(
     }
 }
 
-private fun tileTypeLabel(tile: HomeTile): String =
-    when {
-        tile.type == HomeTileType.CONTACT -> "Favorite Contact Tile"
-        tile.type == HomeTileType.APP -> "App Tile"
-        else -> "Action Tile"
-    }
-
-private fun presetLabel(presetName: String): String =
-    when (runCatching { AppVisibilityPreset.valueOf(presetName) }.getOrDefault(AppVisibilityPreset.CUSTOM)) {
-        AppVisibilityPreset.CUSTOM -> "Custom"
-        AppVisibilityPreset.ESSENTIALS_ONLY -> "Essentials Only"
-        AppVisibilityPreset.MINIMAL_COMMON_APPS -> "Minimal Common Apps"
-    }
+private fun slotLabel(position: Int): String {
+    val page = (position / HomeLayoutRules.SLOTS_PER_PAGE) + 1
+    val slot = (position % HomeLayoutRules.SLOTS_PER_PAGE) + 1
+    return "Page $page, Slot $slot"
+}
 
 private fun readabilityLabel(preset: HomeReadabilityPreset): String =
     when (preset) {

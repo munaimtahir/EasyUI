@@ -1,9 +1,9 @@
 package com.easyui.launcher.caregiver
 
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -21,17 +21,17 @@ class CaregiverProtectionSmokeTest {
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun protectedFlowCanRequestPinScreen() {
+    fun caregiverSettingsCanOpenPinScreen() {
         composeRule.setContent {
             var showPin by remember { mutableStateOf(false) }
             EasyUiTheme {
                 if (showPin) {
                     PinEntryScreen(
                         title = "Enter Caregiver PIN",
-                        description = "This change needs the caregiver PIN.",
+                        description = "Open caregiver settings with the local caregiver PIN.",
                         pin = "",
                         confirmPin = null,
-                        errorMessage = null,
+                        errorMessage = "PIN did not match. Try again.",
                         submitLabel = "Verify",
                         onPinChange = {},
                         onConfirmPinChange = null,
@@ -42,18 +42,20 @@ class CaregiverProtectionSmokeTest {
                         protectionEnabled = true,
                         layoutLocked = true,
                         hasPinConfigured = true,
-                        currentPresetName = "CUSTOM",
+                        currentPageCount = 2,
+                        showBatteryInfo = false,
                         homeReadabilityPresetName = "STANDARD",
                         verySimpleModeEnabled = false,
-                        favoriteContactCount = 0,
+                        favoriteContactCount = 1,
+                        allowedAppCount = 3,
                         onSetupPin = {},
-                        onChangePin = {},
+                        onChangePin = { showPin = true },
                         onToggleProtection = {},
                         onToggleLayoutLock = {},
-                        onEditHome = { showPin = true },
-                        onHomeDisplay = {},
+                        onToggleBatteryInfo = {},
+                        onOpenLayoutPages = {},
+                        onOpenAllowedApps = {},
                         onManageFavoriteContacts = {},
-                        onManageHiddenApps = {},
                         onFinishSetup = {},
                         onResetLauncher = {},
                     )
@@ -61,7 +63,7 @@ class CaregiverProtectionSmokeTest {
             }
         }
 
-        composeRule.onNodeWithText("Edit Home Screen").performClick()
+        composeRule.onNodeWithText("Change Caregiver PIN").performClick()
         composeRule.onNodeWithTag("pin_entry_screen").assertIsDisplayed()
         composeRule.onNodeWithText("Enter Caregiver PIN").assertIsDisplayed()
     }

@@ -32,6 +32,8 @@ class DataStoreLauncherSettingsRepository(
                 appVisibilityPreset = preferences[Keys.APP_VISIBILITY_PRESET] ?: "CUSTOM",
                 homeReadabilityPreset = preferences[Keys.HOME_READABILITY_PRESET] ?: "STANDARD",
                 verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
+                showBatteryInfo = preferences[Keys.SHOW_BATTERY_INFO] ?: false,
+                homePageCount = preferences[Keys.HOME_PAGE_COUNT] ?: 1,
             )
         }
 
@@ -83,6 +85,18 @@ class DataStoreLauncherSettingsRepository(
         }
     }
 
+    override suspend fun updateShowBatteryInfo(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.SHOW_BATTERY_INFO] = enabled
+        }
+    }
+
+    override suspend fun updateHomePageCount(pageCount: Int) {
+        dataStore.edit { preferences ->
+            preferences[Keys.HOME_PAGE_COUNT] = pageCount.coerceIn(1, 3)
+        }
+    }
+
     override suspend fun storePinCredential(credential: PinCredential) {
         dataStore.edit { preferences ->
             preferences[Keys.PIN_SALT_HEX] = credential.saltHex
@@ -101,5 +115,7 @@ class DataStoreLauncherSettingsRepository(
         val APP_VISIBILITY_PRESET = stringPreferencesKey("app_visibility_preset")
         val HOME_READABILITY_PRESET = stringPreferencesKey("home_readability_preset")
         val VERY_SIMPLE_MODE_ENABLED = booleanPreferencesKey("very_simple_mode_enabled")
+        val SHOW_BATTERY_INFO = booleanPreferencesKey("show_battery_info")
+        val HOME_PAGE_COUNT = androidx.datastore.preferences.core.intPreferencesKey("home_page_count")
     }
 }

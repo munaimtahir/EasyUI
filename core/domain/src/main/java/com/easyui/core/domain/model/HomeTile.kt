@@ -7,6 +7,7 @@ enum class HomeTileType {
 }
 
 enum class HomeTileAction {
+    OPEN_DIALER,
     OPEN_APP_LIST,
     FLASHLIGHT,
     EMERGENCY,

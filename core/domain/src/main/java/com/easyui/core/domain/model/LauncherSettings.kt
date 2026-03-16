@@ -11,4 +11,6 @@ data class LauncherSettings(
     val appVisibilityPreset: String = AppVisibilityPreset.CUSTOM.name,
     val homeReadabilityPreset: String = HomeReadabilityPreset.STANDARD.name,
     val verySimpleModeEnabled: Boolean = false,
+    val showBatteryInfo: Boolean = false,
+    val homePageCount: Int = 1,
 )

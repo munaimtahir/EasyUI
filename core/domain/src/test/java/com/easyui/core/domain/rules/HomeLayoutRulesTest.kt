@@ -6,6 +6,7 @@ import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.InstalledApp
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -21,11 +22,11 @@ class HomeLayoutRulesTest {
         val normalized = HomeLayoutRules.normalize(tiles)
 
         assertEquals(listOf("one", "two"), normalized.map { it.id })
-        assertEquals(listOf(0, 1), normalized.map { it.position })
+        assertEquals(listOf(0, 2), normalized.map { it.position })
     }
 
     @Test
-    fun `starter layout includes all apps tile and emergency actions`() {
+    fun `starter layout includes phone and all apps actions`() {
         val apps = listOf(
             InstalledApp("com.android.camera", "CameraActivity", "Camera"),
             InstalledApp("com.android.dialer", "DialerActivity", "Phone"),
@@ -33,17 +34,17 @@ class HomeLayoutRulesTest {
 
         val layout = HomeLayoutRules.starterLayout(apps)
 
+        assertTrue(layout.any { it.action == HomeTileAction.OPEN_DIALER })
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_APP_LIST })
         assertTrue(layout.any { it.action == HomeTileAction.FLASHLIGHT })
-        assertTrue(layout.any { it.action == HomeTileAction.EMERGENCY })
         assertTrue(HomeLayoutRules.isValid(layout))
     }
 
     @Test
-    fun `isValid rejects non-sequential positions`() {
+    fun `isValid rejects duplicate positions`() {
         val invalidTiles = listOf(
             HomeTile("one", 0, "One", HomeTileType.ACTION, action = HomeTileAction.OPEN_APP_LIST),
-            HomeTile("two", 3, "Two", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
+            HomeTile("two", 0, "Two", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
         )
 
         assertFalse(HomeLayoutRules.isValid(invalidTiles))
@@ -59,11 +60,27 @@ class HomeLayoutRulesTest {
         val updated = HomeLayoutRules.upsertContactTile(
             tiles = initial,
             tile = HomeTile("contact-1", 1, "Grace Hopper", HomeTileType.CONTACT, phoneNumber = "5552222"),
+            pageCount = 1,
         )
 
-        assertEquals(2, updated.size)
-        assertEquals("Grace Hopper", updated.last().title)
-        assertEquals("5552222", updated.last().phoneNumber)
-        assertTrue(HomeLayoutRules.contactTiles(updated).all { it.type == HomeTileType.CONTACT })
+        assertNotNull(updated)
+        val contacts = HomeLayoutRules.contactTiles(updated!!)
+        assertEquals(1, contacts.size)
+        assertEquals("Grace Hopper", contacts.single().title)
+        assertEquals("5552222", contacts.single().phoneNumber)
+        assertTrue(updated.any { it.action == HomeTileAction.OPEN_DIALER })
+    }
+
+    @Test
+    fun `assignAppToPosition places app into requested slot`() {
+        val updated = HomeLayoutRules.assignAppToPosition(
+            tiles = emptyList(),
+            app = InstalledApp("com.example.camera", "CameraActivity", "Camera"),
+            position = 2,
+            pageCount = 1,
+        )
+
+        assertNotNull(updated)
+        assertTrue(updated!!.any { it.packageName == "com.example.camera" && it.position == 2 })
     }
 }

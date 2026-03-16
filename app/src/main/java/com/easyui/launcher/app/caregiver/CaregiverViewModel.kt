@@ -3,16 +3,15 @@ package com.easyui.launcher.app.caregiver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easyui.core.domain.model.AppVisibilityPreset
-import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeReadabilityPreset
+import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.model.PinCredential
 import com.easyui.core.domain.model.ProtectedAction
-import com.easyui.core.domain.rules.AppVisibilityPresetRules
+import com.easyui.core.domain.rules.AppCatalogRules
 import com.easyui.core.domain.rules.CaregiverProtectionRules
 import com.easyui.core.domain.rules.ContactTileRules
-import com.easyui.core.domain.rules.HiddenAppRules
 import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.domain.rules.LauncherResetRules
 import com.easyui.core.domain.security.PinHasher
@@ -53,27 +52,9 @@ class CaregiverViewModel(
             initialValue = CaregiverUiState(),
         )
 
-    fun beginProtectedAction(action: ProtectedAction): String {
-        val settings = state.value.settings
-        val hasPin = !settings.pinHashHex.isNullOrBlank() && !settings.pinSaltHex.isNullOrBlank()
-        val requiresPin = CaregiverProtectionRules.requiresPin(
-            protectionEnabled = settings.caregiverProtectionEnabled,
-            hasPinConfigured = hasPin,
-            action = action,
-        )
-        localState.update { it.copy(pendingAction = action, pinError = null, pinInput = "") }
-        return if (requiresPin) {
-            Routes.PinVerify.route
-        } else {
-            if (action == ProtectedAction.ENTER_EDIT_MODE && settings.layoutLocked) {
-                viewModelScope.launch {
-                    container.launcherSettingsRepository.updateLayoutLocked(false)
-                }
-            }
-            localState.update { it.copy(pendingAction = null) }
-            destinationFor(action)
-        }
-    }
+    fun requestCaregiverAccess(): String = requestProtectedRoute(ProtectedAction.OPEN_CAREGIVER_SETTINGS)
+
+    fun beginProtectedAction(action: ProtectedAction): String = requestProtectedRoute(action)
 
     fun updatePinInput(value: String) {
         localState.update { it.copy(pinInput = value, pinError = null) }
@@ -104,7 +85,14 @@ class CaregiverViewModel(
             container.launcherSettingsRepository.storePinCredential(credential)
             container.launcherSettingsRepository.updateCaregiverProtectionEnabled(pinSaveBehavior.protectionEnabled)
             container.launcherSettingsRepository.updateLayoutLocked(pinSaveBehavior.layoutLocked)
-            localState.update { it.copy(pinInput = "", confirmPinInput = "", pinError = null, pendingAction = null) }
+            localState.update {
+                it.copy(
+                    pinInput = "",
+                    confirmPinInput = "",
+                    pinError = null,
+                    pendingAction = null,
+                )
+            }
             messages.emit(
                 if (hadExistingPinConfigured) {
                     "Caregiver PIN was updated."
@@ -127,26 +115,31 @@ class CaregiverViewModel(
             localState.update { it.copy(pinError = "PIN did not match. Try again.") }
             return null
         }
-        localState.update { it.copy(pinInput = "", pinError = null, pendingAction = null) }
-        return when (pendingAction) {
-            ProtectedAction.ENTER_EDIT_MODE -> {
-                if (state.value.settings.layoutLocked) {
-                    viewModelScope.launch {
-                        container.launcherSettingsRepository.updateLayoutLocked(false)
-                    }
-                }
-                Routes.EditLayout.route
-            }
-            ProtectedAction.TOGGLE_PROTECTION -> {
-                toggleProtectionEnabled()
-                Routes.CaregiverTools.route
-            }
-            ProtectedAction.TOGGLE_LAYOUT_LOCK -> {
-                toggleLayoutLock()
-                Routes.CaregiverTools.route
-            }
-            else -> destinationFor(pendingAction)
+        localState.update {
+            it.copy(
+                pinInput = "",
+                pinError = null,
+                pendingAction = null,
+                caregiverSessionActive = true,
+            )
         }
+        return destinationFor(pendingAction)
+    }
+
+    fun endCaregiverSession() {
+        localState.update {
+            it.copy(
+                caregiverSessionActive = false,
+                pinInput = "",
+                confirmPinInput = "",
+                pinError = null,
+                pendingAction = null,
+            )
+        }
+    }
+
+    fun clearPendingAction() {
+        localState.update { it.copy(pendingAction = null, pinInput = "", pinError = null) }
     }
 
     fun toggleProtectionEnabled() {
@@ -161,21 +154,40 @@ class CaregiverViewModel(
         val locked = !state.value.settings.layoutLocked
         viewModelScope.launch {
             container.launcherSettingsRepository.updateLayoutLocked(locked)
-            messages.emit(if (locked) "Home layout is locked." else "Home layout can now be edited.")
+            messages.emit(if (locked) "Home layout is locked." else "Home layout can now be adjusted.")
+        }
+    }
+
+    fun setBatteryInfoVisible(enabled: Boolean) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateShowBatteryInfo(enabled)
+            messages.emit(if (enabled) "Battery details now show on home." else "Battery details are hidden.")
+        }
+    }
+
+    fun updateHomePageCount(pageCount: Int) {
+        val clamped = HomeLayoutRules.clampPageCount(pageCount)
+        if (!HomeLayoutRules.canUsePageCount(state.value.layoutTiles, clamped)) {
+            viewModelScope.launch {
+                messages.emit("Move home tiles off the last page before using fewer pages.")
+            }
+            return
+        }
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateHomePageCount(clamped)
+            messages.emit("EasyUI home now uses $clamped page${if (clamped == 1) "" else "s"}.")
         }
     }
 
     fun moveTileUp(tileId: String) {
         updateLayout { tiles ->
-            val index = tiles.indexOfFirst { it.id == tileId }
-            if (index <= 0) tiles else tiles.toMutableList().apply { add(index - 1, removeAt(index)) }
+            HomeLayoutRules.moveTileEarlier(tiles, tileId, effectivePageCount())
         }
     }
 
     fun moveTileDown(tileId: String) {
         updateLayout { tiles ->
-            val index = tiles.indexOfFirst { it.id == tileId }
-            if (index == -1 || index == tiles.lastIndex) tiles else tiles.toMutableList().apply { add(index + 1, removeAt(index)) }
+            HomeLayoutRules.moveTileLater(tiles, tileId, effectivePageCount())
         }
     }
 
@@ -193,64 +205,51 @@ class CaregiverViewModel(
         if (error != null) {
             return error
         }
+        var saved = true
         updateLayout { tiles ->
             HomeLayoutRules.upsertContactTile(
                 tiles = tiles,
                 tile = HomeTile(
                     id = tileId ?: "contact-${System.currentTimeMillis()}",
-                    position = tiles.size,
+                    position = 0,
                     title = displayName.trim(),
                     type = HomeTileType.CONTACT,
                     phoneNumber = phoneNumber.trim(),
                     photoUri = photoUri,
                 ),
-            )
+                pageCount = effectivePageCount(),
+            ) ?: run {
+                saved = false
+                tiles
+            }
         }
-        return null
+        return if (saved) null else "Add another home page or remove a home tile first."
     }
 
-    fun addAppTile(app: InstalledApp) {
+    fun assignAllowedApp(packageName: String, position: Int) {
+        val app = state.value.installedApps.firstOrNull { it.packageName == packageName } ?: return
         updateLayout { tiles ->
-            if (tiles.any { it.packageName == app.packageName }) return@updateLayout tiles
-            tiles + HomeTile(
-                id = "app-${app.packageName}",
-                position = tiles.size,
-                title = app.label,
-                type = HomeTileType.APP,
-                packageName = app.packageName,
-            )
+            HomeLayoutRules.assignAppToPosition(
+                tiles = tiles,
+                app = app,
+                position = position,
+                pageCount = effectivePageCount(),
+            ) ?: run {
+                viewModelScope.launch {
+                    messages.emit("Choose an open app slot for this app.")
+                }
+                tiles
+            }
         }
     }
 
-    fun setHidden(packageName: String, hidden: Boolean) {
-        viewModelScope.launch {
-            container.hiddenAppRepository.setHidden(packageName, hidden)
-            container.launcherSettingsRepository.updateAppVisibilityPreset(AppVisibilityPreset.CUSTOM.name)
-        }
-    }
-
-    fun applyVisibilityPreset(preset: AppVisibilityPreset) {
-        viewModelScope.launch(container.ioDispatcher) {
-            if (preset == AppVisibilityPreset.CUSTOM) {
-                container.launcherSettingsRepository.updateAppVisibilityPreset(preset.name)
-                messages.emit("EasyUI kept the current app visibility setup.")
-                return@launch
-            }
-            val hiddenPackages = AppVisibilityPresetRules.hiddenPackagesForPreset(
-                apps = state.value.installedApps,
-                preset = preset,
+    fun removeAllowedApp(packageName: String) {
+        updateLayout { tiles ->
+            HomeLayoutRules.removeAppAssignment(
+                tiles = tiles,
+                packageName = packageName,
+                pageCount = effectivePageCount(),
             )
-            container.hiddenAppRepository.clearHiddenPackages()
-            hiddenPackages.forEach { packageName ->
-                container.hiddenAppRepository.setHidden(packageName, true)
-            }
-            container.launcherSettingsRepository.updateAppVisibilityPreset(preset.name)
-            val message = when (preset) {
-                AppVisibilityPreset.CUSTOM -> "EasyUI kept the current app visibility setup."
-                AppVisibilityPreset.ESSENTIALS_ONLY -> "EasyUI now shows only essential apps."
-                AppVisibilityPreset.MINIMAL_COMMON_APPS -> "EasyUI now shows a small set of common apps."
-            }
-            messages.emit(message)
         }
     }
 
@@ -283,39 +282,62 @@ class CaregiverViewModel(
             container.launcherSettingsRepository.updateAppVisibilityPreset(AppVisibilityPreset.CUSTOM.name)
             container.launcherSettingsRepository.updateVerySimpleModeEnabled(false)
             container.launcherSettingsRepository.updateHomeReadabilityPreset(HomeReadabilityPreset.STANDARD.name)
+            container.launcherSettingsRepository.updateShowBatteryInfo(false)
+            container.launcherSettingsRepository.updateHomePageCount(1)
             messages.emit("EasyUI is back to its safe default layout.")
         }
     }
 
-    fun visibleAppsForHiddenSettings(): List<InstalledApp> =
-        state.value.installedApps
+    fun installedAppsForAllowedApps(): List<InstalledApp> =
+        AppCatalogRules.sortAlphabetically(state.value.installedApps)
 
-    fun availableAppsForLayout(): List<InstalledApp> {
-        val currentPackages = state.value.layoutTiles.mapNotNull { it.packageName }.toSet()
-        return HiddenAppRules.visibleApps(state.value.installedApps, state.value.hiddenPackages)
-            .filterNot { it.packageName in currentPackages }
-    }
+    fun homePages(): List<List<HomeTile?>> =
+        HomeLayoutRules.pages(state.value.layoutTiles, effectivePageCount())
 
-    fun editableTiles(): List<HomeTile> = HomeLayoutRules.normalize(state.value.layoutTiles)
+    fun assignedAppPackages(): Set<String> =
+        HomeLayoutRules.appTiles(state.value.layoutTiles).mapNotNull { it.packageName }.toSet()
+
+    fun effectivePageCount(): Int =
+        HomeLayoutRules.effectivePageCount(
+            configuredPageCount = state.value.settings.homePageCount,
+            tiles = state.value.layoutTiles,
+        )
 
     fun contactTiles(): List<HomeTile> = HomeLayoutRules.contactTiles(state.value.layoutTiles)
 
-    fun clearPendingAction() {
-        localState.update { it.copy(pendingAction = null, pinInput = "", pinError = null) }
+    private fun requestProtectedRoute(action: ProtectedAction): String {
+        localState.update { it.copy(pendingAction = action, pinError = null, pinInput = "") }
+        if (state.value.caregiverSessionActive) {
+            localState.update { it.copy(pendingAction = null) }
+            return destinationFor(action)
+        }
+        val settings = state.value.settings
+        val hasPin = !settings.pinHashHex.isNullOrBlank() && !settings.pinSaltHex.isNullOrBlank()
+        val requiresPin = CaregiverProtectionRules.requiresPin(
+            protectionEnabled = settings.caregiverProtectionEnabled,
+            hasPinConfigured = hasPin,
+            action = action,
+        )
+        return if (requiresPin) {
+            Routes.PinVerify.route
+        } else {
+            localState.update { it.copy(pendingAction = null, caregiverSessionActive = true) }
+            destinationFor(action)
+        }
     }
 
     private fun updateLayout(transform: (List<HomeTile>) -> List<HomeTile>) {
         viewModelScope.launch(container.ioDispatcher) {
-            val updated = HomeLayoutRules.normalize(transform(container.homeLayoutRepository.getTiles()))
+            val updated = HomeLayoutRules.ensureRequiredActions(transform(container.homeLayoutRepository.getTiles()))
             container.homeLayoutRepository.replaceTiles(updated)
         }
     }
 
     private fun destinationFor(action: ProtectedAction): String =
         when (action) {
-            ProtectedAction.ENTER_EDIT_MODE -> Routes.EditLayout.route
-            ProtectedAction.MANAGE_HOME_DISPLAY -> Routes.HomeDisplay.route
-            ProtectedAction.MANAGE_APP_VISIBILITY -> Routes.HiddenApps.route
+            ProtectedAction.OPEN_CAREGIVER_SETTINGS -> Routes.CaregiverTools.route
+            ProtectedAction.MANAGE_LAYOUT_PAGES -> Routes.LayoutPages.route
+            ProtectedAction.MANAGE_ALLOWED_APPS -> Routes.AllowedApps.route
             ProtectedAction.MANAGE_FAVORITE_CONTACTS -> Routes.ManageContacts.route
             ProtectedAction.RESET_LAUNCHER -> Routes.ResetLauncher.route
             ProtectedAction.CHANGE_PIN -> Routes.PinSetup.route

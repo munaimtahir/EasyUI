@@ -21,21 +21,21 @@ class CaregiverProtectionRulesTest {
             CaregiverProtectionRules.requiresPin(
                 protectionEnabled = false,
                 hasPinConfigured = true,
-                action = ProtectedAction.ENTER_EDIT_MODE,
+                action = ProtectedAction.OPEN_CAREGIVER_SETTINGS,
             ),
         )
         assertTrue(
             CaregiverProtectionRules.requiresPin(
                 protectionEnabled = true,
                 hasPinConfigured = true,
-                action = ProtectedAction.ENTER_EDIT_MODE,
+                action = ProtectedAction.OPEN_CAREGIVER_SETTINGS,
             ),
         )
         assertTrue(
             CaregiverProtectionRules.requiresPin(
                 protectionEnabled = true,
                 hasPinConfigured = true,
-                action = ProtectedAction.MANAGE_HOME_DISPLAY,
+                action = ProtectedAction.MANAGE_LAYOUT_PAGES,
             ),
         )
         assertTrue(

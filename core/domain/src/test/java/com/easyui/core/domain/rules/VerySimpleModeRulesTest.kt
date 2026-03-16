@@ -15,12 +15,12 @@ class VerySimpleModeRulesTest {
             HomeTile("contact-b", 2, "Grace", HomeTileType.CONTACT, phoneNumber = "222"),
             HomeTile("app-camera", 3, "Camera", HomeTileType.APP, packageName = "camera"),
             HomeTile("flashlight", 4, "Flashlight", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
-            HomeTile("emergency", 5, "Emergency Call", HomeTileType.ACTION, action = HomeTileAction.EMERGENCY),
+            HomeTile("phone", 5, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
         )
 
         val simplified = VerySimpleModeRules.simplify(tiles, enabled = true)
 
-        assertEquals(listOf("apps", "contact-a", "contact-b", "emergency"), simplified.map { it.id })
+        assertEquals(listOf("phone", "apps-list", "contact-a", "contact-b"), simplified.map { it.id })
     }
 
     @Test

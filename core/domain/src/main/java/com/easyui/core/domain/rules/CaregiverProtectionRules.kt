@@ -25,9 +25,9 @@ object CaregiverProtectionRules {
     fun requiresPin(protectionEnabled: Boolean, hasPinConfigured: Boolean, action: ProtectedAction): Boolean =
         hasPinConfigured &&
             when (action) {
-                ProtectedAction.ENTER_EDIT_MODE,
-                ProtectedAction.MANAGE_HOME_DISPLAY,
-                ProtectedAction.MANAGE_APP_VISIBILITY,
+                ProtectedAction.OPEN_CAREGIVER_SETTINGS,
+                ProtectedAction.MANAGE_LAYOUT_PAGES,
+                ProtectedAction.MANAGE_ALLOWED_APPS,
                 ProtectedAction.MANAGE_FAVORITE_CONTACTS,
                 ProtectedAction.RESET_LAUNCHER,
                 ProtectedAction.TOGGLE_LAYOUT_LOCK,
