@@ -63,23 +63,17 @@ fun EasyUiNavGraph(
     LaunchedEffect(caregiverViewModel) {
         caregiverViewModel.messages.collect { snackbarHostState.showSnackbar(it) }
     }
-    LaunchedEffect(appState.settings.onboardingComplete, appState.starterLayoutReady) {
-        if (!appState.starterLayoutReady) return@LaunchedEffect
-        val destination = if (appState.settings.onboardingComplete) Routes.Home.route else Routes.Intro.route
-        navController.navigate(destination) {
-            popUpTo(navController.graph.id) { inclusive = true }
-        }
-    }
-
     Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { innerPadding ->
-        if (!appState.starterLayoutReady) {
+        if (!appState.settingsLoaded || !appState.starterLayoutReady) {
             Text("Loading EasyUI…", modifier = androidx.compose.ui.Modifier.padding(innerPadding))
             return@Scaffold
         }
+        val startDestination =
+            if (appState.settings.onboardingComplete) Routes.Home.route else Routes.Intro.route
         androidx.compose.foundation.layout.Box(modifier = androidx.compose.ui.Modifier.padding(innerPadding)) {
             NavHost(
                 navController = navController,
-                startDestination = Routes.Intro.route,
+                startDestination = startDestination,
             ) {
                 composable(Routes.Intro.route) {
                     IntroScreen(onContinue = { navController.navigate(Routes.LauncherGuidance.route) })
