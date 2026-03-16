@@ -53,4 +53,35 @@ class CaregiverProtectionRulesTest {
             ),
         )
     }
+
+    @Test
+    fun `first pin setup enables protection and locks layout`() {
+        val behavior = CaregiverProtectionRules.pinSaveBehavior(
+            hadExistingPinConfigured = false,
+            protectionEnabled = false,
+            layoutLocked = false,
+        )
+
+        assertTrue(behavior.protectionEnabled)
+        assertTrue(behavior.layoutLocked)
+    }
+
+    @Test
+    fun `changing existing pin preserves current protection settings`() {
+        val unlockedBehavior = CaregiverProtectionRules.pinSaveBehavior(
+            hadExistingPinConfigured = true,
+            protectionEnabled = false,
+            layoutLocked = false,
+        )
+        assertFalse(unlockedBehavior.protectionEnabled)
+        assertFalse(unlockedBehavior.layoutLocked)
+
+        val lockedBehavior = CaregiverProtectionRules.pinSaveBehavior(
+            hadExistingPinConfigured = true,
+            protectionEnabled = true,
+            layoutLocked = true,
+        )
+        assertTrue(lockedBehavior.protectionEnabled)
+        assertTrue(lockedBehavior.layoutLocked)
+    }
 }

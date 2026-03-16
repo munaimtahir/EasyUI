@@ -3,6 +3,11 @@ package com.easyui.core.domain.rules
 import com.easyui.core.domain.model.PinValidationResult
 import com.easyui.core.domain.model.ProtectedAction
 
+data class PinSaveBehavior(
+    val protectionEnabled: Boolean,
+    val layoutLocked: Boolean,
+)
+
 object CaregiverProtectionRules {
     fun validatePin(pin: String, confirmation: String? = null): PinValidationResult {
         if (pin.length < 4 || pin.length > 8) {
@@ -30,4 +35,21 @@ object CaregiverProtectionRules {
                 ProtectedAction.TOGGLE_PROTECTION -> protectionEnabled
                 ProtectedAction.CHANGE_PIN -> true
             }
+
+    fun pinSaveBehavior(
+        hadExistingPinConfigured: Boolean,
+        protectionEnabled: Boolean,
+        layoutLocked: Boolean,
+    ): PinSaveBehavior =
+        if (hadExistingPinConfigured) {
+            PinSaveBehavior(
+                protectionEnabled = protectionEnabled,
+                layoutLocked = layoutLocked,
+            )
+        } else {
+            PinSaveBehavior(
+                protectionEnabled = true,
+                layoutLocked = true,
+            )
+        }
 }

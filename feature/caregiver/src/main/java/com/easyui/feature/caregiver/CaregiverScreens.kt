@@ -392,10 +392,12 @@ fun FavoriteContactsScreen(
 
     val openDocumentLauncher = rememberLauncherForActivityResult(OpenDocument()) { uri: Uri? ->
         uri?.let {
-            context.contentResolver.takePersistableUriPermission(
-                it,
-                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION,
-            )
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION,
+                )
+            }
             photoUri = it.toString()
         }
     }

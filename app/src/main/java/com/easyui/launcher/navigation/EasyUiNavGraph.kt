@@ -190,7 +190,7 @@ fun EasyUiNavGraph(
                         verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
                         onSelectPreset = caregiverViewModel::updateHomeReadabilityPreset,
                         onToggleVerySimpleMode = caregiverViewModel::setVerySimpleModeEnabled,
-                        onDone = { navController.popBackStack() },
+                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                         onFinishSetup = {
                             navController.navigate(Routes.Home.route) {
                                 popUpTo(Routes.CaregiverTools.route) { inclusive = false }
@@ -228,7 +228,9 @@ fun EasyUiNavGraph(
                         onSubmit = {
                             val destination = caregiverViewModel.completePinVerification()
                             if (destination != null) {
-                                navController.navigate(destination)
+                                navController.navigate(destination) {
+                                    popUpTo(Routes.PinVerify.route) { inclusive = true }
+                                }
                             }
                         },
                     )
@@ -242,7 +244,7 @@ fun EasyUiNavGraph(
                         onRemove = caregiverViewModel::removeTile,
                         onAdd = caregiverViewModel::addAppTile,
                         onManageFavoriteContacts = { navController.navigate(Routes.ManageContacts.route) },
-                        onDone = { navController.popBackStack() },
+                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                         onFinishSetup = {
                             navController.navigate(Routes.Home.route) {
                                 popUpTo(Routes.CaregiverTools.route) { inclusive = false }
@@ -257,7 +259,7 @@ fun EasyUiNavGraph(
                         onMoveDown = caregiverViewModel::moveTileDown,
                         onEdit = caregiverViewModel::saveContactTile,
                         onRemove = caregiverViewModel::removeTile,
-                        onDone = { navController.popBackStack() },
+                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                         onFinishSetup = {
                             navController.navigate(Routes.Home.route) {
                                 popUpTo(Routes.CaregiverTools.route) { inclusive = false }
@@ -272,7 +274,7 @@ fun EasyUiNavGraph(
                         currentPresetName = caregiverState.settings.appVisibilityPreset,
                         onApplyPreset = caregiverViewModel::applyVisibilityPreset,
                         onToggleHidden = caregiverViewModel::setHidden,
-                        onDone = { navController.popBackStack() },
+                        onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                         onFinishSetup = {
                             navController.navigate(Routes.Home.route) {
                                 popUpTo(Routes.CaregiverTools.route) { inclusive = false }
@@ -286,7 +288,7 @@ fun EasyUiNavGraph(
                             caregiverViewModel.resetLauncher()
                             navController.popBackStack(Routes.CaregiverTools.route, false)
                         },
-                        onCancel = { navController.popBackStack() },
+                        onCancel = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                     )
                 }
             }

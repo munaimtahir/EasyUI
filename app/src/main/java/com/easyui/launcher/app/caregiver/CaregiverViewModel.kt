@@ -84,6 +84,8 @@ class CaregiverViewModel(
     }
 
     fun submitPinSetup(): Boolean {
+        val hadExistingPinConfigured =
+            !state.value.settings.pinHashHex.isNullOrBlank() && !state.value.settings.pinSaltHex.isNullOrBlank()
         val validation = CaregiverProtectionRules.validatePin(
             pin = state.value.pinInput,
             confirmation = state.value.confirmPinInput,
@@ -94,11 +96,22 @@ class CaregiverViewModel(
         }
         viewModelScope.launch {
             val credential = PinHasher.create(state.value.pinInput)
+            val pinSaveBehavior = CaregiverProtectionRules.pinSaveBehavior(
+                hadExistingPinConfigured = hadExistingPinConfigured,
+                protectionEnabled = state.value.settings.caregiverProtectionEnabled,
+                layoutLocked = state.value.settings.layoutLocked,
+            )
             container.launcherSettingsRepository.storePinCredential(credential)
-            container.launcherSettingsRepository.updateCaregiverProtectionEnabled(true)
-            container.launcherSettingsRepository.updateLayoutLocked(true)
+            container.launcherSettingsRepository.updateCaregiverProtectionEnabled(pinSaveBehavior.protectionEnabled)
+            container.launcherSettingsRepository.updateLayoutLocked(pinSaveBehavior.layoutLocked)
             localState.update { it.copy(pinInput = "", confirmPinInput = "", pinError = null, pendingAction = null) }
-            messages.emit("Caregiver PIN is now active.")
+            messages.emit(
+                if (hadExistingPinConfigured) {
+                    "Caregiver PIN was updated."
+                } else {
+                    "Caregiver PIN is now active."
+                },
+            )
         }
         return true
     }
