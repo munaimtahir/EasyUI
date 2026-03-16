@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 @Database(
     entities = [HomeTileEntity::class],
     version = 2,
-    exportSchema = false,
+    exportSchema = true,
 )
 abstract class EasyUiDatabase : RoomDatabase() {
     abstract fun homeTileDao(): HomeTileDao

@@ -1,34 +1,86 @@
-# Gradle files
+# ------------------------------------------------------------
+# Android project .gitignore
+# Mirror-style private repository version
+# Keeps important config and final outputs
+# ------------------------------------------------------------
+
+# -----------------------
+# OS / editor junk
+# -----------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.desktop
+.directory
+
+# -----------------------
+# IDE files
+# -----------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# -----------------------
+# Gradle / build cache junk
+# Keep transient build/cache ignored
+# -----------------------
 .gradle/
+**/.gradle/
 build/
-
-# Local configuration file (sdk path, etc)
-local.properties
-
-# Log/OS Files
-*.log
-
-# Android Studio generated files and folders
+**/build/
+out/
 captures/
 .externalNativeBuild/
 .cxx/
-*.aab
-*.apk
-output-metadata.json
 
-# IntelliJ
-*.iml
-.idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+# -----------------------
+# Logs / temp
+# -----------------------
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+hs_err_pid*
+replay_pid*
 
-# Keystore files
-*.jks
-*.keystore
+# -----------------------
+# Archives only if temporary
+# Remove these lines if you intentionally store zip exports
+# -----------------------
+# *.zip
+# *.tar
+# *.tar.gz
+# *.7z
+# *.rar
 
-# Google Services (e.g. APIs or Firebase)
-google-services.json
+# ------------------------------------------------------------
+# IMPORTANT:
+# We are intentionally NOT ignoring these, because this repo
+# is meant to preserve full working configuration:
+#
+# - local.properties
+# - .env
+# - google-services.json
+# - key.properties
+# - signing.properties
+# - *.apk
+# - *.aab
+# - release artifacts
+#
+# If you want to exclude any of them later, do it explicitly.
+# ------------------------------------------------------------
 
-# Android Profiling
-*.hprof
+
+
+
