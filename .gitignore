@@ -1,23 +1,13 @@
-# ------------------------------------------------------------
-# Android project .gitignore
-# Mirror-style private repository version
-# Keeps important config and final outputs
-# ------------------------------------------------------------
-
-# -----------------------
-# OS / editor junk
-# -----------------------
+# OS / filesystem junk
 .DS_Store
 Thumbs.db
-*.swp
-*.swo
-*~
 .desktop
 .directory
+*~
+*.swp
+*.swo
 
-# -----------------------
-# IDE files
-# -----------------------
+# IDE / editor local state
 .idea/
 *.iml
 *.ipr
@@ -29,12 +19,10 @@ Thumbs.db
 !.vscode/tasks.json
 !.vscode/launch.json
 
-# -----------------------
-# Gradle / build cache junk
-# Keep transient build/cache ignored
-# -----------------------
+# Gradle / build caches
 .gradle/
 **/.gradle/
+.kotlin/
 build/
 **/build/
 out/
@@ -42,9 +30,7 @@ captures/
 .externalNativeBuild/
 .cxx/
 
-# -----------------------
-# Logs / temp
-# -----------------------
+# Logs / temp / crash files
 *.log
 *.tmp
 *.temp
@@ -54,33 +40,66 @@ captures/
 hs_err_pid*
 replay_pid*
 
-# -----------------------
-# Archives only if temporary
-# Remove these lines if you intentionally store zip exports
-# -----------------------
-# *.zip
-# *.tar
-# *.tar.gz
-# *.7z
-# *.rar
+# Local machine-specific config
+local.properties
 
-# ------------------------------------------------------------
-# IMPORTANT:
-# We are intentionally NOT ignoring these, because this repo
-# is meant to preserve full working configuration:
-#
-# - local.properties
-# - .env
-# - google-services.json
-# - key.properties
-# - signing.properties
-# - *.apk
-# - *.aab
-# - release artifacts
-#
-# If you want to exclude any of them later, do it explicitly.
-# ------------------------------------------------------------
+# Optional env files
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
 
+# Signing and sensitive files
+*.jks
+*.keystore
+*.p12
+*.pfx
+key.properties
+keystore.properties
+signing.properties
+secrets.properties
+google-services.json
 
+# Package/tooling caches
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
 
+# Test / reporting artifacts
+coverage/
+test-output/
+playwright-report/
+allure-results/
+allure-report/
+screenshots/
+
+# Generic archives
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Release outputs ignored by default
+*.apk
+*.aab
+*.ap_
+*.aar
+*.dm
+output-metadata.json
+
+# Legacy release output location
+release/apk/
+
+# Tracked release artifacts folder
+!release-artifacts/
+!release-artifacts/**
