@@ -7,4 +7,5 @@ interface HiddenAppRepository {
     suspend fun getHiddenPackages(): Set<String>
     suspend fun setHidden(packageName: String, hidden: Boolean)
     suspend fun clearHiddenPackages()
+    suspend fun replaceHiddenPackages(packages: Set<String>)
 }

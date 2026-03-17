@@ -38,6 +38,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.HomeTile
@@ -59,6 +62,8 @@ fun CaregiverToolsScreen(
     verySimpleModeEnabled: Boolean,
     favoriteContactCount: Int,
     allowedAppCount: Int,
+    hiddenAppCount: Int,
+    emergencyPhoneNumber: String,
     onSetupPin: () -> Unit,
     onChangePin: () -> Unit,
     onToggleProtection: () -> Unit,
@@ -67,6 +72,9 @@ fun CaregiverToolsScreen(
     onOpenLayoutPages: () -> Unit,
     onOpenAllowedApps: () -> Unit,
     onManageFavoriteContacts: () -> Unit,
+    onOpenEmergencySettings: () -> Unit,
+    onOpenBackupRestore: () -> Unit,
+    onOpenHiddenApps: () -> Unit,
     onFinishSetup: () -> Unit,
     onResetLauncher: () -> Unit,
     modifier: Modifier = Modifier,
@@ -123,6 +131,28 @@ fun CaregiverToolsScreen(
                 )
             }
             item {
+                SectionCard(
+                    title = "Emergency Number",
+                    body = listOf(
+                        "The Emergency tile dials this number.",
+                        "Current: ${emergencyPhoneNumber.ifBlank { "Not set (defaults to 911)" }}",
+                    ),
+                    primaryLabel = "Set Emergency Number",
+                    onPrimaryClick = onOpenEmergencySettings,
+                )
+            }
+            item {
+                SectionCard(
+                    title = "Hidden Apps",
+                    body = listOf(
+                        "Remove apps from the All Apps search list.",
+                        "Total hidden: $hiddenAppCount",
+                    ),
+                    primaryLabel = "Manage Hidden Apps",
+                    onPrimaryClick = onOpenHiddenApps,
+                )
+            }
+            item {
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(EasyUiSpacing.md),
@@ -175,6 +205,17 @@ fun CaregiverToolsScreen(
                 Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
                     Text("Back to Home")
                 }
+            }
+            item {
+                SectionCard(
+                    title = "Backup and Restore",
+                    body = listOf(
+                        "Export the current setup to a file.",
+                        "Restore a saved setup from a backup file.",
+                    ),
+                    primaryLabel = "Backup and Restore",
+                    onPrimaryClick = onOpenBackupRestore,
+                )
             }
             item {
                 OutlinedButton(onClick = onResetLauncher, modifier = Modifier.fillMaxWidth()) {
@@ -536,16 +577,20 @@ fun PinEntryScreen(
                 value = pin,
                 onValueChange = onPinChange,
                 label = { Text("PIN") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().testTag("pin_input"),
                 singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             )
             if (onConfirmPinChange != null && confirmPin != null) {
                 OutlinedTextField(
                     value = confirmPin,
                     onValueChange = onConfirmPinChange,
                     label = { Text("Confirm PIN") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("pin_confirm_input"),
                     singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 )
             }
             if (!errorMessage.isNullOrBlank()) {
@@ -854,3 +899,66 @@ private fun readabilityBody(preset: HomeReadabilityPreset): String =
         HomeReadabilityPreset.LARGER_TILES -> "Shows fewer, larger tiles on the home screen."
         HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> "Adds extra breathing room between home elements."
     }
+
+@Composable
+fun EmergencySettingsScreen(
+    currentEmergencyNumber: String,
+    onSave: (String) -> Unit,
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var number by rememberSaveable { mutableStateOf(currentEmergencyNumber) }
+    var error by rememberSaveable { mutableStateOf<String?>(null) }
+
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(EasyUiSpacing.lg)
+                .testTag("emergency_settings_screen"),
+            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+        ) {
+            Text("Emergency Number", style = MaterialTheme.typography.headlineLarge)
+            Text(
+                "Set the phone number the Emergency tile will dial. This only changes EasyUI and does not affect the system dialer or emergency services.",
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                "Leave as 911 if you want the tile to open the dialer without pre-filling a number.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedTextField(
+                value = number,
+                onValueChange = {
+                    number = it
+                    error = null
+                },
+                label = { Text("Emergency phone number") },
+                modifier = Modifier.fillMaxWidth().testTag("emergency_number_field"),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            )
+            if (!error.isNullOrBlank()) {
+                Text(error ?: "", color = MaterialTheme.colorScheme.error)
+            }
+            Button(
+                onClick = {
+                    val trimmed = number.trim()
+                    if (trimmed.isBlank()) {
+                        error = "Enter a phone number or use 911 as the default."
+                    } else {
+                        onSave(trimmed)
+                        onDone()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Save")
+            }
+            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                Text("Cancel")
+            }
+        }
+    }
+}

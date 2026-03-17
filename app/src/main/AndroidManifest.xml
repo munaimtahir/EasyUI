@@ -5,6 +5,18 @@
         android:name="android.hardware.camera.flash"
         android:required="false" />
 
+    <!-- Declare which intents this launcher resolves so PackageManager can answer
+         resolveActivity() on Android 11+ (API 30+) without QUERY_ALL_PACKAGES. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
     <application
         android:name=".EasyUiApplication"
         android:allowBackup="false"
@@ -18,7 +30,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

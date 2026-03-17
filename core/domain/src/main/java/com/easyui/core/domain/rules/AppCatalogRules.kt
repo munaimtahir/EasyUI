@@ -18,4 +18,7 @@ object AppCatalogRules {
                 app.packageName.lowercase(Locale.getDefault()).contains(normalizedQuery)
         }
     }
+
+    fun filterHiddenApps(apps: List<InstalledApp>, hiddenPackages: Set<String>): List<InstalledApp> =
+        apps.filterNot { it.packageName in hiddenPackages }
 }

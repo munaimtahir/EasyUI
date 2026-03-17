@@ -31,8 +31,12 @@ class AppListViewModel(
         combine(
             query,
             container.appCatalogRepository.observeInstalledApps(),
-        ) { currentQuery, apps ->
-            val visibleApps = AppCatalogRules.filterByQuery(apps, currentQuery)
+            container.hiddenAppRepository.observeHiddenPackages(),
+        ) { currentQuery, apps, hiddenPackages ->
+            val visibleApps = AppCatalogRules.filterByQuery(
+                apps = AppCatalogRules.filterHiddenApps(apps, hiddenPackages),
+                query = currentQuery
+            )
             val fallbackState = FallbackStateRules.appList(currentQuery, visibleApps.size)
             AppListUiState(
                 query = currentQuery,

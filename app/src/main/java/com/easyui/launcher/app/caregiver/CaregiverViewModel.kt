@@ -288,6 +288,26 @@ class CaregiverViewModel(
         }
     }
 
+    fun updateEmergencyNumber(number: String) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateEmergencyPhoneNumber(number)
+            messages.emit("Emergency number saved.")
+        }
+    }
+
+    fun toggleAppHidden(packageName: String) {
+        viewModelScope.launch {
+            val currentlyHidden = state.value.hiddenPackages
+            if (packageName in currentlyHidden) {
+                container.hiddenAppRepository.unhidePackage(packageName)
+                messages.emit("App will now show in All Apps.")
+            } else {
+                container.hiddenAppRepository.hidePackage(packageName)
+                messages.emit("App is now hidden from All Apps.")
+            }
+        }
+    }
+
     fun installedAppsForAllowedApps(): List<InstalledApp> =
         AppCatalogRules.sortAlphabetically(state.value.installedApps)
 
@@ -343,6 +363,7 @@ class CaregiverViewModel(
             ProtectedAction.CHANGE_PIN -> Routes.PinSetup.route
             ProtectedAction.TOGGLE_PROTECTION -> Routes.CaregiverTools.route
             ProtectedAction.TOGGLE_LAYOUT_LOCK -> Routes.CaregiverTools.route
+            ProtectedAction.MANAGE_HIDDEN_APPS -> Routes.ManageHiddenApps.route
         }
 
     private fun com.easyui.core.domain.model.LauncherSettings.toPinCredential(): PinCredential? {

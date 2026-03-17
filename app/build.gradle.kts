@@ -22,6 +22,33 @@ android {
         unitTests.isIncludeAndroidResources = true
     }
 
+    // Release signing — keys are read from local gradle.properties or CI environment variables.
+    // DO NOT commit real keystore values to source control.
+    // Set up by creating a keystore and adding these properties to your local gradle.properties:
+    //   EASYUI_KEYSTORE_PATH=<absolute path to .jks>
+    //   EASYUI_KEYSTORE_PASSWORD=<store password>
+    //   EASYUI_KEY_ALIAS=<key alias>
+    //   EASYUI_KEY_PASSWORD=<key password>
+    signingConfigs {
+        create("release") {
+            val keystorePath: String? = System.getenv("EASYUI_KEYSTORE_PATH")
+                ?: project.findProperty("EASYUI_KEYSTORE_PATH") as String?
+            val storePassword: String? = System.getenv("EASYUI_KEYSTORE_PASSWORD")
+                ?: project.findProperty("EASYUI_KEYSTORE_PASSWORD") as String?
+            val keyAlias: String? = System.getenv("EASYUI_KEY_ALIAS")
+                ?: project.findProperty("EASYUI_KEY_ALIAS") as String?
+            val keyPassword: String? = System.getenv("EASYUI_KEY_PASSWORD")
+                ?: project.findProperty("EASYUI_KEY_PASSWORD") as String?
+
+            if (keystorePath != null) {
+                storeFile = file(keystorePath)
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -30,6 +57,27 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            val releaseSigningConfig = signingConfigs.getByName("release")
+            if (releaseSigningConfig.storeFile != null) {
+                signingConfig = releaseSigningConfig
+            }
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
+    }
+
+    // Android App Bundle (AAB) is the required upload format for Play Store.
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
         }
     }
 

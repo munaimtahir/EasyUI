@@ -41,6 +41,12 @@ class DataStoreHiddenAppRepository(
         }
     }
 
+    override suspend fun replaceHiddenPackages(packages: Set<String>) {
+        dataStore.edit { preferences ->
+            preferences[HIDDEN_PACKAGES] = packages
+        }
+    }
+
     private companion object {
         val HIDDEN_PACKAGES = stringSetPreferencesKey("hidden_packages")
     }

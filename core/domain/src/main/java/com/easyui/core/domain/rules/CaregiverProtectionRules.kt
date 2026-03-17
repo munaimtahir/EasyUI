@@ -31,6 +31,7 @@ object CaregiverProtectionRules {
                 ProtectedAction.MANAGE_FAVORITE_CONTACTS,
                 ProtectedAction.RESET_LAUNCHER,
                 ProtectedAction.TOGGLE_LAYOUT_LOCK,
+                ProtectedAction.MANAGE_HIDDEN_APPS,
                 -> protectionEnabled
                 ProtectedAction.TOGGLE_PROTECTION -> protectionEnabled
                 ProtectedAction.CHANGE_PIN -> true

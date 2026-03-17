@@ -13,4 +13,7 @@ sealed class Routes(val route: String) {
     data object PinVerify : Routes("pin_verify")
     data object ManageContacts : Routes("manage_contacts")
     data object ResetLauncher : Routes("reset_launcher")
+    data object EmergencySettings : Routes("emergency_settings")
+    data object BackupRestore : Routes("backup_restore")
+    data object ManageHiddenApps : Routes("manage_hidden_apps")
 }

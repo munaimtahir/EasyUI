@@ -1,6 +1,8 @@
 package com.easyui.launcher.di
 
 import android.content.Context
+import com.easyui.core.data.repository.LocalBackupRepository
+import com.easyui.core.domain.repository.BackupRepository
 import com.easyui.core.data.database.EasyUiDatabase
 import com.easyui.core.data.datastore.DataStoreLauncherSettingsRepository
 import com.easyui.core.data.repository.DataStoreHiddenAppRepository
@@ -46,6 +48,11 @@ class AppContainer(
     val appLauncher: AppLauncher = AndroidAppLauncher(appContext)
     val defaultLauncherManager: DefaultLauncherManager = AndroidDefaultLauncherManager(appContext)
     val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    val backupRepository: BackupRepository = LocalBackupRepository(
+        homeLayoutRepository = homeLayoutRepository,
+        launcherSettingsRepository = launcherSettingsRepository,
+        hiddenAppRepository = hiddenAppRepository,
+    )
 
     suspend fun ensureStarterLayout() = withContext(ioDispatcher) {
         val existing = homeLayoutRepository.getTiles()

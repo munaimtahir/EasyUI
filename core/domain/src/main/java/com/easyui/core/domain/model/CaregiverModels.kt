@@ -9,6 +9,7 @@ enum class ProtectedAction {
     CHANGE_PIN,
     TOGGLE_PROTECTION,
     TOGGLE_LAYOUT_LOCK,
+    MANAGE_HIDDEN_APPS,
 }
 
 enum class AppVisibilityPreset {

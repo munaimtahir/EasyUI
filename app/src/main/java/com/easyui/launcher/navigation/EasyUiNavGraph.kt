@@ -1,8 +1,15 @@
 package com.easyui.launcher.navigation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -12,14 +19,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easyui.feature.apps.AppListScreen
+import com.easyui.feature.caregiver.BackupRestoreScreen
 import com.easyui.feature.caregiver.AllowedAppsScreen
 import com.easyui.feature.caregiver.CaregiverToolsScreen
+import com.easyui.feature.caregiver.EmergencySettingsScreen
 import com.easyui.feature.caregiver.FavoriteContactsScreen
 import com.easyui.feature.caregiver.LayoutPagesScreen
 import com.easyui.feature.caregiver.PinEntryScreen
@@ -31,10 +41,18 @@ import com.easyui.feature.onboarding.IntroScreen
 import com.easyui.launcher.app.AppListViewModel
 import com.easyui.launcher.app.AppViewModel
 import com.easyui.launcher.app.HomeViewModel
+import com.easyui.launcher.app.caregiver.BackupViewModel
 import com.easyui.launcher.app.caregiver.CaregiverViewModel
 import com.easyui.launcher.di.AppContainer
 import com.easyui.launcher.ui.AppViewModelFactory
 import com.easyui.core.domain.model.ProtectedAction
+import com.easyui.core.ui.theme.EasyUiSpacing
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun EasyUiNavGraph(
@@ -46,6 +64,7 @@ fun EasyUiNavGraph(
     val homeViewModel: HomeViewModel = viewModel(factory = factory)
     val appListViewModel: AppListViewModel = viewModel(factory = factory)
     val caregiverViewModel: CaregiverViewModel = viewModel(factory = factory)
+    val backupViewModel: BackupViewModel = viewModel(factory = factory)
     val appState by appViewModel.state.collectAsState()
     val homeState by homeViewModel.state.collectAsState()
     val appListState by appListViewModel.state.collectAsState()
@@ -64,7 +83,7 @@ fun EasyUiNavGraph(
     }
     Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { innerPadding ->
         if (!appState.settingsLoaded || !appState.starterLayoutReady) {
-            Text("Loading EasyUI…", modifier = androidx.compose.ui.Modifier.padding(innerPadding))
+            LoadingScreen(modifier = androidx.compose.ui.Modifier.padding(innerPadding))
             return@Scaffold
         }
         val startDestination =
@@ -143,6 +162,8 @@ fun EasyUiNavGraph(
                             verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
                             favoriteContactCount = caregiverViewModel.contactTiles().size,
                             allowedAppCount = caregiverViewModel.assignedAppPackages().size,
+                            hiddenAppCount = caregiverState.hiddenPackages.size,
+                            emergencyPhoneNumber = caregiverState.settings.emergencyPhoneNumber,
                             onSetupPin = { navController.navigate(Routes.PinSetup.route) },
                             onChangePin = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.CHANGE_PIN))
@@ -164,6 +185,15 @@ fun EasyUiNavGraph(
                             },
                             onManageFavoriteContacts = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_FAVORITE_CONTACTS))
+                            },
+                            onOpenEmergencySettings = {
+                                navController.navigate(Routes.EmergencySettings.route)
+                            },
+                            onOpenBackupRestore = {
+                                navController.navigate(Routes.BackupRestore.route)
+                            },
+                            onOpenHiddenApps = {
+                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_HIDDEN_APPS))
                             },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()
@@ -303,6 +333,86 @@ fun EasyUiNavGraph(
                         )
                     }
                 }
+                composable(Routes.EmergencySettings.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        EmergencySettingsScreen(
+                            currentEmergencyNumber = caregiverState.settings.emergencyPhoneNumber,
+                            onSave = { number ->
+                                caregiverViewModel.updateEmergencyNumber(number)
+                            },
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                        )
+                    }
+                }
+                composable(Routes.ManageHiddenApps.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        HiddenAppsScreen(
+                            installedApps = caregiverViewModel.installedAppsForAllowedApps(),
+                            hiddenPackages = caregiverState.hiddenPackages,
+                            onToggleHidden = caregiverViewModel::toggleAppHidden,
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) }
+                        )
+                    }
+                }
+                composable(Routes.BackupRestore.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        val backupState by backupViewModel.state.collectAsState()
+                        val context = androidx.compose.ui.platform.LocalContext.current
+                        val scope = rememberCoroutineScope()
+
+                        LaunchedEffect(backupViewModel) {
+                            backupViewModel.messages.collect {
+                                snackbarHostState.showSnackbar(it)
+                            }
+                        }
+
+                        val importFilePicker = rememberLauncherForActivityResult(
+                            contract = ActivityResultContracts.OpenDocument(),
+                        ) { uri: Uri? ->
+                            if (uri != null) {
+                                backupViewModel.loadImportFromUri(context, uri)
+                            }
+                        }
+
+                        BackupRestoreScreen(
+                            isExporting = backupState.isExporting,
+                            isImporting = backupState.isImporting,
+                            lastResult = backupState.lastResult,
+                            pendingImportConfirmation = backupState.pendingImportJson != null,
+                            onExport = {
+                                backupViewModel.exportBackup { json, filename ->
+                                    // Share the JSON via Android's share sheet so the user can
+                                    // save it to Files, Drive, email it, etc.
+                                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "application/json"
+                                        putExtra(Intent.EXTRA_TEXT, json)
+                                        putExtra(Intent.EXTRA_SUBJECT, filename)
+                                    }
+                                    context.startActivity(
+                                        Intent.createChooser(shareIntent, "Save EasyUI Backup").apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        },
+                                    )
+                                }
+                            },
+                            onPickImportFile = {
+                                importFilePicker.launch(arrayOf("application/json", "text/plain", "*/*"))
+                            },
+                            onConfirmImport = { backupViewModel.confirmImport() },
+                            onCancelImport = { backupViewModel.cancelImport() },
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -324,4 +434,29 @@ private fun RequireCaregiverSession(
         return
     }
     content()
+}
+
+@Composable
+private fun LoadingScreen(
+    modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        Column(
+            modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "EasyUI",
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Box(modifier = androidx.compose.ui.Modifier.padding(top = EasyUiSpacing.lg)) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        }
+    }
 }
