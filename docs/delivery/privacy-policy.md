@@ -56,4 +56,4 @@ You can remove local EasyUI data by uninstalling the app or clearing app storage
 
 ## Contact
 
-Before publishing, replace this section with the maintainer or publisher contact email and host this policy at a public URL for Google Play submission.
+If you have questions about this Privacy Policy, please contact the developer at: **munaim.tahir@gmail.com**
