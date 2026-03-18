@@ -8,14 +8,13 @@ import com.easyui.core.data.datastore.DataStoreLauncherSettingsRepository
 import com.easyui.core.data.repository.DataStoreHiddenAppRepository
 import com.easyui.core.data.repository.RoomHomeLayoutRepository
 import com.easyui.core.domain.model.HomeTile
-import com.easyui.core.domain.model.HomeTileAction
-import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.repository.AppCatalogRepository
 import com.easyui.core.domain.repository.AppLauncher
 import com.easyui.core.domain.repository.BatteryStatusRepository
 import com.easyui.core.domain.repository.CameraActionHandler
 import com.easyui.core.domain.repository.DefaultLauncherManager
+import com.easyui.core.domain.repository.DeviceStatusRepository
 import com.easyui.core.domain.repository.EmergencyActionHandler
 import com.easyui.core.domain.repository.FlashlightController
 import com.easyui.core.domain.repository.HiddenAppRepository
@@ -25,6 +24,7 @@ import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.platform.actions.AndroidAppLauncher
 import com.easyui.core.platform.actions.AndroidBatteryStatusRepository
 import com.easyui.core.platform.actions.AndroidCameraActionHandler
+import com.easyui.core.platform.actions.AndroidDeviceStatusRepository
 import com.easyui.core.platform.actions.AndroidEmergencyActionHandler
 import com.easyui.core.platform.actions.AndroidFlashlightController
 import com.easyui.core.platform.apps.AndroidAppCatalogRepository
@@ -48,6 +48,7 @@ class AppContainer(
     val emergencyActionHandler: EmergencyActionHandler = AndroidEmergencyActionHandler(appContext)
     val cameraActionHandler: CameraActionHandler = AndroidCameraActionHandler(appContext)
     val batteryStatusRepository: BatteryStatusRepository = AndroidBatteryStatusRepository(appContext)
+    val deviceStatusRepository: DeviceStatusRepository = AndroidDeviceStatusRepository(appContext)
     val appLauncher: AppLauncher = AndroidAppLauncher(appContext)
     val defaultLauncherManager: DefaultLauncherManager = AndroidDefaultLauncherManager(appContext)
     val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -72,19 +73,6 @@ class AppContainer(
     }
 
     fun createStarterLayout(installedApps: List<InstalledApp>): List<HomeTile> {
-        val starterLayout = HomeLayoutRules.starterLayout(installedApps)
-        return if (starterLayout.any { it.action == HomeTileAction.OPEN_APP_LIST }) {
-            starterLayout
-        } else {
-            listOf(
-                HomeTile(
-                    id = "apps-list",
-                    position = 0,
-                    title = "All Apps",
-                    type = HomeTileType.ACTION,
-                    action = HomeTileAction.OPEN_APP_LIST,
-                ),
-            ) + starterLayout
-        }
+        return HomeLayoutRules.starterLayout(installedApps)
     }
 }

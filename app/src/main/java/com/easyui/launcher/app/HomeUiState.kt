@@ -1,15 +1,16 @@
 package com.easyui.launcher.app
 
-import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.TileDisplayModel
 
 data class HomeUiState(
     val timeText: String = "",
-    val dateText: String = "",
-    val batterySummary: String? = null,
-    val pages: List<List<TileDisplayModel?>> = emptyList(),
-    val readabilityPreset: HomeReadabilityPreset = HomeReadabilityPreset.STANDARD,
-    val verySimpleModeEnabled: Boolean = false,
-    val fallbackTitle: String? = null,
-    val fallbackBody: String? = null,
+    val batteryPercent: String = "--%",
+    val chargingLabel: String = "Not charging",
+    val signalLabel: String = "Signal unknown",
+    val simLabel: String = "SIM",
+    val wifiLabel: String = "Wi-Fi unknown",
+    val tiles: List<TileDisplayModel> = emptyList(),
+    val caregiverAccessVisible: Boolean = false,
+    val flashlightTriggerProgress: Int = 0,
+    val sosTriggerProgress: Int = 0,
 )

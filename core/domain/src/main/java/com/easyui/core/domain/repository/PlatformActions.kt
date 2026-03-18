@@ -1,6 +1,7 @@
 package com.easyui.core.domain.repository
 
 import com.easyui.core.domain.model.BatteryStatus
+import com.easyui.core.domain.model.DeviceStatus
 import com.easyui.core.domain.model.LauncherActionState
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +13,8 @@ interface FlashlightController {
 interface EmergencyActionHandler {
     suspend fun currentState(phoneNumber: String?): LauncherActionState
     suspend fun launchDialer(phoneNumber: String?): Boolean
+    suspend fun sendSms(phoneNumber: String, message: String): Boolean
+    suspend fun callPhone(phoneNumber: String): Boolean
 }
 
 interface CameraActionHandler {
@@ -30,4 +33,8 @@ interface DefaultLauncherManager {
 
 interface BatteryStatusRepository {
     fun observeBatteryStatus(): Flow<BatteryStatus>
+}
+
+interface DeviceStatusRepository {
+    fun observeDeviceStatus(): Flow<DeviceStatus>
 }

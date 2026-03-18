@@ -14,9 +14,11 @@ enum class TileDisplayKind {
     APP,
     DIALER,
     APPS_LIST,
+    PHONE_CONTACTS,
     FLASHLIGHT,
     EMERGENCY,
     CAMERA,
     HEALTH_INFO,
+    SOS,
     CONTACT,
 }

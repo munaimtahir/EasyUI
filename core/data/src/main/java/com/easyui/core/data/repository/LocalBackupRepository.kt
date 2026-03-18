@@ -36,9 +36,13 @@ class LocalBackupRepository(
         hiddenAppRepository.replaceHiddenPackages(data.hiddenPackages)
         with(launcherSettingsRepository) {
             updateEmergencyPhoneNumber(data.settings.emergencyPhoneNumber)
+            updateEmergencyNumbers(data.settings.emergencyNumbers)
+            updateSosNumbers(data.settings.sosNumbers)
             updateClockPreference(data.settings.use24HourClock)
             updateCaregiverProtectionEnabled(data.settings.caregiverProtectionEnabled)
             updateLayoutLocked(data.settings.layoutLocked)
+            updateEasyUiLockEnabled(data.settings.easyUiLockEnabled)
+            updateEasyUiLockTimeoutSeconds(data.settings.easyUiLockTimeoutSeconds)
             updateAppVisibilityPreset(data.settings.appVisibilityPreset)
             updateHomeReadabilityPreset(data.settings.homeReadabilityPreset)
             updateVerySimpleModeEnabled(data.settings.verySimpleModeEnabled)

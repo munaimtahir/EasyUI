@@ -38,6 +38,9 @@ class CaregiverQolSmokeTest {
                     hiddenAppCount = 1,
                     healthInfoConfigured = true,
                     emergencyPhoneNumber = "911",
+                    sosNumberCount = 2,
+                    easyUiLockEnabled = true,
+                    easyUiLockTimeoutSeconds = 60,
                     onSetupPin = {},
                     onChangePin = {},
                     onToggleProtection = {},
@@ -58,7 +61,7 @@ class CaregiverQolSmokeTest {
 
         composeRule.onNodeWithTag("caregiver_tools_screen").assertIsDisplayed()
         composeRule.onNodeWithText("Layout / Pages").assertIsDisplayed()
-        composeRule.onNodeWithText("Allowed Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Home Apps").assertIsDisplayed()
         composeRule.onNodeWithText("Call Shortcuts").assertIsDisplayed()
         composeRule.onNodeWithText("Lock / Protection").assertIsDisplayed()
         composeRule.onNodeWithText("Battery Display").assertIsDisplayed()
@@ -97,7 +100,7 @@ class CaregiverQolSmokeTest {
                     pages = listOf(
                         listOf(
                             HomeTile("phone", 0, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
-                            HomeTile("apps-list", 1, "All Apps", HomeTileType.ACTION, action = HomeTileAction.OPEN_APP_LIST),
+                            HomeTile("flashlight", 1, "Flashlight", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
                             HomeTile("app-camera", 2, "Camera", HomeTileType.APP, packageName = "com.camera"),
                             null,
                             null,
@@ -122,7 +125,7 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Allowed Apps").assertIsDisplayed()
         composeRule.onNodeWithText("Installed Apps").assertIsDisplayed()
         composeRule.onNodeWithText("Phone").assertIsDisplayed()
-        composeRule.onNodeWithText("All Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Flashlight").assertIsDisplayed()
         composeRule.onNodeWithText("Maps").assertIsDisplayed()
     }
 }

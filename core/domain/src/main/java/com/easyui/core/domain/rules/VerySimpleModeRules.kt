@@ -10,13 +10,13 @@ object VerySimpleModeRules {
         val normalized = HomeLayoutRules.ensureRequiredActions(tiles)
         val contacts = normalized.filter { it.type == HomeTileType.CONTACT }.take(2)
         val phone = normalized.firstOrNull { it.action == HomeTileAction.OPEN_DIALER }
-        val actionApps = normalized.firstOrNull { it.action == HomeTileAction.OPEN_APP_LIST }
+        val emergency = normalized.firstOrNull { it.action == HomeTileAction.EMERGENCY }
         val fallbackApp = normalized.firstOrNull { it.type == HomeTileType.APP }
         val flashlight = normalized.firstOrNull { it.action == HomeTileAction.FLASHLIGHT }
 
         val selected = buildList {
             if (phone != null) add(phone)
-            if (actionApps != null) add(actionApps)
+            if (emergency != null) add(emergency)
             addAll(contacts)
             if (contacts.isEmpty() && fallbackApp != null) add(fallbackApp)
             if (size < 4 && flashlight != null) add(flashlight)

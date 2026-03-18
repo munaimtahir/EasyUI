@@ -28,6 +28,7 @@ fun LargeActionTile(
     onClick: () -> Unit,
     avatarImageUri: String? = null,
     avatarFallback: String? = null,
+    highlighted: Boolean = false,
     titleScale: Float = 1f,
     subtitleScale: Float = 1f,
     modifier: Modifier = Modifier,
@@ -41,7 +42,7 @@ fun LargeActionTile(
             .semantics { role = Role.Button },
         colors = CardDefaults.cardColors(
             containerColor = if (enabled) {
-                MaterialTheme.colorScheme.surface
+                if (highlighted) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surface
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
             },
@@ -70,6 +71,7 @@ fun LargeActionTile(
                         fontSize = MaterialTheme.typography.titleLarge.fontSize * titleScale,
                         lineHeight = MaterialTheme.typography.titleLarge.lineHeight * titleScale,
                     ),
+                    color = if (highlighted) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                 )
             }
@@ -79,7 +81,7 @@ fun LargeActionTile(
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize * subtitleScale,
                     lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * subtitleScale,
                 ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (highlighted) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

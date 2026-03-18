@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -12,15 +13,24 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +47,9 @@ import com.easyui.feature.caregiver.LayoutPagesScreen
 import com.easyui.feature.caregiver.PinEntryScreen
 import com.easyui.feature.caregiver.ResetLauncherScreen
 import com.easyui.feature.home.HealthInfoScreen
+import com.easyui.feature.home.EmergencyCallScreen
 import com.easyui.feature.home.HomeScreen
+import com.easyui.feature.home.PhoneContactsScreen
 import com.easyui.feature.onboarding.CaregiverHelpScreen
 import com.easyui.feature.onboarding.DefaultLauncherGuidanceScreen
 import com.easyui.feature.onboarding.IntroScreen
@@ -49,11 +61,15 @@ import com.easyui.launcher.app.caregiver.CaregiverViewModel
 import com.easyui.launcher.di.AppContainer
 import com.easyui.launcher.ui.AppViewModelFactory
 import com.easyui.core.domain.model.ProtectedAction
+import com.easyui.core.domain.model.PinCredential
+import com.easyui.core.domain.security.PinHasher
 import com.easyui.core.ui.theme.EasyUiSpacing
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import kotlinx.coroutines.launch
 
 @Composable
 fun EasyUiNavGraph(
@@ -70,8 +86,14 @@ fun EasyUiNavGraph(
     val homeState by homeViewModel.state.collectAsState()
     val appListState by appListViewModel.state.collectAsState()
     val caregiverState by caregiverViewModel.state.collectAsState()
+    val uiScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
     val snackbarHostState = remember { SnackbarHostState() }
     var launcherStatusVersion by remember { mutableIntStateOf(0) }
+    var lastInteractionAt by remember { mutableLongStateOf(android.os.SystemClock.elapsedRealtime()) }
+    var easyUiLocked by remember { mutableStateOf(false) }
+    var lockPinInput by remember { mutableStateOf("") }
+    var lockPinError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(homeViewModel) {
         homeViewModel.messages.collect { snackbarHostState.showSnackbar(it) }
@@ -82,6 +104,28 @@ fun EasyUiNavGraph(
     LaunchedEffect(caregiverViewModel) {
         caregiverViewModel.messages.collect { snackbarHostState.showSnackbar(it) }
     }
+    LaunchedEffect(appState.settings.easyUiLockEnabled, appState.settings.easyUiLockTimeoutSeconds) {
+        while (true) {
+            kotlinx.coroutines.delay(1_000)
+            if (!appState.settings.easyUiLockEnabled) {
+                easyUiLocked = false
+                continue
+            }
+            val elapsed = android.os.SystemClock.elapsedRealtime() - lastInteractionAt
+            if (elapsed >= appState.settings.easyUiLockTimeoutSeconds * 1_000L) {
+                easyUiLocked = true
+            }
+        }
+    }
+    DisposableEffect(lifecycleOwner, appState.settings.easyUiLockEnabled) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME && appState.settings.easyUiLockEnabled) {
+                easyUiLocked = true
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
     Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { innerPadding ->
         if (!appState.settingsLoaded || !appState.starterLayoutReady) {
             LoadingScreen(modifier = androidx.compose.ui.Modifier.padding(innerPadding))
@@ -89,7 +133,13 @@ fun EasyUiNavGraph(
         }
         val startDestination =
             if (appState.settings.onboardingComplete) Routes.Home.route else Routes.Intro.route
-        androidx.compose.foundation.layout.Box(modifier = androidx.compose.ui.Modifier.padding(innerPadding)) {
+        androidx.compose.foundation.layout.Box(
+            modifier = androidx.compose.ui.Modifier
+                .padding(innerPadding)
+                .pointerInput(Unit) {
+                    detectTapGestures { lastInteractionAt = android.os.SystemClock.elapsedRealtime() }
+                },
+        ) {
             NavHost(
                 navController = navController,
                 startDestination = startDestination,
@@ -119,25 +169,59 @@ fun EasyUiNavGraph(
                     )
                 }
                 composable(Routes.Home.route) {
+                    BackHandler(enabled = true) {}
                     HomeScreen(
                         timeText = homeState.timeText,
-                        dateText = homeState.dateText,
-                        batterySummary = homeState.batterySummary,
-                        pages = homeState.pages,
-                        readabilityPreset = homeState.readabilityPreset,
-                        verySimpleModeEnabled = homeState.verySimpleModeEnabled,
-                        fallbackTitle = homeState.fallbackTitle,
-                        fallbackBody = homeState.fallbackBody,
+                        batteryPercent = homeState.batteryPercent,
+                        chargingLabel = homeState.chargingLabel,
+                        signalLabel = homeState.signalLabel,
+                        simLabel = homeState.simLabel,
+                        wifiLabel = homeState.wifiLabel,
+                        tiles = homeState.tiles,
+                        caregiverAccessVisible = homeState.caregiverAccessVisible,
+                        flashlightTriggerProgress = homeState.flashlightTriggerProgress,
+                        sosTriggerProgress = homeState.sosTriggerProgress,
                         onTileClick = { tileId ->
                             homeViewModel.onTileClick(
                                 tileId = tileId,
-                                onOpenApps = { navController.navigate(Routes.AppList.route) },
+                                onOpenPhoneContacts = { navController.navigate(Routes.PhoneContacts.route) },
+                                onOpenEmergency = { navController.navigate(Routes.EmergencyCall.route) },
                                 onOpenHealthInfo = { navController.navigate(Routes.HealthInfo.route) },
                             )
                         },
-                        onCaregiverAccessRequested = {
-                            navController.navigate(caregiverViewModel.requestCaregiverAccess())
+                        onCaregiverAccessTap = {
+                            homeViewModel.onCaregiverAccessTapped {
+                                navController.navigate(caregiverViewModel.requestCaregiverAccess())
+                            }
                         },
+                    )
+                }
+                composable(Routes.PhoneContacts.route) {
+                    PhoneContactsScreen(
+                        contacts = caregiverViewModel.contactTiles().take(10),
+                        onCall = { number ->
+                            uiScope.launch {
+                                val launched = container.emergencyActionHandler.callPhone(number)
+                                if (!launched) {
+                                    snackbarHostState.showSnackbar("Calling is not available on this device.")
+                                }
+                            }
+                        },
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) },
+                    )
+                }
+                composable(Routes.EmergencyCall.route) {
+                    EmergencyCallScreen(
+                        numbers = appState.settings.emergencyNumbers,
+                        onCall = { number ->
+                            uiScope.launch {
+                                val launched = homeViewModel.triggerDirectEmergencyCall(number)
+                                if (!launched) {
+                                    snackbarHostState.showSnackbar("Emergency calling is not available on this device.")
+                                }
+                            }
+                        },
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) },
                     )
                 }
                 composable(Routes.HealthInfo.route) {
@@ -174,6 +258,9 @@ fun EasyUiNavGraph(
                             hiddenAppCount = caregiverState.hiddenPackages.size,
                             healthInfoConfigured = caregiverState.settings.healthInfo.hasAnyValue(),
                             emergencyPhoneNumber = caregiverState.settings.emergencyPhoneNumber,
+                            sosNumberCount = caregiverState.settings.sosNumbers.size,
+                            easyUiLockEnabled = caregiverState.settings.easyUiLockEnabled,
+                            easyUiLockTimeoutSeconds = caregiverState.settings.easyUiLockTimeoutSeconds,
                             onSetupPin = { navController.navigate(Routes.PinSetup.route) },
                             onChangePin = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.CHANGE_PIN))
@@ -353,9 +440,17 @@ fun EasyUiNavGraph(
                     ) {
                         EmergencySettingsScreen(
                             currentEmergencyNumber = caregiverState.settings.emergencyPhoneNumber,
+                            emergencyNumbers = caregiverState.settings.emergencyNumbers,
+                            sosNumbers = caregiverState.settings.sosNumbers,
+                            easyUiLockEnabled = caregiverState.settings.easyUiLockEnabled,
+                            easyUiLockTimeoutSeconds = caregiverState.settings.easyUiLockTimeoutSeconds,
                             onSave = { number ->
                                 caregiverViewModel.updateEmergencyNumber(number)
                             },
+                            onSaveEmergencyNumbers = caregiverViewModel::updateEmergencyNumbers,
+                            onSaveSosNumbers = caregiverViewModel::updateSosNumbers,
+                            onToggleEasyUiLock = caregiverViewModel::setEasyUiLockEnabled,
+                            onSaveEasyUiLockTimeout = caregiverViewModel::updateEasyUiLockTimeoutSeconds,
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                         )
                     }
@@ -438,6 +533,31 @@ fun EasyUiNavGraph(
                     }
                 }
             }
+            if (easyUiLocked && appState.settings.easyUiLockEnabled) {
+                EasyUiLockOverlay(
+                    pin = lockPinInput,
+                    error = lockPinError,
+                    onPinChange = {
+                        lockPinInput = it
+                        lockPinError = null
+                    },
+                    onUnlock = {
+                        val credential = appState.settings.pinCredentialOrNull()
+                        if (credential == null) {
+                            lockPinError = "Set a caregiver PIN first."
+                            return@EasyUiLockOverlay
+                        }
+                        if (PinHasher.verify(lockPinInput, credential)) {
+                            easyUiLocked = false
+                            lockPinInput = ""
+                            lockPinError = null
+                            lastInteractionAt = android.os.SystemClock.elapsedRealtime()
+                        } else {
+                            lockPinError = "Incorrect PIN."
+                        }
+                    },
+                )
+            }
         }
     }
 }
@@ -483,4 +603,65 @@ private fun LoadingScreen(
             }
         }
     }
+}
+
+@Composable
+private fun EasyUiLockOverlay(
+    pin: String,
+    error: String?,
+    onPinChange: (String) -> Unit,
+    onUnlock: () -> Unit,
+) {
+    Surface(
+        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background.copy(alpha = 0.97f),
+    ) {
+        Column(
+            modifier = androidx.compose.ui.Modifier
+                .fillMaxSize()
+                .padding(EasyUiSpacing.lg),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text("EasyUI Locked", style = MaterialTheme.typography.headlineLarge)
+            Text(
+                "Enter caregiver PIN to continue.",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = androidx.compose.ui.Modifier.padding(top = EasyUiSpacing.sm),
+            )
+            androidx.compose.material3.OutlinedTextField(
+                value = pin,
+                onValueChange = onPinChange,
+                label = { Text("Caregiver PIN") },
+                visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.NumberPassword,
+                ),
+                modifier = androidx.compose.ui.Modifier
+                    .fillMaxWidth()
+                    .padding(top = EasyUiSpacing.md),
+            )
+            if (!error.isNullOrBlank()) {
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = androidx.compose.ui.Modifier.padding(top = EasyUiSpacing.xs),
+                )
+            }
+            androidx.compose.material3.Button(
+                onClick = onUnlock,
+                modifier = androidx.compose.ui.Modifier
+                    .fillMaxWidth()
+                    .padding(top = EasyUiSpacing.md),
+            ) {
+                Text("Unlock")
+            }
+        }
+    }
+}
+
+private fun com.easyui.core.domain.model.LauncherSettings.pinCredentialOrNull(): PinCredential? {
+    val salt = pinSaltHex ?: return null
+    val hash = pinHashHex ?: return null
+    return PinCredential(saltHex = salt, hashHex = hash)
 }

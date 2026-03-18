@@ -17,10 +17,10 @@ class HiddenAppRulesTest {
         )
         val tiles = listOf(
             HomeTile("hidden", 0, "Hidden", HomeTileType.APP, packageName = "com.hidden"),
-            HomeTile("all", 1, "All Apps", HomeTileType.ACTION, action = HomeTileAction.OPEN_APP_LIST),
+            HomeTile("phone", 1, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
         )
 
         assertEquals(listOf("Visible"), HiddenAppRules.visibleApps(apps, hidden).map { it.label })
-        assertEquals(listOf("all"), HiddenAppRules.visibleHomeTiles(tiles, hidden).map { it.id })
+        assertEquals(listOf("phone"), HiddenAppRules.visibleHomeTiles(tiles, hidden).map { it.id })
     }
 }

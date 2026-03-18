@@ -66,6 +66,9 @@ fun CaregiverToolsScreen(
     hiddenAppCount: Int,
     healthInfoConfigured: Boolean,
     emergencyPhoneNumber: String,
+    sosNumberCount: Int,
+    easyUiLockEnabled: Boolean,
+    easyUiLockTimeoutSeconds: Int,
     onSetupPin: () -> Unit,
     onChangePin: () -> Unit,
     onToggleProtection: () -> Unit,
@@ -150,6 +153,12 @@ fun CaregiverToolsScreen(
                     body = listOf(
                         "The Emergency tile opens dialer with this number.",
                         "Current: ${emergencyPhoneNumber.ifBlank { "Not set (defaults to 911)" }}",
+                        "SOS numbers configured: $sosNumberCount",
+                        if (easyUiLockEnabled) {
+                            "EasyUI lock is on (${easyUiLockTimeoutSeconds}s timeout)."
+                        } else {
+                            "EasyUI lock is off."
+                        },
                     ),
                     primaryLabel = "Set Emergency Number",
                     onPrimaryClick = onOpenEmergencySettings,
@@ -917,11 +926,31 @@ private fun readabilityBody(preset: HomeReadabilityPreset): String =
 @Composable
 fun EmergencySettingsScreen(
     currentEmergencyNumber: String,
+    emergencyNumbers: List<com.easyui.core.domain.model.EmergencyNumber>,
+    sosNumbers: List<String>,
+    easyUiLockEnabled: Boolean,
+    easyUiLockTimeoutSeconds: Int,
     onSave: (String) -> Unit,
+    onSaveEmergencyNumbers: (List<com.easyui.core.domain.model.EmergencyNumber>) -> Unit,
+    onSaveSosNumbers: (List<String>) -> Unit,
+    onToggleEasyUiLock: (Boolean) -> Unit,
+    onSaveEasyUiLockTimeout: (Int) -> Unit,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var number by rememberSaveable { mutableStateOf(currentEmergencyNumber) }
+    var ambulance by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(0)?.phoneNumber ?: "911") }
+    var police by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(1)?.phoneNumber ?: "911") }
+    var fire by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(2)?.phoneNumber ?: "911") }
+    var custom1Label by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(3)?.label ?: "") }
+    var custom1Number by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(3)?.phoneNumber ?: "") }
+    var custom2Label by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(4)?.label ?: "") }
+    var custom2Number by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(4)?.phoneNumber ?: "") }
+    var sos1 by rememberSaveable { mutableStateOf(sosNumbers.getOrNull(0).orEmpty()) }
+    var sos2 by rememberSaveable { mutableStateOf(sosNumbers.getOrNull(1).orEmpty()) }
+    var sos3 by rememberSaveable { mutableStateOf(sosNumbers.getOrNull(2).orEmpty()) }
+    var lockEnabled by rememberSaveable { mutableStateOf(easyUiLockEnabled) }
+    var timeoutSeconds by rememberSaveable { mutableStateOf(easyUiLockTimeoutSeconds.toString()) }
     var error by rememberSaveable { mutableStateOf<String?>(null) }
 
     Surface(modifier = modifier.fillMaxSize()) {
@@ -963,6 +992,26 @@ fun EmergencySettingsScreen(
                         error = "Enter a phone number or use 911 as the default."
                     } else {
                         onSave(trimmed)
+                        onSaveEmergencyNumbers(
+                            listOf(
+                                com.easyui.core.domain.model.EmergencyNumber("Ambulance", ambulance.trim()),
+                                com.easyui.core.domain.model.EmergencyNumber("Police", police.trim()),
+                                com.easyui.core.domain.model.EmergencyNumber("Fire", fire.trim()),
+                            ) + listOfNotNull(
+                                custom1Label.trim().takeIf { it.isNotBlank() }?.let {
+                                    com.easyui.core.domain.model.EmergencyNumber(it, custom1Number.trim())
+                                },
+                                custom2Label.trim().takeIf { it.isNotBlank() }?.let {
+                                    com.easyui.core.domain.model.EmergencyNumber(it, custom2Number.trim())
+                                },
+                            ),
+                        )
+                        onSaveSosNumbers(listOf(sos1, sos2, sos3))
+                        onToggleEasyUiLock(lockEnabled)
+                        val timeout = timeoutSeconds.toIntOrNull()?.coerceIn(15, 300)
+                        if (timeout != null) {
+                            onSaveEasyUiLockTimeout(timeout)
+                        }
                         onDone()
                     }
                 },
@@ -970,6 +1019,33 @@ fun EmergencySettingsScreen(
             ) {
                 Text("Save")
             }
+            Text("Emergency quick numbers", style = MaterialTheme.typography.titleLarge)
+            OutlinedTextField(value = ambulance, onValueChange = { ambulance = it }, label = { Text("Ambulance") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = police, onValueChange = { police = it }, label = { Text("Police") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = fire, onValueChange = { fire = it }, label = { Text("Fire") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = custom1Label, onValueChange = { custom1Label = it }, label = { Text("Custom label 1") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = custom1Number, onValueChange = { custom1Number = it }, label = { Text("Custom number 1") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = custom2Label, onValueChange = { custom2Label = it }, label = { Text("Custom label 2") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = custom2Number, onValueChange = { custom2Number = it }, label = { Text("Custom number 2") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+
+            Text("SOS numbers (up to 3)", style = MaterialTheme.typography.titleLarge)
+            OutlinedTextField(value = sos1, onValueChange = { sos1 = it }, label = { Text("SOS number 1") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = sos2, onValueChange = { sos2 = it }, label = { Text("SOS number 2") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(value = sos3, onValueChange = { sos3 = it }, label = { Text("SOS number 3") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+
+            SettingToggleRow(
+                label = "Enable EasyUI lock overlay",
+                checked = lockEnabled,
+                onCheckedChange = { lockEnabled = it },
+            )
+            OutlinedTextField(
+                value = timeoutSeconds,
+                onValueChange = { timeoutSeconds = it },
+                label = { Text("Lock timeout (15-300 sec)") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            )
             OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                 Text("Cancel")
             }

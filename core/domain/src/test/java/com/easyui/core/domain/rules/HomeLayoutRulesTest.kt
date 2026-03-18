@@ -26,7 +26,7 @@ class HomeLayoutRulesTest {
     }
 
     @Test
-    fun `starter layout includes phone and all apps actions`() {
+    fun `starter layout includes fixed senior actions`() {
         val apps = listOf(
             InstalledApp("com.android.camera", "CameraActivity", "Camera"),
             InstalledApp("com.android.dialer", "DialerActivity", "Phone"),
@@ -35,18 +35,18 @@ class HomeLayoutRulesTest {
         val layout = HomeLayoutRules.starterLayout(apps)
 
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_DIALER })
-        assertTrue(layout.any { it.action == HomeTileAction.OPEN_APP_LIST })
+        assertTrue(layout.any { it.action == HomeTileAction.FLASHLIGHT })
         assertTrue(layout.any { it.action == HomeTileAction.EMERGENCY })
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_CAMERA })
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_HEALTH_INFO })
-        assertTrue(layout.any { it.action == HomeTileAction.FLASHLIGHT })
+        assertTrue(layout.any { it.action == HomeTileAction.SOS })
         assertTrue(HomeLayoutRules.isValid(layout))
     }
 
     @Test
     fun `isValid rejects duplicate positions`() {
         val invalidTiles = listOf(
-            HomeTile("one", 0, "One", HomeTileType.ACTION, action = HomeTileAction.OPEN_APP_LIST),
+            HomeTile("one", 0, "One", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
             HomeTile("two", 0, "Two", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
         )
 
@@ -56,7 +56,7 @@ class HomeLayoutRulesTest {
     @Test
     fun `upsertContactTile adds or updates a favorite contact tile`() {
         val initial = listOf(
-            HomeTile("apps", 0, "All Apps", HomeTileType.ACTION, action = HomeTileAction.OPEN_APP_LIST),
+            HomeTile("phone", 0, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
             HomeTile("contact-1", 1, "Grace", HomeTileType.CONTACT, phoneNumber = "5551111"),
         )
 

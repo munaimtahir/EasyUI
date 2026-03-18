@@ -3,6 +3,7 @@ package com.easyui.launcher.app.caregiver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easyui.core.domain.model.AppVisibilityPreset
+import com.easyui.core.domain.model.EmergencyNumber
 import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.HomeTile
@@ -285,6 +286,16 @@ class CaregiverViewModel(
             container.launcherSettingsRepository.updateHomeReadabilityPreset(HomeReadabilityPreset.STANDARD.name)
             container.launcherSettingsRepository.updateShowBatteryInfo(false)
             container.launcherSettingsRepository.updateHomePageCount(2)
+            container.launcherSettingsRepository.updateSosNumbers(emptyList())
+            container.launcherSettingsRepository.updateEmergencyNumbers(
+                listOf(
+                    EmergencyNumber(label = "Ambulance", phoneNumber = "911"),
+                    EmergencyNumber(label = "Police", phoneNumber = "911"),
+                    EmergencyNumber(label = "Fire", phoneNumber = "911"),
+                ),
+            )
+            container.launcherSettingsRepository.updateEasyUiLockEnabled(false)
+            container.launcherSettingsRepository.updateEasyUiLockTimeoutSeconds(60)
             messages.emit("EasyUI is back to its safe default layout.")
         }
     }
@@ -293,6 +304,38 @@ class CaregiverViewModel(
         viewModelScope.launch {
             container.launcherSettingsRepository.updateEmergencyPhoneNumber(number)
             messages.emit("Emergency number saved.")
+        }
+    }
+
+    fun updateEmergencyNumbers(numbers: List<EmergencyNumber>) {
+        viewModelScope.launch {
+            val cleaned = numbers
+                .map { EmergencyNumber(it.label.trim(), it.phoneNumber.trim()) }
+                .filter { it.label.isNotBlank() && it.phoneNumber.isNotBlank() }
+            container.launcherSettingsRepository.updateEmergencyNumbers(cleaned)
+            messages.emit("Emergency numbers saved.")
+        }
+    }
+
+    fun updateSosNumbers(numbers: List<String>) {
+        viewModelScope.launch {
+            val cleaned = numbers.map { it.trim() }.filter { it.isNotBlank() }.take(3)
+            container.launcherSettingsRepository.updateSosNumbers(cleaned)
+            messages.emit("SOS numbers saved.")
+        }
+    }
+
+    fun setEasyUiLockEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateEasyUiLockEnabled(enabled)
+            messages.emit(if (enabled) "EasyUI lock overlay is on." else "EasyUI lock overlay is off.")
+        }
+    }
+
+    fun updateEasyUiLockTimeoutSeconds(seconds: Int) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateEasyUiLockTimeoutSeconds(seconds)
+            messages.emit("Lock timeout saved.")
         }
     }
 

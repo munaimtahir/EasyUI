@@ -5,9 +5,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
-import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.ui.theme.EasyUiTheme
@@ -20,116 +17,60 @@ class HomeScreenSmokeTest {
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun homeScreenRendersPagesAndBatterySummary() {
+    fun homeScreenRendersFixedGridAndTopStatusBar() {
         composeRule.setContent {
             EasyUiTheme {
                 HomeScreen(
                     timeText = "9:41",
-                    dateText = "Sunday, Mar 15",
-                    batterySummary = "Battery 82% · Charging",
-                    pages = listOf(
-                        listOf(
-                            TileDisplayModel("phone", "Phone", "Open the dialer", true, TileDisplayKind.DIALER),
-                            TileDisplayModel("apps", "All Apps", "Browse every app", true, TileDisplayKind.APPS_LIST),
-                        ),
-                        listOf(
-                            TileDisplayModel("camera", "Camera", "Open Camera", true, TileDisplayKind.APP),
-                        ),
+                    batteryPercent = "82%",
+                    chargingLabel = "Charging",
+                    signalLabel = "Signal good",
+                    simLabel = "SIM One",
+                    wifiLabel = "Wi-Fi connected",
+                    tiles = listOf(
+                        TileDisplayModel("phone", "Phone", "Open caregiver contacts", true, TileDisplayKind.PHONE_CONTACTS),
+                        TileDisplayModel("flashlight", "Flashlight", "Toggle light", true, TileDisplayKind.FLASHLIGHT),
+                        TileDisplayModel("camera", "Camera", "Open camera now", true, TileDisplayKind.CAMERA),
+                        TileDisplayModel("emergency", "Emergency", "Emergency call options", true, TileDisplayKind.EMERGENCY),
+                        TileDisplayModel("health-info", "Health Info", "View medical card", true, TileDisplayKind.HEALTH_INFO),
+                        TileDisplayModel("sos", "SOS", "Tap 3x quickly", true, TileDisplayKind.SOS),
                     ),
-                    readabilityPreset = HomeReadabilityPreset.STANDARD,
-                    verySimpleModeEnabled = false,
-                    fallbackTitle = null,
-                    fallbackBody = null,
+                    caregiverAccessVisible = false,
+                    flashlightTriggerProgress = 0,
+                    sosTriggerProgress = 0,
                     onTileClick = {},
-                    onCaregiverAccessRequested = {},
+                    onCaregiverAccessTap = {},
                 )
             }
         }
 
-        composeRule.onNodeWithTag("home_screen").assertIsDisplayed()
-        composeRule.onNodeWithText("9:41").assertIsDisplayed()
-        composeRule.onNodeWithTag("battery_summary").assertIsDisplayed()
+        composeRule.onNodeWithTag("home_top_status_bar").assertIsDisplayed()
         composeRule.onNodeWithText("Phone").assertIsDisplayed()
-        composeRule.onNodeWithTag("home_page_indicator").assertIsDisplayed()
-        composeRule.onNodeWithText("Page 1 of 2").assertIsDisplayed()
+        composeRule.onNodeWithText("SOS").assertIsDisplayed()
     }
 
     @Test
-    fun homeScreenSupportsVisibleAndFallbackCaregiverAccess() {
-        var caregiverOpenCount = 0
-
+    fun homeScreenShowsHiddenCaregiverAccessAndProgress() {
         composeRule.setContent {
             EasyUiTheme {
                 HomeScreen(
                     timeText = "9:41",
-                    dateText = "Sunday, Mar 15",
-                    batterySummary = null,
-                    pages = listOf(
-                        listOf(
-                            TileDisplayModel("phone", "Phone", "Open the dialer", true, TileDisplayKind.DIALER),
-                        ),
-                    ),
-                    readabilityPreset = HomeReadabilityPreset.STANDARD,
-                    verySimpleModeEnabled = false,
-                    fallbackTitle = null,
-                    fallbackBody = null,
+                    batteryPercent = "82%",
+                    chargingLabel = "Charging",
+                    signalLabel = "Signal good",
+                    simLabel = "SIM One",
+                    wifiLabel = "Wi-Fi connected",
+                    tiles = emptyList(),
+                    caregiverAccessVisible = true,
+                    flashlightTriggerProgress = 6,
+                    sosTriggerProgress = 2,
                     onTileClick = {},
-                    onCaregiverAccessRequested = { caregiverOpenCount += 1 },
+                    onCaregiverAccessTap = {},
                 )
             }
         }
 
-        composeRule.onNodeWithTag("caregiver_entry_button").assertIsDisplayed()
-
-        composeRule.onNodeWithTag("caregiver_entry_button").performClick()
-        composeRule.runOnIdle { assert(caregiverOpenCount == 1) }
-
-        repeat(4) {
-            composeRule.onNodeWithTag("home_header").performTouchInput {
-                down(center)
-                up()
-            }
-        }
-        composeRule.runOnIdle { assert(caregiverOpenCount == 1) }
-
-        composeRule.onNodeWithTag("home_header").performTouchInput {
-            down(center)
-            up()
-        }
-        composeRule.runOnIdle { assert(caregiverOpenCount == 2) }
-    }
-
-    @Test
-    fun homeScreenRendersContactFallbackTile() {
-        composeRule.setContent {
-            EasyUiTheme {
-                HomeScreen(
-                    timeText = "9:41",
-                    dateText = "Sunday, Mar 15",
-                    batterySummary = null,
-                    pages = listOf(
-                        listOf(
-                            TileDisplayModel(
-                                id = "contact",
-                                title = "Grace Hopper",
-                                subtitle = "555-0100",
-                                enabled = true,
-                                kind = TileDisplayKind.CONTACT,
-                                avatarFallback = "GH",
-                            ),
-                        ),
-                    ),
-                    readabilityPreset = HomeReadabilityPreset.STANDARD,
-                    verySimpleModeEnabled = false,
-                    fallbackTitle = null,
-                    fallbackBody = null,
-                    onTileClick = {},
-                    onCaregiverAccessRequested = {},
-                )
-            }
-        }
-
-        composeRule.onNodeWithText("Grace Hopper").assertIsDisplayed()
-        composeRule.onNodeWithText("GH").assertIsDisplayed()
+        composeRule.onNodeWithTag("caregiver_access_reveal").assertIsDisplayed()
+        composeRule.onNodeWithTag("sos_trigger_progress").assertIsDisplayed()
     }
 }

@@ -13,6 +13,7 @@ enum class HomeTileAction {
     EMERGENCY,
     OPEN_CAMERA,
     OPEN_HEALTH_INFO,
+    SOS,
 }
 
 data class HomeTile(

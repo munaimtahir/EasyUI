@@ -1,6 +1,7 @@
 package com.easyui.core.data.backup
 
 import com.easyui.core.domain.model.BackupData
+import com.easyui.core.domain.model.EmergencyNumber
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
 import com.easyui.core.domain.model.HomeTileType
@@ -79,9 +80,25 @@ object BackupSerializer {
 
     private fun settingsToJson(s: LauncherSettings): JSONObject = JSONObject().apply {
         put("emergencyPhoneNumber", s.emergencyPhoneNumber)
+        put(
+            "emergencyNumbers",
+            JSONArray().apply {
+                s.emergencyNumbers.forEach { number ->
+                    put(
+                        JSONObject().apply {
+                            put("label", number.label)
+                            put("phoneNumber", number.phoneNumber)
+                        },
+                    )
+                }
+            },
+        )
+        put("sosNumbers", JSONArray(s.sosNumbers))
         put("use24HourClock", s.use24HourClock)
         put("caregiverProtectionEnabled", s.caregiverProtectionEnabled)
         put("layoutLocked", s.layoutLocked)
+        put("easyUiLockEnabled", s.easyUiLockEnabled)
+        put("easyUiLockTimeoutSeconds", s.easyUiLockTimeoutSeconds)
         put("appVisibilityPreset", s.appVisibilityPreset)
         put("homeReadabilityPreset", s.homeReadabilityPreset)
         put("verySimpleModeEnabled", s.verySimpleModeEnabled)
@@ -103,12 +120,40 @@ object BackupSerializer {
 
     private fun jsonToSettings(obj: JSONObject): LauncherSettings {
         val health = obj.optJSONObject("healthInfo")
+        val emergencyNumbers = obj.optJSONArray("emergencyNumbers")?.let { numbers ->
+            buildList {
+                for (index in 0 until numbers.length()) {
+                    val entry = numbers.optJSONObject(index) ?: continue
+                    val label = entry.optString("label", "").trim()
+                    val phoneNumber = entry.optString("phoneNumber", "").trim()
+                    if (label.isNotBlank() && phoneNumber.isNotBlank()) {
+                        add(EmergencyNumber(label = label, phoneNumber = phoneNumber))
+                    }
+                }
+            }
+        } ?: listOf(
+            EmergencyNumber(label = "Ambulance", phoneNumber = "911"),
+            EmergencyNumber(label = "Police", phoneNumber = "911"),
+            EmergencyNumber(label = "Fire", phoneNumber = "911"),
+        )
+        val sosNumbers = obj.optJSONArray("sosNumbers")?.let { values ->
+            buildList {
+                for (index in 0 until values.length()) {
+                    val number = values.optString(index, "").trim()
+                    if (number.isNotBlank()) add(number)
+                }
+            }.take(3)
+        } ?: emptyList()
         return LauncherSettings(
             onboardingComplete = true,
             emergencyPhoneNumber = obj.optString("emergencyPhoneNumber", "911"),
+            emergencyNumbers = emergencyNumbers,
+            sosNumbers = sosNumbers,
             use24HourClock = obj.optBoolean("use24HourClock", false),
             caregiverProtectionEnabled = obj.optBoolean("caregiverProtectionEnabled", false),
             layoutLocked = obj.optBoolean("layoutLocked", false),
+            easyUiLockEnabled = obj.optBoolean("easyUiLockEnabled", false),
+            easyUiLockTimeoutSeconds = obj.optInt("easyUiLockTimeoutSeconds", 60).coerceIn(15, 300),
             appVisibilityPreset = obj.optString("appVisibilityPreset", "CUSTOM"),
             homeReadabilityPreset = obj.optString("homeReadabilityPreset", "STANDARD"),
             verySimpleModeEnabled = obj.optBoolean("verySimpleModeEnabled", false),

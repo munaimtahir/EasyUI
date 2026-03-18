@@ -33,25 +33,25 @@ object HomeLayoutRules {
             action = HomeTileAction.OPEN_DIALER,
         ),
         HomeTile(
-            id = "apps-list",
+            id = "flashlight",
             position = 1,
-            title = "All Apps",
+            title = "Flashlight",
             type = HomeTileType.ACTION,
-            action = HomeTileAction.OPEN_APP_LIST,
-        ),
-        HomeTile(
-            id = "emergency",
-            position = 2,
-            title = "Emergency",
-            type = HomeTileType.ACTION,
-            action = HomeTileAction.EMERGENCY,
+            action = HomeTileAction.FLASHLIGHT,
         ),
         HomeTile(
             id = "camera",
-            position = 3,
+            position = 2,
             title = "Camera",
             type = HomeTileType.ACTION,
             action = HomeTileAction.OPEN_CAMERA,
+        ),
+        HomeTile(
+            id = "emergency",
+            position = 3,
+            title = "Emergency",
+            type = HomeTileType.ACTION,
+            action = HomeTileAction.EMERGENCY,
         ),
         HomeTile(
             id = "health-info",
@@ -61,11 +61,11 @@ object HomeLayoutRules {
             action = HomeTileAction.OPEN_HEALTH_INFO,
         ),
         HomeTile(
-            id = "flashlight",
+            id = "sos",
             position = 5,
-            title = "Flashlight",
+            title = "SOS",
             type = HomeTileType.ACTION,
-            action = HomeTileAction.FLASHLIGHT,
+            action = HomeTileAction.SOS,
         ),
     )
 
@@ -294,11 +294,11 @@ object HomeLayoutRules {
     private fun isRequiredActionTile(tile: HomeTile): Boolean =
         tile.id in requiredActionIds || tile.action in setOf(
             HomeTileAction.OPEN_DIALER,
-            HomeTileAction.OPEN_APP_LIST,
             HomeTileAction.EMERGENCY,
             HomeTileAction.OPEN_CAMERA,
             HomeTileAction.OPEN_HEALTH_INFO,
             HomeTileAction.FLASHLIGHT,
+            HomeTileAction.SOS,
         )
 
     private fun nextAvailablePosition(

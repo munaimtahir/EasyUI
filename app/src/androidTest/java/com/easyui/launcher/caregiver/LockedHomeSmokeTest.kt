@@ -2,10 +2,9 @@ package com.easyui.launcher.caregiver
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performTouchInput
-import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.ui.theme.EasyUiTheme
@@ -18,36 +17,29 @@ class LockedHomeSmokeTest {
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun longPressDoesNotTriggerHiddenCaregiverAccess() {
-        var caregiverOpenCount = 0
-
+    fun homeShowsNoVisibleCaregiverAccessByDefault() {
         composeRule.setContent {
             EasyUiTheme {
                 HomeScreen(
                     timeText = "9:41",
-                    dateText = "Monday, Mar 16",
-                    batterySummary = null,
-                    pages = listOf(
-                        listOf(
-                            TileDisplayModel("phone", "Phone", "Open the dialer", true, TileDisplayKind.DIALER),
-                        ),
+                    batteryPercent = "82%",
+                    chargingLabel = "Charging",
+                    signalLabel = "Signal good",
+                    simLabel = "SIM One",
+                    wifiLabel = "Wi-Fi connected",
+                    tiles = listOf(
+                        TileDisplayModel("phone", "Phone", "Open caregiver contacts", true, TileDisplayKind.PHONE_CONTACTS),
                     ),
-                    readabilityPreset = HomeReadabilityPreset.STANDARD,
-                    verySimpleModeEnabled = false,
-                    fallbackTitle = null,
-                    fallbackBody = null,
+                    caregiverAccessVisible = false,
+                    flashlightTriggerProgress = 0,
+                    sosTriggerProgress = 0,
                     onTileClick = {},
-                    onCaregiverAccessRequested = { caregiverOpenCount += 1 },
+                    onCaregiverAccessTap = {},
                 )
             }
         }
 
-        composeRule.onNodeWithTag("home_header").performTouchInput {
-            down(center)
-            advanceEventTime(1_500)
-            up()
-        }
-        composeRule.runOnIdle { assert(caregiverOpenCount == 0) }
         composeRule.onNodeWithTag("home_screen").assertIsDisplayed()
+        composeRule.onNodeWithTag("caregiver_access_reveal").assertDoesNotExist()
     }
 }
