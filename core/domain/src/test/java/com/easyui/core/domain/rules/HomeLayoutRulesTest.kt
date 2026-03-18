@@ -36,6 +36,9 @@ class HomeLayoutRulesTest {
 
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_DIALER })
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_APP_LIST })
+        assertTrue(layout.any { it.action == HomeTileAction.EMERGENCY })
+        assertTrue(layout.any { it.action == HomeTileAction.OPEN_CAMERA })
+        assertTrue(layout.any { it.action == HomeTileAction.OPEN_HEALTH_INFO })
         assertTrue(layout.any { it.action == HomeTileAction.FLASHLIGHT })
         assertTrue(HomeLayoutRules.isValid(layout))
     }
@@ -76,11 +79,11 @@ class HomeLayoutRulesTest {
         val updated = HomeLayoutRules.assignAppToPosition(
             tiles = emptyList(),
             app = InstalledApp("com.example.camera", "CameraActivity", "Camera"),
-            position = 2,
-            pageCount = 1,
+            position = 6,
+            pageCount = 2,
         )
 
         assertNotNull(updated)
-        assertTrue(updated!!.any { it.packageName == "com.example.camera" && it.position == 2 })
+        assertTrue(updated!!.any { it.packageName == "com.example.camera" && it.position == 6 })
     }
 }

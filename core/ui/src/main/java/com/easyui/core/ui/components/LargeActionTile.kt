@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,11 @@ fun LargeActionTile(
                 MaterialTheme.colorScheme.surfaceVariant
             },
         ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (enabled) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.outline,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
         Column(
             modifier = Modifier.padding(20.dp),

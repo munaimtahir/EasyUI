@@ -31,9 +31,12 @@ import com.easyui.feature.caregiver.AllowedAppsScreen
 import com.easyui.feature.caregiver.CaregiverToolsScreen
 import com.easyui.feature.caregiver.EmergencySettingsScreen
 import com.easyui.feature.caregiver.FavoriteContactsScreen
+import com.easyui.feature.caregiver.HealthInfoEditorScreen
+import com.easyui.feature.caregiver.HiddenAppsScreen
 import com.easyui.feature.caregiver.LayoutPagesScreen
 import com.easyui.feature.caregiver.PinEntryScreen
 import com.easyui.feature.caregiver.ResetLauncherScreen
+import com.easyui.feature.home.HealthInfoScreen
 import com.easyui.feature.home.HomeScreen
 import com.easyui.feature.onboarding.CaregiverHelpScreen
 import com.easyui.feature.onboarding.DefaultLauncherGuidanceScreen
@@ -51,8 +54,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun EasyUiNavGraph(
@@ -128,13 +129,21 @@ fun EasyUiNavGraph(
                         fallbackTitle = homeState.fallbackTitle,
                         fallbackBody = homeState.fallbackBody,
                         onTileClick = { tileId ->
-                            homeViewModel.onTileClick(tileId) {
-                                navController.navigate(Routes.AppList.route)
-                            }
+                            homeViewModel.onTileClick(
+                                tileId = tileId,
+                                onOpenApps = { navController.navigate(Routes.AppList.route) },
+                                onOpenHealthInfo = { navController.navigate(Routes.HealthInfo.route) },
+                            )
                         },
                         onCaregiverAccessRequested = {
                             navController.navigate(caregiverViewModel.requestCaregiverAccess())
                         },
+                    )
+                }
+                composable(Routes.HealthInfo.route) {
+                    HealthInfoScreen(
+                        healthInfo = appState.settings.healthInfo,
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) },
                     )
                 }
                 composable(Routes.AppList.route) {
@@ -163,6 +172,7 @@ fun EasyUiNavGraph(
                             favoriteContactCount = caregiverViewModel.contactTiles().size,
                             allowedAppCount = caregiverViewModel.assignedAppPackages().size,
                             hiddenAppCount = caregiverState.hiddenPackages.size,
+                            healthInfoConfigured = caregiverState.settings.healthInfo.hasAnyValue(),
                             emergencyPhoneNumber = caregiverState.settings.emergencyPhoneNumber,
                             onSetupPin = { navController.navigate(Routes.PinSetup.route) },
                             onChangePin = {
@@ -188,6 +198,9 @@ fun EasyUiNavGraph(
                             },
                             onOpenEmergencySettings = {
                                 navController.navigate(Routes.EmergencySettings.route)
+                            },
+                            onOpenHealthInfo = {
+                                navController.navigate(Routes.HealthInfoEditor.route)
                             },
                             onOpenBackupRestore = {
                                 navController.navigate(Routes.BackupRestore.route)
@@ -347,6 +360,18 @@ fun EasyUiNavGraph(
                         )
                     }
                 }
+                composable(Routes.HealthInfoEditor.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        navController = navController,
+                    ) {
+                        HealthInfoEditorScreen(
+                            healthInfo = caregiverState.settings.healthInfo,
+                            onSave = caregiverViewModel::updateHealthInfo,
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                        )
+                    }
+                }
                 composable(Routes.ManageHiddenApps.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
@@ -367,7 +392,6 @@ fun EasyUiNavGraph(
                     ) {
                         val backupState by backupViewModel.state.collectAsState()
                         val context = androidx.compose.ui.platform.LocalContext.current
-                        val scope = rememberCoroutineScope()
 
                         LaunchedEffect(backupViewModel) {
                             backupViewModel.messages.collect {

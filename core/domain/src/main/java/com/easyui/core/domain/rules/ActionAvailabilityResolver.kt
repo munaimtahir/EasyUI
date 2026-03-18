@@ -25,4 +25,11 @@ object ActionAvailabilityResolver {
         } else {
             LauncherActionState(enabled = true)
         }
+
+    fun camera(hasCamera: Boolean): LauncherActionState =
+        if (hasCamera) {
+            LauncherActionState(enabled = true)
+        } else {
+            LauncherActionState(enabled = false, fallbackMessage = "Camera is not available on this device.")
+        }
 }

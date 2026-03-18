@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileType
+import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.rules.ContactTileRules
 import com.easyui.core.domain.rules.HomeLayoutRules
@@ -63,6 +64,7 @@ fun CaregiverToolsScreen(
     favoriteContactCount: Int,
     allowedAppCount: Int,
     hiddenAppCount: Int,
+    healthInfoConfigured: Boolean,
     emergencyPhoneNumber: String,
     onSetupPin: () -> Unit,
     onChangePin: () -> Unit,
@@ -73,6 +75,7 @@ fun CaregiverToolsScreen(
     onOpenAllowedApps: () -> Unit,
     onManageFavoriteContacts: () -> Unit,
     onOpenEmergencySettings: () -> Unit,
+    onOpenHealthInfo: () -> Unit,
     onOpenBackupRestore: () -> Unit,
     onOpenHiddenApps: () -> Unit,
     onFinishSetup: () -> Unit,
@@ -110,12 +113,12 @@ fun CaregiverToolsScreen(
             }
             item {
                 SectionCard(
-                    title = "Allowed Apps",
+                    title = "Home Apps",
                     body = listOf(
                         "Home apps placed: $allowedAppCount",
                         "Assign apps to a fixed page and slot without changing All Apps.",
                     ),
-                    primaryLabel = "Manage Allowed Apps",
+                    primaryLabel = "Manage Home Apps",
                     onPrimaryClick = onOpenAllowedApps,
                 )
             }
@@ -132,9 +135,20 @@ fun CaregiverToolsScreen(
             }
             item {
                 SectionCard(
+                    title = "Health Info",
+                    body = listOf(
+                        if (healthInfoConfigured) "Health details are saved." else "No health details saved yet.",
+                        "Show simple medical information from a home tile.",
+                    ),
+                    primaryLabel = "Edit Health Info",
+                    onPrimaryClick = onOpenHealthInfo,
+                )
+            }
+            item {
+                SectionCard(
                     title = "Emergency Number",
                     body = listOf(
-                        "The Emergency tile dials this number.",
+                        "The Emergency tile opens dialer with this number.",
                         "Current: ${emergencyPhoneNumber.ifBlank { "Not set (defaults to 911)" }}",
                     ),
                     primaryLabel = "Set Emergency Number",
@@ -958,6 +972,139 @@ fun EmergencySettingsScreen(
             }
             OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                 Text("Cancel")
+            }
+        }
+    }
+}
+
+@Composable
+fun HealthInfoEditorScreen(
+    healthInfo: HealthInfo,
+    onSave: (HealthInfo) -> Unit,
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var fullName by rememberSaveable { mutableStateOf(healthInfo.fullName) }
+    var age by rememberSaveable { mutableStateOf(healthInfo.age) }
+    var bloodGroup by rememberSaveable { mutableStateOf(healthInfo.bloodGroup) }
+    var allergies by rememberSaveable { mutableStateOf(healthInfo.allergies) }
+    var conditions by rememberSaveable { mutableStateOf(healthInfo.medicalConditions) }
+    var medicines by rememberSaveable { mutableStateOf(healthInfo.medicines) }
+    var doctorContact by rememberSaveable { mutableStateOf(healthInfo.doctorOrEmergencyContact) }
+    var notes by rememberSaveable { mutableStateOf(healthInfo.notes) }
+
+    Surface(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(EasyUiSpacing.lg)
+                .testTag("health_info_editor_screen"),
+            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+        ) {
+            item {
+                Text("Health Info", style = MaterialTheme.typography.headlineLarge)
+            }
+            item {
+                Text(
+                    "Save simple health details that can be opened from the home screen.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = fullName,
+                    onValueChange = { fullName = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Name") },
+                    singleLine = true,
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = age,
+                    onValueChange = { age = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Age") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = bloodGroup,
+                    onValueChange = { bloodGroup = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Blood Group") },
+                    singleLine = true,
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = allergies,
+                    onValueChange = { allergies = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Allergies") },
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = conditions,
+                    onValueChange = { conditions = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Medical Conditions") },
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = medicines,
+                    onValueChange = { medicines = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Medicines") },
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = doctorContact,
+                    onValueChange = { doctorContact = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Doctor / Emergency Contact") },
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Notes") },
+                    minLines = 3,
+                )
+            }
+            item {
+                Button(
+                    onClick = {
+                        onSave(
+                            HealthInfo(
+                                fullName = fullName.trim(),
+                                age = age.trim(),
+                                bloodGroup = bloodGroup.trim(),
+                                allergies = allergies.trim(),
+                                medicalConditions = conditions.trim(),
+                                medicines = medicines.trim(),
+                                doctorOrEmergencyContact = doctorContact.trim(),
+                                notes = notes.trim(),
+                            ),
+                        )
+                        onDone()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Save Health Info")
+                }
+            }
+            item {
+                OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                    Text("Back to Caregiver Settings")
+                }
             }
         }
     }

@@ -47,16 +47,19 @@ Implemented in this pass:
 - caregiver help screen
 - large-tile home screen
 - clock and date block
+- practical caregiver entry button on home (plus hidden fallback gesture)
 - starter layout persisted in Room
 - launcher settings persisted in DataStore
-- flashlight and emergency tiles with graceful fallback messaging
+- anchored essentials on home page 1: Phone, All Apps, Emergency, Camera, Health Info, Flashlight
+- flashlight, emergency, and camera tiles with graceful fallback messaging
 - installed app enumeration with refresh on package changes
 - alphabetical app list with search
 - app launching from home or app list
 - caregiver PIN setup and verification
 - layout lock and protected edit mode
 - hidden app management inside EasyUI
-- essential app visibility presets inside EasyUI
+- Home Apps placement in fixed slots (separate from All Apps)
+- simple offline Health Info storage and viewing flow
 - favorite contact tiles with optional local photo and initials fallback
 - polished caregiver tools hub and contact management flow
 - home readability presets
@@ -106,9 +109,13 @@ Run flow:
 - Flashlight unsupported:
   On a device with no torch, or where torch access is blocked, the flashlight tile should stay disabled and show a fallback message instead of crashing.
 - Caregiver protection:
-  Open `Caregiver Tools`, set a local PIN, enable protection, then confirm that `Edit Home Screen`, `Hide or Show Apps`, and `Reset to Safe Default` ask for the PIN.
+  Open the `Caregiver` entry from home, set a local PIN, enable protection, then confirm caregiver sections ask for the PIN when protection is enabled.
+- Caregiver re-entry:
+  Confirm the caregiver entry is visible on home and still protected by PIN when enabled.
 - Hidden apps:
-  Hide one installed app and confirm it disappears from the home screen, the all-apps list, and search results inside EasyUI only.
+  Hide one installed app and confirm it disappears from the All Apps list and search results inside EasyUI only.
+- Health info:
+  In `Caregiver Settings`, edit Health Info and confirm the home `Health Info` tile opens readable saved details.
 - Favorite contacts:
   In `Caregiver Tools`, open `Manage Favorite Contacts`, add a name and phone number, optionally choose a local photo, and confirm the tile appears on Home and opens the dialer instead of placing a direct call.
 - Home readability:

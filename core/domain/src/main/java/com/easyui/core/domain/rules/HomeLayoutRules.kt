@@ -40,6 +40,27 @@ object HomeLayoutRules {
             action = HomeTileAction.OPEN_APP_LIST,
         ),
         HomeTile(
+            id = "emergency",
+            position = 2,
+            title = "Emergency",
+            type = HomeTileType.ACTION,
+            action = HomeTileAction.EMERGENCY,
+        ),
+        HomeTile(
+            id = "camera",
+            position = 3,
+            title = "Camera",
+            type = HomeTileType.ACTION,
+            action = HomeTileAction.OPEN_CAMERA,
+        ),
+        HomeTile(
+            id = "health-info",
+            position = 4,
+            title = "Health Info",
+            type = HomeTileType.ACTION,
+            action = HomeTileAction.OPEN_HEALTH_INFO,
+        ),
+        HomeTile(
             id = "flashlight",
             position = 5,
             title = "Flashlight",
@@ -67,16 +88,18 @@ object HomeLayoutRules {
         val preferredApps = preferredPackages.mapNotNull { packageName ->
             sortedApps.firstOrNull { it.packageName == packageName }
         }
-        val selectedApps = (preferredApps + sortedApps).distinctBy { it.packageName }.take(3)
-        val userTiles = selectedApps.mapIndexed { index, app ->
-            HomeTile(
-                id = "app-${app.packageName}",
-                position = index + 2,
-                title = app.label,
-                type = HomeTileType.APP,
-                packageName = app.packageName,
+        val selectedHomeApp = (preferredApps + sortedApps).distinctBy { it.packageName }.firstOrNull()
+        val userTiles = selectedHomeApp?.let { app ->
+            listOf(
+                HomeTile(
+                    id = "app-${app.packageName}",
+                    position = 6,
+                    title = app.label,
+                    type = HomeTileType.APP,
+                    packageName = app.packageName,
+                ),
             )
-        }
+        } ?: emptyList()
         return ensureRequiredActions(userTiles)
     }
 
@@ -272,6 +295,9 @@ object HomeLayoutRules {
         tile.id in requiredActionIds || tile.action in setOf(
             HomeTileAction.OPEN_DIALER,
             HomeTileAction.OPEN_APP_LIST,
+            HomeTileAction.EMERGENCY,
+            HomeTileAction.OPEN_CAMERA,
+            HomeTileAction.OPEN_HEALTH_INFO,
             HomeTileAction.FLASHLIGHT,
         )
 

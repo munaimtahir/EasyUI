@@ -12,5 +12,6 @@ data class LauncherSettings(
     val homeReadabilityPreset: String = HomeReadabilityPreset.STANDARD.name,
     val verySimpleModeEnabled: Boolean = false,
     val showBatteryInfo: Boolean = false,
-    val homePageCount: Int = 1,
+    val homePageCount: Int = 2,
+    val healthInfo: HealthInfo = HealthInfo(),
 )

@@ -107,11 +107,15 @@ fun CaregiverHelpScreen(
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                "If something changes later, you can reopen EasyUI and use the All Apps list to find anything that is not on the home screen.",
+                "To re-enter caregiver settings later, use the Caregiver button on home. If PIN protection is on, the caregiver PIN is required.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                "This first version keeps one starter layout only. There are no folders, widgets, or advanced controls yet.",
+                "Home shows essential tiles and Home Apps. All Apps opens the full app list. Hidden Apps are only hidden inside EasyUI, not Android system-wide.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                "EasyUI simplifies this launcher only. It does not lock down Android settings or other apps outside EasyUI.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(modifier = Modifier.height(EasyUiSpacing.md))

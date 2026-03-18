@@ -87,7 +87,11 @@ class HomeViewModel(
             initialValue = HomeUiState(),
         )
 
-    fun onTileClick(tileId: String, onOpenApps: () -> Unit) {
+    fun onTileClick(
+        tileId: String,
+        onOpenApps: () -> Unit,
+        onOpenHealthInfo: () -> Unit,
+    ) {
         val tile = state.value.pages.flatten().filterNotNull().firstOrNull { it.id == tileId } ?: return
         viewModelScope.launch {
             when (tile.kind) {
@@ -108,6 +112,12 @@ class HomeViewModel(
                         messages.emit("Emergency calling is not available on this device.")
                     }
                 }
+                TileDisplayKind.CAMERA -> {
+                    if (!container.cameraActionHandler.launchCamera()) {
+                        messages.emit("Camera is not available on this device.")
+                    }
+                }
+                TileDisplayKind.HEALTH_INFO -> onOpenHealthInfo()
                 TileDisplayKind.APP -> {
                     val domainTile = container.homeLayoutRepository.getTiles().firstOrNull { it.id == tileId }
                     if (domainTile?.packageName == null) {
@@ -159,7 +169,7 @@ class HomeViewModel(
             HomeTileAction.OPEN_APP_LIST -> TileDisplayModel(
                 id = tile.id,
                 title = tile.title,
-                subtitle = "Browse every app",
+                subtitle = "Open full app list",
                 enabled = true,
                 kind = TileDisplayKind.APPS_LIST,
             )
@@ -178,11 +188,32 @@ class HomeViewModel(
                 TileDisplayModel(
                     id = tile.id,
                     title = tile.title,
-                    subtitle = if (state.enabled) "Open the dialer" else state.fallbackMessage.orEmpty(),
+                    subtitle = if (state.enabled) "Open dialer with saved emergency number" else state.fallbackMessage.orEmpty(),
                     enabled = state.enabled,
                     kind = TileDisplayKind.EMERGENCY,
                 )
             }
+            HomeTileAction.OPEN_CAMERA -> {
+                val state = container.cameraActionHandler.currentState()
+                TileDisplayModel(
+                    id = tile.id,
+                    title = tile.title,
+                    subtitle = if (state.enabled) "Open camera" else state.fallbackMessage.orEmpty(),
+                    enabled = state.enabled,
+                    kind = TileDisplayKind.CAMERA,
+                )
+            }
+            HomeTileAction.OPEN_HEALTH_INFO -> TileDisplayModel(
+                id = tile.id,
+                title = tile.title,
+                subtitle = if (settings.healthInfo.hasAnyValue()) {
+                    "View saved health details"
+                } else {
+                    "No health details saved yet"
+                },
+                enabled = true,
+                kind = TileDisplayKind.HEALTH_INFO,
+            )
             null -> {
                 if (tile.type == com.easyui.core.domain.model.HomeTileType.CONTACT) {
                     val state = container.emergencyActionHandler.currentState(tile.phoneNumber)

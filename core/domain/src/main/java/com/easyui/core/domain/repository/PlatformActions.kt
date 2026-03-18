@@ -14,6 +14,11 @@ interface EmergencyActionHandler {
     suspend fun launchDialer(phoneNumber: String?): Boolean
 }
 
+interface CameraActionHandler {
+    suspend fun currentState(): LauncherActionState
+    suspend fun launchCamera(): Boolean
+}
+
 interface AppLauncher {
     suspend fun launch(packageName: String, activityName: String): Boolean
 }

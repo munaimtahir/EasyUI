@@ -44,6 +44,7 @@ class LocalBackupRepository(
             updateVerySimpleModeEnabled(data.settings.verySimpleModeEnabled)
             updateShowBatteryInfo(data.settings.showBatteryInfo)
             updateHomePageCount(data.settings.homePageCount)
+            updateHealthInfo(data.settings.healthInfo)
             updateOnboardingComplete(true)
         }
     }

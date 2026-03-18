@@ -4,6 +4,7 @@ import com.easyui.core.domain.model.BackupData
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
 import com.easyui.core.domain.model.HomeTileType
+import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.ValidationResult
 import org.json.JSONArray
@@ -86,25 +87,48 @@ object BackupSerializer {
         put("verySimpleModeEnabled", s.verySimpleModeEnabled)
         put("showBatteryInfo", s.showBatteryInfo)
         put("homePageCount", s.homePageCount)
+        put("healthInfo", JSONObject().apply {
+            put("fullName", s.healthInfo.fullName)
+            put("age", s.healthInfo.age)
+            put("bloodGroup", s.healthInfo.bloodGroup)
+            put("allergies", s.healthInfo.allergies)
+            put("medicalConditions", s.healthInfo.medicalConditions)
+            put("medicines", s.healthInfo.medicines)
+            put("doctorOrEmergencyContact", s.healthInfo.doctorOrEmergencyContact)
+            put("notes", s.healthInfo.notes)
+        })
         // PIN credentials are intentionally excluded from backup for security.
         // Onboarding state is excluded — it will be inferred as complete on restore.
     }
 
-    private fun jsonToSettings(obj: JSONObject): LauncherSettings = LauncherSettings(
-        onboardingComplete = true,
-        emergencyPhoneNumber = obj.optString("emergencyPhoneNumber", "911"),
-        use24HourClock = obj.optBoolean("use24HourClock", false),
-        caregiverProtectionEnabled = obj.optBoolean("caregiverProtectionEnabled", false),
-        layoutLocked = obj.optBoolean("layoutLocked", false),
-        appVisibilityPreset = obj.optString("appVisibilityPreset", "CUSTOM"),
-        homeReadabilityPreset = obj.optString("homeReadabilityPreset", "STANDARD"),
-        verySimpleModeEnabled = obj.optBoolean("verySimpleModeEnabled", false),
-        showBatteryInfo = obj.optBoolean("showBatteryInfo", false),
-        homePageCount = obj.optInt("homePageCount", 1).coerceIn(1, 3),
-        // PIN is not restored from backup.
-        pinSaltHex = null,
-        pinHashHex = null,
-    )
+    private fun jsonToSettings(obj: JSONObject): LauncherSettings {
+        val health = obj.optJSONObject("healthInfo")
+        return LauncherSettings(
+            onboardingComplete = true,
+            emergencyPhoneNumber = obj.optString("emergencyPhoneNumber", "911"),
+            use24HourClock = obj.optBoolean("use24HourClock", false),
+            caregiverProtectionEnabled = obj.optBoolean("caregiverProtectionEnabled", false),
+            layoutLocked = obj.optBoolean("layoutLocked", false),
+            appVisibilityPreset = obj.optString("appVisibilityPreset", "CUSTOM"),
+            homeReadabilityPreset = obj.optString("homeReadabilityPreset", "STANDARD"),
+            verySimpleModeEnabled = obj.optBoolean("verySimpleModeEnabled", false),
+            showBatteryInfo = obj.optBoolean("showBatteryInfo", false),
+            homePageCount = obj.optInt("homePageCount", 2).coerceIn(1, 3),
+            healthInfo = HealthInfo(
+                fullName = health?.optString("fullName", "").orEmpty(),
+                age = health?.optString("age", "").orEmpty(),
+                bloodGroup = health?.optString("bloodGroup", "").orEmpty(),
+                allergies = health?.optString("allergies", "").orEmpty(),
+                medicalConditions = health?.optString("medicalConditions", "").orEmpty(),
+                medicines = health?.optString("medicines", "").orEmpty(),
+                doctorOrEmergencyContact = health?.optString("doctorOrEmergencyContact", "").orEmpty(),
+                notes = health?.optString("notes", "").orEmpty(),
+            ),
+            // PIN is not restored from backup.
+            pinSaltHex = null,
+            pinHashHex = null,
+        )
+    }
 
     // ── Tiles ─────────────────────────────────────────────────────────────
 

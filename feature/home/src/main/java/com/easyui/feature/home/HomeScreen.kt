@@ -18,9 +18,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -34,6 +36,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.text.font.FontWeight
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.domain.rules.HomeLayoutRules
@@ -102,36 +105,52 @@ fun HomeScreen(
                     .pointerInput(Unit) {
                         detectTapGestures(onTap = { registerCaregiverTap() })
                     },
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
             ) {
-                Column(
-                    modifier = Modifier.padding(EasyUiSpacing.md),
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(EasyUiSpacing.md),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
                 ) {
-                    Text(
-                        timeText,
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontSize = MaterialTheme.typography.headlineLarge.fontSize * config.timeScale,
-                            lineHeight = MaterialTheme.typography.headlineLarge.lineHeight * config.timeScale,
-                        ),
-                    )
-                    Text(
-                        dateText,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize * config.titleScale,
-                            lineHeight = MaterialTheme.typography.titleLarge.lineHeight * config.titleScale,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    if (batterySummary != null) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                    ) {
                         Text(
-                            batterySummary,
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                fontSize = MaterialTheme.typography.bodyLarge.fontSize * config.subtitleScale,
-                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * config.subtitleScale,
+                            timeText,
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontSize = MaterialTheme.typography.headlineLarge.fontSize * config.timeScale,
+                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight * config.timeScale,
+                            ),
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            dateText,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize * config.titleScale,
+                                lineHeight = MaterialTheme.typography.titleLarge.lineHeight * config.titleScale,
                             ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.testTag("battery_summary"),
                         )
+                        if (batterySummary != null) {
+                            Text(
+                                batterySummary,
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontSize = MaterialTheme.typography.bodyLarge.fontSize * config.subtitleScale,
+                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * config.subtitleScale,
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.testTag("battery_summary"),
+                            )
+                        }
+                    }
+                    TextButton(
+                        onClick = onCaregiverAccessRequested,
+                        modifier = Modifier.testTag("caregiver_entry_button"),
+                    ) {
+                        Text("Caregiver")
                     }
                 }
             }

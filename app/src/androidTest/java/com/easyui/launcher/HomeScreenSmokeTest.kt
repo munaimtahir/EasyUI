@@ -1,12 +1,11 @@
 package com.easyui.launcher
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.TileDisplayKind
@@ -56,7 +55,7 @@ class HomeScreenSmokeTest {
     }
 
     @Test
-    fun homeScreenUsesHiddenCaregiverAccessWithoutVisibleButton() {
+    fun homeScreenSupportsVisibleAndFallbackCaregiverAccess() {
         var caregiverOpenCount = 0
 
         composeRule.setContent {
@@ -80,8 +79,10 @@ class HomeScreenSmokeTest {
             }
         }
 
-        composeRule.onAllNodesWithText("Caregiver Tools").assertCountEquals(0)
-        composeRule.onAllNodesWithText("Caregiver Settings").assertCountEquals(0)
+        composeRule.onNodeWithTag("caregiver_entry_button").assertIsDisplayed()
+
+        composeRule.onNodeWithTag("caregiver_entry_button").performClick()
+        composeRule.runOnIdle { assert(caregiverOpenCount == 1) }
 
         repeat(4) {
             composeRule.onNodeWithTag("home_header").performTouchInput {
@@ -89,13 +90,13 @@ class HomeScreenSmokeTest {
                 up()
             }
         }
-        composeRule.runOnIdle { assert(caregiverOpenCount == 0) }
+        composeRule.runOnIdle { assert(caregiverOpenCount == 1) }
 
         composeRule.onNodeWithTag("home_header").performTouchInput {
             down(center)
             up()
         }
-        composeRule.runOnIdle { assert(caregiverOpenCount == 1) }
+        composeRule.runOnIdle { assert(caregiverOpenCount == 2) }
     }
 
     @Test

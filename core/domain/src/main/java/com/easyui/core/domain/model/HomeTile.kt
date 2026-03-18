@@ -11,6 +11,8 @@ enum class HomeTileAction {
     OPEN_APP_LIST,
     FLASHLIGHT,
     EMERGENCY,
+    OPEN_CAMERA,
+    OPEN_HEALTH_INFO,
 }
 
 data class HomeTile(

@@ -14,6 +14,7 @@ import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.repository.AppCatalogRepository
 import com.easyui.core.domain.repository.AppLauncher
 import com.easyui.core.domain.repository.BatteryStatusRepository
+import com.easyui.core.domain.repository.CameraActionHandler
 import com.easyui.core.domain.repository.DefaultLauncherManager
 import com.easyui.core.domain.repository.EmergencyActionHandler
 import com.easyui.core.domain.repository.FlashlightController
@@ -23,6 +24,7 @@ import com.easyui.core.domain.repository.LauncherSettingsRepository
 import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.platform.actions.AndroidAppLauncher
 import com.easyui.core.platform.actions.AndroidBatteryStatusRepository
+import com.easyui.core.platform.actions.AndroidCameraActionHandler
 import com.easyui.core.platform.actions.AndroidEmergencyActionHandler
 import com.easyui.core.platform.actions.AndroidFlashlightController
 import com.easyui.core.platform.apps.AndroidAppCatalogRepository
@@ -44,6 +46,7 @@ class AppContainer(
     val hiddenAppRepository: HiddenAppRepository = DataStoreHiddenAppRepository(appContext)
     val flashlightController: FlashlightController = AndroidFlashlightController(appContext)
     val emergencyActionHandler: EmergencyActionHandler = AndroidEmergencyActionHandler(appContext)
+    val cameraActionHandler: CameraActionHandler = AndroidCameraActionHandler(appContext)
     val batteryStatusRepository: BatteryStatusRepository = AndroidBatteryStatusRepository(appContext)
     val appLauncher: AppLauncher = AndroidAppLauncher(appContext)
     val defaultLauncherManager: DefaultLauncherManager = AndroidDefaultLauncherManager(appContext)

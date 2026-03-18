@@ -16,5 +16,7 @@ enum class TileDisplayKind {
     APPS_LIST,
     FLASHLIGHT,
     EMERGENCY,
+    CAMERA,
+    HEALTH_INFO,
     CONTACT,
 }

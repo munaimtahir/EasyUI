@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.PinCredential
 import com.easyui.core.domain.repository.LauncherSettingsRepository
@@ -33,7 +35,17 @@ class DataStoreLauncherSettingsRepository(
                 homeReadabilityPreset = preferences[Keys.HOME_READABILITY_PRESET] ?: "STANDARD",
                 verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
                 showBatteryInfo = preferences[Keys.SHOW_BATTERY_INFO] ?: false,
-                homePageCount = preferences[Keys.HOME_PAGE_COUNT] ?: 1,
+                homePageCount = preferences[Keys.HOME_PAGE_COUNT] ?: 2,
+                healthInfo = HealthInfo(
+                    fullName = preferences[Keys.HEALTH_NAME] ?: "",
+                    age = preferences[Keys.HEALTH_AGE] ?: "",
+                    bloodGroup = preferences[Keys.HEALTH_BLOOD_GROUP] ?: "",
+                    allergies = preferences[Keys.HEALTH_ALLERGIES] ?: "",
+                    medicalConditions = preferences[Keys.HEALTH_CONDITIONS] ?: "",
+                    medicines = preferences[Keys.HEALTH_MEDICINES] ?: "",
+                    doctorOrEmergencyContact = preferences[Keys.HEALTH_DOCTOR_CONTACT] ?: "",
+                    notes = preferences[Keys.HEALTH_NOTES] ?: "",
+                ),
             )
         }
 
@@ -97,6 +109,19 @@ class DataStoreLauncherSettingsRepository(
         }
     }
 
+    override suspend fun updateHealthInfo(healthInfo: HealthInfo) {
+        dataStore.edit { preferences ->
+            preferences[Keys.HEALTH_NAME] = healthInfo.fullName
+            preferences[Keys.HEALTH_AGE] = healthInfo.age
+            preferences[Keys.HEALTH_BLOOD_GROUP] = healthInfo.bloodGroup
+            preferences[Keys.HEALTH_ALLERGIES] = healthInfo.allergies
+            preferences[Keys.HEALTH_CONDITIONS] = healthInfo.medicalConditions
+            preferences[Keys.HEALTH_MEDICINES] = healthInfo.medicines
+            preferences[Keys.HEALTH_DOCTOR_CONTACT] = healthInfo.doctorOrEmergencyContact
+            preferences[Keys.HEALTH_NOTES] = healthInfo.notes
+        }
+    }
+
     override suspend fun storePinCredential(credential: PinCredential) {
         dataStore.edit { preferences ->
             preferences[Keys.PIN_SALT_HEX] = credential.saltHex
@@ -116,6 +141,14 @@ class DataStoreLauncherSettingsRepository(
         val HOME_READABILITY_PRESET = stringPreferencesKey("home_readability_preset")
         val VERY_SIMPLE_MODE_ENABLED = booleanPreferencesKey("very_simple_mode_enabled")
         val SHOW_BATTERY_INFO = booleanPreferencesKey("show_battery_info")
-        val HOME_PAGE_COUNT = androidx.datastore.preferences.core.intPreferencesKey("home_page_count")
+        val HOME_PAGE_COUNT = intPreferencesKey("home_page_count")
+        val HEALTH_NAME = stringPreferencesKey("health_name")
+        val HEALTH_AGE = stringPreferencesKey("health_age")
+        val HEALTH_BLOOD_GROUP = stringPreferencesKey("health_blood_group")
+        val HEALTH_ALLERGIES = stringPreferencesKey("health_allergies")
+        val HEALTH_CONDITIONS = stringPreferencesKey("health_conditions")
+        val HEALTH_MEDICINES = stringPreferencesKey("health_medicines")
+        val HEALTH_DOCTOR_CONTACT = stringPreferencesKey("health_doctor_contact")
+        val HEALTH_NOTES = stringPreferencesKey("health_notes")
     }
 }

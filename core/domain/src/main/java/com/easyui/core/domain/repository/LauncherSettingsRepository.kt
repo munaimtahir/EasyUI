@@ -1,6 +1,7 @@
 package com.easyui.core.domain.repository
 
 import com.easyui.core.domain.model.LauncherSettings
+import com.easyui.core.domain.model.HealthInfo
 import kotlinx.coroutines.flow.Flow
 
 interface LauncherSettingsRepository {
@@ -15,5 +16,6 @@ interface LauncherSettingsRepository {
     suspend fun updateVerySimpleModeEnabled(enabled: Boolean)
     suspend fun updateShowBatteryInfo(enabled: Boolean)
     suspend fun updateHomePageCount(pageCount: Int)
+    suspend fun updateHealthInfo(healthInfo: HealthInfo)
     suspend fun storePinCredential(credential: com.easyui.core.domain.model.PinCredential)
 }

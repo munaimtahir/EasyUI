@@ -3,6 +3,7 @@ package com.easyui.launcher.app.caregiver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easyui.core.domain.model.AppVisibilityPreset
+import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileType
@@ -283,7 +284,7 @@ class CaregiverViewModel(
             container.launcherSettingsRepository.updateVerySimpleModeEnabled(false)
             container.launcherSettingsRepository.updateHomeReadabilityPreset(HomeReadabilityPreset.STANDARD.name)
             container.launcherSettingsRepository.updateShowBatteryInfo(false)
-            container.launcherSettingsRepository.updateHomePageCount(1)
+            container.launcherSettingsRepository.updateHomePageCount(2)
             messages.emit("EasyUI is back to its safe default layout.")
         }
     }
@@ -299,12 +300,19 @@ class CaregiverViewModel(
         viewModelScope.launch {
             val currentlyHidden = state.value.hiddenPackages
             if (packageName in currentlyHidden) {
-                container.hiddenAppRepository.unhidePackage(packageName)
+                container.hiddenAppRepository.setHidden(packageName, false)
                 messages.emit("App will now show in All Apps.")
             } else {
-                container.hiddenAppRepository.hidePackage(packageName)
+                container.hiddenAppRepository.setHidden(packageName, true)
                 messages.emit("App is now hidden from All Apps.")
             }
+        }
+    }
+
+    fun updateHealthInfo(healthInfo: HealthInfo) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateHealthInfo(healthInfo)
+            messages.emit("Health information saved.")
         }
     }
 
