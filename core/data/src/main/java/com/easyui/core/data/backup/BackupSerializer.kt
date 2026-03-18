@@ -1,13 +1,17 @@
 package com.easyui.core.data.backup
 
 import com.easyui.core.domain.model.BackupData
+import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.model.EmergencyNumber
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
 import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.HealthInfo
+import com.easyui.core.domain.model.LayoutMode
 import com.easyui.core.domain.model.LauncherSettings
+import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.ValidationResult
+import com.easyui.core.domain.model.VisualTheme
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -104,6 +108,14 @@ object BackupSerializer {
         put("verySimpleModeEnabled", s.verySimpleModeEnabled)
         put("showBatteryInfo", s.showBatteryInfo)
         put("homePageCount", s.homePageCount)
+        put(
+            "skinConfig",
+            JSONObject().apply {
+                put("layoutMode", s.skinConfig.layoutMode.name)
+                put("visualTheme", s.skinConfig.visualTheme.name)
+                put("accessibilityMode", s.skinConfig.accessibilityMode.name)
+            },
+        )
         put("healthInfo", JSONObject().apply {
             put("fullName", s.healthInfo.fullName)
             put("age", s.healthInfo.age)
@@ -144,6 +156,18 @@ object BackupSerializer {
                 }
             }.take(3)
         } ?: emptyList()
+        val skinObject = obj.optJSONObject("skinConfig")
+        val skinConfig = SkinConfig(
+            layoutMode = runCatching {
+                LayoutMode.valueOf(skinObject?.optString("layoutMode").orEmpty())
+            }.getOrElse { if (obj.optBoolean("verySimpleModeEnabled", false)) LayoutMode.VERY_SIMPLE else LayoutMode.SIMPLE_CLASSIC },
+            visualTheme = runCatching {
+                VisualTheme.valueOf(skinObject?.optString("visualTheme").orEmpty())
+            }.getOrDefault(VisualTheme.LIGHT_PREMIUM),
+            accessibilityMode = runCatching {
+                AccessibilityMode.valueOf(skinObject?.optString("accessibilityMode").orEmpty())
+            }.getOrDefault(AccessibilityMode.NONE),
+        )
         return LauncherSettings(
             onboardingComplete = true,
             emergencyPhoneNumber = obj.optString("emergencyPhoneNumber", "911"),
@@ -159,6 +183,7 @@ object BackupSerializer {
             verySimpleModeEnabled = obj.optBoolean("verySimpleModeEnabled", false),
             showBatteryInfo = obj.optBoolean("showBatteryInfo", false),
             homePageCount = obj.optInt("homePageCount", 2).coerceIn(1, 3),
+            skinConfig = skinConfig,
             healthInfo = HealthInfo(
                 fullName = health?.optString("fullName", "").orEmpty(),
                 age = health?.optString("age", "").orEmpty(),

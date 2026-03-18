@@ -83,6 +83,7 @@ class HomeViewModel(
                 wifiLabel = base.deviceStatus.wifiLabel,
                 tiles = primaryTiles(base.tiles),
                 sosTriggerProgress = local.sosTapProgress,
+                skinConfig = base.settings.skinConfig,
             )
         }.stateIn(
             scope = viewModelScope,

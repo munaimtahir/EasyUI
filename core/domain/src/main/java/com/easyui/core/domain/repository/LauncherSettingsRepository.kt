@@ -3,6 +3,7 @@ package com.easyui.core.domain.repository
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.EmergencyNumber
 import com.easyui.core.domain.model.HealthInfo
+import com.easyui.core.domain.model.SkinConfig
 import kotlinx.coroutines.flow.Flow
 
 interface LauncherSettingsRepository {
@@ -22,5 +23,7 @@ interface LauncherSettingsRepository {
     suspend fun updateShowBatteryInfo(enabled: Boolean)
     suspend fun updateHomePageCount(pageCount: Int)
     suspend fun updateHealthInfo(healthInfo: HealthInfo)
+    suspend fun setSkinConfig(config: SkinConfig)
+    suspend fun getSkinConfig(): SkinConfig
     suspend fun storePinCredential(credential: com.easyui.core.domain.model.PinCredential)
 }

@@ -9,8 +9,12 @@ import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.InstalledApp
+import com.easyui.core.domain.model.LayoutMode
 import com.easyui.core.domain.model.PinCredential
 import com.easyui.core.domain.model.ProtectedAction
+import com.easyui.core.domain.model.SkinConfig
+import com.easyui.core.domain.model.VisualTheme
+import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.rules.AppCatalogRules
 import com.easyui.core.domain.rules.CaregiverProtectionRules
 import com.easyui.core.domain.rules.ContactTileRules
@@ -258,6 +262,16 @@ class CaregiverViewModel(
     fun updateHomeReadabilityPreset(preset: HomeReadabilityPreset) {
         viewModelScope.launch {
             container.launcherSettingsRepository.updateHomeReadabilityPreset(preset.name)
+            val mappedLayoutMode = when (preset) {
+                HomeReadabilityPreset.STANDARD -> LayoutMode.SIMPLE_CLASSIC
+                HomeReadabilityPreset.LARGER_TEXT,
+                HomeReadabilityPreset.LARGER_TILES,
+                HomeReadabilityPreset.EXTRA_SIMPLE_SPACING,
+                -> LayoutMode.VERY_SIMPLE
+            }
+            container.launcherSettingsRepository.setSkinConfig(
+                state.value.settings.skinConfig.copy(layoutMode = mappedLayoutMode),
+            )
             messages.emit(
                 when (preset) {
                     HomeReadabilityPreset.STANDARD -> "Home display is set to Standard."
@@ -272,7 +286,38 @@ class CaregiverViewModel(
     fun setVerySimpleModeEnabled(enabled: Boolean) {
         viewModelScope.launch {
             container.launcherSettingsRepository.updateVerySimpleModeEnabled(enabled)
+            container.launcherSettingsRepository.setSkinConfig(
+                state.value.settings.skinConfig.copy(
+                    layoutMode = if (enabled) LayoutMode.VERY_SIMPLE else LayoutMode.SIMPLE_CLASSIC,
+                ),
+            )
             messages.emit(if (enabled) "Very simple home mode is now on." else "Very simple home mode is now off.")
+        }
+    }
+
+    fun updateSkinLayoutMode(mode: LayoutMode) {
+        viewModelScope.launch {
+            val current = state.value.settings.skinConfig
+            container.launcherSettingsRepository.setSkinConfig(current.copy(layoutMode = mode))
+            val verySimple = mode == LayoutMode.VERY_SIMPLE
+            container.launcherSettingsRepository.updateVerySimpleModeEnabled(verySimple)
+            messages.emit("Layout mode set to ${displayName(mode.name)}.")
+        }
+    }
+
+    fun updateSkinVisualTheme(theme: VisualTheme) {
+        viewModelScope.launch {
+            val current = state.value.settings.skinConfig
+            container.launcherSettingsRepository.setSkinConfig(current.copy(visualTheme = theme))
+            messages.emit("Theme set to ${displayName(theme.name)}.")
+        }
+    }
+
+    fun updateSkinAccessibilityMode(mode: AccessibilityMode) {
+        viewModelScope.launch {
+            val current = state.value.settings.skinConfig
+            container.launcherSettingsRepository.setSkinConfig(current.copy(accessibilityMode = mode))
+            messages.emit("Accessibility mode set to ${displayName(mode.name)}.")
         }
     }
 
@@ -296,6 +341,7 @@ class CaregiverViewModel(
             )
             container.launcherSettingsRepository.updateEasyUiLockEnabled(false)
             container.launcherSettingsRepository.updateEasyUiLockTimeoutSeconds(60)
+            container.launcherSettingsRepository.setSkinConfig(SkinConfig())
             messages.emit("EasyUI is back to its safe default layout.")
         }
     }
@@ -422,4 +468,9 @@ class CaregiverViewModel(
         val hash = pinHashHex ?: return null
         return PinCredential(saltHex = salt, hashHex = hash)
     }
+
+    private fun displayName(raw: String): String =
+        raw.lowercase()
+            .split("_")
+            .joinToString(" ") { part -> part.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() } }
 }

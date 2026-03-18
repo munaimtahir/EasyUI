@@ -49,6 +49,7 @@ class LocalBackupRepository(
             updateShowBatteryInfo(data.settings.showBatteryInfo)
             updateHomePageCount(data.settings.homePageCount)
             updateHealthInfo(data.settings.healthInfo)
+            setSkinConfig(data.settings.skinConfig)
             updateOnboardingComplete(true)
         }
     }

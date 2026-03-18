@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.ui.theme.EasyUiTheme
@@ -36,6 +37,7 @@ class HomeScreenSmokeTest {
                         TileDisplayModel("sos", "SOS", "Tap 3x quickly", true, TileDisplayKind.SOS),
                     ),
                     sosTriggerProgress = 0,
+                    skinConfig = SkinConfig(),
                     onTileClick = {},
                     onStatusBarLongPress = {},
                     onClockTapped = {},
@@ -61,6 +63,7 @@ class HomeScreenSmokeTest {
                     wifiLabel = "Wi-Fi connected",
                     tiles = emptyList(),
                     sosTriggerProgress = 2,
+                    skinConfig = SkinConfig(),
                     onTileClick = {},
                     onStatusBarLongPress = {},
                     onClockTapped = {},

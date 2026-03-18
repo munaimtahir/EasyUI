@@ -182,6 +182,7 @@ fun EasyUiNavGraph(
                         wifiLabel = homeState.wifiLabel,
                         tiles = homeState.tiles,
                         sosTriggerProgress = homeState.sosTriggerProgress,
+                        skinConfig = homeState.skinConfig,
                         onTileClick = { tileId ->
                             homeViewModel.onTileClick(
                                 tileId = tileId,
@@ -253,8 +254,7 @@ fun EasyUiNavGraph(
                             hasPinConfigured = caregiverState.settings.pinHashHex != null && caregiverState.settings.pinSaltHex != null,
                             currentPageCount = caregiverViewModel.effectivePageCount(),
                             showBatteryInfo = caregiverState.settings.showBatteryInfo,
-                            homeReadabilityPresetName = caregiverState.settings.homeReadabilityPreset,
-                            verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
+                            skinConfig = caregiverState.settings.skinConfig,
                             favoriteContactCount = caregiverViewModel.contactTiles().size,
                             allowedAppCount = caregiverViewModel.assignedAppPackages().size,
                             hiddenAppCount = caregiverState.hiddenPackages.size,
@@ -316,16 +316,16 @@ fun EasyUiNavGraph(
                     ) {
                         LayoutPagesScreen(
                             currentPageCount = caregiverViewModel.effectivePageCount(),
-                            currentPresetName = caregiverState.settings.homeReadabilityPreset,
-                            verySimpleModeEnabled = caregiverState.settings.verySimpleModeEnabled,
+                            skinConfig = caregiverState.settings.skinConfig,
                             onIncreasePageCount = {
                                 caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() + 1)
                             },
                             onDecreasePageCount = {
                                 caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() - 1)
                             },
-                            onSelectPreset = caregiverViewModel::updateHomeReadabilityPreset,
-                            onToggleVerySimpleMode = caregiverViewModel::setVerySimpleModeEnabled,
+                            onSelectLayoutMode = caregiverViewModel::updateSkinLayoutMode,
+                            onSelectVisualTheme = caregiverViewModel::updateSkinVisualTheme,
+                            onSelectAccessibilityMode = caregiverViewModel::updateSkinAccessibilityMode,
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()

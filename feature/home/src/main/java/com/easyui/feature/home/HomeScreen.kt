@@ -1,5 +1,6 @@
 package com.easyui.feature.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,9 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,11 +25,19 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.ui.components.LargeActionTile
-import com.easyui.core.ui.theme.EasyUiSpacing
+import com.easyui.core.ui.theme.ColorPalette
+import com.easyui.core.ui.theme.EmphasisMode
+import com.easyui.core.ui.theme.LayoutConfig
+import com.easyui.core.ui.theme.SkinManager
+import com.easyui.core.ui.theme.SpacingSet
+import com.easyui.core.ui.theme.TileStyle
+import com.easyui.core.ui.theme.TypographySet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -44,6 +53,7 @@ fun HomeScreen(
     wifiLabel: String,
     tiles: List<TileDisplayModel>,
     sosTriggerProgress: Int,
+    skinConfig: SkinConfig,
     onTileClick: (String) -> Unit,
     onStatusBarLongPress: () -> Unit,
     onClockTapped: () -> Unit,
@@ -51,7 +61,13 @@ fun HomeScreen(
 ) {
     val haptic = LocalHapticFeedback.current
     var accessCueVisible by remember { mutableStateOf(false) }
-    val tileSlots = List(6) { index -> tiles.getOrNull(index) }
+    val skinManager = remember(skinConfig) { SkinManager(skinConfig) }
+    val colors = skinManager.getColors()
+    val typography = skinManager.getTypography()
+    val spacing = skinManager.getSpacing()
+    val tileStyle = skinManager.getTileStyle()
+    val layout = skinManager.getLayoutConfig()
+    val tileSlots = List(layout.gridRows * layout.gridCols) { index -> tiles.getOrNull(index) }
 
     LaunchedEffect(accessCueVisible) {
         if (accessCueVisible) {
@@ -60,13 +76,13 @@ fun HomeScreen(
         }
     }
 
-    Surface(modifier = modifier.fillMaxSize()) {
+    Surface(modifier = modifier.fillMaxSize().background(colors.background), color = colors.background) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(EasyUiSpacing.lg)
+                .padding(spacing.padding)
                 .testTag("home_screen"),
-            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+            verticalArrangement = Arrangement.spacedBy(spacing.tileSpacing),
         ) {
             TopStatusBar(
                 timeText = timeText,
@@ -76,6 +92,9 @@ fun HomeScreen(
                 simLabel = simLabel,
                 wifiLabel = wifiLabel,
                 accessCueVisible = accessCueVisible,
+                colors = colors,
+                typography = typography,
+                spacing = spacing,
                 onLongPressConfirmed = {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     accessCueVisible = true
@@ -87,8 +106,8 @@ fun HomeScreen(
             if (sosTriggerProgress > 0) {
                 Text(
                     text = "SOS ready: $sosTriggerProgress/3 taps",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.error,
+                    style = TextStyle(fontSize = typography.labelSize, fontWeight = typography.fontWeight),
+                    color = colors.sosColor,
                     modifier = Modifier.testTag("sos_trigger_progress"),
                 )
             }
@@ -97,25 +116,30 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+                verticalArrangement = Arrangement.spacedBy(spacing.tileSpacing),
             ) {
-                repeat(3) { row ->
+                repeat(layout.gridRows) { row ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+                            .weight(1f * layout.tileSizeScale),
+                        horizontalArrangement = Arrangement.spacedBy(spacing.tileSpacing),
                     ) {
-                        repeat(2) { column ->
-                            val index = row * 2 + column
-                            val tile = tileSlots[index]
+                        repeat(layout.gridCols) { column ->
+                            val index = row * layout.gridCols + column
+                            val tile = tileSlots.getOrNull(index)
                             if (tile != null) {
                                 LargeActionTile(
                                     title = tile.title,
                                     subtitle = tile.subtitle,
                                     enabled = tile.enabled,
                                     onClick = { onTileClick(tile.id) },
-                                    highlighted = tile.title.equals("SOS", ignoreCase = true),
+                                    highlighted = tile.title.equals("SOS", ignoreCase = true) || isEmphasized(tile.title, layout),
+                                    showSubtitle = layout.showLabels,
+                                    palette = colors,
+                                    typography = typography,
+                                    spacing = spacing,
+                                    tileStyle = tileStyle,
                                     modifier = Modifier.weight(1f),
                                 )
                             } else {
@@ -123,7 +147,9 @@ fun HomeScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .fillMaxSize(),
-                                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                                    shape = RoundedCornerShape(spacing.cornerRadius),
+                                    colors = CardDefaults.cardColors(containerColor = colors.tileBackground.copy(alpha = 0.6f)),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = tileStyle.elevationDp.dp),
                                 ) {}
                             }
                         }
@@ -131,6 +157,15 @@ fun HomeScreen(
                 }
             }
         }
+    }
+}
+
+private fun isEmphasized(title: String, layout: LayoutConfig): Boolean {
+    val normalized = title.lowercase()
+    return when (layout.emphasisMode) {
+        EmphasisMode.BALANCED -> false
+        EmphasisMode.CARE_FOCUSED -> normalized in setOf("health info", "emergency", "sos")
+        EmphasisMode.COMMUNICATION_FOCUSED -> normalized in setOf("phone", "contacts")
     }
 }
 
@@ -143,6 +178,9 @@ private fun TopStatusBar(
     simLabel: String,
     wifiLabel: String,
     accessCueVisible: Boolean,
+    colors: ColorPalette,
+    typography: TypographySet,
+    spacing: SpacingSet,
     onLongPressConfirmed: () -> Unit,
     onClockTap: () -> Unit,
 ) {
@@ -159,35 +197,34 @@ private fun TopStatusBar(
                         if (releasedBeforeTimeout == null) {
                             onLongPressConfirmed()
                         }
-                    }
+                    },
                 )
             },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        shape = RoundedCornerShape(spacing.cornerRadius),
+        colors = CardDefaults.cardColors(containerColor = colors.tileBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(EasyUiSpacing.md),
+                .padding(spacing.padding),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column {
                 Text(
                     text = timeText,
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(fontSize = typography.headingSize, fontWeight = FontWeight.Bold),
+                    color = colors.primaryText,
                     modifier = Modifier
                         .testTag("home_clock_text")
-                        .pointerInput(onClockTap) {
-                            detectTapGestures(onTap = { onClockTap() })
-                        },
+                        .pointerInput(onClockTap) { detectTapGestures(onTap = { onClockTap() }) },
                 )
                 if (accessCueVisible) {
                     Text(
                         text = "Access detected",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        style = TextStyle(fontSize = typography.bodySize, fontWeight = typography.fontWeight),
+                        color = colors.accent,
                         modifier = Modifier.testTag("caregiver_access_cue"),
                     )
                 }
@@ -195,11 +232,13 @@ private fun TopStatusBar(
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = "$batteryPercent · $chargingLabel",
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = TextStyle(fontSize = typography.bodySize, fontWeight = typography.fontWeight),
+                    color = colors.primaryText,
                 )
                 Text(
                     text = "$signalLabel · $simLabel · $wifiLabel",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = TextStyle(fontSize = typography.labelSize, fontWeight = typography.fontWeight),
+                    color = colors.secondaryText,
                 )
             }
         }

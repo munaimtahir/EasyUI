@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.ui.theme.EasyUiTheme
@@ -32,6 +33,7 @@ class LockedHomeSmokeTest {
                         TileDisplayModel("phone", "Phone", "Open caregiver contacts", true, TileDisplayKind.PHONE_CONTACTS),
                     ),
                     sosTriggerProgress = 0,
+                    skinConfig = SkinConfig(),
                     onTileClick = {},
                     onStatusBarLongPress = {},
                     onClockTapped = {},

@@ -5,7 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import com.easyui.core.domain.model.HomeReadabilityPreset
+import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
 import com.easyui.core.domain.model.HomeTileType
@@ -31,8 +31,7 @@ class CaregiverQolSmokeTest {
                     hasPinConfigured = true,
                     currentPageCount = 2,
                     showBatteryInfo = true,
-                    homeReadabilityPresetName = "STANDARD",
-                    verySimpleModeEnabled = false,
+                    skinConfig = SkinConfig(),
                     favoriteContactCount = 2,
                     allowedAppCount = 4,
                     hiddenAppCount = 1,
@@ -73,12 +72,12 @@ class CaregiverQolSmokeTest {
             EasyUiTheme {
                 LayoutPagesScreen(
                     currentPageCount = 2,
-                    currentPresetName = HomeReadabilityPreset.STANDARD.name,
-                    verySimpleModeEnabled = false,
+                    skinConfig = SkinConfig(),
                     onIncreasePageCount = {},
                     onDecreasePageCount = {},
-                    onSelectPreset = {},
-                    onToggleVerySimpleMode = {},
+                    onSelectLayoutMode = {},
+                    onSelectVisualTheme = {},
+                    onSelectAccessibilityMode = {},
                     onDone = {},
                     onFinishSetup = {},
                 )
@@ -88,7 +87,7 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithTag("layout_pages_screen").assertIsDisplayed()
         composeRule.onNodeWithText("Add Page").assertIsDisplayed()
         composeRule.onNodeWithText("Use Fewer").assertIsDisplayed()
-        composeRule.onNodeWithText("Very simple home mode").assertIsDisplayed()
+        composeRule.onNodeWithText("Visual Theme").assertIsDisplayed()
     }
 
     @Test

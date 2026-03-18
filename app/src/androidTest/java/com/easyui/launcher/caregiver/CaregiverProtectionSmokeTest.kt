@@ -10,6 +10,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.ui.theme.EasyUiTheme
 import com.easyui.feature.caregiver.CaregiverToolsScreen
 import com.easyui.feature.caregiver.PinEntryScreen
@@ -44,13 +45,15 @@ class CaregiverProtectionSmokeTest {
                         hasPinConfigured = true,
                         currentPageCount = 2,
                         showBatteryInfo = false,
-                        homeReadabilityPresetName = "STANDARD",
-                        verySimpleModeEnabled = false,
+                        skinConfig = SkinConfig(),
                         favoriteContactCount = 1,
                         allowedAppCount = 3,
                         hiddenAppCount = 0,
                         healthInfoConfigured = false,
                         emergencyPhoneNumber = "911",
+                        sosNumberCount = 0,
+                        easyUiLockEnabled = false,
+                        easyUiLockTimeoutSeconds = 60,
                         onSetupPin = {},
                         onChangePin = { showPin = true },
                         onToggleProtection = {},

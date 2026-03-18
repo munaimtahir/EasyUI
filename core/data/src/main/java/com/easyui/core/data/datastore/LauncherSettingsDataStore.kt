@@ -8,10 +8,15 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.easyui.core.domain.model.HealthInfo
+import com.easyui.core.domain.model.LayoutMode
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.EmergencyNumber
 import com.easyui.core.domain.model.PinCredential
+import com.easyui.core.domain.model.SkinConfig
+import com.easyui.core.domain.model.VisualTheme
+import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.repository.LauncherSettingsRepository
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.json.JSONArray
@@ -52,6 +57,12 @@ class DataStoreLauncherSettingsRepository(
                     medicines = preferences[Keys.HEALTH_MEDICINES] ?: "",
                     doctorOrEmergencyContact = preferences[Keys.HEALTH_DOCTOR_CONTACT] ?: "",
                     notes = preferences[Keys.HEALTH_NOTES] ?: "",
+                ),
+                skinConfig = decodeSkinConfig(
+                    layoutModeName = preferences[Keys.SKIN_LAYOUT_MODE],
+                    visualThemeName = preferences[Keys.SKIN_VISUAL_THEME],
+                    accessibilityModeName = preferences[Keys.SKIN_ACCESSIBILITY_MODE],
+                    verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
                 ),
             )
         }
@@ -153,6 +164,24 @@ class DataStoreLauncherSettingsRepository(
         }
     }
 
+    override suspend fun setSkinConfig(config: SkinConfig) {
+        dataStore.edit { preferences ->
+            preferences[Keys.SKIN_LAYOUT_MODE] = config.layoutMode.name
+            preferences[Keys.SKIN_VISUAL_THEME] = config.visualTheme.name
+            preferences[Keys.SKIN_ACCESSIBILITY_MODE] = config.accessibilityMode.name
+        }
+    }
+
+    override suspend fun getSkinConfig(): SkinConfig {
+        val preferences = dataStore.data.first()
+        return decodeSkinConfig(
+            layoutModeName = preferences[Keys.SKIN_LAYOUT_MODE],
+            visualThemeName = preferences[Keys.SKIN_VISUAL_THEME],
+            accessibilityModeName = preferences[Keys.SKIN_ACCESSIBILITY_MODE],
+            verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
+        )
+    }
+
     override suspend fun storePinCredential(credential: PinCredential) {
         dataStore.edit { preferences ->
             preferences[Keys.PIN_SALT_HEX] = credential.saltHex
@@ -185,6 +214,9 @@ class DataStoreLauncherSettingsRepository(
         val HEALTH_MEDICINES = stringPreferencesKey("health_medicines")
         val HEALTH_DOCTOR_CONTACT = stringPreferencesKey("health_doctor_contact")
         val HEALTH_NOTES = stringPreferencesKey("health_notes")
+        val SKIN_LAYOUT_MODE = stringPreferencesKey("skin_layout_mode")
+        val SKIN_VISUAL_THEME = stringPreferencesKey("skin_visual_theme")
+        val SKIN_ACCESSIBILITY_MODE = stringPreferencesKey("skin_accessibility_mode")
     }
 
     private fun encodeEmergencyNumbers(numbers: List<EmergencyNumber>): String {
@@ -251,4 +283,23 @@ class DataStoreLauncherSettingsRepository(
             }.take(3)
         }
             ?: emptyList()
+
+    private fun decodeSkinConfig(
+        layoutModeName: String?,
+        visualThemeName: String?,
+        accessibilityModeName: String?,
+        verySimpleModeEnabled: Boolean,
+    ): SkinConfig {
+        val layoutMode = runCatching { LayoutMode.valueOf(layoutModeName.orEmpty()) }
+            .getOrElse { if (verySimpleModeEnabled) LayoutMode.VERY_SIMPLE else LayoutMode.SIMPLE_CLASSIC }
+        val visualTheme = runCatching { VisualTheme.valueOf(visualThemeName.orEmpty()) }
+            .getOrDefault(VisualTheme.LIGHT_PREMIUM)
+        val accessibilityMode = runCatching { AccessibilityMode.valueOf(accessibilityModeName.orEmpty()) }
+            .getOrDefault(AccessibilityMode.NONE)
+        return SkinConfig(
+            layoutMode = layoutMode,
+            visualTheme = visualTheme,
+            accessibilityMode = accessibilityMode,
+        )
+    }
 }

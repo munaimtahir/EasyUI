@@ -22,4 +22,5 @@ data class LauncherSettings(
     val showBatteryInfo: Boolean = false,
     val homePageCount: Int = 2,
     val healthInfo: HealthInfo = HealthInfo(),
+    val skinConfig: SkinConfig = SkinConfig(),
 )

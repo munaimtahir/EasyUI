@@ -42,11 +42,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
+import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.model.HomeReadabilityPreset
+import com.easyui.core.domain.model.LayoutMode
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.InstalledApp
+import com.easyui.core.domain.model.SkinConfig
+import com.easyui.core.domain.model.VisualTheme
 import com.easyui.core.domain.rules.ContactTileRules
 import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.ui.components.AvatarBadge
@@ -59,8 +63,7 @@ fun CaregiverToolsScreen(
     hasPinConfigured: Boolean,
     currentPageCount: Int,
     showBatteryInfo: Boolean,
-    homeReadabilityPresetName: String,
-    verySimpleModeEnabled: Boolean,
+    skinConfig: SkinConfig,
     favoriteContactCount: Int,
     allowedAppCount: Int,
     hiddenAppCount: Int,
@@ -107,8 +110,9 @@ fun CaregiverToolsScreen(
                     title = "Layout / Pages",
                     body = listOf(
                         "Home pages: $currentPageCount",
-                        "Readability: ${readabilityLabel(runCatching { HomeReadabilityPreset.valueOf(homeReadabilityPresetName) }.getOrDefault(HomeReadabilityPreset.STANDARD))}",
-                        if (verySimpleModeEnabled) "Very simple mode is on." else "Very simple mode is off.",
+                        "Layout mode: ${layoutModeLabel(skinConfig.layoutMode)}",
+                        "Theme: ${visualThemeLabel(skinConfig.visualTheme)}",
+                        "Accessibility: ${accessibilityModeLabel(skinConfig.accessibilityMode)}",
                     ),
                     primaryLabel = "Layout and Pages",
                     onPrimaryClick = onOpenLayoutPages,
@@ -252,19 +256,16 @@ fun CaregiverToolsScreen(
 @Composable
 fun LayoutPagesScreen(
     currentPageCount: Int,
-    currentPresetName: String,
-    verySimpleModeEnabled: Boolean,
+    skinConfig: SkinConfig,
     onIncreasePageCount: () -> Unit,
     onDecreasePageCount: () -> Unit,
-    onSelectPreset: (HomeReadabilityPreset) -> Unit,
-    onToggleVerySimpleMode: (Boolean) -> Unit,
+    onSelectLayoutMode: (LayoutMode) -> Unit,
+    onSelectVisualTheme: (VisualTheme) -> Unit,
+    onSelectAccessibilityMode: (AccessibilityMode) -> Unit,
     onDone: () -> Unit,
     onFinishSetup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currentPreset = remember(currentPresetName) {
-        runCatching { HomeReadabilityPreset.valueOf(currentPresetName) }.getOrDefault(HomeReadabilityPreset.STANDARD)
-    }
     Surface(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -312,33 +313,68 @@ fun LayoutPagesScreen(
                 }
             }
             item {
-                Text("Readability", style = MaterialTheme.typography.titleLarge)
+                Text("Layout Behavior", style = MaterialTheme.typography.titleLarge)
             }
-            items(HomeReadabilityPreset.entries) { preset ->
-                val selected = preset == currentPreset
+            items(LayoutMode.entries) { mode ->
+                val selected = mode == skinConfig.layoutMode
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(EasyUiSpacing.md),
                         verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
                     ) {
-                        Text(readabilityLabel(preset), style = MaterialTheme.typography.titleLarge)
-                        Text(readabilityBody(preset), style = MaterialTheme.typography.bodyLarge)
+                        Text(layoutModeLabel(mode), style = MaterialTheme.typography.titleLarge)
+                        Text(layoutModeBody(mode), style = MaterialTheme.typography.bodyLarge)
                         if (selected) {
                             Text("Current choice", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                         } else {
-                            Button(onClick = { onSelectPreset(preset) }, modifier = Modifier.fillMaxWidth()) {
-                                Text("Use ${readabilityLabel(preset)}")
+                            Button(onClick = { onSelectLayoutMode(mode) }, modifier = Modifier.fillMaxWidth()) {
+                                Text("Use ${layoutModeLabel(mode)}")
                             }
                         }
                     }
                 }
             }
             item {
-                SettingToggleRow(
-                    label = "Very simple home mode",
-                    checked = verySimpleModeEnabled,
-                    onCheckedChange = onToggleVerySimpleMode,
-                )
+                Text("Visual Theme", style = MaterialTheme.typography.titleLarge)
+            }
+            items(VisualTheme.entries) { theme ->
+                val selected = theme == skinConfig.visualTheme
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(EasyUiSpacing.md),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                    ) {
+                        Text(visualThemeLabel(theme), style = MaterialTheme.typography.titleLarge)
+                        if (selected) {
+                            Text("Current choice", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                        } else {
+                            Button(onClick = { onSelectVisualTheme(theme) }, modifier = Modifier.fillMaxWidth()) {
+                                Text("Use ${visualThemeLabel(theme)}")
+                            }
+                        }
+                    }
+                }
+            }
+            item {
+                Text("Accessibility", style = MaterialTheme.typography.titleLarge)
+            }
+            items(AccessibilityMode.entries) { mode ->
+                val selected = mode == skinConfig.accessibilityMode
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(EasyUiSpacing.md),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                    ) {
+                        Text(accessibilityModeLabel(mode), style = MaterialTheme.typography.titleLarge)
+                        if (selected) {
+                            Text("Current choice", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                        } else {
+                            Button(onClick = { onSelectAccessibilityMode(mode) }, modifier = Modifier.fillMaxWidth()) {
+                                Text("Use ${accessibilityModeLabel(mode)}")
+                            }
+                        }
+                    }
+                }
             }
             item {
                 Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
@@ -921,6 +957,37 @@ private fun readabilityBody(preset: HomeReadabilityPreset): String =
         HomeReadabilityPreset.LARGER_TEXT -> "Makes labels easier to read without changing the layout too much."
         HomeReadabilityPreset.LARGER_TILES -> "Shows fewer, larger tiles on the home screen."
         HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> "Adds extra breathing room between home elements."
+    }
+
+private fun layoutModeLabel(mode: LayoutMode): String =
+    when (mode) {
+        LayoutMode.SIMPLE_CLASSIC -> "Simple Classic"
+        LayoutMode.VERY_SIMPLE -> "Very Simple"
+        LayoutMode.CARE_MODE -> "Care Mode"
+        LayoutMode.COMMUNICATION_MODE -> "Communication Mode"
+    }
+
+private fun layoutModeBody(mode: LayoutMode): String =
+    when (mode) {
+        LayoutMode.SIMPLE_CLASSIC -> "Standard 2x3 layout with balanced readability."
+        LayoutMode.VERY_SIMPLE -> "Larger tiles with fewer labels for maximum readability."
+        LayoutMode.CARE_MODE -> "Emphasizes Health Info, Emergency, and SOS."
+        LayoutMode.COMMUNICATION_MODE -> "Emphasizes Phone and contact-focused use."
+    }
+
+private fun visualThemeLabel(theme: VisualTheme): String =
+    when (theme) {
+        VisualTheme.LIGHT_PREMIUM -> "Light Premium"
+        VisualTheme.DARK_COMFORT -> "Dark Comfort"
+        VisualTheme.CLINICAL_PROFESSIONAL -> "Clinical Professional"
+        VisualTheme.SOFT_CALM -> "Soft Calm"
+    }
+
+private fun accessibilityModeLabel(mode: AccessibilityMode): String =
+    when (mode) {
+        AccessibilityMode.NONE -> "None"
+        AccessibilityMode.HIGH_CONTRAST -> "High Contrast"
+        AccessibilityMode.BOLD_ACCESSIBILITY -> "Bold Accessibility"
     }
 
 @Composable
