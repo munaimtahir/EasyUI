@@ -10,7 +10,5 @@ data class HomeUiState(
     val simLabel: String = "SIM",
     val wifiLabel: String = "Wi-Fi unknown",
     val tiles: List<TileDisplayModel> = emptyList(),
-    val caregiverAccessVisible: Boolean = false,
-    val flashlightTriggerProgress: Int = 0,
     val sosTriggerProgress: Int = 0,
 )

@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.ui.theme.EasyUiTheme
@@ -30,16 +31,17 @@ class LockedHomeSmokeTest {
                     tiles = listOf(
                         TileDisplayModel("phone", "Phone", "Open caregiver contacts", true, TileDisplayKind.PHONE_CONTACTS),
                     ),
-                    caregiverAccessVisible = false,
-                    flashlightTriggerProgress = 0,
                     sosTriggerProgress = 0,
                     onTileClick = {},
-                    onCaregiverAccessTap = {},
+                    onStatusBarLongPress = {},
+                    onClockTapped = {},
                 )
             }
         }
 
         composeRule.onNodeWithTag("home_screen").assertIsDisplayed()
-        composeRule.onNodeWithTag("caregiver_access_reveal").assertDoesNotExist()
+        composeRule.onNodeWithTag("home_top_status_bar").assertIsDisplayed()
+        composeRule.onNodeWithTag("home_clock_text").assertIsDisplayed()
+        composeRule.onNodeWithText("Caregiver Access").assertDoesNotExist()
     }
 }

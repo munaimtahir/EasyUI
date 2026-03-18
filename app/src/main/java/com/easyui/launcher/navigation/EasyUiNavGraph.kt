@@ -170,6 +170,9 @@ fun EasyUiNavGraph(
                 }
                 composable(Routes.Home.route) {
                     BackHandler(enabled = true) {}
+                    val openCaregiverAccess: () -> Unit = {
+                        navController.navigate(caregiverViewModel.requestCaregiverAccess())
+                    }
                     HomeScreen(
                         timeText = homeState.timeText,
                         batteryPercent = homeState.batteryPercent,
@@ -178,8 +181,6 @@ fun EasyUiNavGraph(
                         simLabel = homeState.simLabel,
                         wifiLabel = homeState.wifiLabel,
                         tiles = homeState.tiles,
-                        caregiverAccessVisible = homeState.caregiverAccessVisible,
-                        flashlightTriggerProgress = homeState.flashlightTriggerProgress,
                         sosTriggerProgress = homeState.sosTriggerProgress,
                         onTileClick = { tileId ->
                             homeViewModel.onTileClick(
@@ -189,10 +190,11 @@ fun EasyUiNavGraph(
                                 onOpenHealthInfo = { navController.navigate(Routes.HealthInfo.route) },
                             )
                         },
-                        onCaregiverAccessTap = {
-                            homeViewModel.onCaregiverAccessTapped {
-                                navController.navigate(caregiverViewModel.requestCaregiverAccess())
-                            }
+                        onStatusBarLongPress = {
+                            homeViewModel.onTopBarLongPressCaregiverAccess(openCaregiverAccess)
+                        },
+                        onClockTapped = {
+                            homeViewModel.onClockTappedCaregiverAccess(openCaregiverAccess)
                         },
                     )
                 }

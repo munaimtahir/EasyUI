@@ -1,26 +1,38 @@
 package com.easyui.feature.home
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.ui.components.LargeActionTile
 import com.easyui.core.ui.theme.EasyUiSpacing
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
+
+private const val TopBarLongPressMs = 3_000L
 
 @Composable
 fun HomeScreen(
@@ -31,14 +43,23 @@ fun HomeScreen(
     simLabel: String,
     wifiLabel: String,
     tiles: List<TileDisplayModel>,
-    caregiverAccessVisible: Boolean,
-    flashlightTriggerProgress: Int,
     sosTriggerProgress: Int,
     onTileClick: (String) -> Unit,
-    onCaregiverAccessTap: () -> Unit,
+    onStatusBarLongPress: () -> Unit,
+    onClockTapped: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val haptic = LocalHapticFeedback.current
+    var accessCueVisible by remember { mutableStateOf(false) }
     val tileSlots = List(6) { index -> tiles.getOrNull(index) }
+
+    LaunchedEffect(accessCueVisible) {
+        if (accessCueVisible) {
+            delay(900)
+            accessCueVisible = false
+        }
+    }
+
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -54,27 +75,14 @@ fun HomeScreen(
                 signalLabel = signalLabel,
                 simLabel = simLabel,
                 wifiLabel = wifiLabel,
+                accessCueVisible = accessCueVisible,
+                onLongPressConfirmed = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    accessCueVisible = true
+                    onStatusBarLongPress()
+                },
+                onClockTap = onClockTapped,
             )
-
-            if (caregiverAccessVisible) {
-                Button(
-                    onClick = onCaregiverAccessTap,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("caregiver_access_reveal"),
-                ) {
-                    Text("Caregiver Access")
-                }
-            }
-
-            if (flashlightTriggerProgress > 0 && !caregiverAccessVisible) {
-                Text(
-                    text = "Flashlight pattern: $flashlightTriggerProgress/6",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.testTag("flashlight_trigger_progress"),
-                )
-            }
 
             if (sosTriggerProgress > 0) {
                 Text(
@@ -134,11 +142,26 @@ private fun TopStatusBar(
     signalLabel: String,
     simLabel: String,
     wifiLabel: String,
+    accessCueVisible: Boolean,
+    onLongPressConfirmed: () -> Unit,
+    onClockTap: () -> Unit,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("home_top_status_bar"),
+            .testTag("home_top_status_bar")
+            .pointerInput(onLongPressConfirmed) {
+                detectTapGestures(
+                    onPress = {
+                        val releasedBeforeTimeout = withTimeoutOrNull(TopBarLongPressMs) {
+                            tryAwaitRelease()
+                        }
+                        if (releasedBeforeTimeout == null) {
+                            onLongPressConfirmed()
+                        }
+                    }
+                )
+            },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
@@ -149,11 +172,26 @@ private fun TopStatusBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = timeText,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-            )
+            Column {
+                Text(
+                    text = timeText,
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .testTag("home_clock_text")
+                        .pointerInput(onClockTap) {
+                            detectTapGestures(onTap = { onClockTap() })
+                        },
+                )
+                if (accessCueVisible) {
+                    Text(
+                        text = "Access detected",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.testTag("caregiver_access_cue"),
+                    )
+                }
+            }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = "$batteryPercent · $chargingLabel",

@@ -3,8 +3,11 @@ package com.easyui.launcher.app
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.easyui.core.domain.model.BatteryStatus
+import com.easyui.core.domain.model.DeviceStatus
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
+import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
 import com.easyui.core.domain.rules.ContactTileRules
@@ -23,29 +26,29 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-private const val CaregiverPatternWindowMs = 7_000L
-private const val CaregiverAccessVisibilityMs = 10_000L
 private const val SosTapWindowMs = 2_400L
 private const val SosCooldownMs = 8_000L
+private const val ClockTapWindowMs = 3_000L
+private const val ClockTapTriggerCount = 5
+private const val CaregiverAccessDebounceMs = 1_500L
 
 class HomeViewModel(
     private val container: AppContainer,
 ) : ViewModel() {
     val messages = MutableSharedFlow<String>()
     private val localState = MutableStateFlow(LocalHomeState())
-    private val expectedFlashPattern = listOf(true, false, true, false, true, false)
 
     private val settingsState = container.launcherSettingsRepository.settings.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = com.easyui.core.domain.model.LauncherSettings(),
+        initialValue = LauncherSettings(),
     )
 
     private data class BaseHomeState(
         val tiles: List<HomeTile>,
-        val batteryStatus: com.easyui.core.domain.model.BatteryStatus,
-        val deviceStatus: com.easyui.core.domain.model.DeviceStatus,
-        val settings: com.easyui.core.domain.model.LauncherSettings,
+        val batteryStatus: BatteryStatus,
+        val deviceStatus: DeviceStatus,
+        val settings: LauncherSettings,
         val now: LocalDateTime,
     )
 
@@ -79,8 +82,6 @@ class HomeViewModel(
                 simLabel = base.deviceStatus.simLabel,
                 wifiLabel = base.deviceStatus.wifiLabel,
                 tiles = primaryTiles(base.tiles),
-                caregiverAccessVisible = local.caregiverAccessVisible,
-                flashlightTriggerProgress = local.flashPatternProgress,
                 sosTriggerProgress = local.sosTapProgress,
             )
         }.stateIn(
@@ -102,9 +103,6 @@ class HomeViewModel(
                 TileDisplayKind.FLASHLIGHT -> {
                     val result = container.flashlightController.performToggle()
                     result.fallbackMessage?.let { messages.emit(it) }
-                    if (result.enabled) {
-                        registerFlashToggle()
-                    }
                 }
                 TileDisplayKind.CAMERA -> {
                     if (!container.cameraActionHandler.launchCamera()) {
@@ -120,21 +118,45 @@ class HomeViewModel(
                 -> Unit
             }
         }
-
     }
 
-    fun onCaregiverAccessTapped(open: () -> Unit) {
-        if (!state.value.caregiverAccessVisible) return
-        open()
-        localState.update { it.copy(caregiverAccessVisible = false, flashPatternProgress = 0) }
+    fun onTopBarLongPressCaregiverAccess(onAccessRequested: () -> Unit) {
+        if (!canTriggerCaregiverAccess()) return
+        onAccessRequested()
     }
 
-    fun dismissCaregiverAccess() {
-        localState.update { it.copy(caregiverAccessVisible = false, flashPatternProgress = 0) }
+    fun onClockTappedCaregiverAccess(onAccessRequested: () -> Unit) {
+        val now = SystemClock.elapsedRealtime()
+        val current = localState.value
+        val nextCount =
+            if (now - current.lastClockTapAtMs <= ClockTapWindowMs) {
+                current.clockTapCount + 1
+            } else {
+                1
+            }
+        localState.update {
+            it.copy(
+                clockTapCount = nextCount,
+                lastClockTapAtMs = now,
+            )
+        }
+        if (nextCount < ClockTapTriggerCount) return
+        localState.update { it.copy(clockTapCount = 0, lastClockTapAtMs = 0L) }
+        if (!canTriggerCaregiverAccess()) return
+        onAccessRequested()
     }
 
     suspend fun triggerDirectEmergencyCall(number: String): Boolean =
         container.emergencyActionHandler.callPhone(number)
+
+    private fun canTriggerCaregiverAccess(): Boolean {
+        val now = SystemClock.elapsedRealtime()
+        val allowed = now - localState.value.lastCaregiverAccessAtMs >= CaregiverAccessDebounceMs
+        if (allowed) {
+            localState.update { it.copy(lastCaregiverAccessAtMs = now, clockTapCount = 0, lastClockTapAtMs = 0L) }
+        }
+        return allowed
+    }
 
     private suspend fun registerSosTap() {
         val now = SystemClock.elapsedRealtime()
@@ -179,57 +201,6 @@ class HomeViewModel(
         val callPlaced = container.emergencyActionHandler.callPhone(numbers.first())
         val callLabel = if (callPlaced) "calling primary caregiver." else "unable to auto-call primary caregiver."
         messages.emit("SOS activated: sent $sentCount/${numbers.size} messages, $callLabel")
-    }
-
-    private fun registerFlashToggle() {
-        val now = SystemClock.elapsedRealtime()
-        val nextFlashState = !localState.value.flashlightOn
-        val nextEvents = (localState.value.flashEvents + (now to nextFlashState))
-            .filter { now - it.first <= CaregiverPatternWindowMs }
-        val recentStates = nextEvents.map { it.second }
-        val progress = matchProgress(recentStates)
-
-        localState.update {
-            it.copy(
-                flashlightOn = nextFlashState,
-                flashEvents = nextEvents,
-                flashPatternProgress = progress,
-            )
-        }
-
-        val matches =
-            recentStates.size >= expectedFlashPattern.size &&
-                recentStates.takeLast(expectedFlashPattern.size) == expectedFlashPattern &&
-                (nextEvents.last().first - nextEvents[nextEvents.lastIndex - expectedFlashPattern.lastIndex].first) <= CaregiverPatternWindowMs
-
-        if (!matches) return
-        localState.update {
-            it.copy(
-                caregiverAccessVisible = true,
-                flashPatternProgress = expectedFlashPattern.size,
-                flashEvents = emptyList(),
-            )
-        }
-        viewModelScope.launch {
-            delay(CaregiverAccessVisibilityMs)
-            localState.update { current ->
-                if (current.caregiverAccessVisible) {
-                    current.copy(caregiverAccessVisible = false, flashPatternProgress = 0)
-                } else {
-                    current
-                }
-            }
-        }
-    }
-
-    private fun matchProgress(recentStates: List<Boolean>): Int {
-        val max = minOf(recentStates.size, expectedFlashPattern.size)
-        for (progress in max downTo 0) {
-            if (recentStates.takeLast(progress) == expectedFlashPattern.take(progress)) {
-                return progress
-            }
-        }
-        return 0
     }
 
     private fun primaryTiles(tiles: List<HomeTile>): List<TileDisplayModel> {
@@ -298,10 +269,9 @@ class HomeViewModel(
     }
 
     private data class LocalHomeState(
-        val flashlightOn: Boolean = false,
-        val flashEvents: List<Pair<Long, Boolean>> = emptyList(),
-        val flashPatternProgress: Int = 0,
-        val caregiverAccessVisible: Boolean = false,
+        val clockTapCount: Int = 0,
+        val lastClockTapAtMs: Long = 0L,
+        val lastCaregiverAccessAtMs: Long = 0L,
         val sosTapCount: Int = 0,
         val sosTapProgress: Int = 0,
         val lastSosTapAtMs: Long = 0L,

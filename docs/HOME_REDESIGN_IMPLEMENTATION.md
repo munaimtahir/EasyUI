@@ -10,9 +10,10 @@
   - Emergency
   - Health Info
   - SOS
-- Removed visible caregiver button from Home and added hidden caregiver reveal:
-  - Flashlight ON/OFF sequence (`ON → OFF → ON → OFF → ON → OFF`) within 7 seconds.
-  - Temporary `Caregiver Access` button appears for 10 seconds.
+- Removed visible caregiver button from Home and finalized hidden caregiver entry model:
+  - 3-second long-press anywhere on top status bar.
+  - 5 quick taps on the clock within 3 seconds (fallback).
+  - Both routes open the same caregiver access pipeline.
 - Added SOS workflow:
   - SOS tile requires 3 quick taps.
   - Sends SMS to up to 3 configured SOS numbers.
@@ -60,3 +61,8 @@
 - Signal/SIM/Wi-Fi status labels are best-effort and may be limited on some Android versions/devices.
 - Contact management still reuses existing home contact storage model; this preserves compatibility but is not yet a dedicated contacts table.
 - Device/ADB validation scenarios are not executed in this static run and should be completed on physical hardware.
+
+## Caregiver Access (Final Model)
+- Long press top bar (3s)
+- Clock 5-tap fallback
+- PIN-gated access

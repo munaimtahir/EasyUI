@@ -35,11 +35,10 @@ class HomeScreenSmokeTest {
                         TileDisplayModel("health-info", "Health Info", "View medical card", true, TileDisplayKind.HEALTH_INFO),
                         TileDisplayModel("sos", "SOS", "Tap 3x quickly", true, TileDisplayKind.SOS),
                     ),
-                    caregiverAccessVisible = false,
-                    flashlightTriggerProgress = 0,
                     sosTriggerProgress = 0,
                     onTileClick = {},
-                    onCaregiverAccessTap = {},
+                    onStatusBarLongPress = {},
+                    onClockTapped = {},
                 )
             }
         }
@@ -50,7 +49,7 @@ class HomeScreenSmokeTest {
     }
 
     @Test
-    fun homeScreenShowsHiddenCaregiverAccessAndProgress() {
+    fun homeScreenShowsSosProgressState() {
         composeRule.setContent {
             EasyUiTheme {
                 HomeScreen(
@@ -61,16 +60,14 @@ class HomeScreenSmokeTest {
                     simLabel = "SIM One",
                     wifiLabel = "Wi-Fi connected",
                     tiles = emptyList(),
-                    caregiverAccessVisible = true,
-                    flashlightTriggerProgress = 6,
                     sosTriggerProgress = 2,
                     onTileClick = {},
-                    onCaregiverAccessTap = {},
+                    onStatusBarLongPress = {},
+                    onClockTapped = {},
                 )
             }
         }
 
-        composeRule.onNodeWithTag("caregiver_access_reveal").assertIsDisplayed()
         composeRule.onNodeWithTag("sos_trigger_progress").assertIsDisplayed()
     }
 }
