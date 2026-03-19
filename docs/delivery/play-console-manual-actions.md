@@ -1,7 +1,7 @@
 # Play Console Manual Actions
 
 1. Create or confirm the Google Play app entry for `EasyUI Senior Launcher`.
-2. Decide the release signing and Play App Signing setup.
+2. Decide the release signing and Play App Signing setup, then configure the matching upload keystore locally or in CI before building the bundle.
 3. Host the privacy policy at a public URL and add that URL in Play Console.
 4. Upload the signed release `.aab`.
 5. Complete the Data Safety questionnaire using the repo-backed draft.

@@ -1,11 +1,11 @@
 package com.easyui.launcher.caregiver
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
@@ -44,6 +44,6 @@ class LockedHomeSmokeTest {
         composeRule.onNodeWithTag("home_screen").assertIsDisplayed()
         composeRule.onNodeWithTag("home_top_status_bar").assertIsDisplayed()
         composeRule.onNodeWithTag("home_clock_text").assertIsDisplayed()
-        composeRule.onNodeWithText("Caregiver Access").assertDoesNotExist()
+        composeRule.onAllNodesWithText("Caregiver Access").assertCountEquals(0)
     }
 }
