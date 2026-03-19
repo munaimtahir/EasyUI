@@ -2,15 +2,15 @@
 
 ## Summary of completed features
 
-- Added practical caregiver entry on home (`Caregiver` button) while preserving hidden fallback entry.
+- Added practical caregiver entry through a hidden top-bar long-press with clock-tap fallback.
 - Kept caregiver PIN/session protection and improved onboarding explanation for re-entry and PIN purpose.
 - Upgraded anchored home essentials to fixed page-1 actions:
   - Phone
-  - All Apps
-  - Emergency
   - Camera
+  - Emergency
   - Health Info
   - Flashlight
+  - SOS
 - Added offline local Health Info feature:
   - caregiver edit surface
   - senior-facing read screen from home tile
@@ -101,7 +101,7 @@
 ## Known limitations
 
 - No runtime emulator/device execution was performed in this environment for full interaction checks.
-- Hidden Apps behavior remains EasyUI-surface filtering (All Apps/search) and does not block apps system-wide.
+- Hidden Apps behavior remains EasyUI-surface filtering and does not block apps system-wide.
 - Camera availability and flashlight behavior still depend on device/OEM capabilities and permissions.
 
 ## Manual-only remaining checks

@@ -121,7 +121,7 @@ class CaregiverQolSmokeTest {
         }
 
         composeRule.onNodeWithTag("allowed_apps_screen").assertIsDisplayed()
-        composeRule.onNodeWithText("Allowed Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Home Apps").assertIsDisplayed()
         composeRule.onNodeWithText("Installed Apps").assertIsDisplayed()
         composeRule.onNodeWithText("Phone").assertIsDisplayed()
         composeRule.onNodeWithText("Flashlight").assertIsDisplayed()

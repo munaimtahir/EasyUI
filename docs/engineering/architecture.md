@@ -10,7 +10,7 @@ Single Android application, offline-first, no backend.
    - Jetpack Compose screens
    - app navigation
    - accessibility-focused components
-   - billing and paywall UI
+   - premium/paywall scaffolding, not yet wired into the current build
 2. Domain layer
    - home layout rules
    - app visibility filtering
@@ -25,9 +25,11 @@ Single Android application, offline-first, no backend.
 4. Platform integration layer
    - launcher and home intent integration
    - flashlight action
+   - camera action
    - direct dial intent
    - package inventory
-   - billing wrapper
+   - battery and device-status probes
+   - billing wrapper scaffold for a later premium release
 
 ## Repository scaffold
 
@@ -48,7 +50,7 @@ Single Android application, offline-first, no backend.
 
 - onboarding
 - home
-- app list
+- app list scaffold
 - contact detail or action
 - caregiver settings
 - edit layout
@@ -67,10 +69,11 @@ intro -> set default launcher guidance -> optional permission explanation -> sta
 
 open phone -> see large main actions -> tap app or photo contact -> optionally return home
 
-- `Phone` and `All Apps` stay obvious on home
+- `Phone`, `Flashlight`, `Camera`, `Emergency`, `Health Info`, and `SOS` stay obvious on home
 - caregiver settings are not visible on home
-- caregiver entry uses a deliberate hidden gesture on the home header
-- home pages are bounded and fixed, not draggable
+- caregiver entry uses a deliberate hidden gesture on the top status bar, with a clock-tap fallback
+- the app list screen exists, but the senior-facing entry point is still being wired in this build
+- home pages are fixed and caregiver-managed, not draggable
 
 ### Caregiver edit flow
 
@@ -78,7 +81,7 @@ open caregiver area -> enter PIN -> edit layout -> hide or show apps -> save -> 
 
 - caregiver session starts from hidden home entry
 - if caregiver PIN protection is enabled, PIN is required before caregiver settings open
-- caregiver manages `Allowed Apps` separately from senior-facing `All Apps`
+- caregiver manages `Home Apps` separately from the senior-facing home surface
 - caregiver assigns home apps to fixed page and slot positions
 
 ## Crash sensitivity

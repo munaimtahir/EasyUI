@@ -21,7 +21,7 @@ It replaces a cluttered launcher with large tiles, clear labels, and a steadier 
 EasyUI focuses on practical everyday use:
 
 - Large home tiles for the apps and actions that matter most
-- Clear All Apps list with search
+- App list screen with search is present, but the senior-facing entry point is still being wired
 - Optional favorite contact tiles that open the dialer
 - Optional flashlight tile when the device supports it
 - Caregiver PIN and layout lock options
@@ -33,7 +33,7 @@ EasyUI does not depend on a cloud account, does not include ads, and does not pr
 ## Key feature bullets
 
 - Large, readable home screen tiles
-- Simple app list with search
+- App list screen and search scaffold
 - Caregiver setup and layout protection
 - Favorite contact tiles with photo support
 - Optional flashlight shortcut

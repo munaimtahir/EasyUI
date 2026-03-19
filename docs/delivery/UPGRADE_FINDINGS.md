@@ -1,5 +1,7 @@
 # EasyUI Upgrade Findings
 
+Historical baseline note: this document captures the state of the repo before the current Health Info, hidden caregiver access, and backup/restore work landed. Use `docs/delivery/current-status.md` for the live implementation snapshot.
+
 ## Scope of inspection
 
 Reviewed canonical product and engineering docs, launcher navigation, home UI, caregiver flow, persistence layers (Room/DataStore), platform action wrappers, and current smoke/unit tests.

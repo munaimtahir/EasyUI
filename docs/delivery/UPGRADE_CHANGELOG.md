@@ -8,7 +8,7 @@ This upgrade focuses on caregiver-first discoverability, anchored home essential
 
 ## 1) Caregiver entry and protection flow
 
-- Added a practical caregiver entry button on home (`Caregiver`) while keeping the hidden header multi-tap fallback.
+- Added a practical caregiver entry path through a hidden top-bar long-press, with the clock-tap fallback retained.
 - Kept and reused existing PIN/session protection flow (`CaregiverViewModel`, protected routes).
 - Updated onboarding caregiver guidance copy to explain how to re-enter caregiver settings and what PIN protects.
 

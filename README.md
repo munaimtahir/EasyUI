@@ -24,11 +24,12 @@ This product is not a kiosk app, device-owner solution, or enterprise lockdown t
 
 ## Documentation map
 
-- [Docs Overview](/home/munaim/srv/apps/easyui/docs/README.md)
-- [Product Brief](/home/munaim/srv/apps/easyui/docs/product/project-brief.md)
-- [Architecture](/home/munaim/srv/apps/easyui/docs/engineering/architecture.md)
-- [Implementation Roadmap](/home/munaim/srv/apps/easyui/docs/engineering/tasks.md)
-- [Agent Guide](/home/munaim/srv/apps/easyui/AGENTS.md)
+- [Docs Overview](/home/munaim/Documents/github/easyui/docs/README.md)
+- [Current Status](/home/munaim/Documents/github/easyui/docs/delivery/current-status.md)
+- [Product Brief](/home/munaim/Documents/github/easyui/docs/product/project-brief.md)
+- [Architecture](/home/munaim/Documents/github/easyui/docs/engineering/architecture.md)
+- [Implementation Roadmap](/home/munaim/Documents/github/easyui/docs/engineering/tasks.md)
+- [Agent Guide](/home/munaim/Documents/github/easyui/AGENTS.md)
 
 ## Project layout
 
@@ -38,40 +39,37 @@ The current implementation follows this split:
 - `feature/home`, `feature/apps`, `feature/onboarding`, and `feature/caregiver` for the current user-facing flows
 - `core/*` for shared UI, domain rules, local persistence, platform integration, and test support
 
-## Current MVP slice
+## Current implementation snapshot
 
-Implemented in this pass:
+Implemented in the current build:
 
-- first-run intro
-- default launcher guidance
-- caregiver help screen
-- large-tile home screen
-- clock and date block
-- practical caregiver entry button on home (plus hidden fallback gesture)
+- first-run intro and default launcher guidance
+- caregiver help screen with honest setup guidance
+- fixed six-tile senior home
+- clock/date header and status summary
+- hidden caregiver access through a deliberate home gesture, with clock fallback
 - starter layout persisted in Room
 - launcher settings persisted in DataStore
-- anchored essentials on home page 1: Phone, All Apps, Emergency, Camera, Health Info, Flashlight
-- flashlight, emergency, and camera tiles with graceful fallback messaging
+- Home essentials on the senior surface: Phone, Flashlight, Camera, Emergency, Health Info, and SOS
+- flashlight, emergency, camera, and dialer tiles with graceful fallback messaging
 - installed app enumeration with refresh on package changes
-- alphabetical app list with search
-- app launching from home or app list
+- caregiver-managed Home Apps placement in fixed slots
 - caregiver PIN setup and verification
 - layout lock and protected edit mode
 - hidden app management inside EasyUI
-- Home Apps placement in fixed slots (separate from All Apps)
-- simple offline Health Info storage and viewing flow
+- offline Health Info storage and viewing
 - favorite contact tiles with optional local photo and initials fallback
-- polished caregiver tools hub and contact management flow
-- home readability presets
-- very simple home mode
-- calmer empty and fallback states for home and app list
-- finish-setup handoff back to the senior-facing home screen
-- reset-to-safe-default flow
+- home readability presets and very simple mode
+- battery visibility toggle
+- backup export/import and reset-to-safe-default flow
+
+Present but not yet fully surfaced:
+
+- the app list screen and search are implemented, but the senior-facing home entry point is still being wired in this build
 
 Deferred on purpose:
 
 - billing and premium unlock
-- backup or restore
 - system-wide blocking or kiosk-style controls
 
 ## Setup
@@ -109,11 +107,11 @@ Run flow:
 - Flashlight unsupported:
   On a device with no torch, or where torch access is blocked, the flashlight tile should stay disabled and show a fallback message instead of crashing.
 - Caregiver protection:
-  Open the `Caregiver` entry from home, set a local PIN, enable protection, then confirm caregiver sections ask for the PIN when protection is enabled.
+  Long-press the top status bar, set a local PIN, enable protection, then confirm caregiver sections ask for the PIN when protection is enabled.
 - Caregiver re-entry:
-  Confirm the caregiver entry is visible on home and still protected by PIN when enabled.
+  Confirm the hidden caregiver entry path still opens caregiver settings and remains PIN-protected when enabled.
 - Hidden apps:
-  Hide one installed app and confirm it disappears from the All Apps list and search results inside EasyUI only.
+  Hide one installed app and confirm it disappears from EasyUI app surfaces and search results where those surfaces are exposed.
 - Health info:
   In `Caregiver Settings`, edit Health Info and confirm the home `Health Info` tile opens readable saved details.
 - Favorite contacts:

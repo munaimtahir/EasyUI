@@ -1,5 +1,7 @@
 # Implementation Tasks
 
+Current stage: the launcher is beyond MVP and the caregiver safety pack, Health Info, SOS, backup/restore, and release-hardening work are in place. The remaining clear product gap is the premium/billing path, and the app list surface still needs a senior-facing entry point.
+
 ## Phase 0: Foundation
 
 - [x] Initialize Android project with Kotlin and Compose
@@ -23,8 +25,11 @@
 - [x] Large-tile home screen
 - [x] Clock and date block
 - [x] Core app tiles
+- [x] Camera action tile
 - [x] Emergency action tile
+- [x] Health Info tile
 - [x] Flashlight action tile
+- [x] SOS action tile
 - [x] Safe fallbacks for unsupported actions
 
 ### App list
@@ -34,12 +39,18 @@
 - [x] Search
 - [x] Launch app action
 - [x] Refresh on install and uninstall
+- [ ] Senior-facing home entry for the app list surface
 
 ### Data and settings
 
 - [x] Persist home tiles
 - [x] Persist theme and settings
 - [x] Persist emergency contact config
+- [x] Persist Health Info
+- [x] Persist SOS numbers
+- [x] Persist home readability and very simple mode settings
+- [x] Persist battery visibility
+- [x] Persist caregiver lock overlay state
 
 ### QA
 
@@ -61,6 +72,14 @@
 - [x] Hidden apps settings screen
 - [x] Hidden app filtering
 - [x] Restore hidden apps action
+- [x] Home Apps fixed-slot assignment
+- [x] Favorite photo contacts
+- [x] Health Info caregiver editor
+- [x] Home readability presets
+- [x] Very simple home mode
+- [x] Battery visibility toggle
+- [x] EasyUI lock overlay
+- [x] Layout/page controls for caregiver-managed slots
 
 ### Photo contacts
 

@@ -20,7 +20,7 @@ Add the caregiver features that justify payment and create a stable long-term pr
 - hide unused or confusing apps
 - show only selected apps on home or app list
 - optionally hide settings from normal view
-- separate `Allowed Apps` home management from senior-facing `All Apps`
+- separate `Home Apps` management from senior-facing `All Apps`
 - assign home apps to a bounded page and slot model
 
 ### Contacts and quick access

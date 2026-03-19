@@ -40,7 +40,7 @@ fun HiddenAppsScreen(
         ) {
             Text("Hidden Apps", style = MaterialTheme.typography.headlineLarge)
             Text(
-                "Apps toggled off here will not appear in the All Apps list. They are still installed on the device.",
+                "Apps toggled off here will not appear in EasyUI app surfaces that expose app inventory. They are still installed on the device.",
                 style = MaterialTheme.typography.bodyLarge,
             )
 

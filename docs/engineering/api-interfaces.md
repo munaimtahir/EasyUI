@@ -25,17 +25,26 @@ Use standard intents. Request only the minimum permissions required by the chose
 
 Use CameraManager torch APIs when available. If unsupported, hide or disable safely.
 
+### Camera
+
+Launch the installed camera app through a standard intent. If unavailable, show a safe fallback message.
+
+### Battery and device status
+
+Observe battery and device status locally for the home header. Treat the values as best-effort device state, not guaranteed telemetry.
+
 ### Contacts
 
-If direct device-contact integration is used, handle permissions carefully and provide a local-entry fallback.
+Keep the current implementation local-first. Photo contacts use launcher-owned local records and optional local photo URIs.
 
 ### Billing
 
-Google Play Billing Library:
+Google Play Billing Library is planned for the premium unlock path, but it is not wired into the current build yet.
 
 - one-time non-consumable premium product
 - local entitlement cache
 - testable abstraction
+- graceful fallback to free mode if billing is unavailable
 
 ## Internal interfaces
 
@@ -43,7 +52,7 @@ Google Play Billing Library:
 
 - load installed launchable apps
 - search and sort apps
-- expose filtered visible apps
+- expose filtered visible apps and app-list scaffold state
 
 ### HomeLayoutRepository
 
@@ -52,29 +61,45 @@ Google Play Billing Library:
 - validate tile positions
 - restore defaults
 
-### CaregiverSettingsRepository
+### LauncherSettingsRepository
 
 - lock state
 - PIN state
 - theme and visibility preferences
+- home readability and accessibility preferences
 - premium state cache
+
+### HiddenAppRepository
+
+- persist hidden package names
+- hide and unhide packages without affecting installed apps
+
+### BackupRepository
+
+- export config payload
+- validate import payloads
+- apply validated backups atomically
+
+### Platform action wrappers
+
+- `AppLauncher`
+- `DefaultLauncherManager`
+- `EmergencyActionHandler`
+- `FlashlightController`
+- `CameraActionHandler`
+- `BatteryStatusRepository`
+- `DeviceStatusRepository`
+- `AndroidDefaultLauncherManager`
+- `AndroidAppLauncher`
 
 ### ContactsRepository
 
 - CRUD photo contacts
 - local photo reference handling
 
-### BackupService
-
-- export config payload
-- import config payload
-- validate version and integrity
-
 ### PremiumService
 
-- initiate purchase
-- observe entitlement
-- expose feature flags
+Planned only. When it lands, it should initiate purchase, observe entitlement, and expose feature flags behind a free-mode fallback.
 
 ## Error handling contract
 

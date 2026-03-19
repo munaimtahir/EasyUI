@@ -6,6 +6,8 @@ This release-readiness pass applies to the Android project that actually exists 
 
 The original task request referenced `Warranty Vault`, but that product is not present in this repo. All audit findings, policy notes, and store materials below are based on the in-repo launcher app only.
 
+Note: the audit snapshot below predates the current local backup/export flow that now exists in the app module. Use it as a historical release audit, not as the live status page.
+
 ## Audit date
 
 March 16, 2026 (UTC)
@@ -40,7 +42,7 @@ March 16, 2026 (UTC)
 - No `FileProvider`
 - No network security config
 - No cleartext traffic override
-- Automatic Android backup is now disabled because the app does not yet expose an explicit backup/export flow for release.
+- Automatic Android backup is disabled so the app's explicit local backup/export flow remains the only restore path.
 
 ### Permissions and feature declarations
 
@@ -62,6 +64,7 @@ Observed from the codebase:
 - PackageManager queries for installed launchable apps
 - Dialer launch through `ACTION_DIAL`
 - Flashlight control through `CameraManager.setTorchMode`
+- Local backup/export and restore flow in the app module
 
 Not observed in the repo:
 
@@ -74,13 +77,12 @@ Not observed in the repo:
 - notification scheduling
 - reminder channels
 - billing integration in the shipped app module
-- backup/export implementation in the shipped app module
 
 ### Release risks found during audit
 
 - The repo did not include launcher icon assets suitable for release packaging.
 - The manifest requested `CAMERA`, which was broader than necessary for the optional torch tile.
-- Automatic backup was enabled even though explicit backup/export is not implemented and caregiver PIN data is stored locally.
+- Automatic backup needed to be disabled because the app now owns local backup/export behavior and caregiver PIN data is stored locally.
 - Room schema export was disabled, which weakened public-release migration discipline.
 
 ## Repo-side hardening completed

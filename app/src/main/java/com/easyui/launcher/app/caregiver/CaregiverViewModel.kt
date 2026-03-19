@@ -390,10 +390,10 @@ class CaregiverViewModel(
             val currentlyHidden = state.value.hiddenPackages
             if (packageName in currentlyHidden) {
                 container.hiddenAppRepository.setHidden(packageName, false)
-                messages.emit("App will now show in All Apps.")
+                messages.emit("App will now show in EasyUI app surfaces.")
             } else {
                 container.hiddenAppRepository.setHidden(packageName, true)
-                messages.emit("App is now hidden from All Apps.")
+                messages.emit("App is now hidden from EasyUI app surfaces.")
             }
         }
     }

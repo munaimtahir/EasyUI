@@ -107,11 +107,11 @@ fun CaregiverHelpScreen(
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                "To re-enter caregiver settings later, use the Caregiver button on home. If PIN protection is on, the caregiver PIN is required.",
+                "To re-enter caregiver settings later, long-press the top status bar or use the clock-tap fallback. If PIN protection is on, the caregiver PIN is required.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                "Home shows essential tiles and Home Apps. All Apps opens the full app list. Hidden Apps are only hidden inside EasyUI, not Android system-wide.",
+                "Home shows the fixed essentials and Home Apps. The app list surface is still being wired in this build. Hidden Apps are only hidden inside EasyUI, not Android system-wide.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(

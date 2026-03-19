@@ -123,7 +123,7 @@ fun CaregiverToolsScreen(
                     title = "Home Apps",
                     body = listOf(
                         "Home apps placed: $allowedAppCount",
-                        "Assign apps to a fixed page and slot without changing All Apps.",
+                        "Assign apps to a fixed page and slot without changing the installed app list.",
                     ),
                     primaryLabel = "Manage Home Apps",
                     onPrimaryClick = onOpenAllowedApps,
@@ -172,7 +172,7 @@ fun CaregiverToolsScreen(
                 SectionCard(
                     title = "Hidden Apps",
                     body = listOf(
-                        "Remove apps from the All Apps search list.",
+                        "Remove apps from EasyUI surfaces and search results.",
                         "Total hidden: $hiddenAppCount",
                     ),
                     primaryLabel = "Manage Hidden Apps",
@@ -306,7 +306,7 @@ fun LayoutPagesScreen(
                             }
                         }
                         Text(
-                            "Page 1 always keeps Phone, All Apps, and Flashlight easy to reach.",
+                            "The senior home keeps its fixed essentials. These pages control caregiver-managed Home Apps slots.",
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     }
@@ -414,9 +414,9 @@ fun AllowedAppsScreen(
                 .testTag("allowed_apps_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
-            Text("Allowed Apps", style = MaterialTheme.typography.headlineLarge)
+            Text("Home Apps", style = MaterialTheme.typography.headlineLarge)
             Text(
-                "Choose which apps appear on EasyUI home and place each app into a fixed slot.",
+                "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
                 style = MaterialTheme.typography.bodyLarge,
             )
 

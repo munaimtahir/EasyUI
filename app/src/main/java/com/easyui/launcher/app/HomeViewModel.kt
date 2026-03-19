@@ -113,7 +113,7 @@ class HomeViewModel(
                 TileDisplayKind.EMERGENCY -> onOpenEmergency()
                 TileDisplayKind.HEALTH_INFO -> onOpenHealthInfo()
                 TileDisplayKind.SOS -> registerSosTap()
-                TileDisplayKind.APPS_LIST -> messages.emit("All Apps is hidden in this senior-focused layout.")
+                TileDisplayKind.APPS_LIST -> messages.emit("The app list surface is not exposed in this senior-focused layout yet.")
                 TileDisplayKind.APP,
                 TileDisplayKind.CONTACT,
                 -> Unit

@@ -26,14 +26,13 @@ Expected:
 
 ## 3) Caregiver entry discovery
 
-1. On home, locate `Caregiver` button in header.
-2. Tap to open caregiver flow.
-3. Also test hidden fallback by tapping home header repeatedly (5 taps).
+1. On home, long-press the top status bar.
+2. Use the clock-tap fallback by tapping the clock five times quickly.
 
 Expected:
 
 - Caregiver entry is practical and discoverable.
-- Hidden fallback still works.
+- The clock fallback still works.
 
 ## 4) Caregiver PIN enabled flow
 
@@ -58,13 +57,13 @@ Expected:
 
 ## 6) Home page switching
 
-1. On home, swipe between pages.
-2. Confirm page indicator updates.
+1. In caregiver `Layout and Pages`, change the page count between 1 and 3.
+2. Return home and confirm the fixed senior grid is unchanged.
 
 Expected:
 
-- Page transitions are smooth.
-- Page count remains bounded and consistent.
+- Page count stays bounded and consistent.
+- The senior home remains a fixed six-tile grid.
 
 ## 7) Fixed layout stability after app addition
 
@@ -74,7 +73,7 @@ Expected:
 
 Expected:
 
-- Essentials stay anchored (Phone, All Apps, Emergency, Camera, Health Info, Flashlight).
+- Essentials stay anchored (Phone, Flashlight, Camera, Emergency, Health Info, SOS).
 - Added Home Apps occupy predictable fixed slots.
 - Layout persists after relaunch.
 
@@ -152,24 +151,22 @@ Expected:
 
 ## 15) All Apps entry point
 
-1. Tap `All Apps` on home.
-2. Search for apps in All Apps screen.
+1. Confirm the app list surface is not yet exposed from the senior home in this build.
 
 Expected:
 
-- Full app list opens from dedicated entry point.
-- Search works and list stays alphabetized.
+- The app list screen remains a scaffolded/internal surface until its home entry point is wired.
 
 ## 16) Hidden Apps behavior
 
 1. Open caregiver `Hidden Apps`.
 2. Hide an app.
-3. Open All Apps and search for hidden app.
+3. Verify the hidden package state is reflected in the EasyUI surfaces that expose app inventory.
 4. Unhide app and verify return.
 
 Expected:
 
-- Hidden app disappears from EasyUI All Apps/search.
+- Hidden app disappears from EasyUI surfaces/search where exposed.
 - Unhide restores visibility.
 
 ## 17) Reboot continuity
