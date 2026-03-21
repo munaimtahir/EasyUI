@@ -69,18 +69,20 @@ intro -> set default launcher guidance -> optional permission explanation -> sta
 
 open phone -> see large main actions -> tap app or photo contact -> optionally return home
 
-- `Phone`, `Flashlight`, `Camera`, `Emergency`, `Health Info`, and `SOS` stay obvious on home
+- `Phone`, `Messages`, `Contacts`, `Photos`, `Camera`, and `Emergency` stay obvious on home
+- the first home page uses a fixed 2x3 layout with equal tiles, a large clock/date header card, and no visible settings or app-list entry
 - caregiver settings are not visible on home
 - caregiver entry uses a deliberate hidden gesture on the top status bar, with a clock-tap fallback
-- the app list screen exists, but the senior-facing entry point is still being wired in this build
+- the app list screen still exists for secondary flows, but it is not exposed on the main senior home page
 - home pages are fixed and caregiver-managed, not draggable
 
 ### Caregiver edit flow
 
-open caregiver area -> enter PIN -> edit layout -> hide or show apps -> save -> relock
+open caregiver area -> enter PIN -> land on caregiver dashboard -> open a focused section -> save or relock -> return home
 
 - caregiver session starts from hidden home entry
 - if caregiver PIN protection is enabled, PIN is required before caregiver settings open
+- the first caregiver screen is a dashboard with a compact header, four section cards, setup status, and grouped control cards
 - caregiver manages `Home Apps` separately from the senior-facing home surface
 - caregiver assigns home apps to fixed page and slot positions
 

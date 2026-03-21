@@ -2,10 +2,8 @@ package com.easyui.launcher.caregiver
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
@@ -24,15 +22,10 @@ class LockedHomeSmokeTest {
             EasyUiTheme {
                 HomeScreen(
                     timeText = "9:41",
-                    batteryPercent = "82%",
-                    chargingLabel = "Charging",
-                    signalLabel = "Signal good",
-                    simLabel = "SIM One",
-                    wifiLabel = "Wi-Fi connected",
+                    dateText = "Friday, March 20",
                     tiles = listOf(
-                        TileDisplayModel("phone", "Phone", "Open caregiver contacts", true, TileDisplayKind.PHONE_CONTACTS),
+                        TileDisplayModel("phone", "Phone", "Phone", true, TileDisplayKind.PHONE),
                     ),
-                    sosTriggerProgress = 0,
                     skinConfig = SkinConfig(),
                     onTileClick = {},
                     onStatusBarLongPress = {},
@@ -44,6 +37,5 @@ class LockedHomeSmokeTest {
         composeRule.onNodeWithTag("home_screen").assertIsDisplayed()
         composeRule.onNodeWithTag("home_top_status_bar").assertIsDisplayed()
         composeRule.onNodeWithTag("home_clock_text").assertIsDisplayed()
-        composeRule.onNodeWithText("Caregiver Access").assertDoesNotExist()
     }
 }

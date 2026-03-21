@@ -6,19 +6,17 @@ data class TileDisplayModel(
     val subtitle: String,
     val enabled: Boolean,
     val kind: TileDisplayKind,
+    val packageName: String? = null,
+    val activityName: String? = null,
     val avatarImageUri: String? = null,
     val avatarFallback: String? = null,
 )
 
 enum class TileDisplayKind {
-    APP,
-    DIALER,
-    APPS_LIST,
-    PHONE_CONTACTS,
-    FLASHLIGHT,
+    PHONE,
+    MESSAGES,
+    CONTACTS,
+    PHOTOS,
     EMERGENCY,
     CAMERA,
-    HEALTH_INFO,
-    SOS,
-    CONTACT,
 }

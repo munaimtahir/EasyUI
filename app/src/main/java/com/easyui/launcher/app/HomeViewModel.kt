@@ -3,15 +3,15 @@ package com.easyui.launcher.app
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.easyui.core.domain.model.BatteryStatus
-import com.easyui.core.domain.model.DeviceStatus
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
+import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
-import com.easyui.core.domain.rules.ContactTileRules
 import com.easyui.core.domain.rules.HomeLayoutRules
+import com.easyui.core.domain.rules.PrimaryHomeAppKind
+import com.easyui.core.domain.rules.PrimaryHomeAppRules
 import com.easyui.launcher.di.AppContainer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -26,8 +26,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-private const val SosTapWindowMs = 2_400L
-private const val SosCooldownMs = 8_000L
 private const val ClockTapWindowMs = 3_000L
 private const val ClockTapTriggerCount = 5
 private const val CaregiverAccessDebounceMs = 1_500L
@@ -46,8 +44,7 @@ class HomeViewModel(
 
     private data class BaseHomeState(
         val tiles: List<HomeTile>,
-        val batteryStatus: BatteryStatus,
-        val deviceStatus: DeviceStatus,
+        val installedApps: List<InstalledApp>,
         val settings: LauncherSettings,
         val now: LocalDateTime,
     )
@@ -55,19 +52,17 @@ class HomeViewModel(
     val state: StateFlow<HomeUiState> =
         combine(
             container.homeLayoutRepository.observeTiles(),
-            container.batteryStatusRepository.observeBatteryStatus(),
-            container.deviceStatusRepository.observeDeviceStatus(),
+            container.appCatalogRepository.observeInstalledApps(),
             settingsState,
             timeFlow(),
-        ) { tiles, batteryStatus, deviceStatus, settings, now ->
+        ) { tiles, installedApps, settings, now ->
             BaseHomeState(
                 tiles = tiles,
-                batteryStatus = batteryStatus,
-                deviceStatus = deviceStatus,
+                installedApps = installedApps,
                 settings = settings,
                 now = now,
             )
-        }.combine(localState) { base, local ->
+        }.combine(localState) { base, _ ->
             HomeUiState(
                 timeText = base.now.format(
                     if (base.settings.use24HourClock) {
@@ -76,13 +71,8 @@ class HomeViewModel(
                         DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())
                     },
                 ),
-                batteryPercent = base.batteryStatus.percentage?.let { "$it%" } ?: "--%",
-                chargingLabel = if (base.batteryStatus.isCharging) "Charging" else "Not charging",
-                signalLabel = base.deviceStatus.signalLabel,
-                simLabel = base.deviceStatus.simLabel,
-                wifiLabel = base.deviceStatus.wifiLabel,
-                tiles = primaryTiles(base.tiles),
-                sosTriggerProgress = local.sosTapProgress,
+                dateText = base.now.format(DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.getDefault())),
+                tiles = primaryTiles(base.tiles, base.installedApps),
                 skinConfig = base.settings.skinConfig,
             )
         }.stateIn(
@@ -95,28 +85,19 @@ class HomeViewModel(
         tileId: String,
         onOpenPhoneContacts: () -> Unit,
         onOpenEmergency: () -> Unit,
-        onOpenHealthInfo: () -> Unit,
     ) {
         val tile = state.value.tiles.firstOrNull { it.id == tileId } ?: return
         viewModelScope.launch {
             when (tile.kind) {
-                TileDisplayKind.PHONE_CONTACTS, TileDisplayKind.DIALER -> onOpenPhoneContacts()
-                TileDisplayKind.FLASHLIGHT -> {
-                    val result = container.flashlightController.performToggle()
-                    result.fallbackMessage?.let { messages.emit(it) }
-                }
+                TileDisplayKind.PHONE -> launchDialer()
+                TileDisplayKind.CONTACTS -> onOpenPhoneContacts()
+                TileDisplayKind.MESSAGES, TileDisplayKind.PHOTOS -> launchResolvedApp(tile)
                 TileDisplayKind.CAMERA -> {
                     if (!container.cameraActionHandler.launchCamera()) {
                         messages.emit("Camera is not available on this device.")
                     }
                 }
                 TileDisplayKind.EMERGENCY -> onOpenEmergency()
-                TileDisplayKind.HEALTH_INFO -> onOpenHealthInfo()
-                TileDisplayKind.SOS -> registerSosTap()
-                TileDisplayKind.APPS_LIST -> messages.emit("The app list surface is not exposed in this senior-focused layout yet.")
-                TileDisplayKind.APP,
-                TileDisplayKind.CONTACT,
-                -> Unit
             }
         }
     }
@@ -159,108 +140,92 @@ class HomeViewModel(
         return allowed
     }
 
-    private suspend fun registerSosTap() {
-        val now = SystemClock.elapsedRealtime()
-        val current = localState.value
-        if (now < current.sosCooldownUntilMs) {
-            messages.emit("SOS is cooling down for a moment.")
-            return
+    private suspend fun launchDialer() {
+        if (!container.emergencyActionHandler.launchDialer(phoneNumber = null)) {
+            messages.emit("Phone is not available on this device.")
         }
-        val nextCount = if (now - current.lastSosTapAtMs <= SosTapWindowMs) current.sosTapCount + 1 else 1
-        localState.update {
-            it.copy(
-                sosTapCount = nextCount,
-                sosTapProgress = nextCount.coerceAtMost(3),
-                lastSosTapAtMs = now,
-            )
-        }
-        if (nextCount < 3) return
-
-        localState.update {
-            it.copy(
-                sosTapCount = 0,
-                sosTapProgress = 0,
-                sosCooldownUntilMs = now + SosCooldownMs,
-            )
-        }
-        runSosFlow()
     }
 
-    private suspend fun runSosFlow() {
-        val numbers = settingsState.value.sosNumbers.take(3)
-        if (numbers.isEmpty()) {
-            messages.emit("Set at least one SOS number in caregiver settings first.")
-            return
+    private suspend fun launchResolvedApp(tile: TileDisplayModel) {
+        val packageName = tile.packageName
+        val activityName = tile.activityName
+        val launched = packageName != null &&
+            activityName != null &&
+            container.appLauncher.launch(packageName, activityName)
+        if (!launched) {
+            messages.emit("${tile.title} is not available on this device.")
         }
-
-        val sentCount = numbers.count { number ->
-            container.emergencyActionHandler.sendSms(
-                phoneNumber = number,
-                message = "EasyUI SOS alert: please call back immediately.",
-            )
-        }
-        val callPlaced = container.emergencyActionHandler.callPhone(numbers.first())
-        val callLabel = if (callPlaced) "calling primary caregiver." else "unable to auto-call primary caregiver."
-        messages.emit("SOS activated: sent $sentCount/${numbers.size} messages, $callLabel")
     }
 
-    private fun primaryTiles(tiles: List<HomeTile>): List<TileDisplayModel> {
+    private fun primaryTiles(
+        tiles: List<HomeTile>,
+        installedApps: List<InstalledApp>,
+    ): List<TileDisplayModel> {
         val fixed = HomeLayoutRules.ensureRequiredActions(tiles).filter { it.position in 0..5 }.sortedBy { it.position }
-        return fixed.map { tile ->
+        return fixed.mapNotNull { tile ->
             when (tile.action) {
                 HomeTileAction.OPEN_DIALER -> TileDisplayModel(
                     id = tile.id,
                     title = tile.title,
-                    subtitle = "Open caregiver contacts",
+                    subtitle = "Phone",
                     enabled = true,
-                    kind = TileDisplayKind.PHONE_CONTACTS,
+                    kind = TileDisplayKind.PHONE,
                 )
-                HomeTileAction.FLASHLIGHT -> TileDisplayModel(
+                HomeTileAction.OPEN_MESSAGES -> actionTile(
+                    tile = tile,
+                    kind = TileDisplayKind.MESSAGES,
+                    app = PrimaryHomeAppRules.resolve(PrimaryHomeAppKind.MESSAGES, installedApps),
+                )
+                HomeTileAction.OPEN_CONTACTS -> TileDisplayModel(
                     id = tile.id,
                     title = tile.title,
-                    subtitle = "Toggle light",
+                    subtitle = "Contacts",
                     enabled = true,
-                    kind = TileDisplayKind.FLASHLIGHT,
+                    kind = TileDisplayKind.CONTACTS,
+                )
+                HomeTileAction.OPEN_PHOTOS -> actionTile(
+                    tile = tile,
+                    kind = TileDisplayKind.PHOTOS,
+                    app = PrimaryHomeAppRules.resolve(PrimaryHomeAppKind.PHOTOS, installedApps),
                 )
                 HomeTileAction.OPEN_CAMERA -> TileDisplayModel(
                     id = tile.id,
                     title = tile.title,
-                    subtitle = "Open camera now",
+                    subtitle = "Camera",
                     enabled = true,
                     kind = TileDisplayKind.CAMERA,
                 )
                 HomeTileAction.EMERGENCY -> TileDisplayModel(
                     id = tile.id,
                     title = tile.title,
-                    subtitle = "Emergency call options",
+                    subtitle = "Emergency",
                     enabled = true,
                     kind = TileDisplayKind.EMERGENCY,
                 )
-                HomeTileAction.OPEN_HEALTH_INFO -> TileDisplayModel(
-                    id = tile.id,
-                    title = tile.title,
-                    subtitle = "View medical card",
-                    enabled = true,
-                    kind = TileDisplayKind.HEALTH_INFO,
-                )
-                HomeTileAction.SOS -> TileDisplayModel(
-                    id = tile.id,
-                    title = tile.title,
-                    subtitle = "Tap 3x quickly",
-                    enabled = true,
-                    kind = TileDisplayKind.SOS,
-                )
-                HomeTileAction.OPEN_APP_LIST, null -> TileDisplayModel(
-                    id = tile.id,
-                    title = tile.title,
-                    subtitle = "Unavailable in this layout",
-                    enabled = false,
-                    kind = TileDisplayKind.APPS_LIST,
-                    avatarFallback = ContactTileRules.photoFallback(null, tile.title),
-                )
+                HomeTileAction.OPEN_APP_LIST,
+                HomeTileAction.FLASHLIGHT,
+                HomeTileAction.OPEN_HEALTH_INFO,
+                HomeTileAction.SOS,
+                null,
+                -> null
             }
         }
     }
+
+    private fun actionTile(
+        tile: HomeTile,
+        kind: TileDisplayKind,
+        app: InstalledApp?,
+    ): TileDisplayModel =
+        TileDisplayModel(
+            id = tile.id,
+            title = tile.title,
+            subtitle = tile.title,
+            enabled = true,
+            kind = kind,
+            packageName = app?.packageName,
+            activityName = app?.activityName,
+        )
 
     private fun timeFlow() = kotlinx.coroutines.flow.flow {
         while (true) {
@@ -273,9 +238,5 @@ class HomeViewModel(
         val clockTapCount: Int = 0,
         val lastClockTapAtMs: Long = 0L,
         val lastCaregiverAccessAtMs: Long = 0L,
-        val sosTapCount: Int = 0,
-        val sosTapProgress: Int = 0,
-        val lastSosTapAtMs: Long = 0L,
-        val sosCooldownUntilMs: Long = 0L,
     )
 }

@@ -23,20 +23,15 @@ class HomeScreenSmokeTest {
             EasyUiTheme {
                 HomeScreen(
                     timeText = "9:41",
-                    batteryPercent = "82%",
-                    chargingLabel = "Charging",
-                    signalLabel = "Signal good",
-                    simLabel = "SIM One",
-                    wifiLabel = "Wi-Fi connected",
+                    dateText = "Friday, March 20",
                     tiles = listOf(
-                        TileDisplayModel("phone", "Phone", "Open caregiver contacts", true, TileDisplayKind.PHONE_CONTACTS),
-                        TileDisplayModel("flashlight", "Flashlight", "Toggle light", true, TileDisplayKind.FLASHLIGHT),
-                        TileDisplayModel("camera", "Camera", "Open camera now", true, TileDisplayKind.CAMERA),
-                        TileDisplayModel("emergency", "Emergency", "Emergency call options", true, TileDisplayKind.EMERGENCY),
-                        TileDisplayModel("health-info", "Health Info", "View medical card", true, TileDisplayKind.HEALTH_INFO),
-                        TileDisplayModel("sos", "SOS", "Tap 3x quickly", true, TileDisplayKind.SOS),
+                        TileDisplayModel("phone", "Phone", "Phone", true, TileDisplayKind.PHONE),
+                        TileDisplayModel("messages", "Messages", "Messages", true, TileDisplayKind.MESSAGES),
+                        TileDisplayModel("contacts", "Contacts", "Contacts", true, TileDisplayKind.CONTACTS),
+                        TileDisplayModel("photos", "Photos", "Photos", true, TileDisplayKind.PHOTOS),
+                        TileDisplayModel("camera", "Camera", "Camera", true, TileDisplayKind.CAMERA),
+                        TileDisplayModel("emergency", "Emergency", "Emergency", true, TileDisplayKind.EMERGENCY),
                     ),
-                    sosTriggerProgress = 0,
                     skinConfig = SkinConfig(),
                     onTileClick = {},
                     onStatusBarLongPress = {},
@@ -47,30 +42,7 @@ class HomeScreenSmokeTest {
 
         composeRule.onNodeWithTag("home_top_status_bar").assertIsDisplayed()
         composeRule.onNodeWithText("Phone").assertIsDisplayed()
-        composeRule.onNodeWithText("SOS").assertIsDisplayed()
-    }
-
-    @Test
-    fun homeScreenShowsSosProgressState() {
-        composeRule.setContent {
-            EasyUiTheme {
-                HomeScreen(
-                    timeText = "9:41",
-                    batteryPercent = "82%",
-                    chargingLabel = "Charging",
-                    signalLabel = "Signal good",
-                    simLabel = "SIM One",
-                    wifiLabel = "Wi-Fi connected",
-                    tiles = emptyList(),
-                    sosTriggerProgress = 2,
-                    skinConfig = SkinConfig(),
-                    onTileClick = {},
-                    onStatusBarLongPress = {},
-                    onClockTapped = {},
-                )
-            }
-        }
-
-        composeRule.onNodeWithTag("sos_trigger_progress").assertIsDisplayed()
+        composeRule.onNodeWithText("Emergency").assertIsDisplayed()
+        composeRule.onNodeWithText("Friday, March 20").assertIsDisplayed()
     }
 }

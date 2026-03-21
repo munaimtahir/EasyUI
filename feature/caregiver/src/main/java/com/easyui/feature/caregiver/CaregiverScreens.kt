@@ -56,6 +56,7 @@ import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.ui.components.AvatarBadge
 import com.easyui.core.ui.theme.EasyUiSpacing
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun CaregiverToolsScreen(
     protectionEnabled: Boolean,
@@ -88,169 +89,36 @@ fun CaregiverToolsScreen(
     onResetLauncher: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(EasyUiSpacing.lg)
-                .testTag("caregiver_tools_screen"),
-            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
-        ) {
-            item {
-                Text("Caregiver Settings", style = MaterialTheme.typography.headlineLarge)
-            }
-            item {
-                Text(
-                    "These settings change EasyUI only. They do not lock or manage Android outside this launcher.",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-            item {
-                SectionCard(
-                    title = "Layout / Pages",
-                    body = listOf(
-                        "Home pages: $currentPageCount",
-                        "Layout mode: ${layoutModeLabel(skinConfig.layoutMode)}",
-                        "Theme: ${visualThemeLabel(skinConfig.visualTheme)}",
-                        "Accessibility: ${accessibilityModeLabel(skinConfig.accessibilityMode)}",
-                    ),
-                    primaryLabel = "Layout and Pages",
-                    onPrimaryClick = onOpenLayoutPages,
-                )
-            }
-            item {
-                SectionCard(
-                    title = "Home Apps",
-                    body = listOf(
-                        "Home apps placed: $allowedAppCount",
-                        "Assign apps to a fixed page and slot without changing the installed app list.",
-                    ),
-                    primaryLabel = "Manage Home Apps",
-                    onPrimaryClick = onOpenAllowedApps,
-                )
-            }
-            item {
-                SectionCard(
-                    title = "Call Shortcuts",
-                    body = listOf(
-                        "The Phone tile always opens the system dialer.",
-                        "Call shortcuts on home: $favoriteContactCount",
-                    ),
-                    primaryLabel = "Manage Call Shortcuts",
-                    onPrimaryClick = onManageFavoriteContacts,
-                )
-            }
-            item {
-                SectionCard(
-                    title = "Health Info",
-                    body = listOf(
-                        if (healthInfoConfigured) "Health details are saved." else "No health details saved yet.",
-                        "Show simple medical information from a home tile.",
-                    ),
-                    primaryLabel = "Edit Health Info",
-                    onPrimaryClick = onOpenHealthInfo,
-                )
-            }
-            item {
-                SectionCard(
-                    title = "Emergency Number",
-                    body = listOf(
-                        "The Emergency tile opens dialer with this number.",
-                        "Current: ${emergencyPhoneNumber.ifBlank { "Not set (defaults to 911)" }}",
-                        "SOS numbers configured: $sosNumberCount",
-                        if (easyUiLockEnabled) {
-                            "EasyUI lock is on (${easyUiLockTimeoutSeconds}s timeout)."
-                        } else {
-                            "EasyUI lock is off."
-                        },
-                    ),
-                    primaryLabel = "Set Emergency Number",
-                    onPrimaryClick = onOpenEmergencySettings,
-                )
-            }
-            item {
-                SectionCard(
-                    title = "Hidden Apps",
-                    body = listOf(
-                        "Remove apps from EasyUI surfaces and search results.",
-                        "Total hidden: $hiddenAppCount",
-                    ),
-                    primaryLabel = "Manage Hidden Apps",
-                    onPrimaryClick = onOpenHiddenApps,
-                )
-            }
-            item {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(EasyUiSpacing.md),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                    ) {
-                        Text("Lock / Protection", style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            if (hasPinConfigured) "Caregiver PIN is ready." else "No caregiver PIN is set yet.",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        Button(
-                            onClick = if (hasPinConfigured) onChangePin else onSetupPin,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(if (hasPinConfigured) "Change Caregiver PIN" else "Set Caregiver PIN")
-                        }
-                        SettingToggleRow(
-                            label = "Require PIN for caregiver access",
-                            checked = protectionEnabled,
-                            onCheckedChange = { onToggleProtection() },
-                        )
-                        SettingToggleRow(
-                            label = "Lock launcher settings and layout",
-                            checked = layoutLocked,
-                            onCheckedChange = { onToggleLayoutLock() },
-                        )
-                    }
-                }
-            }
-            item {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(EasyUiSpacing.md),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                    ) {
-                        Text("Battery Display", style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            "Show simple battery details on the EasyUI home screen when helpful.",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        SettingToggleRow(
-                            label = "Show battery on home",
-                            checked = showBatteryInfo,
-                            onCheckedChange = onToggleBatteryInfo,
-                        )
-                    }
-                }
-            }
-            item {
-                Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                    Text("Back to Home")
-                }
-            }
-            item {
-                SectionCard(
-                    title = "Backup and Restore",
-                    body = listOf(
-                        "Export the current setup to a file.",
-                        "Restore a saved setup from a backup file.",
-                    ),
-                    primaryLabel = "Backup and Restore",
-                    onPrimaryClick = onOpenBackupRestore,
-                )
-            }
-            item {
-                OutlinedButton(onClick = onResetLauncher, modifier = Modifier.fillMaxWidth()) {
-                    Text("Reset to Safe Default")
-                }
-            }
-        }
-    }
+    CaregiverDashboardScreen(
+        protectionEnabled = protectionEnabled,
+        layoutLocked = layoutLocked,
+        hasPinConfigured = hasPinConfigured,
+        currentPageCount = currentPageCount,
+        showBatteryInfo = showBatteryInfo,
+        favoriteContactCount = favoriteContactCount,
+        allowedAppCount = allowedAppCount,
+        hiddenAppCount = hiddenAppCount,
+        healthInfoConfigured = healthInfoConfigured,
+        emergencyPhoneNumber = emergencyPhoneNumber,
+        sosNumberCount = sosNumberCount,
+        easyUiLockEnabled = easyUiLockEnabled,
+        easyUiLockTimeoutSeconds = easyUiLockTimeoutSeconds,
+        onSetupPin = onSetupPin,
+        onChangePin = onChangePin,
+        onToggleProtection = onToggleProtection,
+        onToggleLayoutLock = onToggleLayoutLock,
+        onToggleBatteryInfo = onToggleBatteryInfo,
+        onOpenLayoutPages = onOpenLayoutPages,
+        onOpenAllowedApps = onOpenAllowedApps,
+        onManageFavoriteContacts = onManageFavoriteContacts,
+        onOpenEmergencySettings = onOpenEmergencySettings,
+        onOpenHealthInfo = onOpenHealthInfo,
+        onOpenBackupRestore = onOpenBackupRestore,
+        onOpenHiddenApps = onOpenHiddenApps,
+        onFinishSetup = onFinishSetup,
+        onResetLauncher = onResetLauncher,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -953,10 +821,10 @@ private fun readabilityLabel(preset: HomeReadabilityPreset): String =
 
 private fun readabilityBody(preset: HomeReadabilityPreset): String =
     when (preset) {
-        HomeReadabilityPreset.STANDARD -> "Balanced spacing and size for everyday use."
-        HomeReadabilityPreset.LARGER_TEXT -> "Makes labels easier to read without changing the layout too much."
-        HomeReadabilityPreset.LARGER_TILES -> "Shows fewer, larger tiles on the home screen."
-        HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> "Adds extra breathing room between home elements."
+        HomeReadabilityPreset.STANDARD -> "Uses the locked senior home layout with balanced spacing."
+        HomeReadabilityPreset.LARGER_TEXT -> "Keeps the same home layout while favoring larger text where supported."
+        HomeReadabilityPreset.LARGER_TILES -> "Keeps the same 2x3 layout while favoring roomier tile spacing where supported."
+        HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> "Keeps the home calm with extra breathing room where supported."
     }
 
 private fun layoutModeLabel(mode: LayoutMode): String =
@@ -969,10 +837,10 @@ private fun layoutModeLabel(mode: LayoutMode): String =
 
 private fun layoutModeBody(mode: LayoutMode): String =
     when (mode) {
-        LayoutMode.SIMPLE_CLASSIC -> "Standard 2x3 layout with balanced readability."
-        LayoutMode.VERY_SIMPLE -> "Larger tiles with fewer labels for maximum readability."
-        LayoutMode.CARE_MODE -> "Emphasizes Health Info, Emergency, and SOS."
-        LayoutMode.COMMUNICATION_MODE -> "Emphasizes Phone and contact-focused use."
+        LayoutMode.SIMPLE_CLASSIC -> "Uses the fixed senior home layout."
+        LayoutMode.VERY_SIMPLE -> "Keeps the same fixed layout while favoring maximum readability."
+        LayoutMode.CARE_MODE -> "Keeps the same fixed layout while prioritizing urgent caregiver-friendly actions."
+        LayoutMode.COMMUNICATION_MODE -> "Keeps the same fixed layout while prioritizing calling and contacts."
     }
 
 private fun visualThemeLabel(theme: VisualTheme): String =

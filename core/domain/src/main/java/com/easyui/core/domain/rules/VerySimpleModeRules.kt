@@ -11,15 +11,17 @@ object VerySimpleModeRules {
         val contacts = normalized.filter { it.type == HomeTileType.CONTACT }.take(2)
         val phone = normalized.firstOrNull { it.action == HomeTileAction.OPEN_DIALER }
         val emergency = normalized.firstOrNull { it.action == HomeTileAction.EMERGENCY }
+        val contactsAction = normalized.firstOrNull { it.action == HomeTileAction.OPEN_CONTACTS }
+        val messages = normalized.firstOrNull { it.action == HomeTileAction.OPEN_MESSAGES }
         val fallbackApp = normalized.firstOrNull { it.type == HomeTileType.APP }
-        val flashlight = normalized.firstOrNull { it.action == HomeTileAction.FLASHLIGHT }
 
         val selected = buildList {
             if (phone != null) add(phone)
             if (emergency != null) add(emergency)
             addAll(contacts)
-            if (contacts.isEmpty() && fallbackApp != null) add(fallbackApp)
-            if (size < 4 && flashlight != null) add(flashlight)
+            if (contacts.isEmpty() && contactsAction != null) add(contactsAction)
+            if (size < 4 && messages != null) add(messages)
+            if (size < 4 && fallbackApp != null) add(fallbackApp)
         }
         return selected
             .distinctBy { it.id }

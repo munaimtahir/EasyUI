@@ -1,44 +1,56 @@
 package com.easyui.feature.home
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.model.SkinConfig
+import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
-import com.easyui.core.ui.components.LargeActionTile
-import com.easyui.core.ui.theme.ColorPalette
-import com.easyui.core.ui.theme.EmphasisMode
-import com.easyui.core.ui.theme.LayoutConfig
-import com.easyui.core.ui.theme.SkinManager
-import com.easyui.core.ui.theme.SpacingSet
-import com.easyui.core.ui.theme.TileStyle
-import com.easyui.core.ui.theme.TypographySet
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
 
 private const val TopBarLongPressMs = 3_000L
@@ -46,111 +58,74 @@ private const val TopBarLongPressMs = 3_000L
 @Composable
 fun HomeScreen(
     timeText: String,
-    batteryPercent: String,
-    chargingLabel: String,
-    signalLabel: String,
-    simLabel: String,
-    wifiLabel: String,
+    dateText: String,
     tiles: List<TileDisplayModel>,
-    sosTriggerProgress: Int,
     skinConfig: SkinConfig,
     onTileClick: (String) -> Unit,
     onStatusBarLongPress: () -> Unit,
     onClockTapped: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val haptic = LocalHapticFeedback.current
-    var accessCueVisible by remember { mutableStateOf(false) }
-    val skinManager = remember(skinConfig) { SkinManager(skinConfig) }
-    val colors = skinManager.getColors()
-    val typography = skinManager.getTypography()
-    val spacing = skinManager.getSpacing()
-    val tileStyle = skinManager.getTileStyle()
-    val layout = skinManager.getLayoutConfig()
-    val tileSlots = List(layout.gridRows * layout.gridCols) { index -> tiles.getOrNull(index) }
+    val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
+    val tileSlots = List(6) { index -> tiles.getOrNull(index) }
 
-    LaunchedEffect(accessCueVisible) {
-        if (accessCueVisible) {
-            delay(900)
-            accessCueVisible = false
-        }
-    }
-
-    Surface(modifier = modifier.fillMaxSize().background(colors.background), color = colors.background) {
-        Column(
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = SeniorHomeTokens.backgroundBottom,
+    ) {
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(spacing.padding)
+                .background(SeniorHomeTokens.backgroundBrush)
                 .testTag("home_screen"),
-            verticalArrangement = Arrangement.spacedBy(spacing.tileSpacing),
         ) {
-            TopStatusBar(
-                timeText = timeText,
-                batteryPercent = batteryPercent,
-                chargingLabel = chargingLabel,
-                signalLabel = signalLabel,
-                simLabel = simLabel,
-                wifiLabel = wifiLabel,
-                accessCueVisible = accessCueVisible,
-                colors = colors,
-                typography = typography,
-                spacing = spacing,
-                onLongPressConfirmed = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    accessCueVisible = true
-                    onStatusBarLongPress()
-                },
-                onClockTap = onClockTapped,
-            )
-
-            if (sosTriggerProgress > 0) {
-                Text(
-                    text = "SOS ready: $sosTriggerProgress/3 taps",
-                    style = TextStyle(fontSize = typography.labelSize, fontWeight = typography.fontWeight),
-                    color = colors.sosColor,
-                    modifier = Modifier.testTag("sos_trigger_progress"),
-                )
-            }
-
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(spacing.tileSpacing),
+                    .fillMaxSize()
+                    .padding(
+                        start = SeniorHomeTokens.pageHorizontalPadding,
+                        end = SeniorHomeTokens.pageHorizontalPadding,
+                        top = safeDrawingPadding.calculateTopPadding() + SeniorHomeTokens.topSafeSpacing,
+                        bottom = safeDrawingPadding.calculateBottomPadding() + SeniorHomeTokens.bottomSpacing,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.sectionGap),
             ) {
-                repeat(layout.gridRows) { row ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f * layout.tileSizeScale),
-                        horizontalArrangement = Arrangement.spacedBy(spacing.tileSpacing),
-                    ) {
-                        repeat(layout.gridCols) { column ->
-                            val index = row * layout.gridCols + column
-                            val tile = tileSlots.getOrNull(index)
-                            if (tile != null) {
-                                LargeActionTile(
-                                    title = tile.title,
-                                    subtitle = tile.subtitle,
-                                    enabled = tile.enabled,
-                                    onClick = { onTileClick(tile.id) },
-                                    highlighted = tile.title.equals("SOS", ignoreCase = true) || isEmphasized(tile.title, layout),
-                                    showSubtitle = layout.showLabels,
-                                    palette = colors,
-                                    typography = typography,
-                                    spacing = spacing,
-                                    tileStyle = tileStyle,
-                                    modifier = Modifier.weight(1f),
-                                )
-                            } else {
-                                Card(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxSize(),
-                                    shape = RoundedCornerShape(spacing.cornerRadius),
-                                    colors = CardDefaults.cardColors(containerColor = colors.tileBackground.copy(alpha = 0.6f)),
-                                    elevation = CardDefaults.cardElevation(defaultElevation = tileStyle.elevationDp.dp),
-                                ) {}
+                HomeHeaderCard(
+                    timeText = timeText,
+                    dateText = dateText,
+                    accessibilityMode = skinConfig.accessibilityMode,
+                    onLongPressConfirmed = onStatusBarLongPress,
+                    onClockTapped = onClockTapped,
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                ) {
+                    repeat(3) { row ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            horizontalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                        ) {
+                            repeat(2) { column ->
+                                val index = (row * 2) + column
+                                val tile = tileSlots[index]
+                                if (tile != null) {
+                                    HomeActionTile(
+                                        tile = tile,
+                                        accessibilityMode = skinConfig.accessibilityMode,
+                                        onClick = { onTileClick(tile.id) },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxHeight(),
+                                    )
+                                } else {
+                                    Box(modifier = Modifier.weight(1f))
+                                }
                             }
                         }
                     }
@@ -160,30 +135,15 @@ fun HomeScreen(
     }
 }
 
-private fun isEmphasized(title: String, layout: LayoutConfig): Boolean {
-    val normalized = title.lowercase()
-    return when (layout.emphasisMode) {
-        EmphasisMode.BALANCED -> false
-        EmphasisMode.CARE_FOCUSED -> normalized in setOf("health info", "emergency", "sos")
-        EmphasisMode.COMMUNICATION_FOCUSED -> normalized in setOf("phone", "contacts")
-    }
-}
-
 @Composable
-private fun TopStatusBar(
+private fun HomeHeaderCard(
     timeText: String,
-    batteryPercent: String,
-    chargingLabel: String,
-    signalLabel: String,
-    simLabel: String,
-    wifiLabel: String,
-    accessCueVisible: Boolean,
-    colors: ColorPalette,
-    typography: TypographySet,
-    spacing: SpacingSet,
+    dateText: String,
+    accessibilityMode: AccessibilityMode,
     onLongPressConfirmed: () -> Unit,
-    onClockTap: () -> Unit,
+    onClockTapped: () -> Unit,
 ) {
+    val haptic = LocalHapticFeedback.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,52 +155,161 @@ private fun TopStatusBar(
                             tryAwaitRelease()
                         }
                         if (releasedBeforeTimeout == null) {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             onLongPressConfirmed()
                         }
                     },
                 )
             },
-        shape = RoundedCornerShape(spacing.cornerRadius),
-        colors = CardDefaults.cardColors(containerColor = colors.tileBackground),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+        colors = CardDefaults.cardColors(containerColor = SeniorHomeTokens.headerBackground),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(spacing.padding),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(
+                    horizontal = SeniorHomeTokens.headerHorizontalPadding,
+                    vertical = SeniorHomeTokens.headerVerticalPadding,
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Column {
-                Text(
-                    text = timeText,
-                    style = TextStyle(fontSize = typography.headingSize, fontWeight = FontWeight.Bold),
-                    color = colors.primaryText,
-                    modifier = Modifier
-                        .testTag("home_clock_text")
-                        .pointerInput(onClockTap) { detectTapGestures(onTap = { onClockTap() }) },
-                )
-                if (accessCueVisible) {
-                    Text(
-                        text = "Access detected",
-                        style = TextStyle(fontSize = typography.bodySize, fontWeight = typography.fontWeight),
-                        color = colors.accent,
-                        modifier = Modifier.testTag("caregiver_access_cue"),
-                    )
-                }
-            }
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = "$batteryPercent · $chargingLabel",
-                    style = TextStyle(fontSize = typography.bodySize, fontWeight = typography.fontWeight),
-                    color = colors.primaryText,
-                )
-                Text(
-                    text = "$signalLabel · $simLabel · $wifiLabel",
-                    style = TextStyle(fontSize = typography.labelSize, fontWeight = typography.fontWeight),
-                    color = colors.secondaryText,
-                )
-            }
+            Text(
+                text = timeText,
+                color = SeniorHomeTokens.textPrimary,
+                fontSize = when (accessibilityMode) {
+                    AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.timeTextSizeLarge
+                    else -> SeniorHomeTokens.timeTextSize
+                },
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .testTag("home_clock_text")
+                    .pointerInput(onClockTapped) {
+                        detectTapGestures(onTap = { onClockTapped() })
+                    },
+            )
+            Text(
+                text = dateText,
+                color = SeniorHomeTokens.textSecondaryOnHeader,
+                fontSize = when (accessibilityMode) {
+                    AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.dateTextSizeLarge
+                    else -> SeniorHomeTokens.dateTextSize
+                },
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }
+
+@Composable
+private fun HomeActionTile(
+    tile: TileDisplayModel,
+    accessibilityMode: AccessibilityMode,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.98f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        label = "homeTileScale",
+    )
+    var isFocused by remember { mutableStateOf(false) }
+
+    Card(
+        onClick = onClick,
+        interactionSource = interactionSource,
+        modifier = modifier
+            .defaultMinSize(
+                minWidth = SeniorHomeTokens.minimumTargetSize,
+                minHeight = SeniorHomeTokens.minimumTargetSize,
+            )
+            .scale(scale)
+            .onFocusChanged { isFocused = it.isFocused }
+            .semantics {
+                role = Role.Button
+                contentDescription = tile.title
+            }
+            .testTag("home_tile_${tile.id}"),
+        shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+        colors = CardDefaults.cardColors(containerColor = SeniorHomeTokens.tileColor(tile.kind)),
+        border = if (isFocused) {
+            androidx.compose.foundation.BorderStroke(SeniorHomeTokens.focusRingWidth, SeniorHomeTokens.focusRing)
+        } else {
+            null
+        },
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = SeniorHomeTokens.tileHorizontalPadding,
+                    vertical = SeniorHomeTokens.tileVerticalPadding,
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                imageVector = SeniorHomeTokens.tileIcon(tile.kind),
+                contentDescription = null,
+                tint = SeniorHomeTokens.textPrimary,
+                modifier = Modifier.size(SeniorHomeTokens.iconSize),
+            )
+            Text(
+                text = tile.title,
+                color = SeniorHomeTokens.textPrimary,
+                fontSize = when (accessibilityMode) {
+                    AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.labelTextSizeLarge
+                    else -> SeniorHomeTokens.labelTextSize
+                },
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 12.dp),
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0D1238)
+@Composable
+private fun HomeScreenPreview() {
+    HomeScreen(
+        timeText = "9:41",
+        dateText = "Friday, March 20",
+        tiles = previewTiles(),
+        skinConfig = SkinConfig(),
+        onTileClick = {},
+        onStatusBarLongPress = {},
+        onClockTapped = {},
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0D1238, fontScale = 1.3f)
+@Composable
+private fun HomeScreenLargeTextPreview() {
+    HomeScreen(
+        timeText = "9:41",
+        dateText = "Friday, March 20",
+        tiles = previewTiles(),
+        skinConfig = SkinConfig(accessibilityMode = AccessibilityMode.BOLD_ACCESSIBILITY),
+        onTileClick = {},
+        onStatusBarLongPress = {},
+        onClockTapped = {},
+    )
+}
+
+private fun previewTiles(): List<TileDisplayModel> =
+    listOf(
+        TileDisplayModel("phone", "Phone", "Phone", true, TileDisplayKind.PHONE),
+        TileDisplayModel("messages", "Messages", "Messages", true, TileDisplayKind.MESSAGES),
+        TileDisplayModel("contacts", "Contacts", "Contacts", true, TileDisplayKind.CONTACTS),
+        TileDisplayModel("photos", "Photos", "Photos", true, TileDisplayKind.PHOTOS),
+        TileDisplayModel("camera", "Camera", "Camera", true, TileDisplayKind.CAMERA),
+        TileDisplayModel("emergency", "Emergency", "Emergency", true, TileDisplayKind.EMERGENCY),
+    )

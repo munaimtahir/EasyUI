@@ -32,6 +32,9 @@ The data model is fully local. Separate durable user configuration from transien
 ### HomeTileAction
 
 - `OPEN_DIALER`
+- `OPEN_MESSAGES`
+- `OPEN_CONTACTS`
+- `OPEN_PHOTOS`
 - `OPEN_APP_LIST`
 - `FLASHLIGHT`
 - `EMERGENCY`
@@ -113,7 +116,7 @@ The data model is fully local. Separate durable user configuration from transien
 - Refresh installed apps from PackageManager rather than treating them as owned data.
 - Home layout must reference package names, not list indexes.
 - Home layout positions are fixed caregiver-defined slots, not freeform drag ordering.
-- Reserve positions `0..5` for the six essential senior-facing tiles.
+- Reserve positions `0..5` for the fixed senior-facing first page: `Phone`, `Messages`, `Contacts`, `Photos`, `Camera`, `Emergency`.
 - Home Apps slots are caregiver-managed and bounded by page count.
 - Hidden-app rules must survive app list refreshes.
 - PIN credentials are intentionally excluded from backups.

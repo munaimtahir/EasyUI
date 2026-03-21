@@ -35,12 +35,31 @@ class HomeLayoutRulesTest {
         val layout = HomeLayoutRules.starterLayout(apps)
 
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_DIALER })
-        assertTrue(layout.any { it.action == HomeTileAction.FLASHLIGHT })
-        assertTrue(layout.any { it.action == HomeTileAction.EMERGENCY })
+        assertTrue(layout.any { it.action == HomeTileAction.OPEN_MESSAGES })
+        assertTrue(layout.any { it.action == HomeTileAction.OPEN_CONTACTS })
+        assertTrue(layout.any { it.action == HomeTileAction.OPEN_PHOTOS })
         assertTrue(layout.any { it.action == HomeTileAction.OPEN_CAMERA })
-        assertTrue(layout.any { it.action == HomeTileAction.OPEN_HEALTH_INFO })
-        assertTrue(layout.any { it.action == HomeTileAction.SOS })
+        assertTrue(layout.any { it.action == HomeTileAction.EMERGENCY })
         assertTrue(HomeLayoutRules.isValid(layout))
+    }
+
+    @Test
+    fun `ensure required actions replaces legacy first page tiles`() {
+        val migrated = HomeLayoutRules.ensureRequiredActions(
+            listOf(
+                HomeTile("phone", 0, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
+                HomeTile("flashlight", 1, "Flashlight", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
+                HomeTile("camera", 2, "Camera", HomeTileType.ACTION, action = HomeTileAction.OPEN_CAMERA),
+                HomeTile("emergency", 3, "Emergency", HomeTileType.ACTION, action = HomeTileAction.EMERGENCY),
+                HomeTile("health-info", 4, "Health Info", HomeTileType.ACTION, action = HomeTileAction.OPEN_HEALTH_INFO),
+                HomeTile("sos", 5, "SOS", HomeTileType.ACTION, action = HomeTileAction.SOS),
+            ),
+        )
+
+        assertEquals(
+            listOf("Phone", "Messages", "Contacts", "Photos", "Camera", "Emergency"),
+            migrated.filter { it.position in 0..5 }.map { it.title },
+        )
     }
 
     @Test

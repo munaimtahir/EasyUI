@@ -175,20 +175,14 @@ fun EasyUiNavGraph(
                     }
                     HomeScreen(
                         timeText = homeState.timeText,
-                        batteryPercent = homeState.batteryPercent,
-                        chargingLabel = homeState.chargingLabel,
-                        signalLabel = homeState.signalLabel,
-                        simLabel = homeState.simLabel,
-                        wifiLabel = homeState.wifiLabel,
+                        dateText = homeState.dateText,
                         tiles = homeState.tiles,
-                        sosTriggerProgress = homeState.sosTriggerProgress,
                         skinConfig = homeState.skinConfig,
                         onTileClick = { tileId ->
                             homeViewModel.onTileClick(
                                 tileId = tileId,
                                 onOpenPhoneContacts = { navController.navigate(Routes.PhoneContacts.route) },
                                 onOpenEmergency = { navController.navigate(Routes.EmergencyCall.route) },
-                                onOpenHealthInfo = { navController.navigate(Routes.HealthInfo.route) },
                             )
                         },
                         onStatusBarLongPress = {
