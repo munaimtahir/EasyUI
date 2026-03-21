@@ -3,6 +3,7 @@
 ## Pre-upload
 
 - [ ] Confirm `versionCode` and `versionName` for the exact release build
+- [ ] Configure the Play upload keystore locally or in CI before building the bundle
 - [ ] Build a release App Bundle with `./gradlew :app:bundleRelease`
 - [ ] Sign the release artifact with the production upload key
 - [ ] Verify launcher cold start on a fresh install

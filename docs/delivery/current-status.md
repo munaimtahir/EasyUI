@@ -4,6 +4,8 @@
 
 EasyUI Senior Launcher is currently beyond the MVP baseline. The app ships the caregiver safety pack, backup/restore, home readability controls, Health Info, SOS, and release-hardening work, while Play Billing / premium unlock remains scaffolded only.
 
+Release packaging is still gated on a real Play upload keystore. The repository does not ship signing credentials, so `bundleRelease` only succeeds once local or CI signing values are provided.
+
 ## Implemented in the current build
 
 - first-run intro and default-launcher guidance
