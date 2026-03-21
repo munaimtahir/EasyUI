@@ -1,6 +1,6 @@
 # Implementation Tasks
 
-Current stage: the launcher is beyond MVP and the caregiver safety pack, Health Info, SOS, backup/restore, and release-hardening work are in place. The remaining clear product gap is the premium/billing path, and the app list surface still needs a senior-facing entry point.
+Current stage: the launcher is beyond MVP and the caregiver safety pack, backup/restore, and release-hardening work are in place. The senior-facing home now uses a locked 2x3 first page with `Phone`, `Messages`, `Contacts`, `Photos`, `Camera`, and `Emergency`. The remaining clear product gap is the premium/billing path.
 
 ## Phase 0: Foundation
 
@@ -24,12 +24,13 @@ Current stage: the launcher is beyond MVP and the caregiver safety pack, Health 
 
 - [x] Large-tile home screen
 - [x] Clock and date block
+- [x] Fixed 2x3 primary home grid
 - [x] Core app tiles
+- [x] Messages tile
+- [x] Contacts tile
+- [x] Photos tile
 - [x] Camera action tile
 - [x] Emergency action tile
-- [x] Health Info tile
-- [x] Flashlight action tile
-- [x] SOS action tile
 - [x] Safe fallbacks for unsupported actions
 
 ### App list
@@ -39,7 +40,7 @@ Current stage: the launcher is beyond MVP and the caregiver safety pack, Health 
 - [x] Search
 - [x] Launch app action
 - [x] Refresh on install and uninstall
-- [ ] Senior-facing home entry for the app list surface
+- [x] Keep app list off the main senior home page
 
 ### Data and settings
 
@@ -66,6 +67,7 @@ Current stage: the launcher is beyond MVP and the caregiver safety pack, Health 
 - [x] PIN gate for edit mode
 - [x] Layout lock
 - [x] Disable long-press editing when locked
+- [x] Caregiver dashboard landing screen with grouped control cards
 
 ### App visibility
 

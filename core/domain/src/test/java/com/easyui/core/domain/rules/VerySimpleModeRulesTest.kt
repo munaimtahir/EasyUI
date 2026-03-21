@@ -14,7 +14,6 @@ class VerySimpleModeRulesTest {
             HomeTile("contact-a", 1, "Ada", HomeTileType.CONTACT, phoneNumber = "111"),
             HomeTile("contact-b", 2, "Grace", HomeTileType.CONTACT, phoneNumber = "222"),
             HomeTile("app-camera", 3, "Camera", HomeTileType.APP, packageName = "camera"),
-            HomeTile("flashlight", 4, "Flashlight", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
             HomeTile("phone", 5, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
         )
 

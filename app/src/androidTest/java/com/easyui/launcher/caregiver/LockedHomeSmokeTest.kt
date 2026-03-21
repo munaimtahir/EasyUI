@@ -24,15 +24,10 @@ class LockedHomeSmokeTest {
             EasyUiTheme {
                 HomeScreen(
                     timeText = "9:41",
-                    batteryPercent = "82%",
-                    chargingLabel = "Charging",
-                    signalLabel = "Signal good",
-                    simLabel = "SIM One",
-                    wifiLabel = "Wi-Fi connected",
+                    dateText = "Friday, March 20",
                     tiles = listOf(
-                        TileDisplayModel("phone", "Phone", "Open caregiver contacts", true, TileDisplayKind.PHONE_CONTACTS),
+                        TileDisplayModel("phone", "Phone", "Phone", true, TileDisplayKind.PHONE),
                     ),
-                    sosTriggerProgress = 0,
                     skinConfig = SkinConfig(),
                     onTileClick = {},
                     onStatusBarLongPress = {},

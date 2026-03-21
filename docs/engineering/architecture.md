@@ -22,7 +22,7 @@ EasyUI Senior Launcher is a single Android app built with Kotlin and Compose. It
   - PIN setup and verification
   - home-app assignment
   - hidden apps
-  - emergency and SOS settings
+  - emergency settings
   - backup and restore
 - `feature/onboarding`
   - intro
@@ -40,7 +40,6 @@ EasyUI Senior Launcher is a single Android app built with Kotlin and Compose. It
   - repository implementations
 - `core/platform`
   - PackageManager wrappers
-  - flashlight
   - camera launch
   - dial and emergency actions
   - battery and device status
@@ -63,23 +62,29 @@ EasyUI Senior Launcher is a single Android app built with Kotlin and Compose. It
 ### Senior daily use
 
 - home is a fixed essentials grid
-- the visible essentials are `Phone`, `Flashlight`, `Camera`, `Emergency`, `Health Info`, and `SOS`
+- the visible essentials are `Phone`, `Messages`, `Contacts`, `Photos`, `Camera`, and `Emergency`
+- the first home page uses a fixed 2x3 layout with equal tiles, a large clock/date header card, and no visible settings or app-list entry
 - caregiver access is hidden behind a deliberate top-bar long-press, with a clock-tap fallback
-- the app-list screen exists, but the senior-facing home entry is still not wired in this build
-- home-app slots are caregiver-managed and bounded; the senior surface is not freeform
+- caregiver settings are not visible on home
+- the app list screen still exists for secondary flows, but it is not exposed on the main senior home page
+- home-app slots are caregiver-managed and bounded; the senior surface is not freeform or draggable
 
 ### Caregiver flow
 
-- caregiver enters through the hidden home gesture
-- PIN is required when protection is enabled
-- caregiver configures layout, hidden apps, contact shortcuts, emergency numbers, SOS numbers, health info, battery visibility, and backup/restore
+open caregiver area -> enter PIN -> land on caregiver dashboard -> open a focused section -> save or relock -> return home
+
+- caregiver session starts from the hidden home entry
+- if caregiver PIN protection is enabled, PIN is required before caregiver settings open
+- the first caregiver screen is a dashboard with grouped control cards and focused sections
+- caregiver manages `Home Apps` separately from the senior-facing home surface
+- caregiver assigns home apps to fixed page and slot positions
 
 ## Platform behavior
 
-- `Phone` opens the in-app contact/dial flow
+- `Phone` opens the in-app contact and dial flow
+- `Messages` and `Photos` resolve through safe installed-app matching and fail with a clear message if unavailable
 - `Emergency` uses the emergency configuration and safe dial fallbacks
-- `SOS` can send SMS and attempt a direct call to the primary SOS number when Android permissions are granted; otherwise the app must degrade safely
-- flashlight and camera remain optional capability paths
+- camera remains an optional capability path
 
 ## Reliability rules
 

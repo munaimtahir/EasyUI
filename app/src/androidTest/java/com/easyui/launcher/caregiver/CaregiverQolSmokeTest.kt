@@ -59,11 +59,12 @@ class CaregiverQolSmokeTest {
         }
 
         composeRule.onNodeWithTag("caregiver_tools_screen").assertIsDisplayed()
-        composeRule.onNodeWithText("Layout / Pages").assertIsDisplayed()
-        composeRule.onNodeWithText("Home Apps").assertIsDisplayed()
-        composeRule.onNodeWithText("Call Shortcuts").assertIsDisplayed()
-        composeRule.onNodeWithText("Lock / Protection").assertIsDisplayed()
-        composeRule.onNodeWithText("Battery Display").assertIsDisplayed()
+        composeRule.onNodeWithText("Caregiver").assertIsDisplayed()
+        composeRule.onNodeWithText("Home Layout").assertIsDisplayed()
+        composeRule.onNodeWithText("Allowed Apps").assertIsDisplayed()
+        composeRule.onNodeWithText("Contacts & Emergency").assertIsDisplayed()
+        composeRule.onNodeWithText("Security & Lock").assertIsDisplayed()
+        composeRule.onNodeWithText("Quick Toggles").assertIsDisplayed()
     }
 
     @Test
@@ -99,11 +100,11 @@ class CaregiverQolSmokeTest {
                     pages = listOf(
                         listOf(
                             HomeTile("phone", 0, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
-                            HomeTile("flashlight", 1, "Flashlight", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
+                            HomeTile("messages", 1, "Messages", HomeTileType.ACTION, action = HomeTileAction.OPEN_MESSAGES),
                             HomeTile("app-camera", 2, "Camera", HomeTileType.APP, packageName = "com.camera"),
                             null,
                             null,
-                            HomeTile("flashlight", 5, "Flashlight", HomeTileType.ACTION, action = HomeTileAction.FLASHLIGHT),
+                            HomeTile("emergency", 5, "Emergency", HomeTileType.ACTION, action = HomeTileAction.EMERGENCY),
                         ),
                         listOf(null, null, null, null, null, null),
                     ),
@@ -124,7 +125,7 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Home Apps").assertIsDisplayed()
         composeRule.onNodeWithText("Installed Apps").assertIsDisplayed()
         composeRule.onNodeWithText("Phone").assertIsDisplayed()
-        composeRule.onNodeWithText("Flashlight").assertIsDisplayed()
+        composeRule.onNodeWithText("Messages").assertIsDisplayed()
         composeRule.onNodeWithText("Maps").assertIsDisplayed()
     }
 }

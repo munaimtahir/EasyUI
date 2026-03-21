@@ -33,43 +33,49 @@ object HomeLayoutRules {
             action = HomeTileAction.OPEN_DIALER,
         ),
         HomeTile(
-            id = "flashlight",
+            id = "messages",
             position = 1,
-            title = "Flashlight",
+            title = "Messages",
             type = HomeTileType.ACTION,
-            action = HomeTileAction.FLASHLIGHT,
+            action = HomeTileAction.OPEN_MESSAGES,
+        ),
+        HomeTile(
+            id = "contacts",
+            position = 2,
+            title = "Contacts",
+            type = HomeTileType.ACTION,
+            action = HomeTileAction.OPEN_CONTACTS,
+        ),
+        HomeTile(
+            id = "photos",
+            position = 3,
+            title = "Photos",
+            type = HomeTileType.ACTION,
+            action = HomeTileAction.OPEN_PHOTOS,
         ),
         HomeTile(
             id = "camera",
-            position = 2,
+            position = 4,
             title = "Camera",
             type = HomeTileType.ACTION,
             action = HomeTileAction.OPEN_CAMERA,
         ),
         HomeTile(
             id = "emergency",
-            position = 3,
+            position = 5,
             title = "Emergency",
             type = HomeTileType.ACTION,
             action = HomeTileAction.EMERGENCY,
         ),
-        HomeTile(
-            id = "health-info",
-            position = 4,
-            title = "Health Info",
-            type = HomeTileType.ACTION,
-            action = HomeTileAction.OPEN_HEALTH_INFO,
-        ),
-        HomeTile(
-            id = "sos",
-            position = 5,
-            title = "SOS",
-            type = HomeTileType.ACTION,
-            action = HomeTileAction.SOS,
-        ),
     )
 
     private val requiredActionIds = requiredActionTiles.map { it.id }.toSet()
+    private val legacyPrimaryActionIds = setOf("flashlight", "health-info", "sos")
+    private val legacyPrimaryActions = setOf(
+        HomeTileAction.FLASHLIGHT,
+        HomeTileAction.OPEN_HEALTH_INFO,
+        HomeTileAction.SOS,
+    )
     private val reservedPositions = requiredActionTiles.map { it.position }.toSet()
 
     fun clampPageCount(pageCount: Int): Int = pageCount.coerceIn(1, MAX_PAGE_COUNT)
@@ -109,7 +115,7 @@ object HomeLayoutRules {
     ): List<HomeTile> {
         val maxPosition = totalSlots(pageCount) - 1
         val normalizedUsers = normalize(
-            tiles.filterNot(::isRequiredActionTile),
+            tiles.filterNot(::isPrimarySurfaceTile),
             pageCount = pageCount,
         )
         val adjustedUsers = mutableListOf<HomeTile>()
@@ -272,7 +278,7 @@ object HomeLayoutRules {
     ): List<HomeTile> {
         val effectivePageCount = effectivePageCount(pageCount, tiles)
         val base = ensureRequiredActions(tiles, effectivePageCount)
-        val movable = base.filterNot(::isRequiredActionTile).sortedBy { it.position }
+        val movable = base.filterNot(::isPrimarySurfaceTile).sortedBy { it.position }
         val index = movable.indexOfFirst { it.id == tileId }
         if (index == -1) return base
         val swapIndex = index + direction
@@ -291,14 +297,17 @@ object HomeLayoutRules {
         )
     }
 
-    private fun isRequiredActionTile(tile: HomeTile): Boolean =
-        tile.id in requiredActionIds || tile.action in setOf(
+    private fun isPrimarySurfaceTile(tile: HomeTile): Boolean =
+        tile.id in requiredActionIds ||
+            tile.id in legacyPrimaryActionIds ||
+            tile.action in legacyPrimaryActions ||
+            tile.action in setOf(
             HomeTileAction.OPEN_DIALER,
+            HomeTileAction.OPEN_MESSAGES,
+            HomeTileAction.OPEN_CONTACTS,
+            HomeTileAction.OPEN_PHOTOS,
             HomeTileAction.EMERGENCY,
             HomeTileAction.OPEN_CAMERA,
-            HomeTileAction.OPEN_HEALTH_INFO,
-            HomeTileAction.FLASHLIGHT,
-            HomeTileAction.SOS,
         )
 
     private fun nextAvailablePosition(
