@@ -9,6 +9,6 @@ fun SectionHeader(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.headlineMedium,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = MaterialTheme.colorScheme.primary,
     )
 }

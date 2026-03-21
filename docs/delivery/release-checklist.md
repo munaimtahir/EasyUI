@@ -8,11 +8,13 @@
 - [ ] Sign the release artifact with the production upload key
 - [ ] Verify launcher cold start on a fresh install
 - [ ] Verify default-launcher guidance flow on a real device
+- [ ] Verify caregiver help CTA remains reachable on smaller-height devices
 - [ ] Verify home screen survives reboot
 - [ ] Verify app list refresh after install and uninstall
 - [ ] Verify flashlight tile on a device with flash hardware
-- [ ] Verify favorite contact tiles open the dialer, not direct call
+- [ ] Verify favorite contact tiles open the expected phone flow safely
 - [ ] Verify caregiver PIN and layout lock flows
+- [ ] Verify SOS behavior with and without `SEND_SMS` / `CALL_PHONE`
 - [ ] Verify hidden apps only affect EasyUI, not Android system visibility
 - [ ] Verify no placeholder branding or debug UI remains
 

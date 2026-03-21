@@ -18,6 +18,7 @@
 
 - [ ] App can be set as default launcher
 - [ ] Default launcher guidance is clear
+- [ ] Caregiver Help can complete onboarding on smaller-height screens
 - [ ] Home screen loads reliably after reboot
 - [ ] Missing app targets do not break home screen
 
@@ -34,17 +35,16 @@
 - [ ] Hidden apps stay hidden
 - [ ] Layout lock prevents accidental movement
 - [ ] Restore and reset behavior is understandable
+- [ ] Emergency and SOS settings are understandable
 
 ## Premium
 
-- [ ] Free and premium boundaries are clear
-- [ ] One-time purchase path works
-- [ ] Entitlement restore works
-- [ ] Billing failures do not crash the app
+- [ ] Current build does not advertise unavailable premium purchase flows
+- [ ] Billing scaffolding does not leak broken UI into release paths
 
 ## Reliability
 
-- [ ] No unnecessary permissions
+- [ ] Declared permissions are justified in store copy and reviewer notes
 - [ ] No network dependency for core use
 - [ ] No obvious OEM-specific failure in the core flow
 - [ ] Crash-free smoke test passed on multiple devices

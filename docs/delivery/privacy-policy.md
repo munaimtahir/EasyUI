@@ -2,7 +2,7 @@
 
 ## EasyUI Senior Launcher
 
-Effective date: March 16, 2026
+Effective date: March 20, 2026
 
 EasyUI Senior Launcher is designed to work offline and store its setup information on the device.
 
@@ -10,11 +10,12 @@ EasyUI Senior Launcher is designed to work offline and store its setup informati
 
 EasyUI may store the following information locally on your device:
 
-- home screen tile layout and ordering
-- caregiver settings such as layout lock and readability choices
+- home screen layout and settings
+- caregiver settings such as layout lock, readability choices, and hidden apps
 - caregiver PIN salt and hashed PIN value
-- hidden-app preferences used inside EasyUI
 - favorite contact names, phone numbers, and selected photo URI references
+- emergency numbers and SOS numbers
+- Health Info entered by the caregiver
 - onboarding completion status
 
 This information is used only to run the launcher on your device.
@@ -36,15 +37,18 @@ Based on the current app build, EasyUI does not:
 EasyUI can:
 
 - list launchable apps installed on the device so it can show them in the launcher
-- open the phone dialer when you tap an emergency or favorite contact tile
+- open phone actions for emergency and favorite-contact flows
+- send SOS text messages when you configure SOS numbers and grant SMS permission
+- attempt a direct SOS call when you grant call permission
 - toggle the flashlight on supported devices
 - let you choose a contact photo through the system document picker
+- read local battery and device-status information for the home header
 
-EasyUI does not place phone calls automatically. It opens the system dialer so you can review the action before calling.
+EasyUI only uses these features to provide the local launcher experience on your device.
 
 ## Backup behavior
 
-Automatic Android backup is disabled in the current release build. EasyUI currently relies on local on-device storage unless and until an explicit backup/export feature is added in a future release.
+Automatic Android backup is disabled in the current release build. EasyUI uses its own local export/import flow for backup and restore.
 
 ## Third-party services
 

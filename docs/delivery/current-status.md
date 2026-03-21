@@ -2,14 +2,15 @@
 
 ## Snapshot
 
-EasyUI Senior Launcher is currently beyond the MVP baseline. The app ships the caregiver safety pack, backup/restore, home readability controls, Health Info, SOS, and release-hardening work, while Play Billing / premium unlock remains scaffolded only.
+EasyUI Senior Launcher is beyond the MVP baseline and already includes the caregiver safety pack, SOS, Health Info, backup/restore, and the current visual refresh. The remaining product gaps are still the premium/billing path and a senior-facing home entry to the app-list screen.
 
-Release packaging is still gated on a real Play upload keystore. The repository does not ship signing credentials, so `bundleRelease` only succeeds once local or CI signing values are provided.
+Release packaging is still gated on a real Play upload keystore. The repository does not contain production signing credentials.
 
 ## Implemented in the current build
 
 - first-run intro and default-launcher guidance
 - fixed six-tile senior home with hidden caregiver access
+- refreshed calmer visual system with stronger typography, spacing, and tile styling
 - caregiver PIN setup and verification
 - layout lock and easy-ui lock overlay
 - Home Apps management in caregiver settings
@@ -37,4 +38,10 @@ Release packaging is still gated on a real Play upload keystore. The repository 
 
 ## Verification
 
-This snapshot matches the current repository state verified on March 19, 2026 with `./gradlew --no-daemon testDebugUnitTest assembleDebug`.
+Verified against the current repository and device flows on March 20, 2026.
+
+Latest retained device run:
+
+- full suite result: `15 passed`
+- run directory: `/home/munaim/Documents/github/easyui/device_test_runs/20260320_025455`
+- retained screenshots: `b1.png` through `b10.png` in the run `screenshots/` folder

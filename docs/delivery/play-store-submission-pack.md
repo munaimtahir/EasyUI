@@ -10,33 +10,34 @@ EasyUI Senior Launcher
 
 ## Short description
 
-Simple Android home screen with large buttons and caregiver setup tools.
+Simple senior-friendly Android launcher with large tiles and caregiver setup tools.
 
 ## Full description
 
 EasyUI Senior Launcher is a simpler Android home screen built for seniors and the people who help set up their phones.
 
-It replaces a cluttered launcher with large tiles, clear labels, and a steadier layout that is easier to understand day to day. Caregivers can set up a starter layout, keep the home screen simple, and reduce accidental changes without claiming full Android lockdown.
+It replaces a cluttered launcher with large tiles, clear labels, and a steadier layout that is easier to understand every day. Caregivers can set up the home screen, reduce accidental changes, and keep important actions easy to find without claiming full Android lockdown.
 
-EasyUI focuses on practical everyday use:
+EasyUI currently includes:
 
-- Large home tiles for the apps and actions that matter most
-- App list screen with search is present, but the senior-facing entry point is still being wired
-- Optional favorite contact tiles that open the dialer
-- Optional flashlight tile when the device supports it
+- A fixed large-tile home screen for everyday essentials
+- Clear onboarding with default-launcher guidance
 - Caregiver PIN and layout lock options
 - Hidden-app filtering inside EasyUI
-- Offline-first local storage with no account required
+- Favorite contacts and emergency-focused actions
+- Health Info and SOS support
+- Local backup export and import
+- Offline-first setup with no account required
 
-EasyUI does not depend on a cloud account, does not include ads, and does not promise enterprise device control or full system lockdown. It is designed to make the daily home-screen experience calmer, clearer, and easier to maintain.
+EasyUI does not require a cloud account, does not include ads, and does not promise kiosk mode, enterprise management, or full system control. It is designed to make Android feel calmer, clearer, and easier to maintain for seniors and caregivers.
 
 ## Key feature bullets
 
 - Large, readable home screen tiles
-- App list screen and search scaffold
 - Caregiver setup and layout protection
-- Favorite contact tiles with photo support
-- Optional flashlight shortcut
+- Hidden apps, favorite contacts, and emergency tools
+- Health Info and SOS support
+- Local backup and restore
 - Local-only setup with no account required
 
 ## Reviewer notes draft
@@ -44,8 +45,10 @@ EasyUI does not depend on a cloud account, does not include ads, and does not pr
 - No login or account is required.
 - Reviewer can launch the app directly and complete onboarding without credentials.
 - The app is a consumer launcher, not kiosk or device-owner software.
-- Favorite contact tiles open the dialer with `ACTION_DIAL`; they do not place calls automatically.
+- The app requests `SEND_SMS` and `CALL_PHONE` because the SOS flow can send messages and attempt a direct emergency call when permissions are granted.
+- Favorite contact and phone flows are local launcher actions, not remote communication features.
 - The flashlight tile is optional and only appears functional on devices with flash hardware.
+- The app-list surface exists internally, but the current senior-facing home flow centers on the fixed essentials grid.
 
 ## Suggested store tags and category
 
@@ -62,15 +65,17 @@ EasyUI does not depend on a cloud account, does not include ads, and does not pr
 
 Based on the repository contents:
 
-- Data collected: none observed leaving the device
+- Data collected by the developer backend: none observed
 - Data shared: none observed
 - Local processing only:
   - home layout
   - caregiver protection settings
   - hidden-app preferences
+  - emergency and SOS numbers
+  - health information entered by the caregiver
   - favorite contact labels, phone numbers, and selected photo URI references
-- Analytics: none observed
-- Crash reporting: none observed
-- Ads: none observed
+- Analytics: none observed in the repo
+- Crash reporting: none observed in the repo
+- Ads: none observed in the repo
 
 Final Play Console answers must be completed by the release owner, but the repo currently supports a low-data/no-sharing posture.

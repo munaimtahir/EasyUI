@@ -11,7 +11,7 @@ Cover:
 - caregiver lock rules
 - PIN verification
 - backup payload validation
-- premium feature gating
+- SOS and fallback rules
 - theme and settings persistence rules
 
 ## Integration tests
@@ -34,7 +34,7 @@ Cover:
 - hide and unhide app flow
 - add and edit photo contact flow
 - layout lock behavior
-- premium upgrade screen state
+- backup and restore confirmation flow
 
 ## Manual device tests
 
@@ -44,7 +44,8 @@ Cover:
 4. Lock layout and verify accidental move prevention.
 5. Use the senior daily flow without caregiver steps.
 6. Backup configuration and restore it.
-7. Test on a device with unsupported torch.
-8. Test without optional permissions granted.
-9. Confirm readability at different font scales.
-10. Confirm safe behavior when a target app is removed.
+7. Verify the onboarding CTA remains reachable on smaller-height displays.
+8. Test on a device with unsupported torch.
+9. Test without call or SMS permissions granted.
+10. Confirm readability at different font scales.
+11. Confirm safe behavior when a target app is removed.

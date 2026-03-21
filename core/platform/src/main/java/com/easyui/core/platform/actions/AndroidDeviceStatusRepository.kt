@@ -3,7 +3,6 @@ package com.easyui.core.platform.actions
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import com.easyui.core.domain.model.DeviceStatus
 import com.easyui.core.domain.repository.DeviceStatusRepository
@@ -17,7 +16,6 @@ class AndroidDeviceStatusRepository(
     private val appContext = context.applicationContext
     private val connectivityManager: ConnectivityManager? = appContext.getSystemService(ConnectivityManager::class.java)
     private val telephonyManager: TelephonyManager? = appContext.getSystemService(TelephonyManager::class.java)
-    private val subscriptionManager: SubscriptionManager? = appContext.getSystemService(SubscriptionManager::class.java)
 
     override fun observeDeviceStatus(): Flow<DeviceStatus> = flow {
         while (true) {
@@ -61,8 +59,7 @@ class AndroidDeviceStatusRepository(
 
         val simLabel =
             try {
-                val subscription = subscriptionManager?.activeSubscriptionInfoList?.firstOrNull()
-                val carrier = subscription?.carrierName?.toString()?.trim().orEmpty()
+                val carrier = telephonyManager?.networkOperatorName?.trim().orEmpty()
                 if (carrier.isBlank()) "SIM" else "SIM $carrier"
             } catch (_: SecurityException) {
                 "SIM"

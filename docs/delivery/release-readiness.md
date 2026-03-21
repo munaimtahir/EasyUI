@@ -2,106 +2,103 @@
 
 ## Scope
 
-This release-readiness pass applies to the Android project that actually exists in this repository: `EasyUI Senior Launcher`.
+This document reflects the current in-repo application only: `EasyUI Senior Launcher`.
 
-The original task request referenced `Warranty Vault`, but that product is not present in this repo. All audit findings, policy notes, and store materials below are based on the in-repo launcher app only.
+## Repository-backed release summary
 
-Note: the audit snapshot below predates the current local backup/export flow that now exists in the app module. Use it as a historical release audit, not as the live status page.
+### App identity
 
-## Audit date
-
-March 16, 2026 (UTC)
-
-## Release audit summary
-
-### Build and packaging
-
-- App module: `app`
 - Application ID: `com.easyui.launcher`
-- Namespace: `com.easyui.launcher`
+- Debug package: `com.easyui.launcher.debug`
 - `minSdk`: 26
 - `targetSdk`: 35
-- `compileSdk`: 35
-- Versioning after this pass:
-  - `versionCode`: 1
-  - `versionName`: `1.0.0`
-- Release build type exists and now enables R8/resource shrinking.
-- App Bundle generation is supported through the standard Gradle `bundleRelease` task.
-- No signing credentials are stored in the repo. Final upload signing remains a manual release step.
+- Launcher activity: `com.easyui.launcher.MainActivity`
 
-### Manifest and component posture
+### Current product shape
 
-- Single exported activity: `com.easyui.launcher.MainActivity`
-- Home launcher intent filters:
-  - `android.intent.action.MAIN`
-  - `android.intent.category.HOME`
-  - `android.intent.category.DEFAULT`
-- No services
-- No broadcast receivers declared in manifest
-- No deep links
-- No `FileProvider`
-- No network security config
-- No cleartext traffic override
-- Automatic Android backup is disabled so the app's explicit local backup/export flow remains the only restore path.
+- consumer Android launcher
+- offline-first
+- no account requirement
+- caregiver-assisted setup
+- current build includes:
+  - onboarding
+  - fixed essentials home
+  - hidden caregiver access
+  - caregiver PIN and layout lock
+  - hidden apps
+  - favorite contacts
+  - Health Info
+  - SOS
+  - backup export/import
+- current build does not yet include:
+  - live billing
+  - premium entitlement restore
+  - a senior-facing home entry to the app-list surface
 
-### Permissions and feature declarations
+### Manifest and policy-sensitive behavior
 
-After this pass the manifest does not request any runtime permissions.
+- exported activity: one launcher activity
+- launcher categories:
+  - `MAIN`
+  - `HOME`
+  - `DEFAULT`
+- declared permissions:
+  - `android.permission.SEND_SMS`
+  - `android.permission.CALL_PHONE`
+- optional hardware feature:
+  - `android.hardware.camera.flash` with `required="false"`
+- Android automatic backup is disabled in favor of app-owned export/import
 
-Optional hardware feature declarations:
+### Data posture
 
-- `android.hardware.camera.flash` with `required="false"`
-  - Used only for the optional flashlight tile.
-  - The feature remains optional so the launcher is installable on devices without flash hardware.
+Stored locally on device:
 
-### Data, SDK, and policy-sensitive behavior
+- onboarding state
+- home layout
+- caregiver settings
+- hidden app choices
+- emergency and SOS numbers
+- Health Info
+- contact shortcuts and photo URI references
+- caregiver PIN hash and salt
 
-Observed from the codebase:
-
-- Local Room database for home tiles
-- Local DataStore preferences for onboarding, caregiver settings, hidden apps, and PIN hash/salt
-- Local persisted photo URI references for favorite contact tiles
-- PackageManager queries for installed launchable apps
-- Dialer launch through `ACTION_DIAL`
-- Flashlight control through `CameraManager.setTorchMode`
-- Local backup/export and restore flow in the app module
-
-Not observed in the repo:
+Not observed in the current repo:
 
 - analytics SDKs
-- crash reporting SDKs
 - ad SDKs
-- account/login flows
-- backend API clients
-- external data transmission
-- notification scheduling
-- reminder channels
-- billing integration in the shipped app module
+- crash reporting SDKs
+- backend APIs
+- account login
+- remote caregiver control
 
-### Release risks found during audit
+## Release strengths
 
-- The repo did not include launcher icon assets suitable for release packaging.
-- The manifest requested `CAMERA`, which was broader than necessary for the optional torch tile.
-- Automatic backup needed to be disabled because the app now owns local backup/export behavior and caregiver PIN data is stored locally.
-- Room schema export was disabled, which weakened public-release migration discipline.
+- honest scope for a consumer launcher
+- no backend dependency
+- local backup and restore
+- strong caregiver safety tooling
+- current device suite coverage across onboarding, home, caregiver, SOS-adjacent flows, and offline behavior
+- latest full retained device verification passed on March 20, 2026:
+  - `15 passed (5.3m)`
+  - artifacts: `/home/munaim/Documents/github/easyui/device_test_runs/20260320_025455`
 
-## Repo-side hardening completed
+## Release blockers
 
-- Removed the `CAMERA` permission by refactoring flashlight support to use flash feature detection plus safe torch attempts.
-- Disabled automatic backup in the manifest.
-- Added launcher icon and round icon resources, including monochrome support for themed icons.
-- Enabled release minification and resource shrinking.
-- Enabled Room schema export and kapt schema generation for migration tracking.
+- release signing and upload keystore are still manual
+- Play listing assets still need final exported artwork and screenshots
+- privacy policy must be hosted at a stable public URL
+- Play Console Data Safety and content-rating answers still require human submission
+- premium docs must remain aspirational only until billing is actually connected
 
-## Manual release boundary
+## Release cautions
 
-The following still requires human action outside the repository:
+- Store copy must not imply kiosk mode or OS-level lockdown.
+- Reviewer notes should explain why `SEND_SMS` and `CALL_PHONE` exist:
+  - SOS can send messages to configured SOS numbers
+  - SOS may attempt a direct call to the primary SOS number when permission is granted
+- The app-list entry gap must not be marketed as fully available from home.
+- Release packaging now succeeds with signing, code shrinking, and resource shrinking after upgrading the Android Gradle Plugin from `8.5.2` to `8.6.1`.
 
-- choose final signing key ownership strategy
-- configure Play App Signing in Google Play Console
-- create the Play listing
-- upload screenshots and feature graphic
-- host the privacy policy at a stable public URL
-- complete Data Safety and content rating questionnaires
-- upload the signed `.aab`
-- choose testing and rollout tracks
+## Recommended release stance
+
+The app is close to Play-ready from a product and QA perspective, but it is not fully submission-ready until the manual release items above are completed.
