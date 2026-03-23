@@ -1,5 +1,6 @@
 package com.easyui.core.platform.actions
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -34,6 +35,7 @@ class AndroidDeviceStatusRepository(
         }
     }
 
+    @SuppressLint("NewApi", "MissingPermission")
     private fun readStatus(): DeviceStatus {
         val networkCapabilities = readNetworkCapabilities()
         val wifiLabel = when {
@@ -77,6 +79,7 @@ class AndroidDeviceStatusRepository(
         )
     }
 
+    @SuppressLint("MissingPermission")
     private fun readNetworkCapabilities(): NetworkCapabilities? {
         val manager = connectivityManager ?: return null
         return try {

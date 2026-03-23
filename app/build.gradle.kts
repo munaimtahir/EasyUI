@@ -7,6 +7,22 @@ android {
     namespace = "com.easyui.launcher"
     compileSdk = 35
 
+    val releaseKeystorePath: String? = System.getenv("EASYUI_KEYSTORE_PATH")
+        ?: project.findProperty("EASYUI_KEYSTORE_PATH") as String?
+    val releaseStorePassword: String? = System.getenv("EASYUI_KEYSTORE_PASSWORD")
+        ?: project.findProperty("EASYUI_KEYSTORE_PASSWORD") as String?
+    val releaseKeyAlias: String? = System.getenv("EASYUI_KEY_ALIAS")
+        ?: project.findProperty("EASYUI_KEY_ALIAS") as String?
+    val releaseKeyPassword: String? = System.getenv("EASYUI_KEY_PASSWORD")
+        ?: project.findProperty("EASYUI_KEY_PASSWORD") as String?
+    val releaseKeystoreFile = releaseKeystorePath
+        ?.takeIf { it.isNotBlank() }
+        ?.let { file(it) }
+    val hasReleaseSigning = releaseKeystoreFile?.exists() == true &&
+        !releaseStorePassword.isNullOrBlank() &&
+        !releaseKeyAlias.isNullOrBlank() &&
+        !releaseKeyPassword.isNullOrBlank()
+
     defaultConfig {
         applicationId = "com.easyui.launcher"
         minSdk = 26
@@ -31,20 +47,11 @@ android {
     //   EASYUI_KEY_PASSWORD=<key password>
     signingConfigs {
         create("release") {
-            val keystorePath: String? = System.getenv("EASYUI_KEYSTORE_PATH")
-                ?: project.findProperty("EASYUI_KEYSTORE_PATH") as String?
-            val storePassword: String? = System.getenv("EASYUI_KEYSTORE_PASSWORD")
-                ?: project.findProperty("EASYUI_KEYSTORE_PASSWORD") as String?
-            val keyAlias: String? = System.getenv("EASYUI_KEY_ALIAS")
-                ?: project.findProperty("EASYUI_KEY_ALIAS") as String?
-            val keyPassword: String? = System.getenv("EASYUI_KEY_PASSWORD")
-                ?: project.findProperty("EASYUI_KEY_PASSWORD") as String?
-
-            if (keystorePath != null) {
-                storeFile = file(keystorePath)
-                this.storePassword = storePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
+            if (hasReleaseSigning) {
+                storeFile = releaseKeystoreFile
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
             }
         }
     }
@@ -57,9 +64,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            val releaseSigningConfig = signingConfigs.getByName("release")
-            if (releaseSigningConfig.storeFile != null) {
-                signingConfig = releaseSigningConfig
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
             }
         }
         debug {

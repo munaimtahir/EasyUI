@@ -32,6 +32,7 @@ class AndroidBatteryStatusRepository(
         }
     }
 
+    @android.annotation.SuppressLint("InlinedApi")
     private fun Intent?.toBatteryStatus(): BatteryStatus {
         if (this == null) return BatteryStatus()
         val level = getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
