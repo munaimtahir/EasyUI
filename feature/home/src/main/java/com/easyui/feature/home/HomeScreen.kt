@@ -97,7 +97,6 @@ fun HomeScreen(
                     onLongPressConfirmed = onStatusBarLongPress,
                     onClockTapped = onClockTapped,
                 )
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

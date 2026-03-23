@@ -3,21 +3,30 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+import java.util.Properties
+
 android {
     namespace = "com.easyui.launcher"
     compileSdk = 35
 
-    val releaseKeystorePath: String? = System.getenv("EASYUI_KEYSTORE_PATH")
-        ?: project.findProperty("EASYUI_KEYSTORE_PATH") as String?
-    val releaseStorePassword: String? = System.getenv("EASYUI_KEYSTORE_PASSWORD")
-        ?: project.findProperty("EASYUI_KEYSTORE_PASSWORD") as String?
-    val releaseKeyAlias: String? = System.getenv("EASYUI_KEY_ALIAS")
-        ?: project.findProperty("EASYUI_KEY_ALIAS") as String?
-    val releaseKeyPassword: String? = System.getenv("EASYUI_KEY_PASSWORD")
-        ?: project.findProperty("EASYUI_KEY_PASSWORD") as String?
+    val localSigningProperties = Properties().apply {
+        val signingFile = rootProject.file("keystore.properties")
+        if (signingFile.exists()) {
+            signingFile.inputStream().use(::load)
+        }
+    }
+    fun readSigningValue(name: String): String? =
+        System.getenv(name)
+            ?: (project.findProperty(name) as String?)
+            ?: localSigningProperties.getProperty(name)
+
+    val releaseKeystorePath: String? = readSigningValue("EASYUI_KEYSTORE_PATH")
     val releaseKeystoreFile = releaseKeystorePath
         ?.takeIf { it.isNotBlank() }
-        ?.let { file(it) }
+        ?.let { rootProject.file(it) }
+    val releaseStorePassword: String? = readSigningValue("EASYUI_KEYSTORE_PASSWORD")
+    val releaseKeyAlias: String? = readSigningValue("EASYUI_KEY_ALIAS")
+    val releaseKeyPassword: String? = readSigningValue("EASYUI_KEY_PASSWORD")
     val hasReleaseSigning = releaseKeystoreFile?.exists() == true &&
         !releaseStorePassword.isNullOrBlank() &&
         !releaseKeyAlias.isNullOrBlank() &&

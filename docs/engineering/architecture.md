@@ -2,103 +2,100 @@
 
 ## Overview
 
-Single Android application, offline-first, no backend.
+EasyUI Senior Launcher is a single Android app built with Kotlin and Compose. It is offline-first, stores setup data locally, and does not depend on a backend or account system.
 
-## Layers
-
-1. UI layer
-   - Jetpack Compose screens
-   - app navigation
-   - accessibility-focused components
-   - premium/paywall scaffolding, not yet wired into the current build
-2. Domain layer
-   - home layout rules
-   - app visibility filtering
-   - caregiver lock-state rules
-   - contact shortcut behavior
-   - backup and restore flows
-3. Data layer
-   - Room database for structured records
-   - DataStore for preferences
-   - PackageManager integration for installed apps
-   - local media references for contact photos
-4. Platform integration layer
-   - launcher and home intent integration
-   - flashlight action
-   - camera action
-   - direct dial intent
-   - package inventory
-   - battery and device-status probes
-   - billing wrapper scaffold for a later premium release
-
-## Repository scaffold
+## Module responsibilities
 
 - `app`
+  - startup
+  - dependency wiring
+  - navigation graph
+  - launcher registration
 - `feature/home`
+  - senior home surface
+  - health info viewer
+  - tile layout presentation
 - `feature/apps`
-- `feature/contacts`
+  - installed-app list and search surface
 - `feature/caregiver`
+  - caregiver settings
+  - PIN setup and verification
+  - home-app assignment
+  - hidden apps
+  - emergency settings
+  - backup and restore
 - `feature/onboarding`
-- `feature/premium`
-- `core/ui`
+  - intro
+  - default launcher guidance
+  - caregiver help
 - `core/domain`
+  - layout rules
+  - visibility rules
+  - fallback rules
+  - reset rules
 - `core/data`
+  - Room
+  - DataStore
+  - backup serialization
+  - repository implementations
 - `core/platform`
+  - PackageManager wrappers
+  - camera launch
+  - dial and emergency actions
+  - battery and device status
+- `core/ui`
+  - shared components
+  - current typography, color, spacing, and tile styling system
 - `core/testing`
+  - shared fixtures and test helpers
 
-## Navigation map
+## Current runtime model
 
-- onboarding
-- home
-- app list scaffold
-- contact detail or action
-- caregiver settings
-- edit layout
-- hidden apps
-- premium unlock
-- backup and restore
-- about and help
+### Onboarding
 
-## Key runtime flows
+`Intro -> Default Launcher Guidance -> Caregiver Help -> Home`
 
-### First install
+- onboarding is fully local
+- onboarding copy must stay honest about launcher limitations
+- long onboarding content must remain usable on smaller displays
 
-intro -> set default launcher guidance -> optional permission explanation -> starter layout -> handoff complete
+### Senior daily use
 
-### Daily senior use
-
-open phone -> see large main actions -> tap app or photo contact -> optionally return home
-
-- `Phone`, `Messages`, `Contacts`, `Photos`, `Camera`, and `Emergency` stay obvious on home
+- home is a fixed essentials grid
+- the visible essentials are `Phone`, `Messages`, `Contacts`, `Photos`, `Camera`, and `Emergency`
 - the first home page uses a fixed 2x3 layout with equal tiles, a large clock/date header card, and no visible settings or app-list entry
+- caregiver access is hidden behind a deliberate top-bar long-press, with a clock-tap fallback
 - caregiver settings are not visible on home
-- caregiver entry uses a deliberate hidden gesture on the top status bar, with a clock-tap fallback
 - the app list screen still exists for secondary flows, but it is not exposed on the main senior home page
-- home pages are fixed and caregiver-managed, not draggable
+- home-app slots are caregiver-managed and bounded; the senior surface is not freeform or draggable
 
-### Caregiver edit flow
+### Caregiver flow
 
 open caregiver area -> enter PIN -> land on caregiver dashboard -> open a focused section -> save or relock -> return home
 
-- caregiver session starts from hidden home entry
+- caregiver session starts from the hidden home entry
 - if caregiver PIN protection is enabled, PIN is required before caregiver settings open
-- the first caregiver screen is a dashboard with a compact header, four section cards, setup status, and grouped control cards
+- the first caregiver screen is a dashboard with grouped control cards and focused sections
 - caregiver manages `Home Apps` separately from the senior-facing home surface
 - caregiver assigns home apps to fixed page and slot positions
 
-## Crash sensitivity
+## Platform behavior
 
-Launcher apps sit on a critical path. Default to graceful fallback:
+- `Phone` opens the in-app contact and dial flow
+- `Messages` and `Photos` resolve through safe installed-app matching and fail with a clear message if unavailable
+- `Emergency` uses the emergency configuration and safe dial fallbacks
+- camera remains an optional capability path
 
-- if package icon is unavailable, show a safe fallback icon
-- if torch is unavailable, hide or disable the action
-- if dial action is unavailable, show explanation instead of crashing
-- if premium state is unavailable, default to free mode
+## Reliability rules
 
-## Privacy and security
+- launcher flows should never dead-end because of missing hardware, permissions, or apps
+- onboarding and home must remain reachable on smaller displays
+- if a referenced app disappears, EasyUI must fail safely and stay usable
+- if premium or billing is unavailable, the app must stay in free mode without crashing
 
-- no cloud account
-- no remote control
-- no unnecessary network permissions
-- local-only storage
-- explicit user-controlled backup and export
+## Product boundaries
+
+- consumer launcher only
+- no device-owner or kiosk claims
+- no remote caregiver control
+- no backend dependency

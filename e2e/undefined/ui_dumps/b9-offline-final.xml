@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><hierarchy dump_error="Command failed: adb -s 34081500040008N shell uiautomator dump /sdcard/window_dump.xml
+java.io.FileNotFoundException: /sys/board_info/user_cpu_freq: open failed: EACCES (Permission denied)
+	at libcore.io.IoBridge.open(IoBridge.java:574)
+	at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:179)
+	at java.io.FileReader.&lt;init&gt;(FileReader.java:75)
+	at com.vivo.adapter.cpuinfo.AbsCpuInfo.readFileFirstLine(AbsCpuInfo.java:52)
+	at com.vivo.adapter.cpuinfo.CpuInfoImpl.init(CpuInfoImpl.java:40)
+	at com.vivo.adapter.cpuinfo.CpuInfoImpl.getMaxCpuRate(CpuInfoImpl.java:158)
+	at android.util.FtCpuInfo.getMaxCpuRate(FtCpuInfo.java:54)
+	at android.app.UiAutomation.getConnectTimeOut(UiAutomation.java:299)
+	at android.app.UiAutomation.connect(UiAutomation.java:286)
+	at com.android.uiautomator.core.UiAutomationShellWrapper.connect(UiAutomationShellWrapper.java:31)
+	at com.android.commands.uiautomator.DumpCommand.run(DumpCommand.java:78)
+	at com.android.commands.uiautomator.Launcher.main(Launcher.java:83)
+	at com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)
+	at com.android.internal.os.RuntimeInit.main(RuntimeInit.java:389)
+Caused by: android.system.ErrnoException: open failed: EACCES (Permission denied)
+	at libcore.io.Linux.open(Native Method)
+	at libcore.io.ForwardingOs.open(ForwardingOs.java:574)
+	at libcore.io.BlockGuardOs.open(BlockGuardOs.java:274)
+	at libcore.io.IoBridge.open(IoBridge.java:560)
+	... 13 more
+"></hierarchy>

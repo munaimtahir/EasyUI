@@ -1,15 +1,39 @@
-# Documentation Overview
+# EasyUI Docs
 
-This `docs/` tree is the canonical documentation set for EasyUI Senior Launcher.
+This `docs/` tree is the active documentation set for EasyUI Senior Launcher.
 
-## Structure
+## Use These First
 
-- `product/` defines problem, users, positioning, scope, roadmap, monetization, and hard product guardrails.
-- `engineering/` defines architecture, data model, interfaces, setup, testing, and the implementation task list.
-- `delivery/` defines contribution standards, QA, and CI/CD expectations.
-- `ai/` defines AI-agent operating guidance and the autonomous implementation brief.
-- `delivery/current-status.md` is the live snapshot of what is implemented in the app today.
+Product and scope:
 
-## Legacy material
+- `product/project-brief.md`
+- `product/mvp-scope.md`
+- `product/v1-scope.md`
+- `product/guardrails.md`
 
-The original documentation sources and duplicated AI developer packs have been preserved in `archive/legacy-docs/`. They are historical input only; use this `docs/` tree for active work.
+Engineering:
+
+- `engineering/architecture.md`
+- `engineering/data-model.md`
+- `engineering/api-interfaces.md`
+- `engineering/tasks.md`
+
+Release and Play Store:
+
+- `delivery/current-status.md`
+- `delivery/release-readiness.md`
+- `delivery/release-checklist.md`
+- `delivery/play-store-submission-pack.md`
+- `delivery/play-console-manual-actions.md`
+- `delivery/privacy-policy.md`
+- `delivery/listing-graphics-prompts.md`
+
+## Principles
+
+- Keep docs aligned to the current shipped app, not past upgrade passes.
+- Keep product claims honest: this is a consumer launcher, not kiosk software.
+- Prefer one current document per topic over historical status notes.
+
+## Legacy Material
+
+`archive/legacy-docs/` remains historical input only. Do not use it as the source of truth for current scope or release work.

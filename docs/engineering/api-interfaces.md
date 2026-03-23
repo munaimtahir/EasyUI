@@ -17,9 +17,14 @@ Used to:
 - fetch labels and icons
 - detect install and uninstall changes
 
-### Direct dial or call actions
+### Calling and SOS actions
 
-Use standard intents. Request only the minimum permissions required by the chosen implementation path.
+- regular phone and favorite-contact flows should prefer safe dialer behavior
+- SOS may use:
+  - `ACTION_DIAL` fallback
+  - direct call when `CALL_PHONE` is granted
+  - SMS sending when `SEND_SMS` is granted
+- permission-denied states must degrade safely and clearly
 
 ### Flashlight
 
@@ -67,6 +72,8 @@ Google Play Billing Library is planned for the premium unlock path, but it is no
 - PIN state
 - theme and visibility preferences
 - home readability and accessibility preferences
+- emergency and SOS settings
+- health info
 - premium state cache
 
 ### HiddenAppRepository
@@ -106,4 +113,5 @@ Planned only. When it lands, it should initiate purchase, observe entitlement, a
 - never hard-crash because of a missing app or package
 - use fallback UI for missing target actions
 - validate import payloads before applying
+- permission failures for call or SMS must keep the launcher usable
 - billing failures must degrade gracefully to free mode

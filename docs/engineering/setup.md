@@ -22,10 +22,11 @@
 
 1. Open the repository in Android Studio.
 2. Sync Gradle.
-3. Create a debug build.
-4. Run on an emulator and at least one physical Android device.
+3. Build a debug APK with `./gradlew :app:assembleDebug`.
+4. Run on at least one physical Android device.
 5. Verify launcher intent registration.
 6. Verify the app can be selected as the default launcher.
+7. Verify onboarding can reach home on the target display size.
 
 ## Device test recommendations
 
@@ -37,8 +38,13 @@
 
 - `debug`
 - `release`
-- optional `qa`
 
 ## Config
 
-No backend secrets are required. Billing test product IDs should be provided via local Gradle properties or another VCS-excluded configuration path.
+No backend secrets are required. Billing test product IDs, when premium work resumes, should be provided through a VCS-excluded local configuration path.
+
+## E2E commands
+
+- `./e2e/scripts/run-static.sh`
+- `./e2e/scripts/run-device-smoke.sh <serial>`
+- `./e2e/scripts/run-device-full.sh <serial>`

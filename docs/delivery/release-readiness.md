@@ -2,56 +2,125 @@
 
 ## Scope
 
-This release-readiness pass applies to the Android project: `EasyUI Senior Launcher`.
+This document reflects the current in-repo application only: `EasyUI Senior Launcher`.
 
 ## Audit date
 
-March 21, 2026 (UTC)
+March 23, 2026 (UTC)
 
-## Release audit summary
+## Repository-backed release summary
 
-### Build and packaging
+### App identity
 
 - App module: `app`
 - Application ID: `com.easyui.launcher`
+- Debug package: `com.easyui.launcher.debug`
 - `minSdk`: 26
 - `targetSdk`: 35
+- Launcher activity: `com.easyui.launcher.MainActivity`
+
+### Current product shape
+
+- consumer Android launcher
+- offline-first
+- no account requirement
+- caregiver-assisted setup
+- current build includes:
+  - onboarding
+  - fixed essentials home
+  - hidden caregiver access
+  - caregiver PIN and layout lock
+  - hidden apps
+  - favorite contacts
+  - Health Info
+  - SOS
+  - backup export/import
+- current build does not yet include:
+  - live billing
+  - premium entitlement restore
+  - a senior-facing home entry to the app-list surface
+
+### Build and packaging status
+
 - `versionCode`: 1
 - `versionName`: `1.0.0`
-- **Build Status**:
-  - `assembleDebug`: ✅ PASSED
-  - `test`: ✅ PASSED (all unit tests passing)
-  - `lintRelease`: ✅ PASSED (with hardening and suppressions)
-  - `assembleRelease`: ⚠️ Requires signing key (`easyui-release.jks`) to complete final APK/Bundle.
+- `assembleDebug`: passed
+- `test`: passed
+- `lintRelease`: passed
+- `assembleRelease`: passed
+- `bundleRelease`: passed
+- Release APK output: `app-release-unsigned.apk`
+- Release AAB output: `app-release.aab` and it remains unsigned until a real release keystore is configured
 
-### Permissions and feature declarations
+### Manifest and policy-sensitive behavior
 
-The manifest has been updated to support core launcher features while ensuring maximum device compatibility:
+- exported activity: one launcher activity
+- launcher categories:
+  - `MAIN`
+  - `HOME`
+  - `DEFAULT`
+- declared permissions:
+  - `android.permission.SEND_SMS`
+  - `android.permission.CALL_PHONE`
+  - `android.permission.ACCESS_NETWORK_STATE`
+  - `android.permission.READ_PHONE_STATE`
+- optional hardware features:
+  - `android.hardware.camera.flash` with `required="false"`
+  - `android.hardware.telephony` with `required="false"`
+- Android automatic backup is disabled in favor of app-owned export/import
 
-- `android.permission.SEND_SMS`: Required for emergency and messaging features.
-- `android.permission.CALL_PHONE`: Required for dialer integration.
-- `android.permission.ACCESS_NETWORK_STATE`: Required for status bar connectivity indicators.
-- `android.permission.READ_PHONE_STATE`: Added to support SIM carrier name display.
+### Data posture
 
-**Hardware Features (Optional)**:
-- `android.hardware.camera.flash`: `required="false"` (for flashlight tile).
-- `android.hardware.telephony`: `required="false"` (ensures installation on non-telephony devices like tablets).
+Stored locally on device:
 
-### Code Hardening
+- onboarding state
+- home layout
+- caregiver settings
+- hidden app choices
+- emergency and SOS numbers
+- Health Info
+- contact shortcuts and photo URI references
+- caregiver PIN hash and salt
 
-- **AndroidDeviceStatusRepository**: Implemented defensive `try-catch` blocks and safe fallback values for connectivity, signal strength, and SIM status to prevent crashes on devices with restricted permissions or OEM-specific API quirks.
-- **AndroidBatteryStatusRepository**: Added API-level compatibility guards for battery status monitoring.
+Not observed in the current repo:
 
-## Recent Fixes & Improvements
+- analytics SDKs
+- ad SDKs
+- crash reporting SDKs
+- backend APIs
+- account login
+- remote caregiver control
 
-1. **Merge Conflict Resolution**: Resolved conflicts in `LockedHomeSmokeTest.kt` to restore test suite integrity.
-2. **Lint Error Resolution**:
-   - Fixed `PermissionImpliesUnsupportedChromeOsHardware` by declaring telephony hardware as optional.
-   - Fixed `MissingPermission` and `NewApi` errors in platform repositories through a combination of manifest updates and safe API suppression with guards.
-3. **Verification**: Successfully ran a full clean build and test pass (`./gradlew test lintRelease assembleDebug`).
+## Release strengths
 
-## Manual Release Boundary
+- honest scope for a consumer launcher
+- no backend dependency
+- local backup and restore
+- strong caregiver safety tooling
+- current device suite coverage across onboarding, home, caregiver, SOS-adjacent flows, and offline behavior
+- latest in-repo full Gradle verification passed on March 23, 2026:
+  - `./gradlew --no-daemon clean assembleDebug test lintRelease assembleRelease bundleRelease :app:signingReport`
 
-- **Signing**: The project expects a keystore at `app/easyui-release.jks`. This must be provided or generated for the final Play Store upload.
-- **Play Console**: Data Safety and content rating questionnaires must be updated to reflect the `READ_PHONE_STATE` and `SEND_SMS` usage.
-- **Assets**: Final feature graphics and store screenshots are required.
+## Release blockers
+
+- release signing and upload keystore are still manual
+- Play listing assets still need final exported artwork and screenshots
+- privacy policy must be hosted at a stable public URL
+- Play Console Data Safety and content-rating answers still require human submission
+- premium docs must remain aspirational only until billing is actually connected
+
+## Release cautions
+
+- Store copy must not imply kiosk mode or OS-level lockdown.
+- Reviewer notes should explain why `SEND_SMS` and `CALL_PHONE` exist:
+  - SOS can send messages to configured SOS numbers
+  - SOS may attempt a direct call to the primary SOS number when permission is granted
+- Reviewer notes should explain why `ACCESS_NETWORK_STATE` and `READ_PHONE_STATE` exist:
+  - status indicators and SIM/carrier visibility are read locally for launcher UI only
+- The app-list entry gap must not be marketed as fully available from home.
+- Release packaging now succeeds with code shrinking and resource shrinking after upgrading the Android Gradle Plugin from `8.5.2` to `8.6.1`.
+- Current release artifacts generated from Gradle are unsigned until a release keystore is configured.
+
+## Recommended release stance
+
+The app is close to Play-ready from a product and QA perspective, but it is not fully submission-ready until the manual release items above are completed.
