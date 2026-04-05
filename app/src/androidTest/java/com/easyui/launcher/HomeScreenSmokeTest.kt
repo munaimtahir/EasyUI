@@ -34,6 +34,7 @@ class HomeScreenSmokeTest {
                     ),
                     skinConfig = SkinConfig(),
                     onTileClick = {},
+                    onOpenAppList = {},
                     onStatusBarLongPress = {},
                     onClockTapped = {},
                 )
@@ -43,6 +44,7 @@ class HomeScreenSmokeTest {
         composeRule.onNodeWithTag("home_top_status_bar").assertIsDisplayed()
         composeRule.onNodeWithText("Phone").assertIsDisplayed()
         composeRule.onNodeWithText("Emergency").assertIsDisplayed()
+        composeRule.onNodeWithTag("home_all_apps_button").assertIsDisplayed()
         composeRule.onNodeWithText("Friday, March 20").assertIsDisplayed()
     }
 }

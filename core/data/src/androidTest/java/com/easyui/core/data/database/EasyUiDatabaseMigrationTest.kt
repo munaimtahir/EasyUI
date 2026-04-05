@@ -1,5 +1,6 @@
 package com.easyui.core.data.database
 
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -10,6 +11,8 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class EasyUiDatabaseMigrationTest {
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+
     @get:Rule
     val helper =
         MigrationTestHelper(
@@ -21,7 +24,10 @@ class EasyUiDatabaseMigrationTest {
 
     @Test
     fun migrate1To2AddsContactColumns() {
-        helper.createDatabase("migration-test", 1).apply {
+        context.deleteDatabase("migration-test")
+        val database = SQLiteDatabase.openOrCreateDatabase(context.getDatabasePath("migration-test"), null)
+        database.execSQL("PRAGMA user_version = 1")
+        database.apply {
             execSQL(
                 """
                 CREATE TABLE IF NOT EXISTS home_tiles (

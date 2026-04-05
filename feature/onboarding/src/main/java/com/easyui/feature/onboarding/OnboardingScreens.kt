@@ -145,7 +145,7 @@ fun CaregiverHelpScreen(
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    "Home shows the fixed essentials and Home Apps. The app list surface is still being wired in this build. Hidden Apps are only hidden inside EasyUI, not Android system-wide.",
+                    "Home shows the fixed essentials first, and All Apps stays available as a separate screen. Hidden Apps are only hidden inside EasyUI, not Android system-wide.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(

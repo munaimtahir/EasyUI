@@ -922,7 +922,7 @@ private fun layoutModeBody(mode: LayoutMode): String =
 
 private fun visualThemeLabel(theme: VisualTheme): String =
     when (theme) {
-        VisualTheme.LIGHT_PREMIUM -> "Light Premium"
+        VisualTheme.LIGHT_PREMIUM -> "Warm Light"
         VisualTheme.DARK_COMFORT -> "Dark Comfort"
         VisualTheme.CLINICAL_PROFESSIONAL -> "Clinical Professional"
         VisualTheme.SOFT_CALM -> "Soft Calm"

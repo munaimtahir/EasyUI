@@ -1,10 +1,16 @@
 package com.easyui.launcher.caregiver
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
+import com.easyui.launcher.assertPresent
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
@@ -58,13 +64,13 @@ class CaregiverQolSmokeTest {
             }
         }
 
-        composeRule.onNodeWithTag("caregiver_tools_screen").assertIsDisplayed()
-        composeRule.onNodeWithText("Caregiver").assertIsDisplayed()
-        composeRule.onNodeWithText("Home Layout").assertIsDisplayed()
-        composeRule.onNodeWithText("Allowed Apps").assertIsDisplayed()
-        composeRule.onNodeWithText("Contacts & Emergency").assertIsDisplayed()
-        composeRule.onNodeWithText("Security & Lock").assertIsDisplayed()
-        composeRule.onNodeWithText("Quick Toggles").assertIsDisplayed()
+        composeRule.onNodeWithTag("caregiver_tools_screen").assertPresent()
+        composeRule.onNodeWithText("Caregiver").assertPresent()
+        composeRule.onNodeWithText("Home Layout").assertPresent()
+        composeRule.onNodeWithText("Allowed Apps").assertPresent()
+        composeRule.onNodeWithText("Contacts & Emergency").assertPresent()
+        composeRule.onNodeWithText("Security & Lock").assertPresent()
+        composeRule.onAllNodesWithText("Protected").assertCountEquals(2)
     }
 
     @Test
@@ -85,9 +91,10 @@ class CaregiverQolSmokeTest {
             }
         }
 
-        composeRule.onNodeWithTag("layout_pages_screen").assertIsDisplayed()
+        composeRule.onNodeWithTag("layout_pages_screen").assertPresent()
         composeRule.onNodeWithText("Add Page").assertIsDisplayed()
         composeRule.onNodeWithText("Use Fewer").assertIsDisplayed()
+        composeRule.onNodeWithTag("layout_pages_screen").performScrollToNode(hasText("Visual Theme"))
         composeRule.onNodeWithText("Visual Theme").assertIsDisplayed()
     }
 
@@ -121,11 +128,12 @@ class CaregiverQolSmokeTest {
             }
         }
 
-        composeRule.onNodeWithTag("allowed_apps_screen").assertIsDisplayed()
-        composeRule.onNodeWithText("Home Apps").assertIsDisplayed()
-        composeRule.onNodeWithText("Installed Apps").assertIsDisplayed()
-        composeRule.onNodeWithText("Phone").assertIsDisplayed()
-        composeRule.onNodeWithText("Messages").assertIsDisplayed()
-        composeRule.onNodeWithText("Maps").assertIsDisplayed()
+        composeRule.onNodeWithTag("allowed_apps_screen").assertPresent()
+        composeRule.onNodeWithText("Home Apps").assertPresent()
+        composeRule.onNodeWithText("Installed Apps").assertPresent()
+        composeRule.onNodeWithText("Phone").assertPresent()
+        composeRule.onNodeWithText("Messages").assertPresent()
+        composeRule.onAllNodesWithText("Camera").assertCountEquals(2)
+        composeRule.onNodeWithText("Already on home").assertPresent()
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,6 +63,7 @@ fun HomeScreen(
     tiles: List<TileDisplayModel>,
     skinConfig: SkinConfig,
     onTileClick: (String) -> Unit,
+    onOpenAppList: () -> Unit,
     onStatusBarLongPress: () -> Unit,
     onClockTapped: () -> Unit,
     modifier: Modifier = Modifier,
@@ -128,6 +130,24 @@ fun HomeScreen(
                             }
                         }
                     }
+                }
+                OutlinedButton(
+                    onClick = onOpenAppList,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
+                        .testTag("home_all_apps_button"),
+                    shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+                ) {
+                    Text(
+                        text = "All Apps",
+                        color = SeniorHomeTokens.textPrimary,
+                        fontSize = when (skinConfig.accessibilityMode) {
+                            AccessibilityMode.BOLD_ACCESSIBILITY -> 24.sp
+                            else -> 22.sp
+                        },
+                        fontWeight = FontWeight.SemiBold,
+                    )
                 }
             }
         }
@@ -284,6 +304,7 @@ private fun HomeScreenPreview() {
         tiles = previewTiles(),
         skinConfig = SkinConfig(),
         onTileClick = {},
+        onOpenAppList = {},
         onStatusBarLongPress = {},
         onClockTapped = {},
     )
@@ -298,6 +319,7 @@ private fun HomeScreenLargeTextPreview() {
         tiles = previewTiles(),
         skinConfig = SkinConfig(accessibilityMode = AccessibilityMode.BOLD_ACCESSIBILITY),
         onTileClick = {},
+        onOpenAppList = {},
         onStatusBarLongPress = {},
         onClockTapped = {},
     )

@@ -30,6 +30,7 @@ class LockedHomeSmokeTest {
                     ),
                     skinConfig = SkinConfig(),
                     onTileClick = {},
+                    onOpenAppList = {},
                     onStatusBarLongPress = {},
                     onClockTapped = {},
                 )

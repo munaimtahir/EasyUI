@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +29,7 @@ fun AppListScreen(
     emptyBody: String?,
     onQueryChange: (String) -> Unit,
     onAppClick: (InstalledApp) -> Unit,
+    onBackHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
@@ -34,6 +37,7 @@ fun AppListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(EasyUiSpacing.lg)
+                .navigationBarsPadding()
                 .testTag("app_list_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
@@ -58,7 +62,10 @@ fun AppListScreen(
                     Text(emptyBody, style = MaterialTheme.typography.bodyLarge)
                 }
             } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                ) {
                     items(apps, key = { it.packageName }) { app ->
                         Column(
                             modifier = Modifier
@@ -76,6 +83,14 @@ fun AppListScreen(
                         }
                     }
                 }
+            }
+            OutlinedButton(
+                onClick = onBackHome,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("app_list_back_home"),
+            ) {
+                Text("Back to Home")
             }
         }
     }

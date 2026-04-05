@@ -185,6 +185,7 @@ fun EasyUiNavGraph(
                                 onOpenEmergency = { navController.navigate(Routes.EmergencyCall.route) },
                             )
                         },
+                        onOpenAppList = { navController.navigate(Routes.AppList.route) },
                         onStatusBarLongPress = {
                             homeViewModel.onTopBarLongPressCaregiverAccess(openCaregiverAccess)
                         },
@@ -235,6 +236,7 @@ fun EasyUiNavGraph(
                         emptyBody = appListState.emptyBody,
                         onQueryChange = appListViewModel::updateQuery,
                         onAppClick = appListViewModel::launchApp,
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) },
                     )
                 }
                 composable(Routes.CaregiverTools.route) {

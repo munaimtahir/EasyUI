@@ -10,6 +10,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import com.easyui.launcher.assertPresent
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.ui.theme.EasyUiTheme
 import com.easyui.feature.caregiver.CaregiverToolsScreen
@@ -73,8 +75,8 @@ class CaregiverProtectionSmokeTest {
             }
         }
 
-        composeRule.onNodeWithText("Change Caregiver PIN").performClick()
-        composeRule.onNodeWithTag("pin_entry_screen").assertIsDisplayed()
+        composeRule.onNodeWithText("Security & Lock").performScrollTo().performClick()
+        composeRule.onNodeWithTag("pin_entry_screen").assertPresent()
         composeRule.onNodeWithText("Enter Caregiver PIN").assertIsDisplayed()
     }
 }

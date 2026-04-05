@@ -45,6 +45,7 @@ class AppListSmokeTest {
                     emptyBody = null,
                     onQueryChange = { query = it },
                     onAppClick = {},
+                    onBackHome = {},
                 )
             }
         }
@@ -71,11 +72,13 @@ class AppListSmokeTest {
                     emptyBody = "A caregiver may have hidden some apps inside EasyUI.",
                     onQueryChange = {},
                     onAppClick = {},
+                    onBackHome = {},
                 )
             }
         }
 
         composeRule.onNodeWithTag("app_list_empty_state").assertIsDisplayed()
         composeRule.onNodeWithText("No apps are shown here right now").assertIsDisplayed()
+        composeRule.onNodeWithTag("app_list_back_home").assertIsDisplayed()
     }
 }

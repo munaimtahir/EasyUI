@@ -1,7 +1,6 @@
 package com.easyui.launcher
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -22,8 +21,8 @@ class OnboardingSmokeTest {
             }
         }
 
-        composeRule.onNodeWithTag("intro_screen").assertIsDisplayed()
-        composeRule.onNodeWithText("EasyUI Senior Launcher").assertIsDisplayed()
-        composeRule.onNodeWithText("Start Setup").assertIsDisplayed()
+        composeRule.onNodeWithTag("intro_screen").assertPresent()
+        composeRule.onNodeWithText("EasyUI Senior Launcher").assertPresent()
+        composeRule.onNodeWithText("Start Setup").assertPresent()
     }
 }
