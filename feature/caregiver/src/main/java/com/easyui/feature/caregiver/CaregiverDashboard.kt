@@ -81,6 +81,7 @@ internal fun CaregiverDashboardScreen(
     onOpenHiddenApps: () -> Unit,
     onFinishSetup: () -> Unit,
     onResetLauncher: () -> Unit,
+    onRedoGuidedSetup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
@@ -202,6 +203,7 @@ internal fun CaregiverDashboardScreen(
                         onFinishSetup = onFinishSetup,
                         onOpenBackupRestore = onOpenBackupRestore,
                         onResetLauncher = onResetLauncher,
+                        onRedoGuidedSetup = onRedoGuidedSetup,
                     )
                 }
             }
@@ -509,12 +511,13 @@ private fun QuickActionsCard(
     onFinishSetup: () -> Unit,
     onOpenBackupRestore: () -> Unit,
     onResetLauncher: () -> Unit,
+    onRedoGuidedSetup: () -> Unit,
 ) {
     DashboardSurface(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionHeader(
-                title = "Quick Actions",
-                subtitle = "Use strong color only for priorities and destructive actions.",
+                title = "Setup & Admin",
+                subtitle = "Re-run the first-run wizard or reset the launcher state.",
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -526,8 +529,8 @@ private fun QuickActionsCard(
                     modifier = Modifier.weight(1f),
                 )
                 DashboardSecondaryButton(
-                    text = "Emergency",
-                    onClick = onOpenEmergencySettings,
+                    text = "Restart Setup",
+                    onClick = onRedoGuidedSetup,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -536,16 +539,21 @@ private fun QuickActionsCard(
                 horizontalArrangement = Arrangement.spacedBy(CaregiverDashboardTokens.sectionGap),
             ) {
                 DashboardSecondaryButton(
+                    text = "Emergency",
+                    onClick = onOpenEmergencySettings,
+                    modifier = Modifier.weight(1f),
+                )
+                DashboardSecondaryButton(
                     text = "Backup",
                     onClick = onOpenBackupRestore,
                     modifier = Modifier.weight(1f),
                 )
-                DashboardDangerButton(
-                    text = "Reset",
-                    onClick = onResetLauncher,
-                    modifier = Modifier.weight(1f),
-                )
             }
+            DashboardDangerButton(
+                text = "Reset Launcher",
+                onClick = onResetLauncher,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -862,5 +870,6 @@ private fun CaregiverDashboardPreview() {
         onOpenHiddenApps = {},
         onFinishSetup = {},
         onResetLauncher = {},
+        onRedoGuidedSetup = {},
     )
 }

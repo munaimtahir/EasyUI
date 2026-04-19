@@ -23,4 +23,7 @@ data class LauncherSettings(
     val homePageCount: Int = 2,
     val healthInfo: HealthInfo = HealthInfo(),
     val skinConfig: SkinConfig = SkinConfig(),
+    val guidedSetupStep: Int = 0,
+    val guidedSetupCompleted: Boolean = false,
+    val emergencyMode: String = "MENU",
 )

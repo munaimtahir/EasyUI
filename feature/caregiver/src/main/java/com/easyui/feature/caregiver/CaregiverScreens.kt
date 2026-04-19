@@ -93,6 +93,7 @@ fun CaregiverToolsScreen(
     onOpenHiddenApps: () -> Unit,
     onFinishSetup: () -> Unit,
     onResetLauncher: () -> Unit,
+    onRedoGuidedSetup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CaregiverDashboardScreen(
@@ -123,6 +124,7 @@ fun CaregiverToolsScreen(
         onOpenHiddenApps = onOpenHiddenApps,
         onFinishSetup = onFinishSetup,
         onResetLauncher = onResetLauncher,
+        onRedoGuidedSetup = onRedoGuidedSetup,
         modifier = modifier,
     )
 }

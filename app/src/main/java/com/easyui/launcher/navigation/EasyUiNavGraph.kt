@@ -53,8 +53,19 @@ import com.easyui.feature.home.PhoneContactsScreen
 import com.easyui.feature.onboarding.CaregiverHelpScreen
 import com.easyui.feature.onboarding.DefaultLauncherGuidanceScreen
 import com.easyui.feature.onboarding.IntroScreen
+import com.easyui.feature.onboarding.WelcomeScreen
+import com.easyui.feature.onboarding.LauncherActivationScreen
+import com.easyui.feature.onboarding.ReadabilityPresetScreen
+import com.easyui.feature.onboarding.HomeLayoutSetupScreen
+import com.easyui.feature.onboarding.AllowedAppsSetupScreen
+import com.easyui.feature.onboarding.ContactsSetupScreen
+import com.easyui.feature.onboarding.SecuritySetupScreen
+import com.easyui.feature.onboarding.DeviceSupportScreen
+import com.easyui.feature.onboarding.ReviewConfirmScreen
+import com.easyui.feature.onboarding.CompletionScreen
 import com.easyui.launcher.app.AppListViewModel
 import com.easyui.launcher.app.AppViewModel
+import com.easyui.launcher.app.GuidedSetupViewModel
 import com.easyui.launcher.app.HomeViewModel
 import com.easyui.launcher.app.caregiver.BackupViewModel
 import com.easyui.launcher.app.caregiver.CaregiverViewModel
@@ -82,10 +93,12 @@ fun EasyUiNavGraph(
     val appListViewModel: AppListViewModel = viewModel(factory = factory)
     val caregiverViewModel: CaregiverViewModel = viewModel(factory = factory)
     val backupViewModel: BackupViewModel = viewModel(factory = factory)
+    val guidedSetupViewModel: GuidedSetupViewModel = viewModel(factory = factory)
     val appState by appViewModel.state.collectAsState()
     val homeState by homeViewModel.state.collectAsState()
     val appListState by appListViewModel.state.collectAsState()
     val caregiverState by caregiverViewModel.state.collectAsState()
+    val guidedSetupState by guidedSetupViewModel.state.collectAsState()
     val uiScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -132,7 +145,7 @@ fun EasyUiNavGraph(
             return@Scaffold
         }
         val startDestination =
-            if (appState.settings.onboardingComplete) Routes.Home.route else Routes.Intro.route
+            if (appState.settings.onboardingComplete) Routes.Home.route else Routes.GuidedSetup.route
         androidx.compose.foundation.layout.Box(
             modifier = androidx.compose.ui.Modifier
                 .padding(innerPadding)
@@ -144,29 +157,91 @@ fun EasyUiNavGraph(
                 navController = navController,
                 startDestination = startDestination,
             ) {
-                composable(Routes.Intro.route) {
-                    IntroScreen(onContinue = { navController.navigate(Routes.LauncherGuidance.route) })
-                }
-                composable(Routes.LauncherGuidance.route) {
-                    val isDefaultLauncher = remember(launcherStatusVersion) {
-                        container.defaultLauncherManager.isDefaultLauncher()
-                    }
-                    DefaultLauncherGuidanceScreen(
-                        isDefaultLauncher = isDefaultLauncher,
-                        onOpenSettings = { container.defaultLauncherManager.openDefaultLauncherSettings() },
-                        onRefreshStatus = { launcherStatusVersion += 1 },
-                        onContinue = { navController.navigate(Routes.CaregiverHelp.route) },
-                    )
-                }
-                composable(Routes.CaregiverHelp.route) {
-                    CaregiverHelpScreen(
-                        onContinue = {
-                            appViewModel.completeOnboarding()
-                            navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.Intro.route) { inclusive = true }
+                composable(Routes.GuidedSetup.route) {
+                    when (guidedSetupState.guidedSetupStep) {
+                        1 -> WelcomeScreen(onNext = { guidedSetupViewModel.nextStep() })
+                        2 -> LauncherActivationScreen(
+                            isDefaultLauncher = guidedSetupState.isDefaultLauncher,
+                            onOpenSettings = { guidedSetupViewModel.openLauncherSettings() },
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() }
+                        )
+                        3 -> ReadabilityPresetScreen(
+                            currentPreset = guidedSetupState.homeReadabilityPreset,
+                            onPresetSelected = { guidedSetupViewModel.updateReadabilityPreset(it) },
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() }
+                        )
+                        4 -> HomeLayoutSetupScreen(
+                            homePageCount = guidedSetupState.homePageCount,
+                            onPageCountChange = { caregiverViewModel.updateHomePageCount(it) },
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() }
+                        )
+                        5 -> AllowedAppsSetupScreen(
+                            pageCount = caregiverViewModel.effectivePageCount(),
+                            pages = caregiverViewModel.homePages(),
+                            installedApps = caregiverViewModel.installedAppsForAllowedApps(),
+                            assignedAppPackages = caregiverViewModel.assignedAppPackages(),
+                            onAssignApp = caregiverViewModel::assignAllowedApp,
+                            onRemoveApp = caregiverViewModel::removeAllowedApp,
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() }
+                        )
+                        6 -> ContactsSetupScreen(
+                            tiles = caregiverViewModel.contactTiles(),
+                            onMoveUp = caregiverViewModel::moveTileUp,
+                            onMoveDown = caregiverViewModel::moveTileDown,
+                            onEdit = caregiverViewModel::saveContactTile,
+                            onRemove = caregiverViewModel::removeTile,
+                            emergencyMode = guidedSetupState.emergencyMode,
+                            onEmergencyModeChange = { guidedSetupViewModel.updateEmergencyMode(it) },
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() }
+                        )
+                        7 -> SecuritySetupScreen(
+                            pin = guidedSetupState.pinInput,
+                            confirmPin = guidedSetupState.confirmPinInput,
+                            errorMessage = guidedSetupState.pinError,
+                            layoutLocked = guidedSetupState.layoutLocked,
+                            onLayoutLockedChange = { guidedSetupViewModel.updateLayoutLocked(it) },
+                            onPinChange = { guidedSetupViewModel.updatePinInput(it) },
+                            onConfirmPinChange = { guidedSetupViewModel.updateConfirmPinInput(it) },
+                            onNext = { 
+                                // Only advance if PIN is valid or user wants no PIN (both fields empty)
+                                val pinEmpty = guidedSetupState.pinInput.isEmpty() && guidedSetupState.confirmPinInput.isEmpty()
+                                if (pinEmpty || guidedSetupViewModel.savePin()) {
+                                    guidedSetupViewModel.nextStep()
+                                }
+                            },
+                            onBack = { guidedSetupViewModel.previousStep() },
+                            onSkip = { guidedSetupViewModel.nextStep() }
+                        )
+                        8 -> DeviceSupportScreen(
+                            showBattery = caregiverState.settings.showBatteryInfo,
+                            onToggleBattery = { caregiverViewModel.setBatteryInfoVisible(it) },
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() }
+                        )
+                        9 -> ReviewConfirmScreen(
+                            onConfirm = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() },
+                            readability = guidedSetupState.homeReadabilityPreset.name.replace("_", " "),
+                            pageCount = caregiverViewModel.effectivePageCount(),
+                            allowedAppCount = caregiverViewModel.assignedAppPackages().size,
+                            emergencyMode = guidedSetupState.emergencyMode,
+                            layoutLocked = guidedSetupState.layoutLocked,
+                            hasPin = guidedSetupState.hasPinConfigured
+                        )
+                        10 -> CompletionScreen(
+                            onFinish = {
+                                guidedSetupViewModel.completeSetup()
+                                navController.navigate(Routes.Home.route) {
+                                    popUpTo(Routes.GuidedSetup.route) { inclusive = true }
+                                }
                             }
-                        },
-                    )
+                        )
+                    }
                 }
                 composable(Routes.Home.route) {
                     BackHandler(enabled = true) {}
@@ -302,6 +377,10 @@ fun EasyUiNavGraph(
                             onResetLauncher = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.RESET_LAUNCHER))
                             },
+                            onRedoGuidedSetup = {
+                                guidedSetupViewModel.setStep(1)
+                                navController.navigate(Routes.GuidedSetup.route)
+                            }
                         )
                     }
                 }

@@ -64,6 +64,9 @@ class DataStoreLauncherSettingsRepository(
                     accessibilityModeName = preferences[Keys.SKIN_ACCESSIBILITY_MODE],
                     verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
                 ),
+                guidedSetupStep = preferences[Keys.GUIDED_SETUP_STEP] ?: 0,
+                guidedSetupCompleted = preferences[Keys.GUIDED_SETUP_COMPLETED] ?: false,
+                emergencyMode = preferences[Keys.EMERGENCY_MODE] ?: "MENU",
             )
         }
 
@@ -189,6 +192,24 @@ class DataStoreLauncherSettingsRepository(
         }
     }
 
+    override suspend fun updateGuidedSetupStep(step: Int) {
+        dataStore.edit { preferences ->
+            preferences[Keys.GUIDED_SETUP_STEP] = step
+        }
+    }
+
+    override suspend fun updateGuidedSetupCompleted(completed: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.GUIDED_SETUP_COMPLETED] = completed
+        }
+    }
+
+    override suspend fun updateEmergencyMode(mode: String) {
+        dataStore.edit { preferences ->
+            preferences[Keys.EMERGENCY_MODE] = mode
+        }
+    }
+
     private object Keys {
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         val EMERGENCY_PHONE_NUMBER = stringPreferencesKey("emergency_phone_number")
@@ -217,6 +238,9 @@ class DataStoreLauncherSettingsRepository(
         val SKIN_LAYOUT_MODE = stringPreferencesKey("skin_layout_mode")
         val SKIN_VISUAL_THEME = stringPreferencesKey("skin_visual_theme")
         val SKIN_ACCESSIBILITY_MODE = stringPreferencesKey("skin_accessibility_mode")
+        val GUIDED_SETUP_STEP = intPreferencesKey("guided_setup_step")
+        val GUIDED_SETUP_COMPLETED = booleanPreferencesKey("guided_setup_completed")
+        val EMERGENCY_MODE = stringPreferencesKey("emergency_mode")
     }
 
     private fun encodeEmergencyNumbers(numbers: List<EmergencyNumber>): String {

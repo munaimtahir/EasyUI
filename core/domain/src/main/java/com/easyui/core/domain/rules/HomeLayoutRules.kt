@@ -232,6 +232,20 @@ object HomeLayoutRules {
             pageCount,
         )
 
+    fun updateEmergencyAction(
+        tiles: List<HomeTile>,
+        useSos: Boolean,
+    ): List<HomeTile> {
+        val action = if (useSos) HomeTileAction.SOS else HomeTileAction.EMERGENCY
+        return tiles.map { tile ->
+            if (tile.id == "emergency" && tile.position == 5) {
+                tile.copy(action = action)
+            } else {
+                tile
+            }
+        }
+    }
+
     fun moveTileEarlier(
         tiles: List<HomeTile>,
         tileId: String,

@@ -97,7 +97,14 @@ class HomeViewModel(
                         messages.emit("Camera is not available on this device.")
                     }
                 }
-                TileDisplayKind.EMERGENCY -> onOpenEmergency()
+                TileDisplayKind.EMERGENCY -> {
+                    if (tile.id == "emergency-sos") {
+                        val number = settingsState.value.emergencyPhoneNumber
+                        triggerDirectEmergencyCall(number)
+                    } else {
+                        onOpenEmergency()
+                    }
+                }
             }
         }
     }
@@ -199,6 +206,13 @@ class HomeViewModel(
                     id = tile.id,
                     title = tile.title,
                     subtitle = "Emergency",
+                    enabled = true,
+                    kind = TileDisplayKind.EMERGENCY,
+                )
+                HomeTileAction.SOS -> TileDisplayModel(
+                    id = "emergency-sos",
+                    title = tile.title,
+                    subtitle = "SOS",
                     enabled = true,
                     kind = TileDisplayKind.EMERGENCY,
                 )

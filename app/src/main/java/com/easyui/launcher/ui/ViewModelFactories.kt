@@ -20,6 +20,7 @@ class AppViewModelFactory(
             modelClass.isAssignableFrom(AppListViewModel::class.java) -> AppListViewModel(container) as T
             modelClass.isAssignableFrom(CaregiverViewModel::class.java) -> CaregiverViewModel(container) as T
             modelClass.isAssignableFrom(BackupViewModel::class.java) -> BackupViewModel(container) as T
+            modelClass.isAssignableFrom(com.easyui.launcher.app.GuidedSetupViewModel::class.java) -> com.easyui.launcher.app.GuidedSetupViewModel(container) as T
             else -> error("Unknown view model: ${modelClass.name}")
         }
 }
