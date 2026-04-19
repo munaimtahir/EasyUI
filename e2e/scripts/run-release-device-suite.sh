@@ -68,19 +68,19 @@ run_step "Gradle debug build and unit tests" \
 perl -0pi -e 's/- \[ \] Gradle debug build and unit tests/- [x] Gradle debug build and unit tests/' "$SUMMARY_FILE"
 
 run_step "Connected Android instrumentation tests" \
-  "$ROOT/gradlew" connectedDebugAndroidTest --no-daemon --console=plain
+  env ANDROID_SERIAL="$SERIAL" "$ROOT/gradlew" connectedDebugAndroidTest --no-daemon --console=plain
 perl -0pi -e 's/- \[ \] Connected Android instrumentation tests/- [x] Connected Android instrumentation tests/' "$SUMMARY_FILE"
 
 STATIC_DIR="$(run_step "Static Playwright checks" \
-  "$ROOT/e2e/scripts/run-static.sh" | tail -n 1)"
+  env EASYUI_DEVICE_SERIAL="$SERIAL" ANDROID_SERIAL="$SERIAL" "$ROOT/e2e/scripts/run-static.sh" | tail -n 1)"
 perl -0pi -e 's/- \[ \] Static Playwright checks/- [x] Static Playwright checks/' "$SUMMARY_FILE"
 
 SMOKE_DIR="$(run_step "Playwright smoke device suite" \
-  "$ROOT/e2e/scripts/run-device-smoke.sh" "$SERIAL" | tail -n 1)"
+  env EASYUI_DEVICE_SERIAL="$SERIAL" ANDROID_SERIAL="$SERIAL" "$ROOT/e2e/scripts/run-device-smoke.sh" "$SERIAL" | tail -n 1)"
 perl -0pi -e 's/- \[ \] Playwright smoke device suite/- [x] Playwright smoke device suite/' "$SUMMARY_FILE"
 
 FULL_DIR="$(run_step "Playwright full device suite" \
-  "$ROOT/e2e/scripts/run-device-full.sh" "$SERIAL" | tail -n 1)"
+  env EASYUI_DEVICE_SERIAL="$SERIAL" ANDROID_SERIAL="$SERIAL" "$ROOT/e2e/scripts/run-device-full.sh" "$SERIAL" | tail -n 1)"
 perl -0pi -e 's/- \[ \] Playwright full device suite/- [x] Playwright full device suite/' "$SUMMARY_FILE"
 
 cat >> "$SUMMARY_FILE" <<EOF

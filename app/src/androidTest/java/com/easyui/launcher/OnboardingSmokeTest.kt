@@ -1,9 +1,10 @@
 package com.easyui.launcher
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assertDoesNotExist
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.easyui.core.ui.theme.EasyUiTheme
@@ -67,8 +68,8 @@ class OnboardingSmokeTest {
         }
 
         composeRule.onNodeWithText("EasyUI is ready as Home").assertIsDisplayed()
-        composeRule.onNodeWithTag("setup_secondary_action").assertDoesNotExist()
-        composeRule.onNodeWithTag("setup_tertiary_action").assertDoesNotExist()
+        composeRule.onAllNodesWithTag("setup_secondary_action").assertCountEquals(0)
+        composeRule.onAllNodesWithTag("setup_tertiary_action").assertCountEquals(0)
         composeRule.onNodeWithText("Continue").assertIsDisplayed()
     }
 

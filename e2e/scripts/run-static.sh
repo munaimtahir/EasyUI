@@ -9,6 +9,9 @@ RUN_ID="$(date +%Y%m%d_%H%M%S)"
 RUN_DIR="$ROOT/device_test_runs/$RUN_ID"
 mkdir -p "$RUN_DIR"/{logs,screenshots,recordings,ui_dumps,notes,results}
 export EASYUI_RUN_DIR="$RUN_DIR"
+if [ -n "${EASYUI_DEVICE_SERIAL:-}" ]; then
+  export ANDROID_SERIAL="$EASYUI_DEVICE_SERIAL"
+fi
 npx playwright test tests/00_static
 "$ROOT/e2e/scripts/postprocess-results.sh" "$RUN_DIR"
 printf '%s\n' "$RUN_DIR"

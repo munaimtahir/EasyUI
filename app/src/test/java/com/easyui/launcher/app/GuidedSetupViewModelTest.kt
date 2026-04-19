@@ -65,6 +65,15 @@ class GuidedSetupViewModelTest {
         mockSettingsRepository = mockk(relaxed = true) {
             every { settings } returns settingsFlow
             coEvery { getSkinConfig() } returns SkinConfig(layoutMode = LayoutMode.SIMPLE_CLASSIC)
+            coEvery { updateGuidedSetupStep(any()) } coAnswers {
+                settingsFlow.update { it.copy(guidedSetupStep = firstArg()) }
+            }
+            coEvery { updateGuidedSetupCompleted(any()) } coAnswers {
+                settingsFlow.update { it.copy(guidedSetupCompleted = firstArg()) }
+            }
+            coEvery { updateOnboardingComplete(any()) } coAnswers {
+                settingsFlow.update { it.copy(onboardingComplete = firstArg()) }
+            }
         }
         
         mockLayoutRepository = mockk(relaxed = true) {
@@ -503,6 +512,7 @@ class GuidedSetupViewModelTest {
         // Set PIN
         viewModel.updatePinInput("1234")
         viewModel.updateConfirmPinInput("1234")
+        testDispatcher.scheduler.advanceUntilIdle()
         val pinSaved = viewModel.savePin()
         testDispatcher.scheduler.advanceUntilIdle()
         

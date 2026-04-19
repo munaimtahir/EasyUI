@@ -60,6 +60,7 @@ class CaregiverQolSmokeTest {
                     onOpenHiddenApps = {},
                     onFinishSetup = {},
                     onResetLauncher = {},
+                    onRedoGuidedSetup = {},
                 )
             }
         }
