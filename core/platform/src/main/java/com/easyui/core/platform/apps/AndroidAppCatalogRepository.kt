@@ -6,9 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
-import com.easyui.core.domain.model.InstalledApp
-import com.easyui.core.domain.repository.AppCatalogRepository
-import com.easyui.core.domain.rules.AppCatalogRules
+import com.easyui.core.domain.AppCatalogRepository
+import com.easyui.core.domain.AppCatalogRules
+import com.easyui.core.domain.InstalledApp
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

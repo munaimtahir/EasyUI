@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import com.easyui.core.domain.model.BatteryStatus
-import com.easyui.core.domain.repository.BatteryStatusRepository
+import com.easyui.core.domain.BatteryStatus
+import com.easyui.core.domain.BatteryStatusRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

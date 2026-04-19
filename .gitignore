@@ -21,6 +21,8 @@ Thumbs.db
 # Gradle / Kotlin / Android build outputs
 .gradle/
 **/.gradle/
+.gradle_local/
+**/.gradle_local/
 .kotlin/
 build/
 **/build/
@@ -81,6 +83,9 @@ device_test_runs/
 e2e/test-results/
 e2e/playwright-report/
 e2e/blob-report/
+e2e/undefined/
+e2e/.auth/
+e2e/.cache/
 
 # Android release outputs
 *.apk
@@ -90,8 +95,12 @@ e2e/blob-report/
 *.dm
 output-metadata.json
 release/apk/
-release-artifacts/*.apk
-release-artifacts/*.aab
+release-artifacts/*
+!release-artifacts/.gitkeep
+!release-artifacts/README.md
+
+# Ad-hoc local recovery scripts
+fiz.sh
 
 # Generic archives
 *.zip

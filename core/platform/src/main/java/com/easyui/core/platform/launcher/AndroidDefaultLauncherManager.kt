@@ -3,7 +3,7 @@ package com.easyui.core.platform.launcher
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
-import com.easyui.core.domain.repository.DefaultLauncherManager
+import com.easyui.core.domain.DefaultLauncherManager
 
 class AndroidDefaultLauncherManager(
     private val context: Context,

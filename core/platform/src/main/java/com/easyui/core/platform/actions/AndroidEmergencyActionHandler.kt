@@ -7,9 +7,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.telephony.SmsManager
 import androidx.core.content.ContextCompat
-import com.easyui.core.domain.model.LauncherActionState
-import com.easyui.core.domain.repository.EmergencyActionHandler
-import com.easyui.core.domain.rules.ActionAvailabilityResolver
+import com.easyui.core.domain.ActionAvailabilityResolver
+import com.easyui.core.domain.EmergencyActionHandler
+import com.easyui.core.domain.LauncherActionState
 
 class AndroidEmergencyActionHandler(
     private val context: Context,

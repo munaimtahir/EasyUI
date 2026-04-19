@@ -49,3 +49,28 @@ Cover:
 9. Test without call or SMS permissions granted.
 10. Confirm readability at different font scales.
 11. Confirm safe behavior when a target app is removed.
+
+## Release verification workflow
+
+Run this sequence before calling a build release-ready:
+
+1. `./gradlew testDebugUnitTest`
+2. `./gradlew connectedDebugAndroidTest`
+3. `./e2e/scripts/run-static.sh`
+4. `./e2e/scripts/run-device-smoke.sh <adb-serial>`
+5. `./e2e/scripts/run-device-full.sh <adb-serial>`
+
+Single-command physical-device handoff:
+
+- `./e2e/scripts/run-release-device-suite.sh <adb-serial>`
+- If one device is attached, the serial may be omitted.
+
+Expected release evidence:
+
+- local unit tests pass
+- Compose and instrumentation smoke tests pass on an attached Android device or emulator
+- static Playwright checks pass
+- smoke and full ADB-driven Playwright runs write artifacts under `device_test_runs/<timestamp>/`
+- manual QA confirms default launcher flow, reboot persistence, missing-app fallback, and caregiver lock behavior
+
+If no ADB device is attached, do not mark device verification complete. Report the exact missing serial and keep release status as pending physical-device validation.

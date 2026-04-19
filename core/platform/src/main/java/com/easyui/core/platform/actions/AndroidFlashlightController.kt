@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
-import com.easyui.core.domain.model.LauncherActionState
-import com.easyui.core.domain.repository.FlashlightController
-import com.easyui.core.domain.rules.ActionAvailabilityResolver
+import com.easyui.core.domain.ActionAvailabilityResolver
+import com.easyui.core.domain.FlashlightController
+import com.easyui.core.domain.LauncherActionState
 
 class AndroidFlashlightController(
     context: Context,

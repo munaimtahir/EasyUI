@@ -5,8 +5,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.telephony.TelephonyManager
-import com.easyui.core.domain.model.DeviceStatus
-import com.easyui.core.domain.repository.DeviceStatusRepository
+import com.easyui.core.domain.DeviceStatus
+import com.easyui.core.domain.DeviceStatusRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

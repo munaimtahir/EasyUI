@@ -3,10 +3,10 @@ package com.easyui.core.ui.theme
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.easyui.core.domain.model.AccessibilityMode
-import com.easyui.core.domain.model.LayoutMode
-import com.easyui.core.domain.model.SkinConfig
-import com.easyui.core.domain.model.VisualTheme
+import com.easyui.core.domain.AccessibilityMode
+import com.easyui.core.domain.LayoutMode
+import com.easyui.core.domain.SkinConfig
+import com.easyui.core.domain.VisualTheme
 
 enum class EmphasisMode {
     BALANCED,

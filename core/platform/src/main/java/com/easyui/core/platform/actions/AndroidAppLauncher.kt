@@ -2,7 +2,7 @@ package com.easyui.core.platform.actions
 
 import android.content.Context
 import android.content.Intent
-import com.easyui.core.domain.repository.AppLauncher
+import com.easyui.core.domain.AppLauncher
 
 class AndroidAppLauncher(
     private val context: Context,

@@ -3,8 +3,8 @@ package com.easyui.core.platform.actions
 import android.content.Context
 import android.content.Intent
 import android.provider.MediaStore
-import com.easyui.core.domain.repository.CameraActionHandler
-import com.easyui.core.domain.rules.ActionAvailabilityResolver
+import com.easyui.core.domain.ActionAvailabilityResolver
+import com.easyui.core.domain.CameraActionHandler
 
 class AndroidCameraActionHandler(
     private val context: Context,

@@ -30,7 +30,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
+    api(project(":core:domain"))
     implementation("androidx.compose.foundation:foundation:1.7.1")
     implementation("androidx.compose.material:material-icons-extended:1.7.1")
     implementation("androidx.compose.ui:ui:1.7.1")
