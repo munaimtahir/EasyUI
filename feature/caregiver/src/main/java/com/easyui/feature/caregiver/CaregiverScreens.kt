@@ -138,6 +138,7 @@ fun LayoutPagesScreen(
     onSelectLayoutMode: (LayoutMode) -> Unit,
     onSelectVisualTheme: (VisualTheme) -> Unit,
     onSelectAccessibilityMode: (AccessibilityMode) -> Unit,
+    onOpenHomeLayoutEditor: () -> Unit,
     onDone: () -> Unit,
     onFinishSetup: () -> Unit,
     modifier: Modifier = Modifier,
@@ -158,6 +159,11 @@ fun LayoutPagesScreen(
                     "Keep home simple. Use one to three fixed pages with large slots that do not move during daily use.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
+            }
+            item {
+                Button(onClick = onOpenHomeLayoutEditor, modifier = Modifier.fillMaxWidth()) {
+                    Text("Open Home Layout Editor")
+                }
             }
             item {
                 Card(modifier = Modifier.fillMaxWidth()) {
@@ -274,6 +280,7 @@ fun AllowedAppsScreen(
     assignedAppPackages: Set<String>,
     onAssignApp: (String, Int) -> Unit,
     onRemoveApp: (String) -> Unit,
+    onRestoreDefaultLayout: () -> Unit,
     onDone: () -> Unit,
     onFinishSetup: () -> Unit,
     modifier: Modifier = Modifier,
@@ -295,6 +302,21 @@ fun AllowedAppsScreen(
                 "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
                 style = MaterialTheme.typography.bodyLarge,
             )
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(EasyUiSpacing.md),
+                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                ) {
+                    Text("Senior Home Preview", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        "Page 1 stays fixed for daily essentials. Additional pages are caregiver-managed app and contact slots.",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    HomeLayoutPreviewGrid(
+                        tiles = pages.firstOrNull() ?: List(HomeLayoutRules.SLOTS_PER_PAGE) { null },
+                    )
+                }
+            }
 
             Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                 repeat(pageCount) { pageIndex ->
@@ -377,11 +399,46 @@ fun AllowedAppsScreen(
                 }
             }
 
+            OutlinedButton(onClick = onRestoreDefaultLayout, modifier = Modifier.fillMaxWidth()) {
+                Text("Restore Default Layout")
+            }
             Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
                 Text("Back to Home")
             }
             OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                 Text("Back to Caregiver Settings")
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeLayoutPreviewGrid(
+    tiles: List<HomeTile?>,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp),
+    ) {
+        itemsIndexed(tiles.take(HomeLayoutRules.SLOTS_PER_PAGE)) { _, tile ->
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .padding(EasyUiSpacing.sm),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = tile?.title ?: "Empty",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             }
         }
     }

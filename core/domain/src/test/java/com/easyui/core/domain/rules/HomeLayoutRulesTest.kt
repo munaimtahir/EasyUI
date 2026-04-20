@@ -105,4 +105,31 @@ class HomeLayoutRulesTest {
         assertNotNull(updated)
         assertTrue(updated!!.any { it.packageName == "com.example.camera" && it.position == 6 })
     }
+
+    @Test
+    fun `pages keeps first page anchored and exposes caregiver page slots`() {
+        val pages = HomeLayoutRules.pages(
+            tiles = listOf(
+                HomeTile("app-maps", 6, "Maps", HomeTileType.APP, packageName = "com.maps"),
+                HomeTile("contact-1", 7, "Daughter", HomeTileType.CONTACT, phoneNumber = "123"),
+            ),
+            pageCount = 2,
+        )
+
+        assertEquals(2, pages.size)
+        assertEquals("Phone", pages[0][0]?.title)
+        assertEquals("Emergency", pages[0][5]?.title)
+        assertEquals("Maps", pages[1][0]?.title)
+        assertEquals("Daughter", pages[1][1]?.title)
+    }
+
+    @Test
+    fun `canUsePageCount rejects removing page with configured tiles`() {
+        val tiles = listOf(
+            HomeTile("app-maps", 6, "Maps", HomeTileType.APP, packageName = "com.maps"),
+        )
+
+        assertFalse(HomeLayoutRules.canUsePageCount(tiles, pageCount = 1))
+        assertTrue(HomeLayoutRules.canUsePageCount(tiles, pageCount = 2))
+    }
 }

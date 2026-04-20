@@ -346,6 +346,15 @@ class CaregiverViewModel(
         }
     }
 
+    fun restoreDefaultHomeLayout() {
+        viewModelScope.launch(container.ioDispatcher) {
+            val starterLayout = LauncherResetRules.resetLayout(container.appCatalogRepository.getInstalledApps())
+            container.homeLayoutRepository.replaceTiles(starterLayout)
+            container.launcherSettingsRepository.updateHomePageCount(2)
+            messages.emit("Home layout was restored to EasyUI defaults.")
+        }
+    }
+
     fun updateEmergencyNumber(number: String) {
         viewModelScope.launch {
             container.launcherSettingsRepository.updateEmergencyPhoneNumber(number)

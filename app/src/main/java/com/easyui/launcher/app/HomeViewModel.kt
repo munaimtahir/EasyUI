@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.HomeTileAction
+import com.easyui.core.domain.model.HomeTileType
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.TileDisplayKind
@@ -73,6 +74,7 @@ class HomeViewModel(
                 ),
                 dateText = base.now.format(DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.getDefault())),
                 tiles = primaryTiles(base.tiles, base.installedApps),
+                pages = renderPages(base.tiles, base.installedApps, base.settings),
                 skinConfig = base.settings.skinConfig,
             )
         }.stateIn(
@@ -91,7 +93,16 @@ class HomeViewModel(
             when (tile.kind) {
                 TileDisplayKind.PHONE -> launchDialer()
                 TileDisplayKind.CONTACTS -> onOpenPhoneContacts()
-                TileDisplayKind.MESSAGES, TileDisplayKind.PHOTOS -> launchResolvedApp(tile)
+                TileDisplayKind.MESSAGES,
+                TileDisplayKind.PHOTOS,
+                TileDisplayKind.APP,
+                -> launchResolvedApp(tile)
+                TileDisplayKind.FAVORITE_CONTACT -> {
+                    val number = tile.phoneNumber
+                    if (number.isNullOrBlank() || !container.emergencyActionHandler.callPhone(number)) {
+                        messages.emit("This contact is not available right now.")
+                    }
+                }
                 TileDisplayKind.CAMERA -> {
                     if (!container.cameraActionHandler.launchCamera()) {
                         messages.emit("Camera is not available on this device.")
@@ -240,6 +251,101 @@ class HomeViewModel(
             packageName = app?.packageName,
             activityName = app?.activityName,
         )
+
+    private fun renderPages(
+        tiles: List<HomeTile>,
+        installedApps: List<InstalledApp>,
+        settings: LauncherSettings,
+    ): List<List<TileDisplayModel?>> {
+        val pageCount = HomeLayoutRules.effectivePageCount(
+            configuredPageCount = settings.homePageCount,
+            tiles = tiles,
+        )
+        val appLookup = installedApps.associateBy { it.packageName }
+        return HomeLayoutRules.pages(tiles, pageCount).mapIndexed { pageIndex, pageTiles ->
+            pageTiles.mapIndexed { slotIndex, tile ->
+                when {
+                    tile == null -> null
+                    pageIndex == 0 && slotIndex <= 5 -> firstPageTile(tile, installedApps)
+                    tile.type == HomeTileType.APP -> {
+                        val app = tile.packageName?.let(appLookup::get)
+                        TileDisplayModel(
+                            id = tile.id,
+                            title = tile.title,
+                            subtitle = tile.title,
+                            enabled = true,
+                            kind = TileDisplayKind.APP,
+                            packageName = app?.packageName ?: tile.packageName,
+                            activityName = app?.activityName,
+                        )
+                    }
+                    tile.type == HomeTileType.CONTACT -> TileDisplayModel(
+                        id = tile.id,
+                        title = tile.title,
+                        subtitle = "Call",
+                        enabled = true,
+                        kind = TileDisplayKind.FAVORITE_CONTACT,
+                        phoneNumber = tile.phoneNumber,
+                        avatarImageUri = tile.photoUri,
+                        avatarFallback = tile.title.take(2).uppercase(Locale.getDefault()),
+                    )
+                    else -> null
+                }
+            }
+        }
+    }
+
+    private fun firstPageTile(
+        tile: HomeTile,
+        installedApps: List<InstalledApp>,
+    ): TileDisplayModel? =
+        when (tile.action) {
+            HomeTileAction.OPEN_DIALER -> TileDisplayModel(
+                id = tile.id,
+                title = tile.title,
+                subtitle = "Phone",
+                enabled = true,
+                kind = TileDisplayKind.PHONE,
+            )
+            HomeTileAction.OPEN_MESSAGES -> actionTile(
+                tile = tile,
+                kind = TileDisplayKind.MESSAGES,
+                app = PrimaryHomeAppRules.resolve(PrimaryHomeAppKind.MESSAGES, installedApps),
+            )
+            HomeTileAction.OPEN_CONTACTS -> TileDisplayModel(
+                id = tile.id,
+                title = tile.title,
+                subtitle = "Contacts",
+                enabled = true,
+                kind = TileDisplayKind.CONTACTS,
+            )
+            HomeTileAction.OPEN_PHOTOS -> actionTile(
+                tile = tile,
+                kind = TileDisplayKind.PHOTOS,
+                app = PrimaryHomeAppRules.resolve(PrimaryHomeAppKind.PHOTOS, installedApps),
+            )
+            HomeTileAction.OPEN_CAMERA -> TileDisplayModel(
+                id = tile.id,
+                title = tile.title,
+                subtitle = "Camera",
+                enabled = true,
+                kind = TileDisplayKind.CAMERA,
+            )
+            HomeTileAction.EMERGENCY,
+            HomeTileAction.SOS,
+            -> TileDisplayModel(
+                id = if (tile.action == HomeTileAction.SOS) "emergency-sos" else tile.id,
+                title = tile.title,
+                subtitle = if (tile.action == HomeTileAction.SOS) "SOS" else "Emergency",
+                enabled = true,
+                kind = TileDisplayKind.EMERGENCY,
+            )
+            HomeTileAction.OPEN_APP_LIST,
+            HomeTileAction.FLASHLIGHT,
+            HomeTileAction.OPEN_HEALTH_INFO,
+            null,
+            -> null
+        }
 
     private fun timeFlow() = kotlinx.coroutines.flow.flow {
         while (true) {

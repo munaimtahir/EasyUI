@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -61,6 +63,7 @@ fun HomeScreen(
     timeText: String,
     dateText: String,
     tiles: List<TileDisplayModel>,
+    pages: List<List<TileDisplayModel?>> = emptyList(),
     skinConfig: SkinConfig,
     onTileClick: (String) -> Unit,
     onOpenAppList: () -> Unit,
@@ -69,7 +72,12 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
-    val tileSlots = List(6) { index -> tiles.getOrNull(index) }
+    val resolvedPages = if (pages.isNotEmpty()) {
+        pages
+    } else {
+        listOf(List(6) { index -> tiles.getOrNull(index) })
+    }
+    val pagerState = rememberPagerState(pageCount = { resolvedPages.size })
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -105,31 +113,52 @@ fun HomeScreen(
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
                 ) {
-                    repeat(3) { row ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            horizontalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.weight(1f),
+                    ) { pageIndex ->
+                        val tileSlots = resolvedPages[pageIndex]
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
                         ) {
-                            repeat(2) { column ->
-                                val index = (row * 2) + column
-                                val tile = tileSlots[index]
-                                if (tile != null) {
-                                    HomeActionTile(
-                                        tile = tile,
-                                        accessibilityMode = skinConfig.accessibilityMode,
-                                        onClick = { onTileClick(tile.id) },
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .fillMaxHeight(),
-                                    )
-                                } else {
-                                    Box(modifier = Modifier.weight(1f))
+                            repeat(3) { row ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    horizontalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                                ) {
+                                    repeat(2) { column ->
+                                        val index = (row * 2) + column
+                                        val tile = tileSlots.getOrNull(index)
+                                        if (tile != null) {
+                                            HomeActionTile(
+                                                tile = tile,
+                                                accessibilityMode = skinConfig.accessibilityMode,
+                                                onClick = { onTileClick(tile.id) },
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .fillMaxHeight(),
+                                            )
+                                        } else {
+                                            Box(modifier = Modifier.weight(1f))
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                }
+                if (resolvedPages.size > 1) {
+                    Text(
+                        text = "Page ${pagerState.currentPage + 1} of ${resolvedPages.size}",
+                        color = SeniorHomeTokens.textSecondaryOnHeader,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("home_page_indicator"),
+                    )
                 }
                 OutlinedButton(
                     onClick = onOpenAppList,
@@ -302,6 +331,7 @@ private fun HomeScreenPreview() {
         timeText = "9:41",
         dateText = "Friday, March 20",
         tiles = previewTiles(),
+        pages = listOf(previewTiles().map { it }),
         skinConfig = SkinConfig(),
         onTileClick = {},
         onOpenAppList = {},
@@ -317,6 +347,7 @@ private fun HomeScreenLargeTextPreview() {
         timeText = "9:41",
         dateText = "Friday, March 20",
         tiles = previewTiles(),
+        pages = listOf(previewTiles().map { it }),
         skinConfig = SkinConfig(accessibilityMode = AccessibilityMode.BOLD_ACCESSIBILITY),
         onTileClick = {},
         onOpenAppList = {},
