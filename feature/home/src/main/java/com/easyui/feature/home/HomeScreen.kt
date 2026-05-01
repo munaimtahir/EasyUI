@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -52,6 +56,7 @@ import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.TileDisplayKind
 import com.easyui.core.domain.model.TileDisplayModel
+import com.easyui.core.ui.theme.EasyUiSpacing
 import kotlinx.coroutines.withTimeoutOrNull
 
 private const val TopBarLongPressMs = 3_000L
@@ -66,10 +71,20 @@ fun HomeScreen(
     onOpenAppList: () -> Unit,
     onStatusBarLongPress: () -> Unit,
     onClockTapped: () -> Unit,
+    pageCount: Int = 1,
+    layoutLocked: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
+    var currentPageIndex by remember { mutableIntStateOf(0) }
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
-    val tileSlots = List(6) { index -> tiles.getOrNull(index) }
+    val slotsPerPage = 6
+    val totalSlots = slotsPerPage * pageCount
+    val allTileSlots = List(totalSlots) { index -> tiles.getOrNull(index) }
+    
+    val pageStartIndex = currentPageIndex * slotsPerPage
+    val pageEndIndex = (currentPageIndex + 1) * slotsPerPage
+    val currentPageTiles = allTileSlots.subList(pageStartIndex, pageEndIndex)
+    val tileSlots = List(6) { index -> currentPageTiles.getOrNull(index) }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -119,6 +134,7 @@ fun HomeScreen(
                                     HomeActionTile(
                                         tile = tile,
                                         accessibilityMode = skinConfig.accessibilityMode,
+                                        layoutLocked = layoutLocked,
                                         onClick = { onTileClick(tile.id) },
                                         modifier = Modifier
                                             .weight(1f)
@@ -131,6 +147,100 @@ fun HomeScreen(
                         }
                     }
                 }
+                
+                // Page navigation UI (only show if multiple pages)
+                if (pageCount > 1) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        // Page indicator dots
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("home_page_indicators"),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            repeat(pageCount) { pageIndex ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(if (pageIndex == currentPageIndex) 12.dp else 8.dp)
+                                        .background(
+                                            color = if (pageIndex == currentPageIndex) {
+                                                SeniorHomeTokens.textPrimary
+                                            } else {
+                                                SeniorHomeTokens.textPrimary.copy(alpha = 0.3f)
+                                            },
+                                            shape = CircleShape,
+                                        )
+                                        .testTag("home_page_indicator_$pageIndex"),
+                                )
+                                if (pageIndex < pageCount - 1) {
+                                    Box(modifier = Modifier.width(8.dp))
+                                }
+                            }
+                        }
+                        
+                        // Page navigation buttons
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("home_page_navigation"),
+                            horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                        ) {
+                            OutlinedButton(
+                                onClick = { if (currentPageIndex > 0) currentPageIndex-- },
+                                enabled = currentPageIndex > 0,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
+                                    .testTag("home_page_previous"),
+                                shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+                            ) {
+                                Text(
+                                    text = "← Previous",
+                                    color = if (currentPageIndex > 0) {
+                                        SeniorHomeTokens.textPrimary
+                                    } else {
+                                        SeniorHomeTokens.textPrimary.copy(alpha = 0.5f)
+                                    },
+                                    fontSize = when (skinConfig.accessibilityMode) {
+                                        AccessibilityMode.BOLD_ACCESSIBILITY -> 20.sp
+                                        else -> 18.sp
+                                    },
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                            }
+                            OutlinedButton(
+                                onClick = { if (currentPageIndex < pageCount - 1) currentPageIndex++ },
+                                enabled = currentPageIndex < pageCount - 1,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
+                                    .testTag("home_page_next"),
+                                shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+                            ) {
+                                Text(
+                                    text = "Next →",
+                                    color = if (currentPageIndex < pageCount - 1) {
+                                        SeniorHomeTokens.textPrimary
+                                    } else {
+                                        SeniorHomeTokens.textPrimary.copy(alpha = 0.5f)
+                                    },
+                                    fontSize = when (skinConfig.accessibilityMode) {
+                                        AccessibilityMode.BOLD_ACCESSIBILITY -> 20.sp
+                                        else -> 18.sp
+                                    },
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                            }
+                        }
+                    }
+                }
+                
                 OutlinedButton(
                     onClick = onOpenAppList,
                     modifier = Modifier
@@ -227,6 +337,7 @@ private fun HomeHeaderCard(
 private fun HomeActionTile(
     tile: TileDisplayModel,
     accessibilityMode: AccessibilityMode,
+    layoutLocked: Boolean = false,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -239,58 +350,79 @@ private fun HomeActionTile(
     )
     var isFocused by remember { mutableStateOf(false) }
 
-    Card(
-        onClick = onClick,
-        interactionSource = interactionSource,
+    Box(
         modifier = modifier
             .defaultMinSize(
                 minWidth = SeniorHomeTokens.minimumTargetSize,
                 minHeight = SeniorHomeTokens.minimumTargetSize,
             )
-            .scale(scale)
-            .onFocusChanged { isFocused = it.isFocused }
-            .semantics {
-                role = Role.Button
-                contentDescription = tile.title
-            }
-            .testTag("home_tile_${tile.id}"),
-        shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
-        colors = CardDefaults.cardColors(containerColor = SeniorHomeTokens.tileColor(tile.kind)),
-        border = if (isFocused) {
-            androidx.compose.foundation.BorderStroke(SeniorHomeTokens.focusRingWidth, SeniorHomeTokens.focusRing)
-        } else {
-            null
-        },
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
     ) {
-        Column(
+        Card(
+            onClick = onClick,
+            interactionSource = interactionSource,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    horizontal = SeniorHomeTokens.tileHorizontalPadding,
-                    vertical = SeniorHomeTokens.tileVerticalPadding,
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+                .scale(scale)
+                .onFocusChanged { isFocused = it.isFocused }
+                .semantics {
+                    role = Role.Button
+                    contentDescription = tile.title
+                }
+                .testTag("home_tile_${tile.id}"),
+            shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+            colors = CardDefaults.cardColors(containerColor = SeniorHomeTokens.tileColor(tile.kind)),
+            border = if (isFocused) {
+                androidx.compose.foundation.BorderStroke(SeniorHomeTokens.focusRingWidth, SeniorHomeTokens.focusRing)
+            } else {
+                null
+            },
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
         ) {
-            Icon(
-                imageVector = SeniorHomeTokens.tileIcon(tile.kind),
-                contentDescription = null,
-                tint = SeniorHomeTokens.textPrimary,
-                modifier = Modifier.size(SeniorHomeTokens.iconSize),
-            )
-            Text(
-                text = tile.title,
-                color = SeniorHomeTokens.textPrimary,
-                fontSize = when (accessibilityMode) {
-                    AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.labelTextSizeLarge
-                    else -> SeniorHomeTokens.labelTextSize
-                },
-                fontWeight = FontWeight.SemiBold,
-                lineHeight = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 12.dp),
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = SeniorHomeTokens.tileHorizontalPadding,
+                        vertical = SeniorHomeTokens.tileVerticalPadding,
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    imageVector = SeniorHomeTokens.tileIcon(tile.kind),
+                    contentDescription = null,
+                    tint = SeniorHomeTokens.textPrimary,
+                    modifier = Modifier.size(SeniorHomeTokens.iconSize),
+                )
+                Text(
+                    text = tile.title,
+                    color = SeniorHomeTokens.textPrimary,
+                    fontSize = when (accessibilityMode) {
+                        AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.labelTextSizeLarge
+                        else -> SeniorHomeTokens.labelTextSize
+                    },
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+            }
+        }
+        
+        // Lock icon (top-right corner)
+        if (layoutLocked) {
+            Box(
+                modifier = Modifier
+                    .align(androidx.compose.ui.Alignment.TopEnd)
+                    .padding(4.dp)
+                    .background(Color.Black.copy(alpha = 0.6f), CircleShape)
+                    .padding(2.dp),
+            ) {
+                Text(
+                    text = "🔒",
+                    fontSize = 10.sp,
+                )
+            }
         }
     }
 }
@@ -307,6 +439,8 @@ private fun HomeScreenPreview() {
         onOpenAppList = {},
         onStatusBarLongPress = {},
         onClockTapped = {},
+        pageCount = 1,
+        layoutLocked = false,
     )
 }
 
@@ -322,6 +456,41 @@ private fun HomeScreenLargeTextPreview() {
         onOpenAppList = {},
         onStatusBarLongPress = {},
         onClockTapped = {},
+        pageCount = 1,
+        layoutLocked = false,
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0D1238)
+@Composable
+private fun HomeScreenLockedPreview() {
+    HomeScreen(
+        timeText = "9:41",
+        dateText = "Friday, March 20",
+        tiles = previewTiles(),
+        skinConfig = SkinConfig(),
+        onTileClick = {},
+        onOpenAppList = {},
+        onStatusBarLongPress = {},
+        onClockTapped = {},
+        pageCount = 1,
+        layoutLocked = true,
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0D1238)
+@Composable
+private fun HomeScreenMultiPagePreview() {
+    HomeScreen(
+        timeText = "9:41",
+        dateText = "Friday, March 20",
+        tiles = previewTilesMultiPage(),
+        skinConfig = SkinConfig(),
+        onTileClick = {},
+        onOpenAppList = {},
+        onStatusBarLongPress = {},
+        onClockTapped = {},
+        pageCount = 2,
     )
 }
 
@@ -333,4 +502,20 @@ private fun previewTiles(): List<TileDisplayModel> =
         TileDisplayModel("photos", "Photos", "Photos", true, TileDisplayKind.PHOTOS),
         TileDisplayModel("camera", "Camera", "Camera", true, TileDisplayKind.CAMERA),
         TileDisplayModel("emergency", "Emergency", "Emergency", true, TileDisplayKind.EMERGENCY),
+    )
+
+private fun previewTilesMultiPage(): List<TileDisplayModel> =
+    listOf(
+        TileDisplayModel("phone", "Phone", "Phone", true, TileDisplayKind.PHONE),
+        TileDisplayModel("messages", "Messages", "Messages", true, TileDisplayKind.MESSAGES),
+        TileDisplayModel("contacts", "Contacts", "Contacts", true, TileDisplayKind.CONTACTS),
+        TileDisplayModel("photos", "Photos", "Photos", true, TileDisplayKind.PHOTOS),
+        TileDisplayModel("camera", "Camera", "Camera", true, TileDisplayKind.CAMERA),
+        TileDisplayModel("emergency", "Emergency", "Emergency", true, TileDisplayKind.EMERGENCY),
+        TileDisplayModel("app1", "News", "News", true, TileDisplayKind.PHONE),
+        TileDisplayModel("app2", "Games", "Games", true, TileDisplayKind.MESSAGES),
+        TileDisplayModel("app3", "Music", "Music", true, TileDisplayKind.CONTACTS),
+        TileDisplayModel("app4", "Videos", "Videos", true, TileDisplayKind.PHOTOS),
+        TileDisplayModel("app5", "Gallery", "Gallery", true, TileDisplayKind.CAMERA),
+        TileDisplayModel("app6", "Settings", "Settings", true, TileDisplayKind.EMERGENCY),
     )

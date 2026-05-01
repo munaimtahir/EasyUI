@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -253,6 +255,8 @@ fun EasyUiNavGraph(
                         dateText = homeState.dateText,
                         tiles = homeState.tiles,
                         skinConfig = homeState.skinConfig,
+                        pageCount = homeState.pageCount,
+                        layoutLocked = homeState.layoutLocked,
                         onTileClick = { tileId ->
                             homeViewModel.onTileClick(
                                 tileId = tileId,
@@ -317,6 +321,7 @@ fun EasyUiNavGraph(
                 composable(Routes.CaregiverTools.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         CaregiverToolsScreen(
@@ -387,6 +392,7 @@ fun EasyUiNavGraph(
                 composable(Routes.LayoutPages.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         LayoutPagesScreen(
@@ -414,6 +420,7 @@ fun EasyUiNavGraph(
                 composable(Routes.PinSetup.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         PinEntryScreen(
@@ -456,6 +463,7 @@ fun EasyUiNavGraph(
                 composable(Routes.AllowedApps.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         AllowedAppsScreen(
@@ -478,6 +486,7 @@ fun EasyUiNavGraph(
                 composable(Routes.ManageContacts.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         FavoriteContactsScreen(
@@ -499,6 +508,7 @@ fun EasyUiNavGraph(
                 composable(Routes.ResetLauncher.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         ResetLauncherScreen(
@@ -513,6 +523,7 @@ fun EasyUiNavGraph(
                 composable(Routes.EmergencySettings.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         EmergencySettingsScreen(
@@ -535,6 +546,7 @@ fun EasyUiNavGraph(
                 composable(Routes.HealthInfoEditor.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         HealthInfoEditorScreen(
@@ -547,6 +559,7 @@ fun EasyUiNavGraph(
                 composable(Routes.ManageHiddenApps.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         HiddenAppsScreen(
@@ -560,6 +573,7 @@ fun EasyUiNavGraph(
                 composable(Routes.BackupRestore.route) {
                     RequireCaregiverSession(
                         caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
                         navController = navController,
                     ) {
                         val backupState by backupViewModel.state.collectAsState()
@@ -642,6 +656,7 @@ fun EasyUiNavGraph(
 @Composable
 private fun RequireCaregiverSession(
     caregiverSessionActive: Boolean,
+    caregiverViewModel: CaregiverViewModel,
     navController: NavHostController,
     content: @Composable () -> Unit,
 ) {
@@ -654,6 +669,54 @@ private fun RequireCaregiverSession(
         Text("Returning home…")
         return
     }
+    
+    // Session timeout monitoring
+    var showTimeoutWarning by remember { mutableStateOf(false) }
+    
+    LaunchedEffect(Unit) {
+        while (caregiverSessionActive) {
+            val timeoutState = caregiverViewModel.checkSessionTimeout()
+            when (timeoutState) {
+                CaregiverViewModel.SessionTimeoutState.WarningActive -> {
+                    if (!showTimeoutWarning) {
+                        showTimeoutWarning = true
+                    }
+                }
+                CaregiverViewModel.SessionTimeoutState.TimedOut -> {
+                    caregiverViewModel.endCaregiverSession()
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(Routes.Home.route) { inclusive = false }
+                    }
+                    return@LaunchedEffect
+                }
+                else -> {
+                    if (showTimeoutWarning) {
+                        showTimeoutWarning = false
+                    }
+                }
+            }
+            kotlinx.coroutines.delay(1000)
+        }
+    }
+    
+    if (showTimeoutWarning) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Session Timeout Warning") },
+            text = { Text("Your caregiver session will end in 2 minutes due to inactivity. Please interact with the screen to continue.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        caregiverViewModel.updateSessionActivity()
+                        showTimeoutWarning = false
+                    },
+                ) {
+                    Text("OK")
+                }
+            },
+        )
+    }
+    
     content()
 }
 

@@ -74,6 +74,8 @@ class HomeViewModel(
                 dateText = base.now.format(DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.getDefault())),
                 tiles = primaryTiles(base.tiles, base.installedApps),
                 skinConfig = base.settings.skinConfig,
+                pageCount = base.settings.homePageCount,
+                layoutLocked = base.settings.layoutLocked,
             )
         }.stateIn(
             scope = viewModelScope,

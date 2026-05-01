@@ -295,6 +295,14 @@ fun AllowedAppsScreen(
                 "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
                 style = MaterialTheme.typography.bodyLarge,
             )
+            
+            // Add preview of the home layout
+            HomeLayoutPreviewCard(
+                pages = pages,
+                currentPageIndex = selectedPageIndex,
+                pageCount = pageCount,
+                layoutLocked = false,
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                 repeat(pageCount) { pageIndex ->

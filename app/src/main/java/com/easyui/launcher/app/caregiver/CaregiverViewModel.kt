@@ -31,6 +31,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import android.os.SystemClock
+
+private const val CAREGIVER_SESSION_TIMEOUT_MS = 15 * 60 * 1000L  // 15 minutes
+private const val SESSION_TIMEOUT_WARNING_MS = 13 * 60 * 1000L    // 13 minutes (warn 2 min before)
 
 class CaregiverViewModel(
     private val container: AppContainer,
@@ -127,6 +131,8 @@ class CaregiverViewModel(
                 pinError = null,
                 pendingAction = null,
                 caregiverSessionActive = true,
+                sessionLastActivityTimeMs = SystemClock.uptimeMillis(),
+                sessionTimeoutWarningShown = false,
             )
         }
         return destinationFor(pendingAction)
@@ -146,6 +152,41 @@ class CaregiverViewModel(
 
     fun clearPendingAction() {
         localState.update { it.copy(pendingAction = null, pinInput = "", pinError = null) }
+    }
+    
+    fun updateSessionActivity() {
+        if (state.value.caregiverSessionActive) {
+            localState.update {
+                it.copy(
+                    sessionLastActivityTimeMs = SystemClock.uptimeMillis(),
+                    sessionTimeoutWarningShown = false,
+                )
+            }
+        }
+    }
+    
+    fun checkSessionTimeout(): SessionTimeoutState {
+        if (!state.value.caregiverSessionActive) return SessionTimeoutState.Active
+        
+        val timeSinceLastActivityMs = SystemClock.uptimeMillis() - state.value.sessionLastActivityTimeMs
+        
+        return when {
+            timeSinceLastActivityMs >= CAREGIVER_SESSION_TIMEOUT_MS -> {
+                endCaregiverSession()
+                SessionTimeoutState.TimedOut
+            }
+            timeSinceLastActivityMs >= SESSION_TIMEOUT_WARNING_MS && !state.value.sessionTimeoutWarningShown -> {
+                localState.update { it.copy(sessionTimeoutWarningShown = true) }
+                SessionTimeoutState.WarningActive
+            }
+            else -> SessionTimeoutState.Active
+        }
+    }
+    
+    enum class SessionTimeoutState {
+        Active,
+        WarningActive,
+        TimedOut,
     }
 
     fun toggleProtectionEnabled() {

@@ -15,4 +15,6 @@ data class CaregiverUiState(
     val confirmPinInput: String = "",
     val pinError: String? = null,
     val pendingAction: ProtectedAction? = null,
+    val sessionLastActivityTimeMs: Long = 0,
+    val sessionTimeoutWarningShown: Boolean = false,
 )
