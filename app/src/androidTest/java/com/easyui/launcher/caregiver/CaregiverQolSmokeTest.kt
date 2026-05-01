@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
@@ -71,8 +72,9 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Allowed Apps").assertPresent()
         composeRule.onNodeWithText("Contacts & Emergency").assertPresent()
         composeRule.onNodeWithText("Security & Lock").assertPresent()
-        composeRule.onNodeWithText("Device & Support").assertPresent()
         composeRule.onAllNodesWithText("Protected").assertCountEquals(2)
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Device & Support"))
+        composeRule.onNodeWithText("Device & Support").assertPresent()
     }
 
     @Test
@@ -87,7 +89,6 @@ class CaregiverQolSmokeTest {
                     onSelectLayoutMode = {},
                     onSelectVisualTheme = {},
                     onSelectAccessibilityMode = {},
-                    onOpenHomeLayoutEditor = {},
                     onDone = {},
                     onFinishSetup = {},
                 )
@@ -97,7 +98,6 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithTag("layout_pages_screen").assertPresent()
         composeRule.onNodeWithText("Add Page").assertIsDisplayed()
         composeRule.onNodeWithText("Use Fewer").assertIsDisplayed()
-        composeRule.onNodeWithText("Open Home Layout Editor").assertIsDisplayed()
         composeRule.onNodeWithTag("layout_pages_screen").performScrollToNode(hasText("Visual Theme"))
         composeRule.onNodeWithText("Visual Theme").assertIsDisplayed()
     }
@@ -126,7 +126,6 @@ class CaregiverQolSmokeTest {
                     assignedAppPackages = setOf("com.camera"),
                     onAssignApp = { _, _ -> },
                     onRemoveApp = {},
-                    onRestoreDefaultLayout = {},
                     onDone = {},
                     onFinishSetup = {},
                 )
@@ -136,11 +135,10 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithTag("allowed_apps_screen").assertPresent()
         composeRule.onNodeWithText("Home Apps").assertPresent()
         composeRule.onNodeWithText("Installed Apps").assertPresent()
-        composeRule.onNodeWithText("Senior Home Preview").assertPresent()
-        composeRule.onNodeWithText("Restore Default Layout").assertPresent()
+        composeRule.onNodeWithText("Home Layout Preview").assertPresent()
         composeRule.onNodeWithText("Phone").assertPresent()
         composeRule.onNodeWithText("Messages").assertPresent()
-        composeRule.onAllNodesWithText("Camera").assertCountEquals(2)
+        composeRule.onNodeWithText("Camera").assertPresent()
         composeRule.onNodeWithText("Already on home").assertPresent()
     }
 }

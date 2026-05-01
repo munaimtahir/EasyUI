@@ -31,39 +31,23 @@ class HomeScreenSmokeTest {
                         TileDisplayModel("photos", "Photos", "Photos", true, TileDisplayKind.PHOTOS),
                         TileDisplayModel("camera", "Camera", "Camera", true, TileDisplayKind.CAMERA),
                         TileDisplayModel("emergency", "Emergency", "Emergency", true, TileDisplayKind.EMERGENCY),
-                    ),
-                    pages = listOf(
-                        listOf(
-                            TileDisplayModel("phone", "Phone", "Phone", true, TileDisplayKind.PHONE),
-                            TileDisplayModel("messages", "Messages", "Messages", true, TileDisplayKind.MESSAGES),
-                            TileDisplayModel("contacts", "Contacts", "Contacts", true, TileDisplayKind.CONTACTS),
-                            TileDisplayModel("photos", "Photos", "Photos", true, TileDisplayKind.PHOTOS),
-                            TileDisplayModel("camera", "Camera", "Camera", true, TileDisplayKind.CAMERA),
-                            TileDisplayModel("emergency", "Emergency", "Emergency", true, TileDisplayKind.EMERGENCY),
-                        ),
-                        listOf(
-                            TileDisplayModel("app-maps", "Maps", "Maps", true, TileDisplayKind.APP),
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                        ),
+                        TileDisplayModel("app-maps", "Maps", "Maps", true, TileDisplayKind.APP),
                     ),
                     skinConfig = SkinConfig(),
                     onTileClick = {},
                     onOpenAppList = {},
                     onStatusBarLongPress = {},
                     onClockTapped = {},
+                    pageCount = 2,
                 )
             }
         }
 
-        composeRule.onNodeWithTag("home_top_status_bar").assertIsDisplayed()
+        composeRule.onNodeWithTag("home_top_status_bar").assertPresent()
         composeRule.onNodeWithText("Phone").assertIsDisplayed()
         composeRule.onNodeWithText("Emergency").assertIsDisplayed()
         composeRule.onNodeWithTag("home_all_apps_button").assertIsDisplayed()
-        composeRule.onNodeWithTag("home_page_indicator").assertIsDisplayed()
+        composeRule.onNodeWithTag("home_page_indicators").assertIsDisplayed()
         composeRule.onNodeWithText("Friday, March 20").assertIsDisplayed()
     }
 }

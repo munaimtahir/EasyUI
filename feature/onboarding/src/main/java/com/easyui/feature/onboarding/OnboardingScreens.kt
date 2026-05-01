@@ -93,9 +93,9 @@ fun IntroScreen(
 @Composable
 fun DefaultLauncherGuidanceScreen(
     isDefaultLauncher: Boolean,
-    onOpenSettings: () -> Unit,
-    onRefreshStatus: () -> Unit,
-    onContinue: () -> Unit,
+        onOpenSettings: () -> Unit,
+        onRefreshStatus: () -> Unit,
+        onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val statusTitle = if (isDefaultLauncher) "EasyUI is ready as Home" else "Set EasyUI as Home"
@@ -326,18 +326,18 @@ private fun HeroCard(
             Text(
                 text = eyebrow,
                 style = MaterialTheme.typography.labelLarge,
-                color = OnboardingTokens.setupCardPurple,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineLarge,
-                color = OnboardingTokens.heroPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyLarge,
-                color = OnboardingTokens.heroSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (badges.isNotEmpty()) {
                 Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
@@ -389,7 +389,7 @@ private fun StatusHeroCard(
             Box(
                 modifier = Modifier
                     .size(52.dp)
-                    .background(Color.White.copy(alpha = 0.22f), RoundedCornerShape(18.dp)),
+                    .background(Color.White.copy(alpha = 0.18f), RoundedCornerShape(18.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -406,13 +406,13 @@ private fun StatusHeroCard(
                     color = Color.White,
                 )
                 Text(
-                    text = body,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.92f),
-                )
-            }
+                text = body,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.92f),
+            )
         }
     }
+}
 }
 
 private data class PreviewTile(
@@ -466,10 +466,10 @@ private fun TrustBullet(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(EasyUiSpacing.md),
-            horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(EasyUiSpacing.md),
+                horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
         ) {
             Box(
                 modifier = Modifier
