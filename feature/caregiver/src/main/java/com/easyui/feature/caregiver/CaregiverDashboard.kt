@@ -458,7 +458,7 @@ private fun SupportToolsCard(
     DashboardSurface(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionHeader(
-                title = "Contacts, Emergency, and Support",
+                title = "Device & Support",
                 subtitle = "Keep related caregiver tasks grouped instead of scattering them across bright tiles.",
             )
             DashboardActionRow(

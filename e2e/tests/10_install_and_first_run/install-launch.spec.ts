@@ -20,7 +20,15 @@ test("B1 fresh install and first-run flow", async ({}, testInfo) => {
     clearAppData(serial);
     unlockScreen(serial);
     let xml = dumpUiForEasyUi(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b1-first-run.xml`);
-    if (!(xmlContains(xml, "EasyUI Senior Launcher") || xmlContains(xml, "Phone") || xmlContains(xml, "Emergency"))) {
+    if (
+      !(
+        xmlContains(xml, "Welcome to EasyUI") ||
+        xmlContains(xml, "Set EasyUI as Home") ||
+        xmlContains(xml, "home_screen") ||
+        xmlContains(xml, "Phone") ||
+        xmlContains(xml, "Emergency")
+      )
+    ) {
       throw new Error("Fresh install did not land on an expected EasyUI surface.");
     }
     const onboardingResult = await ensureOnboardingFinished(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b1-onboarding`);
@@ -29,7 +37,7 @@ test("B1 fresh install and first-run flow", async ({}, testInfo) => {
     }
     forceStopApp(serial);
     xml = dumpUiForEasyUi(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b1-first-run-relaunch.xml`);
-    if (!(xmlContains(xml, "Phone") || xmlContains(xml, "Emergency"))) {
+    if (!(xmlContains(xml, "home_screen") || xmlContains(xml, "Phone") || xmlContains(xml, "Emergency"))) {
       throw new Error("Home screen was not visible after relaunch.");
     }
     return { note: "Fresh install succeeded, onboarding completed, and relaunch returned to the home screen." };

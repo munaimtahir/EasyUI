@@ -17,7 +17,7 @@ test("B3 home visibility and tile clarity", async ({}, testInfo) => {
       throw new Error("Home screen was not reachable from the current app state.");
     }
     const xml = dumpUiForEasyUi(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b3-home.xml`);
-    for (const label of ["Phone", "Camera", "Emergency", "Health Info", "SOS"]) {
+    for (const label of ["Phone", "Messages", "Contacts", "Photos", "Camera", "Emergency"]) {
       expect(xmlContains(xml, label), `Missing expected tile ${label}`).toBeTruthy();
     }
     return { note: "Home screen exposes the expected large-label essentials on the current build." };

@@ -8,6 +8,7 @@ data class TileDisplayModel(
     val kind: TileDisplayKind,
     val packageName: String? = null,
     val activityName: String? = null,
+    val phoneNumber: String? = null,
     val avatarImageUri: String? = null,
     val avatarFallback: String? = null,
 )
@@ -19,4 +20,6 @@ enum class TileDisplayKind {
     PHOTOS,
     EMERGENCY,
     CAMERA,
+    APP,
+    FAVORITE_CONTACT,
 }

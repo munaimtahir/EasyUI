@@ -66,7 +66,7 @@ class GuidedSetupViewModel(
             layoutLocked = settings.layoutLocked,
             emergencyMode = settings.emergencyMode
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), GuidedSetupUiState())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, GuidedSetupUiState())
 
     fun setStep(step: Int) {
         viewModelScope.launch {

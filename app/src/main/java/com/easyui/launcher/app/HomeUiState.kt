@@ -7,6 +7,7 @@ data class HomeUiState(
     val timeText: String = "",
     val dateText: String = "",
     val tiles: List<TileDisplayModel> = emptyList(),
+    val pages: List<List<TileDisplayModel?>> = emptyList(),
     val skinConfig: SkinConfig = SkinConfig(),
     val pageCount: Int = 1,
     val layoutLocked: Boolean = false,

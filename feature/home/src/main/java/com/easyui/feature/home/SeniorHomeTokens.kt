@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Warning
@@ -29,6 +31,8 @@ object SeniorHomeTokens {
     val tilePhotos = Color(0xFF4F83F1)
     val tileCamera = Color(0xFF9B5DE5)
     val tileEmergency = Color(0xFFD92D20)
+    val tileApp = Color(0xFF3468C0)
+    val tileFavoriteContact = Color(0xFFE26D8F)
     val focusRing = Color(0xCCFFFFFF)
 
     val pageHorizontalPadding = 16.dp
@@ -65,6 +69,8 @@ object SeniorHomeTokens {
             TileDisplayKind.PHOTOS -> tilePhotos
             TileDisplayKind.CAMERA -> tileCamera
             TileDisplayKind.EMERGENCY -> tileEmergency
+            TileDisplayKind.APP -> tileApp
+            TileDisplayKind.FAVORITE_CONTACT -> tileFavoriteContact
         }
 
     fun tileIcon(kind: TileDisplayKind): ImageVector =
@@ -75,5 +81,7 @@ object SeniorHomeTokens {
             TileDisplayKind.PHOTOS -> Icons.Filled.PhotoLibrary
             TileDisplayKind.CAMERA -> Icons.Filled.PhotoCamera
             TileDisplayKind.EMERGENCY -> Icons.Filled.Warning
+            TileDisplayKind.APP -> Icons.Filled.GridView
+            TileDisplayKind.FAVORITE_CONTACT -> Icons.Filled.Person
         }
 }
