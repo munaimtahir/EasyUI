@@ -254,7 +254,6 @@ fun EasyUiNavGraph(
                         timeText = homeState.timeText,
                         dateText = homeState.dateText,
                         tiles = homeState.tiles,
-                        pages = homeState.pages,
                         skinConfig = homeState.skinConfig,
                         pageCount = homeState.pageCount,
                         layoutLocked = homeState.layoutLocked,
@@ -408,9 +407,6 @@ fun EasyUiNavGraph(
                             onSelectLayoutMode = caregiverViewModel::updateSkinLayoutMode,
                             onSelectVisualTheme = caregiverViewModel::updateSkinVisualTheme,
                             onSelectAccessibilityMode = caregiverViewModel::updateSkinAccessibilityMode,
-                            onOpenHomeLayoutEditor = {
-                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_ALLOWED_APPS))
-                            },
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()
@@ -477,7 +473,6 @@ fun EasyUiNavGraph(
                             assignedAppPackages = caregiverViewModel.assignedAppPackages(),
                             onAssignApp = caregiverViewModel::assignAllowedApp,
                             onRemoveApp = caregiverViewModel::removeAllowedApp,
-                            onRestoreDefaultLayout = caregiverViewModel::restoreDefaultHomeLayout,
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()
