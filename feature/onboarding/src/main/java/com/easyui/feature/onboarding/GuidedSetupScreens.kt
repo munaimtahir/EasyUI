@@ -465,8 +465,8 @@ fun ReadabilityPresetScreen(
         currentStep = 6,
         totalSteps = 13,
     ) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-            items(HomeReadabilityPreset.entries) { preset ->
+        Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+            HomeReadabilityPreset.entries.forEach { preset ->
                 val selected = preset == currentPreset
                 Card(
                     onClick = { onPresetSelected(preset) },
