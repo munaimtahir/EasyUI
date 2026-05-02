@@ -126,7 +126,7 @@ class GuidedSetupViewModelTest {
     @Test
     fun `initial state should be at step 1`() = runTest {
         assertEquals(1, viewModel.state.value.guidedSetupStep)
-        assertEquals(10, viewModel.state.value.totalSteps)
+        assertEquals(13, viewModel.state.value.totalSteps)
         assertFalse(viewModel.state.value.guidedSetupCompleted)
     }
 
@@ -150,8 +150,8 @@ class GuidedSetupViewModelTest {
     }
 
     @Test
-    fun `nextStep from step 10 should complete setup`() = runTest {
-        settingsFlow.update { it.copy(guidedSetupStep = 10) }
+    fun `nextStep from step 13 should complete setup`() = runTest {
+        settingsFlow.update { it.copy(guidedSetupStep = 13) }
         testDispatcher.scheduler.advanceUntilIdle()
         
         viewModel.nextStep()
@@ -492,13 +492,13 @@ class GuidedSetupViewModelTest {
         assertEquals(1, viewModel.state.value.guidedSetupStep)
         
         // Advance through all steps
-        repeat(9) {
+        repeat(12) {
             viewModel.nextStep()
             testDispatcher.scheduler.advanceUntilIdle()
         }
         
-        // Verify we're at step 10
-        coVerify { mockSettingsRepository.updateGuidedSetupStep(10) }
+        // Verify we're at step 13
+        coVerify { mockSettingsRepository.updateGuidedSetupStep(13) }
         
         // Complete setup
         viewModel.nextStep()

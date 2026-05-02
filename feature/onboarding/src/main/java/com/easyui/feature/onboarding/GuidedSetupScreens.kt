@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,12 +42,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.InstalledApp
+import com.easyui.core.domain.model.OptionalPermission
+import com.easyui.core.domain.model.SetupProtectionLevel
+import com.easyui.core.domain.model.VisualTheme
 import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.ui.components.WizardShell
 import com.easyui.core.ui.theme.EasyUiSpacing
@@ -56,6 +62,7 @@ fun WelcomeScreen(
     onNext: () -> Unit
 ) {
     WizardShell(
+        modifier = Modifier.testTag("guided_setup_welcome"),
         title = "Welcome to EasyUI",
         subtitle = "We'll help you set up this phone for a senior. It takes about 5 minutes.",
         onNext = onNext,
@@ -82,6 +89,287 @@ fun WelcomeScreen(
 }
 
 @Composable
+fun ProtectionOptionsScreen(
+    current: SetupProtectionLevel,
+    onSelect: (SetupProtectionLevel) -> Unit,
+    onNext: () -> Unit,
+    onBack: () -> Unit,
+) {
+    WizardShell(
+        modifier = Modifier.testTag("guided_setup_protection_options"),
+        title = "Choose protection level",
+        subtitle = "Pick how strongly EasyUI should protect setup and home layout from accidental changes.",
+        onNext = onNext,
+        onBack = onBack,
+        currentStep = 2,
+        totalSteps = 13,
+        nextLabel = "Continue",
+    ) {
+        Text(
+            text = "EasyUI protects its own layout and caregiver settings. Android system security and screen lock remain controlled by the phone settings.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Spacer(modifier = Modifier.height(EasyUiSpacing.sm))
+
+        ProtectionChoiceCard(
+            title = "Recommended",
+            subtitle = "Caregiver PIN required for editing. Layout locks after setup. Hidden caregiver entry stays available.",
+            selected = current == SetupProtectionLevel.RECOMMENDED,
+            onClick = { onSelect(SetupProtectionLevel.RECOMMENDED) },
+        )
+        ProtectionChoiceCard(
+            title = "Flexible",
+            subtitle = "Caregiver PIN enabled, but layout can remain unlocked initially.",
+            selected = current == SetupProtectionLevel.FLEXIBLE,
+            onClick = { onSelect(SetupProtectionLevel.FLEXIBLE) },
+        )
+        ProtectionChoiceCard(
+            title = "Simple",
+            subtitle = "Fastest setup with fewer caregiver protections. Layout can be changed more easily by accident.",
+            selected = current == SetupProtectionLevel.SIMPLE,
+            onClick = { onSelect(SetupProtectionLevel.SIMPLE) },
+        )
+    }
+}
+
+@Composable
+private fun ProtectionChoiceCard(
+    title: String,
+    subtitle: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = if (selected) {
+        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    } else {
+        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    }
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("protection_choice_${title.lowercase().replace(' ', '_')}"),
+        colors = colors,
+        onClick = onClick,
+    ) {
+        Column(modifier = Modifier.padding(EasyUiSpacing.md), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+            Text(title, style = MaterialTheme.typography.titleLarge)
+            Text(subtitle, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+@Composable
+fun ThemePickerScreen(
+    visualTheme: VisualTheme,
+    accessibilityMode: AccessibilityMode,
+    onSelectVisualTheme: (VisualTheme) -> Unit,
+    onSelectAccessibilityMode: (AccessibilityMode) -> Unit,
+    onNext: () -> Unit,
+    onBack: () -> Unit,
+) {
+    WizardShell(
+        modifier = Modifier.testTag("guided_setup_theme_picker"),
+        title = "Choose display style",
+        subtitle = "Pick a style that stays readable in everyday lighting.",
+        onNext = onNext,
+        onBack = onBack,
+        currentStep = 3,
+        totalSteps = 13,
+        nextLabel = "Continue",
+    ) {
+        ThemeChoiceCard(
+            label = "Midnight Indigo",
+            description = "Default dark style with calm contrast.",
+            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.DARK_COMFORT,
+            swatch = androidx.compose.ui.graphics.Color(0xFF161A1B),
+            onClick = {
+                onSelectAccessibilityMode(AccessibilityMode.NONE)
+                onSelectVisualTheme(VisualTheme.DARK_COMFORT)
+            },
+        )
+        ThemeChoiceCard(
+            label = "Calm Teal",
+            description = "Dark teal accents with a soft feel.",
+            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.SOFT_CALM,
+            swatch = androidx.compose.ui.graphics.Color(0xFF102625),
+            onClick = {
+                onSelectAccessibilityMode(AccessibilityMode.NONE)
+                onSelectVisualTheme(VisualTheme.SOFT_CALM)
+            },
+        )
+        ThemeChoiceCard(
+            label = "Soft Blue",
+            description = "Bright background with a clean blue focus color.",
+            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.CLINICAL_PROFESSIONAL,
+            swatch = androidx.compose.ui.graphics.Color(0xFFD8E2FF),
+            onClick = {
+                onSelectAccessibilityMode(AccessibilityMode.NONE)
+                onSelectVisualTheme(VisualTheme.CLINICAL_PROFESSIONAL)
+            },
+        )
+        ThemeChoiceCard(
+            label = "High Contrast",
+            description = "Strong contrast and clear outlines for maximum readability.",
+            selected = accessibilityMode == AccessibilityMode.HIGH_CONTRAST,
+            swatch = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
+            onClick = {
+                onSelectAccessibilityMode(AccessibilityMode.HIGH_CONTRAST)
+            },
+        )
+        ThemeChoiceCard(
+            label = "Warm Light",
+            description = "Light theme with warm surfaces.",
+            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.LIGHT_PREMIUM,
+            swatch = androidx.compose.ui.graphics.Color(0xFFF6F1E8),
+            onClick = {
+                onSelectAccessibilityMode(AccessibilityMode.NONE)
+                onSelectVisualTheme(VisualTheme.LIGHT_PREMIUM)
+            },
+        )
+    }
+}
+
+@Composable
+private fun ThemeChoiceCard(
+    label: String,
+    description: String,
+    selected: Boolean,
+    swatch: androidx.compose.ui.graphics.Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = if (selected) {
+        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    } else {
+        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    }
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("theme_choice_${label.lowercase().replace(' ', '_')}"),
+        colors = colors,
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(EasyUiSpacing.md),
+            horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .padding(0.dp)
+                    .let { it },
+            ) {
+                // Use a nested Box to apply background without needing extra imports.
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(swatch),
+                )
+            }
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+                Text(label, style = MaterialTheme.typography.titleLarge)
+                Text(description, style = MaterialTheme.typography.bodyMedium)
+            }
+            if (selected) {
+                Icon(imageVector = Icons.Outlined.CheckCircle, contentDescription = "Selected")
+            }
+        }
+    }
+}
+
+@Composable
+fun PermissionsExplanationScreen(
+    enabledPermissions: Set<OptionalPermission>,
+    onSetEnabled: (OptionalPermission, Boolean) -> Unit,
+    onNext: () -> Unit,
+    onBack: () -> Unit,
+) {
+    WizardShell(
+        modifier = Modifier.testTag("guided_setup_permissions_explanation"),
+        title = "Allow helpful features",
+        subtitle = "These permissions are optional. Setup continues even if you skip them.",
+        onNext = onNext,
+        onBack = onBack,
+        currentStep = 4,
+        totalSteps = 13,
+        nextLabel = "Continue",
+    ) {
+        PermissionRow(
+            title = "Phone / Dialer",
+            body = "Lets EasyUI start a call when a tile is tapped.",
+            enabled = enabledPermissions.contains(OptionalPermission.PHONE_DIALER),
+            onToggle = { onSetEnabled(OptionalPermission.PHONE_DIALER, it) },
+        )
+        PermissionRow(
+            title = "Contacts",
+            body = "Lets EasyUI show favorite contacts and place calls more easily.",
+            enabled = enabledPermissions.contains(OptionalPermission.CONTACTS),
+            onToggle = { onSetEnabled(OptionalPermission.CONTACTS, it) },
+        )
+        PermissionRow(
+            title = "Camera",
+            body = "Lets EasyUI launch the camera tile reliably.",
+            enabled = enabledPermissions.contains(OptionalPermission.CAMERA),
+            onToggle = { onSetEnabled(OptionalPermission.CAMERA, it) },
+        )
+        PermissionRow(
+            title = "Photos / Media",
+            body = "Lets EasyUI open photos from tiles and pick contact photos.",
+            enabled = enabledPermissions.contains(OptionalPermission.PHOTOS_MEDIA),
+            onToggle = { onSetEnabled(OptionalPermission.PHOTOS_MEDIA, it) },
+        )
+        PermissionRow(
+            title = "Backup / Restore files",
+            body = "Lets EasyUI import and export backups using system pickers.",
+            enabled = enabledPermissions.contains(OptionalPermission.BACKUP_RESTORE_FILES),
+            onToggle = { onSetEnabled(OptionalPermission.BACKUP_RESTORE_FILES, it) },
+        )
+        PermissionRow(
+            title = "Notifications",
+            body = "Optional. Used only for helpful reminders inside EasyUI.",
+            enabled = enabledPermissions.contains(OptionalPermission.NOTIFICATIONS),
+            onToggle = { onSetEnabled(OptionalPermission.NOTIFICATIONS, it) },
+        )
+        Text(
+            text = "EasyUI does not request broad file access like MANAGE_EXTERNAL_STORAGE.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@Composable
+private fun PermissionRow(
+    title: String,
+    body: String,
+    enabled: Boolean,
+    onToggle: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(EasyUiSpacing.md),
+            horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(body, style = MaterialTheme.typography.bodyMedium)
+            }
+            Switch(checked = enabled, onCheckedChange = onToggle)
+        }
+    }
+}
+
+@Composable
 fun LauncherActivationScreen(
     isDefaultLauncher: Boolean,
     onOpenSettings: () -> Unit,
@@ -93,7 +381,8 @@ fun LauncherActivationScreen(
         subtitle = "EasyUI works best when it's the default home app. This keeps the senior from accidentally leaving the simple interface.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 2,
+        currentStep = 5,
+        totalSteps = 13,
         nextLabel = if (isDefaultLauncher) "Next" else "Waiting for EasyUI...",
         isNextEnabled = isDefaultLauncher
     ) {
@@ -138,7 +427,8 @@ fun ReadabilityPresetScreen(
         subtitle = "How large should tiles and text be? This controls the senior home's look and feel.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 3
+        currentStep = 6,
+        totalSteps = 13,
     ) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
             items(HomeReadabilityPreset.entries) { preset ->
@@ -179,7 +469,8 @@ fun HomeLayoutSetupScreen(
         subtitle = "EasyUI uses a fixed 2x3 home for essentials. You can add extra pages for more apps.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 4
+        currentStep = 7,
+        totalSteps = 13,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -251,7 +542,8 @@ fun AllowedAppsSetupScreen(
         subtitle = "Select an empty slot on a page, then pick an app to place there.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 5
+        currentStep = 8,
+        totalSteps = 13,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
             // Page selection
@@ -345,7 +637,8 @@ fun SecuritySetupScreen(
         onNext = onNext,
         onBack = onBack,
         onSkip = onSkip,
-        currentStep = 7,
+        currentStep = 10,
+        totalSteps = 13,
         nextLabel = "Apply Security"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
@@ -403,7 +696,8 @@ fun DeviceSupportScreen(
         subtitle = "Fine-tune what appears on the senior home screen.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 8
+        currentStep = 11,
+        totalSteps = 13,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -449,7 +743,8 @@ fun ContactsSetupScreen(
         },
         onNext = onNext,
         onBack = onBack,
-        currentStep = 6
+        currentStep = 9,
+        totalSteps = 13,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -553,7 +848,8 @@ fun ReviewConfirmScreen(
         onNext = onConfirm,
         onBack = onBack,
         nextLabel = "Looks Good",
-        currentStep = 9
+        currentStep = 12,
+        totalSteps = 13,
     ) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
             item {

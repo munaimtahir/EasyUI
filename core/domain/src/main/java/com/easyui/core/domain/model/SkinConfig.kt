@@ -2,7 +2,7 @@ package com.easyui.core.domain.model
 
 data class SkinConfig(
     val layoutMode: LayoutMode = LayoutMode.SIMPLE_CLASSIC,
-    val visualTheme: VisualTheme = VisualTheme.LIGHT_PREMIUM,
+    val visualTheme: VisualTheme = VisualTheme.DARK_COMFORT,
     val accessibilityMode: AccessibilityMode = AccessibilityMode.NONE,
 )
 

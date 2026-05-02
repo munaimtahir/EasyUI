@@ -118,6 +118,7 @@ fun HomeScreen(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .testTag("home_pager")
                         .weight(1f),
                     userScrollEnabled = pageCount > 1,
                     pageSpacing = SeniorHomeTokens.gridGap

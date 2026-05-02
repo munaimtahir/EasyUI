@@ -7,8 +7,12 @@ import com.easyui.core.domain.model.EmergencyNumber
 import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.LayoutMode
+import com.easyui.core.domain.model.OptionalPermission
 import com.easyui.core.domain.model.PinCredential
+import com.easyui.core.domain.model.SetupProtectionLevel
 import com.easyui.core.domain.model.SkinConfig
+import com.easyui.core.domain.model.AccessibilityMode
+import com.easyui.core.domain.model.VisualTheme
 import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.domain.security.PinHasher
 import com.easyui.launcher.di.AppContainer
@@ -22,7 +26,7 @@ import kotlinx.coroutines.launch
 
 data class GuidedSetupUiState(
     val currentStep: Int = 1,
-    val totalSteps: Int = 10,
+    val totalSteps: Int = 13,
     val settingsLoaded: Boolean = false,
     val onboardingComplete: Boolean = false,
     val guidedSetupCompleted: Boolean = false,
@@ -30,6 +34,8 @@ data class GuidedSetupUiState(
     val isDefaultLauncher: Boolean = false,
     val homeReadabilityPreset: HomeReadabilityPreset = HomeReadabilityPreset.STANDARD,
     val homePageCount: Int = 2,
+    val setupProtectionLevel: SetupProtectionLevel = SetupProtectionLevel.RECOMMENDED,
+    val setupOptionalPermissions: Set<OptionalPermission> = emptySet(),
     val pinInput: String = "",
     val confirmPinInput: String = "",
     val pinError: String? = null,
@@ -64,6 +70,11 @@ class GuidedSetupViewModel(
             isDefaultLauncher = container.defaultLauncherManager.isDefaultLauncher(),
             hasPinConfigured = !settings.pinHashHex.isNullOrBlank(),
             layoutLocked = settings.layoutLocked,
+            setupProtectionLevel = runCatching { SetupProtectionLevel.valueOf(settings.setupProtectionLevel) }
+                .getOrDefault(SetupProtectionLevel.RECOMMENDED),
+            setupOptionalPermissions = settings.setupOptionalPermissions.mapNotNull { name ->
+                runCatching { OptionalPermission.valueOf(name) }.getOrNull()
+            }.toSet(),
             emergencyMode = settings.emergencyMode
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, GuidedSetupUiState())
@@ -109,6 +120,34 @@ class GuidedSetupViewModel(
     fun updateLayoutLocked(locked: Boolean) {
         viewModelScope.launch {
             container.launcherSettingsRepository.updateLayoutLocked(locked)
+        }
+    }
+
+    fun updateSetupProtectionLevel(level: SetupProtectionLevel) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateSetupProtectionLevel(level.name)
+        }
+    }
+
+    fun setOptionalPermission(permission: OptionalPermission, enabled: Boolean) {
+        val current = state.value.setupOptionalPermissions.toMutableSet()
+        if (enabled) current.add(permission) else current.remove(permission)
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateSetupOptionalPermissions(current.map { it.name }.toSet())
+        }
+    }
+
+    fun updateVisualTheme(theme: VisualTheme) {
+        viewModelScope.launch {
+            val current = container.launcherSettingsRepository.getSkinConfig()
+            container.launcherSettingsRepository.setSkinConfig(current.copy(visualTheme = theme))
+        }
+    }
+
+    fun updateAccessibilityMode(mode: AccessibilityMode) {
+        viewModelScope.launch {
+            val current = container.launcherSettingsRepository.getSkinConfig()
+            container.launcherSettingsRepository.setSkinConfig(current.copy(accessibilityMode = mode))
         }
     }
 

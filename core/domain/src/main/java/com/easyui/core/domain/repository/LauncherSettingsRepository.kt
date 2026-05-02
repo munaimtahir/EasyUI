@@ -26,6 +26,8 @@ interface LauncherSettingsRepository {
     suspend fun setSkinConfig(config: SkinConfig)
     suspend fun getSkinConfig(): SkinConfig
     suspend fun storePinCredential(credential: com.easyui.core.domain.model.PinCredential)
+    suspend fun updateSetupProtectionLevel(levelName: String)
+    suspend fun updateSetupOptionalPermissions(permissionNames: Set<String>)
     suspend fun updateGuidedSetupStep(step: Int)
     suspend fun updateGuidedSetupCompleted(completed: Boolean)
     suspend fun updateEmergencyMode(mode: String)

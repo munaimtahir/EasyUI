@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.easyui.core.ui.theme.EasyUiSpacing
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun WizardShell(
@@ -95,17 +98,31 @@ fun WizardShell(
             }
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(EasyUiSpacing.lg)
+                .padding(innerPadding),
+            contentPadding = PaddingValues(
+                start = EasyUiSpacing.lg,
+                end = EasyUiSpacing.lg,
+                top = EasyUiSpacing.lg,
+                bottom = EasyUiSpacing.lg + 24.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.lg),
         ) {
-            Text(title, style = MaterialTheme.typography.headlineLarge)
-            Spacer(modifier = Modifier.height(EasyUiSpacing.xs))
-            Text(subtitle, style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(EasyUiSpacing.lg))
-            content()
+            item {
+                Column {
+                    Text(title, style = MaterialTheme.typography.headlineLarge)
+                    Spacer(modifier = Modifier.height(EasyUiSpacing.xs))
+                    Text(subtitle, style = MaterialTheme.typography.bodyLarge)
+                }
+            }
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+                    content = content,
+                )
+            }
         }
     }
 }

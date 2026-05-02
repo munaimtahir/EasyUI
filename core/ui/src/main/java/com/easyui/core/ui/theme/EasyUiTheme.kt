@@ -1,13 +1,16 @@
 package com.easyui.core.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.easyui.core.domain.model.AccessibilityMode
+import com.easyui.core.domain.model.SkinConfig
+import com.easyui.core.domain.model.VisualTheme
 
-private val LightColors = lightColorScheme(
+private val WarmLightColors = lightColorScheme(
     primary = Color(0xFF1B5E5A),
     onPrimary = Color.White,
     primaryContainer = Color(0xFFD8EEE8),
@@ -23,7 +26,7 @@ private val LightColors = lightColorScheme(
     error = Color(0xFF8C1D18),
 )
 
-private val DarkColors = darkColorScheme(
+private val MidnightIndigoColors = darkColorScheme(
     primary = Color(0xFF7ED6C8),
     onPrimary = Color(0xFF072D2B),
     secondary = Color(0xFFFFB08D),
@@ -39,12 +42,66 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun EasyUiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    skinConfig: SkinConfig = SkinConfig(),
     content: @Composable () -> Unit,
 ) {
+    val colorScheme = resolveColorScheme(skinConfig)
     MaterialTheme(
-        colorScheme = if (darkTheme) DarkColors else LightColors,
+        colorScheme = colorScheme,
         typography = EasyUiTypography,
         content = content,
     )
+}
+
+private fun resolveColorScheme(config: SkinConfig): ColorScheme {
+    if (config.accessibilityMode == AccessibilityMode.HIGH_CONTRAST) {
+        return lightColorScheme(
+            primary = Color(0xFF0033CC),
+            onPrimary = Color.White,
+            primaryContainer = Color(0xFFDCE6FF),
+            onPrimaryContainer = Color(0xFF001A66),
+            secondary = Color(0xFF111111),
+            onSecondary = Color.White,
+            background = Color(0xFFFFFFFF),
+            onBackground = Color(0xFF000000),
+            surface = Color(0xFFFFFFFF),
+            onSurface = Color(0xFF000000),
+            surfaceVariant = Color(0xFFF2F2F2),
+            onSurfaceVariant = Color(0xFF111111),
+            error = Color(0xFFB00020),
+        )
+    }
+
+    return when (config.visualTheme) {
+        VisualTheme.DARK_COMFORT -> MidnightIndigoColors
+        VisualTheme.SOFT_CALM -> darkColorScheme(
+            primary = Color(0xFF79D9C8),
+            onPrimary = Color(0xFF062B27),
+            secondary = Color(0xFF8DE3FF),
+            onSecondary = Color(0xFF06202A),
+            background = Color(0xFF141B1C),
+            onBackground = Color(0xFFE8F1EF),
+            surface = Color(0xFF1D2627),
+            onSurface = Color(0xFFE8F1EF),
+            surfaceVariant = Color(0xFF334244),
+            onSurfaceVariant = Color(0xFFC3D0CF),
+            error = Color(0xFFFFB4AB),
+        )
+        VisualTheme.CLINICAL_PROFESSIONAL -> lightColorScheme(
+            primary = Color(0xFF1F5AA6),
+            onPrimary = Color.White,
+            primaryContainer = Color(0xFFD8E2FF),
+            onPrimaryContainer = Color(0xFF001A44),
+            secondary = Color(0xFF4A5F82),
+            onSecondary = Color.White,
+            background = Color(0xFFF7FAFF),
+            onBackground = Color(0xFF0E141B),
+            surface = Color(0xFFFFFFFF),
+            onSurface = Color(0xFF0E141B),
+            surfaceVariant = Color(0xFFE1E7F2),
+            onSurfaceVariant = Color(0xFF3F4856),
+            error = Color(0xFF8C1D18),
+        )
+        VisualTheme.LIGHT_PREMIUM -> WarmLightColors
+    }
 }

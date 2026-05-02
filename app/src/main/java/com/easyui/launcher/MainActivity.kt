@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.runtime.Composable
-import com.easyui.core.ui.theme.EasyUiTheme
 import com.easyui.launcher.navigation.EasyUiNavGraph
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +29,5 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun EasyUiApp(application: EasyUiApplication) {
-    EasyUiTheme {
-        EasyUiNavGraph(container = application.container)
-    }
+    EasyUiNavGraph(container = application.container)
 }

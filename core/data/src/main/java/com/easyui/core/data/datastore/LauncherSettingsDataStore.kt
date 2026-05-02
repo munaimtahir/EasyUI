@@ -6,12 +6,15 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.LayoutMode
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.EmergencyNumber
+import com.easyui.core.domain.model.OptionalPermission
 import com.easyui.core.domain.model.PinCredential
+import com.easyui.core.domain.model.SetupProtectionLevel
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.VisualTheme
 import com.easyui.core.domain.model.AccessibilityMode
@@ -64,6 +67,8 @@ class DataStoreLauncherSettingsRepository(
                     accessibilityModeName = preferences[Keys.SKIN_ACCESSIBILITY_MODE],
                     verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
                 ),
+                setupProtectionLevel = preferences[Keys.SETUP_PROTECTION_LEVEL] ?: SetupProtectionLevel.RECOMMENDED.name,
+                setupOptionalPermissions = preferences[Keys.SETUP_OPTIONAL_PERMISSIONS] ?: defaultOptionalPermissions(),
                 guidedSetupStep = preferences[Keys.GUIDED_SETUP_STEP] ?: 0,
                 guidedSetupCompleted = preferences[Keys.GUIDED_SETUP_COMPLETED] ?: false,
                 emergencyMode = preferences[Keys.EMERGENCY_MODE] ?: "MENU",
@@ -192,6 +197,18 @@ class DataStoreLauncherSettingsRepository(
         }
     }
 
+    override suspend fun updateSetupProtectionLevel(levelName: String) {
+        dataStore.edit { preferences ->
+            preferences[Keys.SETUP_PROTECTION_LEVEL] = levelName
+        }
+    }
+
+    override suspend fun updateSetupOptionalPermissions(permissionNames: Set<String>) {
+        dataStore.edit { preferences ->
+            preferences[Keys.SETUP_OPTIONAL_PERMISSIONS] = permissionNames
+        }
+    }
+
     override suspend fun updateGuidedSetupStep(step: Int) {
         dataStore.edit { preferences ->
             preferences[Keys.GUIDED_SETUP_STEP] = step
@@ -209,6 +226,15 @@ class DataStoreLauncherSettingsRepository(
             preferences[Keys.EMERGENCY_MODE] = mode
         }
     }
+
+    private fun defaultOptionalPermissions(): Set<String> = setOf(
+        OptionalPermission.PHONE_DIALER.name,
+        OptionalPermission.CONTACTS.name,
+        OptionalPermission.CAMERA.name,
+        OptionalPermission.PHOTOS_MEDIA.name,
+        OptionalPermission.BACKUP_RESTORE_FILES.name,
+        OptionalPermission.NOTIFICATIONS.name,
+    )
 
     private object Keys {
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
@@ -238,6 +264,8 @@ class DataStoreLauncherSettingsRepository(
         val SKIN_LAYOUT_MODE = stringPreferencesKey("skin_layout_mode")
         val SKIN_VISUAL_THEME = stringPreferencesKey("skin_visual_theme")
         val SKIN_ACCESSIBILITY_MODE = stringPreferencesKey("skin_accessibility_mode")
+        val SETUP_PROTECTION_LEVEL = stringPreferencesKey("setup_protection_level")
+        val SETUP_OPTIONAL_PERMISSIONS = stringSetPreferencesKey("setup_optional_permissions")
         val GUIDED_SETUP_STEP = intPreferencesKey("guided_setup_step")
         val GUIDED_SETUP_COMPLETED = booleanPreferencesKey("guided_setup_completed")
         val EMERGENCY_MODE = stringPreferencesKey("emergency_mode")
@@ -317,7 +345,7 @@ class DataStoreLauncherSettingsRepository(
         val layoutMode = runCatching { LayoutMode.valueOf(layoutModeName.orEmpty()) }
             .getOrElse { if (verySimpleModeEnabled) LayoutMode.VERY_SIMPLE else LayoutMode.SIMPLE_CLASSIC }
         val visualTheme = runCatching { VisualTheme.valueOf(visualThemeName.orEmpty()) }
-            .getOrDefault(VisualTheme.LIGHT_PREMIUM)
+            .getOrDefault(VisualTheme.DARK_COMFORT)
         val accessibilityMode = runCatching { AccessibilityMode.valueOf(accessibilityModeName.orEmpty()) }
             .getOrDefault(AccessibilityMode.NONE)
         return SkinConfig(

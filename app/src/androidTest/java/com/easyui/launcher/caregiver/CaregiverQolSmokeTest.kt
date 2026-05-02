@@ -3,12 +3,15 @@ package com.easyui.launcher.caregiver
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import com.easyui.launcher.assertPresent
@@ -140,5 +143,49 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Messages").assertPresent()
         composeRule.onNodeWithText("Camera").assertPresent()
         composeRule.onNodeWithText("Already on home").assertPresent()
+    }
+
+    @Test
+    fun allowedAppsScreenPlacesIntoSelectedSlot() {
+        var assignedPackage: String? = null
+        var assignedPosition: Int? = null
+        composeRule.setContent {
+            EasyUiTheme {
+                AllowedAppsScreen(
+                    pageCount = 2,
+                    pages = listOf(
+                        listOf(
+                            HomeTile("phone", 0, "Phone", HomeTileType.ACTION, action = HomeTileAction.OPEN_DIALER),
+                            HomeTile("messages", 1, "Messages", HomeTileType.ACTION, action = HomeTileAction.OPEN_MESSAGES),
+                            null,
+                            null,
+                            null,
+                            HomeTile("emergency", 5, "Emergency", HomeTileType.ACTION, action = HomeTileAction.EMERGENCY),
+                        ),
+                        listOf(null, null, null, null, null, null),
+                    ),
+                    installedApps = listOf(
+                        InstalledApp("com.maps", "MapsActivity", "Maps"),
+                    ),
+                    assignedAppPackages = emptySet(),
+                    onAssignApp = { pkg, pos ->
+                        assignedPackage = pkg
+                        assignedPosition = pos
+                    },
+                    onRemoveApp = {},
+                    onDone = {},
+                    onFinishSetup = {},
+                )
+            }
+        }
+
+        // Select a known empty slot: Page 1, Slot 3 -> absolute position 2.
+        composeRule.onNodeWithText("Page 1, Slot 3").assertIsDisplayed()
+        composeRule.onNodeWithText("Page 1, Slot 3").performClick()
+        composeRule.onNodeWithText("Place Here").assertIsEnabled()
+        composeRule.onNodeWithText("Place Here").performClick()
+
+        assert(assignedPackage == "com.maps") { "Expected onAssignApp to receive com.maps, got $assignedPackage" }
+        assert(assignedPosition == 2) { "Expected onAssignApp to receive position 2, got $assignedPosition" }
     }
 }

@@ -57,7 +57,10 @@ import com.easyui.feature.onboarding.DefaultLauncherGuidanceScreen
 import com.easyui.feature.onboarding.IntroScreen
 import com.easyui.feature.onboarding.WelcomeScreen
 import com.easyui.feature.onboarding.LauncherActivationScreen
+import com.easyui.feature.onboarding.PermissionsExplanationScreen
+import com.easyui.feature.onboarding.ProtectionOptionsScreen
 import com.easyui.feature.onboarding.ReadabilityPresetScreen
+import com.easyui.feature.onboarding.ThemePickerScreen
 import com.easyui.feature.onboarding.HomeLayoutSetupScreen
 import com.easyui.feature.onboarding.AllowedAppsSetupScreen
 import com.easyui.feature.onboarding.ContactsSetupScreen
@@ -77,6 +80,7 @@ import com.easyui.core.domain.model.ProtectedAction
 import com.easyui.core.domain.model.PinCredential
 import com.easyui.core.domain.security.PinHasher
 import com.easyui.core.ui.theme.EasyUiSpacing
+import com.easyui.core.ui.theme.EasyUiTheme
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -141,7 +145,8 @@ fun EasyUiNavGraph(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
-    Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { innerPadding ->
+    EasyUiTheme(skinConfig = appState.settings.skinConfig) {
+        Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { innerPadding ->
         if (!appState.settingsLoaded || !appState.starterLayoutReady) {
             LoadingScreen(modifier = androidx.compose.ui.Modifier.padding(innerPadding))
             return@Scaffold
@@ -162,25 +167,48 @@ fun EasyUiNavGraph(
                 composable(Routes.GuidedSetup.route) {
                     when (guidedSetupState.guidedSetupStep) {
                         1 -> WelcomeScreen(onNext = { guidedSetupViewModel.nextStep() })
-                        2 -> LauncherActivationScreen(
+                        2 -> ProtectionOptionsScreen(
+                            current = guidedSetupState.setupProtectionLevel,
+                            onSelect = { level ->
+                                guidedSetupViewModel.updateSetupProtectionLevel(level)
+                                guidedSetupViewModel.updateLayoutLocked(level == com.easyui.core.domain.model.SetupProtectionLevel.RECOMMENDED)
+                            },
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() },
+                        )
+                        3 -> ThemePickerScreen(
+                            visualTheme = appState.settings.skinConfig.visualTheme,
+                            accessibilityMode = appState.settings.skinConfig.accessibilityMode,
+                            onSelectVisualTheme = guidedSetupViewModel::updateVisualTheme,
+                            onSelectAccessibilityMode = guidedSetupViewModel::updateAccessibilityMode,
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() },
+                        )
+                        4 -> PermissionsExplanationScreen(
+                            enabledPermissions = guidedSetupState.setupOptionalPermissions,
+                            onSetEnabled = guidedSetupViewModel::setOptionalPermission,
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() },
+                        )
+                        5 -> LauncherActivationScreen(
                             isDefaultLauncher = guidedSetupState.isDefaultLauncher,
                             onOpenSettings = { guidedSetupViewModel.openLauncherSettings() },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        3 -> ReadabilityPresetScreen(
+                        6 -> ReadabilityPresetScreen(
                             currentPreset = guidedSetupState.homeReadabilityPreset,
                             onPresetSelected = { guidedSetupViewModel.updateReadabilityPreset(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        4 -> HomeLayoutSetupScreen(
+                        7 -> HomeLayoutSetupScreen(
                             homePageCount = guidedSetupState.homePageCount,
                             onPageCountChange = { caregiverViewModel.updateHomePageCount(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        5 -> AllowedAppsSetupScreen(
+                        8 -> AllowedAppsSetupScreen(
                             pageCount = caregiverViewModel.effectivePageCount(),
                             pages = caregiverViewModel.homePages(),
                             installedApps = caregiverViewModel.installedAppsForAllowedApps(),
@@ -190,7 +218,7 @@ fun EasyUiNavGraph(
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        6 -> ContactsSetupScreen(
+                        9 -> ContactsSetupScreen(
                             tiles = caregiverViewModel.contactTiles(),
                             onMoveUp = caregiverViewModel::moveTileUp,
                             onMoveDown = caregiverViewModel::moveTileDown,
@@ -201,7 +229,7 @@ fun EasyUiNavGraph(
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        7 -> SecuritySetupScreen(
+                        10 -> SecuritySetupScreen(
                             pin = guidedSetupState.pinInput,
                             confirmPin = guidedSetupState.confirmPinInput,
                             errorMessage = guidedSetupState.pinError,
@@ -219,13 +247,13 @@ fun EasyUiNavGraph(
                             onBack = { guidedSetupViewModel.previousStep() },
                             onSkip = { guidedSetupViewModel.nextStep() }
                         )
-                        8 -> DeviceSupportScreen(
+                        11 -> DeviceSupportScreen(
                             showBattery = caregiverState.settings.showBatteryInfo,
                             onToggleBattery = { caregiverViewModel.setBatteryInfoVisible(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        9 -> ReviewConfirmScreen(
+                        12 -> ReviewConfirmScreen(
                             onConfirm = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                             readability = guidedSetupState.homeReadabilityPreset.name.replace("_", " "),
@@ -235,7 +263,7 @@ fun EasyUiNavGraph(
                             layoutLocked = guidedSetupState.layoutLocked,
                             hasPin = guidedSetupState.hasPinConfigured
                         )
-                        10 -> CompletionScreen(
+                        13 -> CompletionScreen(
                             onFinish = {
                                 guidedSetupViewModel.completeSetup()
                                 navController.navigate(Routes.Home.route) {
@@ -243,6 +271,7 @@ fun EasyUiNavGraph(
                                 }
                             }
                         )
+                        else -> WelcomeScreen(onNext = { guidedSetupViewModel.setStep(1) })
                     }
                 }
                 composable(Routes.Home.route) {
@@ -649,6 +678,7 @@ fun EasyUiNavGraph(
                     },
                 )
             }
+        }
         }
     }
 }

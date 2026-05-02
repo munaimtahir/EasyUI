@@ -163,7 +163,7 @@ object BackupSerializer {
             }.getOrElse { if (obj.optBoolean("verySimpleModeEnabled", false)) LayoutMode.VERY_SIMPLE else LayoutMode.SIMPLE_CLASSIC },
             visualTheme = runCatching {
                 VisualTheme.valueOf(skinObject?.optString("visualTheme").orEmpty())
-            }.getOrDefault(VisualTheme.LIGHT_PREMIUM),
+            }.getOrDefault(VisualTheme.DARK_COMFORT),
             accessibilityMode = runCatching {
                 AccessibilityMode.valueOf(skinObject?.optString("accessibilityMode").orEmpty())
             }.getOrDefault(AccessibilityMode.NONE),
