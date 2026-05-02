@@ -29,14 +29,18 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import kotlinx.coroutines.launch
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -75,16 +79,12 @@ fun HomeScreen(
     layoutLocked: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    var currentPageIndex by remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState(pageCount = { pageCount })
+    val scope = rememberCoroutineScope()
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
     val slotsPerPage = 6
     val totalSlots = slotsPerPage * pageCount
     val allTileSlots = List(totalSlots) { index -> tiles.getOrNull(index) }
-    
-    val pageStartIndex = currentPageIndex * slotsPerPage
-    val pageEndIndex = (currentPageIndex + 1) * slotsPerPage
-    val currentPageTiles = allTileSlots.subList(pageStartIndex, pageEndIndex)
-    val tileSlots = List(6) { index -> currentPageTiles.getOrNull(index) }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -114,34 +114,48 @@ fun HomeScreen(
                     onLongPressConfirmed = onStatusBarLongPress,
                     onClockTapped = onClockTapped,
                 )
-                Column(
+                HorizontalPager(
+                    state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
-                ) {
-                    repeat(3) { row ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            horizontalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
-                        ) {
-                            repeat(2) { column ->
-                                val index = (row * 2) + column
-                                val tile = tileSlots[index]
-                                if (tile != null) {
-                                    HomeActionTile(
-                                        tile = tile,
-                                        accessibilityMode = skinConfig.accessibilityMode,
-                                        layoutLocked = layoutLocked,
-                                        onClick = { onTileClick(tile.id) },
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .fillMaxHeight(),
-                                    )
-                                } else {
-                                    Box(modifier = Modifier.weight(1f))
+                    userScrollEnabled = pageCount > 1,
+                    pageSpacing = SeniorHomeTokens.gridGap
+                ) { page ->
+                    val pageStartIndex = page * slotsPerPage
+                    val pageEndIndex = (page + 1) * slotsPerPage
+                    val currentPageTiles = allTileSlots.subList(pageStartIndex, pageEndIndex)
+                    val tileSlots = List(6) { index -> currentPageTiles.getOrNull(index) }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                    ) {
+                        repeat(3) { row ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                horizontalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                            ) {
+                                repeat(2) { column ->
+                                    val index = (row * 2) + column
+                                    val tile = tileSlots[index]
+                                    if (tile != null) {
+                                        HomeActionTile(
+                                            tile = tile,
+                                            accessibilityMode = skinConfig.accessibilityMode,
+                                            layoutLocked = layoutLocked,
+                                            onClick = { onTileClick(tile.id) },
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .fillMaxHeight(),
+                                        )
+                                    } else {
+                                        Box(modifier = Modifier.weight(1f))
+                                    }
                                 }
                             }
                         }
@@ -167,9 +181,9 @@ fun HomeScreen(
                             repeat(pageCount) { pageIndex ->
                                 Box(
                                     modifier = Modifier
-                                        .size(if (pageIndex == currentPageIndex) 12.dp else 8.dp)
+                                        .size(if (pageIndex == pagerState.currentPage) 12.dp else 8.dp)
                                         .background(
-                                            color = if (pageIndex == currentPageIndex) {
+                                            color = if (pageIndex == pagerState.currentPage) {
                                                 SeniorHomeTokens.textPrimary
                                             } else {
                                                 SeniorHomeTokens.textPrimary.copy(alpha = 0.3f)
@@ -192,8 +206,8 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
                         ) {
                             OutlinedButton(
-                                onClick = { if (currentPageIndex > 0) currentPageIndex-- },
-                                enabled = currentPageIndex > 0,
+                                onClick = { if (pagerState.currentPage > 0) scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) } },
+                                enabled = pagerState.currentPage > 0,
                                 modifier = Modifier
                                     .weight(1f)
                                     .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
@@ -202,7 +216,7 @@ fun HomeScreen(
                             ) {
                                 Text(
                                     text = "← Previous",
-                                    color = if (currentPageIndex > 0) {
+                                    color = if (pagerState.currentPage > 0) {
                                         SeniorHomeTokens.textPrimary
                                     } else {
                                         SeniorHomeTokens.textPrimary.copy(alpha = 0.5f)
@@ -215,8 +229,8 @@ fun HomeScreen(
                                 )
                             }
                             OutlinedButton(
-                                onClick = { if (currentPageIndex < pageCount - 1) currentPageIndex++ },
-                                enabled = currentPageIndex < pageCount - 1,
+                                onClick = { if (pagerState.currentPage < pageCount - 1) scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) } },
+                                enabled = pagerState.currentPage < pageCount - 1,
                                 modifier = Modifier
                                     .weight(1f)
                                     .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
@@ -225,7 +239,7 @@ fun HomeScreen(
                             ) {
                                 Text(
                                     text = "Next →",
-                                    color = if (currentPageIndex < pageCount - 1) {
+                                    color = if (pagerState.currentPage < pageCount - 1) {
                                         SeniorHomeTokens.textPrimary
                                     } else {
                                         SeniorHomeTokens.textPrimary.copy(alpha = 0.5f)
@@ -279,6 +293,7 @@ private fun HomeHeaderCard(
             .testTag("home_top_status_bar")
             .pointerInput(onLongPressConfirmed) {
                 detectTapGestures(
+                    onTap = { onClockTapped() },
                     onPress = {
                         val releasedBeforeTimeout = withTimeoutOrNull(TopBarLongPressMs) {
                             tryAwaitRelease()
