@@ -218,49 +218,24 @@ private fun SetupScene(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
-    Box(
+    androidx.compose.material3.Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(OnboardingTokens.backgroundBrush),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = OnboardingTokens.pagePadding,
-                    end = OnboardingTokens.pagePadding,
-                    top = safeDrawingPadding.calculateTopPadding() + OnboardingTokens.bottomSpacing,
-                    bottom = safeDrawingPadding.calculateBottomPadding() + OnboardingTokens.bottomSpacing,
-                ),
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(OnboardingTokens.sectionSpacing),
-            ) {
-                HeroCard(
-                    eyebrow = eyebrow,
-                    title = title,
-                    subtitle = subtitle,
-                    badges = badges,
-                    hero = hero,
-                )
-                content()
-                Text(
-                    text = footer,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = OnboardingTokens.screenTextMuted,
-                )
-                Spacer(modifier = Modifier.height(EasyUiSpacing.xs))
-            }
-
-            Spacer(modifier = Modifier.height(OnboardingTokens.bottomSpacing))
-
+            .background(OnboardingTokens.backgroundBrush)
+            .padding(
+                top = safeDrawingPadding.calculateTopPadding(),
+                bottom = safeDrawingPadding.calculateBottomPadding(),
+            ),
+        containerColor = Color.Transparent,
+        bottomBar = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding(),
+                    .padding(
+                        start = OnboardingTokens.pagePadding,
+                        end = OnboardingTokens.pagePadding,
+                        bottom = OnboardingTokens.bottomSpacing,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
             ) {
                 Button(
@@ -300,6 +275,34 @@ private fun SetupScene(
                     }
                 }
             }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    start = OnboardingTokens.pagePadding,
+                    end = OnboardingTokens.pagePadding,
+                )
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(OnboardingTokens.sectionSpacing),
+        ) {
+            Spacer(modifier = Modifier.height(OnboardingTokens.bottomSpacing))
+            HeroCard(
+                eyebrow = eyebrow,
+                title = title,
+                subtitle = subtitle,
+                badges = badges,
+                hero = hero,
+            )
+            content()
+            Text(
+                text = footer,
+                style = MaterialTheme.typography.bodyMedium,
+                color = OnboardingTokens.screenTextMuted,
+            )
+            Spacer(modifier = Modifier.height(EasyUiSpacing.md))
         }
     }
 }

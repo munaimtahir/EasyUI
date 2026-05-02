@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val ClockTapWindowMs = 3_000L
-private const val ClockTapTriggerCount = 5
+private const val ClockTapTriggerCount = 4
 private const val CaregiverAccessDebounceMs = 1_500L
 
 class HomeViewModel(
