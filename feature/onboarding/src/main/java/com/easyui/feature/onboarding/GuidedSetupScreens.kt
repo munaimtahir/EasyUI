@@ -3,7 +3,6 @@ package com.easyui.feature.onboarding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.background
@@ -14,9 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -53,7 +49,7 @@ import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.model.OptionalPermission
 import com.easyui.core.domain.model.SetupProtectionLevel
 import com.easyui.core.domain.model.VisualTheme
-import com.easyui.core.domain.rules.HomeLayoutRules
+import com.easyui.core.ui.components.WizardScrollMode
 import com.easyui.core.ui.components.WizardShell
 import com.easyui.core.ui.theme.EasyUiSpacing
 
@@ -265,7 +261,6 @@ private fun ThemeChoiceCard(
                     .padding(0.dp)
                     .let { it },
             ) {
-                // Use a nested Box to apply background without needing extra imports.
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -464,6 +459,7 @@ fun ReadabilityPresetScreen(
         onBack = onBack,
         currentStep = 6,
         totalSteps = 13,
+        scrollMode = WizardScrollMode.ParentScroll
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
             HomeReadabilityPreset.entries.forEach { preset ->
@@ -506,6 +502,7 @@ fun HomeLayoutSetupScreen(
         onBack = onBack,
         currentStep = 7,
         totalSteps = 13,
+        scrollMode = WizardScrollMode.ParentScroll
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -535,20 +532,30 @@ fun HomeLayoutSetupScreen(
                     )
                 }
             }
-            // Visualization of 2x3 grid
             Text("Senior Home Preview", style = MaterialTheme.typography.titleMedium)
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.height(180.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                userScrollEnabled = false
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
                 val mockTiles = listOf("Phone", "Messages", "Contacts", "Photos", "Camera", "Emergency")
-                items(6) { index ->
-                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().aspectRatio(1.5f)) {
-                            Text(mockTiles[index], style = MaterialTheme.typography.labelSmall)
+                repeat(homePageCount) { pageIndex ->
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Page ${pageIndex + 1}", style = MaterialTheme.typography.titleSmall)
+                        repeat(3) { row ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                repeat(2) { col ->
+                                    val index = row * 2 + col
+                                    Card(
+                                        modifier = Modifier.weight(1f).aspectRatio(1.5f),
+                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                                            val label = if (pageIndex == 0) mockTiles.getOrElse(index) { "" } else "Empty"
+                                            Text(label, style = MaterialTheme.typography.labelSmall)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -579,10 +586,9 @@ fun AllowedAppsSetupScreen(
         onBack = onBack,
         currentStep = 8,
         totalSteps = 13,
-        scrollableContent = false,
+        scrollMode = WizardScrollMode.ChildOwnsScroll
     ) {
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-            // Page selection
             Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
                 repeat(pageCount) { i ->
                     val selected = i == selectedPageIndex
@@ -597,8 +603,6 @@ fun AllowedAppsSetupScreen(
                     }
                 }
             }
-
-            // Grid of slots
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 repeat(3) { row ->
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -621,8 +625,6 @@ fun AllowedAppsSetupScreen(
                     }
                 }
             }
-
-            // App list
             Card(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 Column(modifier = Modifier.fillMaxSize().padding(EasyUiSpacing.md)) {
                     Text("Pick an App", style = MaterialTheme.typography.titleMedium)
@@ -782,9 +784,9 @@ fun ContactsSetupScreen(
         onBack = onBack,
         currentStep = 9,
         totalSteps = 13,
-        scrollableContent = false,
+        scrollMode = WizardScrollMode.ParentScroll
     ) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
+        Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(EasyUiSpacing.md), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                     Text("Emergency Button Mode", style = MaterialTheme.typography.titleMedium)
@@ -844,8 +846,8 @@ fun ContactsSetupScreen(
             }
 
             Text("Current Shortcuts", style = MaterialTheme.typography.titleMedium)
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs), modifier = Modifier.weight(1f)) {
-                items(tiles) { tile ->
+            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+                tiles.forEach { tile ->
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier.padding(EasyUiSpacing.sm),
@@ -888,29 +890,18 @@ fun ReviewConfirmScreen(
         nextLabel = "Looks Good",
         currentStep = 12,
         totalSteps = 13,
+        scrollMode = WizardScrollMode.ParentScroll
     ) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-            item {
-                ReviewCard(title = "Readability", value = readability)
-            }
-            item {
-                ReviewCard(title = "Home Pages", value = "$pageCount page(s) configured")
-            }
-            item {
-                ReviewCard(title = "Emergency Mode", value = if (emergencyMode == "SOS") "Direct Dial" else "Choice Menu")
-            }
-            item {
-                ReviewCard(title = "Home Apps", value = "$allowedAppCount apps placed on home")
-            }
-            item {
-                ReviewCard(
-                    title = "Security",
-                    value = (if (hasPin) "PIN set" else "No PIN") + (if (layoutLocked) ", Layout locked" else ", Layout open")
-                )
-            }
-            item {
-                Spacer(modifier = Modifier.height(EasyUiSpacing.md))
-            }
+        Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+            ReviewCard(title = "Readability", value = readability)
+            ReviewCard(title = "Home Pages", value = "$pageCount page(s) configured")
+            ReviewCard(title = "Emergency Mode", value = if (emergencyMode == "SOS") "Direct Dial" else "Choice Menu")
+            ReviewCard(title = "Home Apps", value = "$allowedAppCount apps placed on home")
+            ReviewCard(
+                title = "Security",
+                value = (if (hasPin) "PIN set" else "No PIN") + (if (layoutLocked) ", Layout locked" else ", Layout open")
+            )
+            Spacer(modifier = Modifier.height(EasyUiSpacing.md))
         }
     }
 }

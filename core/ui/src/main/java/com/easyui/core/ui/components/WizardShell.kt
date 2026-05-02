@@ -38,7 +38,7 @@ fun WizardShell(
     showProgress: Boolean = true,
     currentStep: Int = 1,
     totalSteps: Int = 10,
-    scrollableContent: Boolean = true,
+    scrollMode: WizardScrollMode = WizardScrollMode.ParentScroll,
     content: @Composable (androidx.compose.foundation.layout.ColumnScope.() -> Unit)
 ) {
     Scaffold(
@@ -119,7 +119,7 @@ fun WizardShell(
                 Text(subtitle, style = MaterialTheme.typography.bodyLarge)
             }
             
-            val contentModifier = if (scrollableContent) {
+            val contentModifier = if (scrollMode == WizardScrollMode.ParentScroll) {
                 Modifier.verticalScroll(rememberScrollState())
             } else {
                 Modifier
