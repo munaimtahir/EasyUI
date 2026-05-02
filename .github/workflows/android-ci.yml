@@ -15,6 +15,8 @@ jobs:
     name: Unit Tests & Debug Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -47,6 +49,8 @@ jobs:
     name: Instrumented Tests (Emulator)
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -91,19 +95,23 @@ jobs:
             bash <<'BASH'
             set -euo pipefail
 
+            # Total boot wait: MAX_BOOT_ATTEMPTS * BOOT_CHECK_INTERVAL_SECS = 60 s
+            MAX_BOOT_ATTEMPTS=30
+            BOOT_CHECK_INTERVAL_SECS=2
+
             echo "--- ADB readiness check ---"
             adb devices
             adb wait-for-device
             # Poll until sys.boot_completed == 1 (up to ~60 s).
             BOOT_COMPLETED=""
-            for i in $(seq 1 30); do
+            for i in $(seq 1 "$MAX_BOOT_ATTEMPTS"); do
               BOOT_COMPLETED=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
               if [ "$BOOT_COMPLETED" = "1" ]; then
                 echo "Emulator boot_completed=1 (ready)."
                 break
               fi
               echo "  Waiting for boot... attempt $i (boot_completed='$BOOT_COMPLETED')"
-              sleep 2
+              sleep "$BOOT_CHECK_INTERVAL_SECS"
             done
 
             if [ "$BOOT_COMPLETED" != "1" ]; then
