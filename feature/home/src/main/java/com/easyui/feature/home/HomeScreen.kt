@@ -198,61 +198,6 @@ fun HomeScreen(
                                 }
                             }
                         }
-                        
-                        // Page navigation buttons
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .testTag("home_page_navigation"),
-                            horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                        ) {
-                            OutlinedButton(
-                                onClick = { if (pagerState.currentPage > 0) scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) } },
-                                enabled = pagerState.currentPage > 0,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
-                                    .testTag("home_page_previous"),
-                                shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
-                            ) {
-                                Text(
-                                    text = "← Previous",
-                                    color = if (pagerState.currentPage > 0) {
-                                        SeniorHomeTokens.textPrimary
-                                    } else {
-                                        SeniorHomeTokens.textPrimary.copy(alpha = 0.5f)
-                                    },
-                                    fontSize = when (skinConfig.accessibilityMode) {
-                                        AccessibilityMode.BOLD_ACCESSIBILITY -> 20.sp
-                                        else -> 18.sp
-                                    },
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                            }
-                            OutlinedButton(
-                                onClick = { if (pagerState.currentPage < pageCount - 1) scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) } },
-                                enabled = pagerState.currentPage < pageCount - 1,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
-                                    .testTag("home_page_next"),
-                                shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
-                            ) {
-                                Text(
-                                    text = "Next →",
-                                    color = if (pagerState.currentPage < pageCount - 1) {
-                                        SeniorHomeTokens.textPrimary
-                                    } else {
-                                        SeniorHomeTokens.textPrimary.copy(alpha = 0.5f)
-                                    },
-                                    fontSize = when (skinConfig.accessibilityMode) {
-                                        AccessibilityMode.BOLD_ACCESSIBILITY -> 20.sp
-                                        else -> 18.sp
-                                    },
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                            }
-                        }
                     }
                 }
                 

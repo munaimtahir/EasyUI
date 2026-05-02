@@ -588,7 +588,8 @@ fun AllowedAppsSetupScreen(
         totalSteps = 13,
         scrollMode = WizardScrollMode.ChildOwnsScroll
     ) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+            // Page selection
             Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
                 repeat(pageCount) { i ->
                     val selected = i == selectedPageIndex
@@ -603,9 +604,11 @@ fun AllowedAppsSetupScreen(
                     }
                 }
             }
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+
+            // Grid of slots
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 repeat(3) { row ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                         repeat(2) { col ->
                             val slotIndex = row * 2 + col
                             val tile = currentPage.getOrNull(slotIndex)
@@ -613,7 +616,7 @@ fun AllowedAppsSetupScreen(
                             val isSelected = selectedPosition == position
                             Card(
                                 onClick = { selectedPosition = position },
-                                modifier = Modifier.weight(1f).aspectRatio(1.5f),
+                                modifier = Modifier.weight(1f).aspectRatio(2.0f),
                                 colors = if (isSelected) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer) else CardDefaults.cardColors(),
                                 border = if (isSelected) androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
                             ) {

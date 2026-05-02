@@ -693,13 +693,24 @@ private fun RequireCaregiverSession(
     navController: NavHostController,
     content: @Composable () -> Unit,
 ) {
-    if (!caregiverSessionActive) {
-        LaunchedEffect(Unit) {
-            navController.navigate(Routes.Home.route) {
-                popUpTo(Routes.Home.route) { inclusive = false }
+    var isChecking by remember { mutableStateOf(!caregiverSessionActive) }
+
+    LaunchedEffect(caregiverSessionActive) {
+        if (!caregiverSessionActive) {
+            isChecking = true
+            kotlinx.coroutines.delay(200) // wait for StateFlow combine to settle
+            if (!caregiverViewModel.state.value.caregiverSessionActive) {
+                navController.navigate(Routes.Home.route) {
+                    popUpTo(Routes.Home.route) { inclusive = false }
+                }
             }
+        } else {
+            isChecking = false
         }
-        Text("Returning home…")
+    }
+    
+    if (isChecking) {
+        Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {}
         return
     }
     
