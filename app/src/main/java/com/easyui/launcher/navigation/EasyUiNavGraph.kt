@@ -165,9 +165,19 @@ fun EasyUiNavGraph(
                 startDestination = startDestination,
             ) {
                 composable(Routes.GuidedSetup.route) {
+                    // Force state reads here so that screens like AllowedAppsSetupScreen recompose correctly
+                    val currentTiles = caregiverState.layoutTiles
+                    val currentSettings = caregiverState.settings
+                    
                     when (guidedSetupState.guidedSetupStep) {
-                        1 -> WelcomeScreen(onNext = { guidedSetupViewModel.nextStep() })
-                        2 -> ProtectionOptionsScreen(
+                        1 -> LauncherActivationScreen(
+                            isDefaultLauncher = guidedSetupState.isDefaultLauncher,
+                            onOpenSettings = { guidedSetupViewModel.openLauncherSettings() },
+                            onNext = { guidedSetupViewModel.nextStep() },
+                            onBack = { guidedSetupViewModel.previousStep() }
+                        )
+                        2 -> WelcomeScreen(onNext = { guidedSetupViewModel.nextStep() })
+                        3 -> ProtectionOptionsScreen(
                             current = guidedSetupState.setupProtectionLevel,
                             onSelect = { level ->
                                 guidedSetupViewModel.updateSetupProtectionLevel(level)
@@ -176,25 +186,30 @@ fun EasyUiNavGraph(
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                         )
-                        3 -> ThemePickerScreen(
+                        4 -> SecuritySetupScreen(
+                            pin = guidedSetupState.pinInput,
+                            confirmPin = guidedSetupState.confirmPinInput,
+                            errorMessage = guidedSetupState.pinError,
+                            layoutLocked = guidedSetupState.layoutLocked,
+                            onLayoutLockedChange = { guidedSetupViewModel.updateLayoutLocked(it) },
+                            onPinChange = { guidedSetupViewModel.updatePinInput(it) },
+                            onConfirmPinChange = { guidedSetupViewModel.updateConfirmPinInput(it) },
+                            onNext = { 
+                                val pinEmpty = guidedSetupState.pinInput.isEmpty() && guidedSetupState.confirmPinInput.isEmpty()
+                                if (pinEmpty || guidedSetupViewModel.savePin()) {
+                                    guidedSetupViewModel.nextStep()
+                                }
+                            },
+                            onBack = { guidedSetupViewModel.previousStep() },
+                            onSkip = { guidedSetupViewModel.nextStep() }
+                        )
+                        5 -> ThemePickerScreen(
                             visualTheme = appState.settings.skinConfig.visualTheme,
                             accessibilityMode = appState.settings.skinConfig.accessibilityMode,
                             onSelectVisualTheme = guidedSetupViewModel::updateVisualTheme,
                             onSelectAccessibilityMode = guidedSetupViewModel::updateAccessibilityMode,
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
-                        )
-                        4 -> PermissionsExplanationScreen(
-                            enabledPermissions = guidedSetupState.setupOptionalPermissions,
-                            onSetEnabled = guidedSetupViewModel::setOptionalPermission,
-                            onNext = { guidedSetupViewModel.nextStep() },
-                            onBack = { guidedSetupViewModel.previousStep() },
-                        )
-                        5 -> LauncherActivationScreen(
-                            isDefaultLauncher = guidedSetupState.isDefaultLauncher,
-                            onOpenSettings = { guidedSetupViewModel.openLauncherSettings() },
-                            onNext = { guidedSetupViewModel.nextStep() },
-                            onBack = { guidedSetupViewModel.previousStep() }
                         )
                         6 -> ReadabilityPresetScreen(
                             currentPreset = guidedSetupState.homeReadabilityPreset,
@@ -229,23 +244,11 @@ fun EasyUiNavGraph(
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        10 -> SecuritySetupScreen(
-                            pin = guidedSetupState.pinInput,
-                            confirmPin = guidedSetupState.confirmPinInput,
-                            errorMessage = guidedSetupState.pinError,
-                            layoutLocked = guidedSetupState.layoutLocked,
-                            onLayoutLockedChange = { guidedSetupViewModel.updateLayoutLocked(it) },
-                            onPinChange = { guidedSetupViewModel.updatePinInput(it) },
-                            onConfirmPinChange = { guidedSetupViewModel.updateConfirmPinInput(it) },
-                            onNext = { 
-                                // Only advance if PIN is valid or user wants no PIN (both fields empty)
-                                val pinEmpty = guidedSetupState.pinInput.isEmpty() && guidedSetupState.confirmPinInput.isEmpty()
-                                if (pinEmpty || guidedSetupViewModel.savePin()) {
-                                    guidedSetupViewModel.nextStep()
-                                }
-                            },
+                        10 -> PermissionsExplanationScreen(
+                            enabledPermissions = guidedSetupState.setupOptionalPermissions,
+                            onSetEnabled = guidedSetupViewModel::setOptionalPermission,
+                            onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
-                            onSkip = { guidedSetupViewModel.nextStep() }
                         )
                         11 -> DeviceSupportScreen(
                             showBattery = caregiverState.settings.showBatteryInfo,

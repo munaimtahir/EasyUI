@@ -27,16 +27,18 @@ private val WarmLightColors = lightColorScheme(
 )
 
 private val MidnightIndigoColors = darkColorScheme(
-    primary = Color(0xFF7ED6C8),
-    onPrimary = Color(0xFF072D2B),
+    primary = Color(0xFFBCA5FF),
+    onPrimary = Color(0xFF260085),
+    primaryContainer = Color(0xFF411BA1),
+    onPrimaryContainer = Color(0xFFE4DCFF),
     secondary = Color(0xFFFFB08D),
     onSecondary = Color(0xFF51220F),
-    background = Color(0xFF161A1B),
-    onBackground = Color(0xFFE8E3DA),
-    surface = Color(0xFF202526),
-    onSurface = Color(0xFFE8E3DA),
-    surfaceVariant = Color(0xFF394142),
-    onSurfaceVariant = Color(0xFFC2C8C5),
+    background = Color(0xFF101026),
+    onBackground = Color(0xFFE3E1EB),
+    surface = Color(0xFF181830),
+    onSurface = Color(0xFFE3E1EB),
+    surfaceVariant = Color(0xFF45434F),
+    onSurfaceVariant = Color(0xFFC7C5D0),
     error = Color(0xFFFFB4AB),
 )
 
@@ -75,13 +77,15 @@ private fun resolveColorScheme(config: SkinConfig): ColorScheme {
     return when (config.visualTheme) {
         VisualTheme.DARK_COMFORT -> MidnightIndigoColors
         VisualTheme.SOFT_CALM -> darkColorScheme(
-            primary = Color(0xFF79D9C8),
-            onPrimary = Color(0xFF062B27),
+            primary = Color(0xFF4DB6AC),
+            onPrimary = Color(0xFF00332E),
+            primaryContainer = Color(0xFF005047),
+            onPrimaryContainer = Color(0xFF82F7E8),
             secondary = Color(0xFF8DE3FF),
             onSecondary = Color(0xFF06202A),
-            background = Color(0xFF141B1C),
+            background = Color(0xFF102625),
             onBackground = Color(0xFFE8F1EF),
-            surface = Color(0xFF1D2627),
+            surface = Color(0xFF163332),
             onSurface = Color(0xFFE8F1EF),
             surfaceVariant = Color(0xFF334244),
             onSurfaceVariant = Color(0xFFC3D0CF),

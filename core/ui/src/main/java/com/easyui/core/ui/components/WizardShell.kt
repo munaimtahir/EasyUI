@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +38,7 @@ fun WizardShell(
     showProgress: Boolean = true,
     currentStep: Int = 1,
     totalSteps: Int = 10,
+    scrollableContent: Boolean = true,
     content: @Composable (androidx.compose.foundation.layout.ColumnScope.() -> Unit)
 ) {
     Scaffold(
@@ -98,31 +99,45 @@ fun WizardShell(
             }
         }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(
-                start = EasyUiSpacing.lg,
-                end = EasyUiSpacing.lg,
-                top = EasyUiSpacing.lg,
-                bottom = EasyUiSpacing.lg + 24.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.lg),
+                .padding(innerPadding)
         ) {
-            item {
-                Column {
-                    Text(title, style = MaterialTheme.typography.headlineLarge)
-                    Spacer(modifier = Modifier.height(EasyUiSpacing.xs))
-                    Text(subtitle, style = MaterialTheme.typography.bodyLarge)
-                }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = EasyUiSpacing.lg,
+                        end = EasyUiSpacing.lg,
+                        top = EasyUiSpacing.lg,
+                        bottom = EasyUiSpacing.md
+                    )
+            ) {
+                Text(title, style = MaterialTheme.typography.headlineLarge)
+                Spacer(modifier = Modifier.height(EasyUiSpacing.xs))
+                Text(subtitle, style = MaterialTheme.typography.bodyLarge)
             }
-            item {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
-                    content = content,
-                )
+            
+            val contentModifier = if (scrollableContent) {
+                Modifier.verticalScroll(rememberScrollState())
+            } else {
+                Modifier
             }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .then(contentModifier)
+                    .padding(
+                        start = EasyUiSpacing.lg,
+                        end = EasyUiSpacing.lg,
+                        bottom = EasyUiSpacing.lg
+                    ),
+                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+                content = content
+            )
         }
     }
 }
