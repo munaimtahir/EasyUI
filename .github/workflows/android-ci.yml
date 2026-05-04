@@ -76,6 +76,26 @@ jobs:
       - name: Compile Android instrumented tests
         run: ./gradlew :app:compileDebugAndroidTestKotlin --no-daemon
 
+      - name: Prepare instrumented test script
+        # The reactivecircus/android-emulator-runner action executes the 'script:'
+        # field by running each line individually via '/usr/bin/sh -c <line>'.
+        # Dash (sh) does not support 'set -o pipefail', so any multi-line bash
+        # script embedded directly in 'script:' will fail immediately.
+        # Solution: write the test runner as a real bash script here (under the
+        # runner's own bash shell), then the emulator-runner step calls it with a
+        # single 'bash /tmp/...' invocation that sh can forward without issue.
+        run: |
+          cat > /tmp/run-instrumented-tests.sh << 'BASH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          # The emulator-runner action already polls sys.boot_completed and sends
+          # keyevent 82 (unlock) before invoking this script, so we just run tests.
+          echo "--- Running connected instrumented tests ---"
+          ./gradlew connectedDebugAndroidTest --no-daemon
+          BASH
+          chmod +x /tmp/run-instrumented-tests.sh
+
       - name: Run instrumented tests on emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -86,42 +106,10 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          # Root cause fix: reactivecircus passes the script body to /bin/sh on some
-          # runners, which does not support 'pipefail'. We explicitly invoke bash so
-          # that 'set -euo pipefail' is valid. The readiness checks below guard against
-          # transient "adb: device offline" messages that occur during emulator boot;
-          # they are not failures once boot_completed=1.
-          script: |
-            bash <<'BASH'
-            set -euo pipefail
-
-            # Total boot wait: MAX_BOOT_ATTEMPTS * BOOT_CHECK_INTERVAL_SECS = 60 s
-            MAX_BOOT_ATTEMPTS=30
-            BOOT_CHECK_INTERVAL_SECS=2
-
-            echo "--- ADB readiness check ---"
-            adb devices
-            adb wait-for-device
-            # Poll until sys.boot_completed == 1 (up to ~60 s).
-            BOOT_COMPLETED=""
-            for i in $(seq 1 "$MAX_BOOT_ATTEMPTS"); do
-              BOOT_COMPLETED=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-              if [ "$BOOT_COMPLETED" = "1" ]; then
-                echo "Emulator boot_completed=1 (ready)."
-                break
-              fi
-              echo "  Waiting for boot... attempt $i (boot_completed='$BOOT_COMPLETED')"
-              sleep "$BOOT_CHECK_INTERVAL_SECS"
-            done
-
-            if [ "$BOOT_COMPLETED" != "1" ]; then
-              echo "ERROR: Emulator did not report boot_completed=1 within timeout." >&2
-              exit 1
-            fi
-
-            echo "--- Running connected instrumented tests ---"
-            ./gradlew connectedDebugAndroidTest --no-daemon
-            BASH
+          # The action handles emulator boot polling internally (waits for
+          # sys.boot_completed=1) before invoking the script below.  We call the
+          # pre-written bash script with a single token so sh can forward it cleanly.
+          script: bash /tmp/run-instrumented-tests.sh
 
       - name: Upload instrumented test results
         if: always()
