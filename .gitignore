@@ -19,10 +19,7 @@ Thumbs.db
 !.vscode/launch.json
 
 # Gradle / Kotlin / Android build outputs
-.gradle/
-**/.gradle/
-.gradle_local/
-**/.gradle_local/
+
 .kotlin/
 build/
 **/build/
@@ -30,7 +27,7 @@ out/
 captures/
 .externalNativeBuild/
 .cxx/
-local.properties
+
 
 # Signing and sensitive files
 *.jks
