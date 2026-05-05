@@ -372,7 +372,9 @@ fun AllowedAppsScreen(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     LazyColumn(
-                        modifier = Modifier.height(220.dp),
+                        modifier = Modifier
+                            .height(220.dp)
+                            .testTag("allowed_apps_installed_list"),
                         verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
                     ) {
                         items(installedApps, key = { it.packageName }) { app ->
@@ -450,11 +452,21 @@ private fun AllowedAppSlotCard(
             Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
                 if (tile == null || tile.type == HomeTileType.APP) {
                     if (selected) {
-                        Button(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
+                        Button(
+                            onClick = onSelect,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("slot_select_$position"),
+                        ) {
                             Text("Selected")
                         }
                     } else {
-                        OutlinedButton(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(
+                            onClick = onSelect,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("slot_select_$position"),
+                        ) {
                             Text("Use This Slot")
                         }
                     }
