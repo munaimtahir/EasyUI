@@ -328,6 +328,7 @@ fun AllowedAppsScreen(
             // Non-lazy slot grid: 2 columns rendered as Row pairs so the scrollable Column works correctly.
             // (LazyVerticalGrid cannot be nested inside a vertically scrollable Column.)
             val slotsPerRow = 2
+            // Ceiling division: number of rows needed to display all slots in pairs
             val numRows = (currentPage.size + slotsPerRow - 1) / slotsPerRow
             Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                 repeat(numRows) { rowIndex ->
