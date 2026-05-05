@@ -180,9 +180,9 @@ class CaregiverQolSmokeTest {
         }
 
         // Select a known empty slot: Page 1, Slot 3 -> absolute position 2.
-        composeRule.onNodeWithText("Page 1, Slot 3").assertIsDisplayed()
+        composeRule.onNodeWithText("Page 1, Slot 3").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("Page 1, Slot 3").performClick()
-        composeRule.onNodeWithText("Place Here").assertIsEnabled()
+        composeRule.onNodeWithText("Place Here").performScrollTo().assertIsEnabled()
         composeRule.onNodeWithText("Place Here").performClick()
 
         assert(assignedPackage == "com.maps") { "Expected onAssignApp to receive com.maps, got $assignedPackage" }

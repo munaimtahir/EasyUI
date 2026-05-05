@@ -122,6 +122,7 @@ class CaregiverSupportSmokeTest {
 
         composeRule.onNodeWithTag("health_info_editor_screen").assertPresent()
         composeRule.onNodeWithText("Health Info").assertPresent()
+        composeRule.onNodeWithTag("health_info_editor_screen").performScrollToNode(hasText("Doctor / Emergency Contact"))
         composeRule.onNodeWithText("Doctor / Emergency Contact").assertPresent()
         composeRule.onNodeWithTag("health_info_editor_screen").performScrollToNode(hasText("Save Health Info"))
         composeRule.onNodeWithText("Save Health Info").assertIsDisplayed()

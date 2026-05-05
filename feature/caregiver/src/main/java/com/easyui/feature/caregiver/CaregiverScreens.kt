@@ -16,9 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -286,6 +285,7 @@ fun AllowedAppsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(EasyUiSpacing.lg)
                 .testTag("allowed_apps_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
@@ -295,7 +295,7 @@ fun AllowedAppsScreen(
                 "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
                 style = MaterialTheme.typography.bodyLarge,
             )
-            
+
             // Add preview of the home layout
             HomeLayoutPreviewCard(
                 pages = pages,
@@ -325,24 +325,37 @@ fun AllowedAppsScreen(
                 }
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                itemsIndexed(currentPage, key = { slotIndex, tile -> tile?.id ?: "slot-$slotIndex" }) { slotIndex, tile ->
-                    val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
-                    AllowedAppSlotCard(
-                        tile = tile,
-                        position = position,
-                        selected = selectedPosition == position,
-                        onSelect = { selectedPosition = position },
-                        onRemove = {
-                            tile?.packageName?.let(onRemoveApp)
-                            if (selectedPosition == position) selectedPosition = null
-                        },
-                    )
+            // Non-lazy slot grid: 2 columns rendered as Row pairs so the scrollable Column works correctly.
+            // (LazyVerticalGrid cannot be nested inside a vertically scrollable Column.)
+            val slotsPerRow = 2
+            val numRows = (currentPage.size + slotsPerRow - 1) / slotsPerRow
+            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+                repeat(numRows) { rowIndex ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                    ) {
+                        repeat(slotsPerRow) { colIndex ->
+                            val slotIndex = rowIndex * slotsPerRow + colIndex
+                            if (slotIndex < currentPage.size) {
+                                val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
+                                val tile = currentPage.getOrNull(slotIndex)
+                                AllowedAppSlotCard(
+                                    tile = tile,
+                                    position = position,
+                                    selected = selectedPosition == position,
+                                    onSelect = { selectedPosition = position },
+                                    onRemove = {
+                                        tile?.packageName?.let(onRemoveApp)
+                                        if (selectedPosition == position) selectedPosition = null
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
                 }
             }
 
@@ -402,8 +415,9 @@ private fun AllowedAppSlotCard(
     selected: Boolean,
     onSelect: () -> Unit,
     onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    FeaturePanelCard(modifier = Modifier.fillMaxWidth()) {
+    FeaturePanelCard(modifier = modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

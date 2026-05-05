@@ -54,9 +54,9 @@ class GuidedSetupNewStepsTest {
 
         composeRule.onNodeWithTag("guided_setup_protection_options").assertPresent()
         composeRule.onNodeWithText("Choose protection level").assertIsDisplayed()
-        composeRule.onNodeWithText("Recommended").assertIsDisplayed()
-        composeRule.onNodeWithText("Flexible").assertIsDisplayed()
-        composeRule.onNodeWithText("Simple").assertIsDisplayed()
+        composeRule.onNodeWithText("Recommended").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Flexible").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Simple").performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -76,11 +76,11 @@ class GuidedSetupNewStepsTest {
 
         composeRule.onNodeWithTag("guided_setup_theme_picker").assertPresent()
         composeRule.onNodeWithText("Choose display style").assertIsDisplayed()
-        composeRule.onNodeWithText("Midnight Indigo").assertIsDisplayed()
-        composeRule.onNodeWithText("Calm Teal").assertIsDisplayed()
-        composeRule.onNodeWithText("Soft Blue").assertIsDisplayed()
-        composeRule.onNodeWithText("High Contrast").assertIsDisplayed()
-        composeRule.onNodeWithText("Warm Light").assertIsDisplayed()
+        composeRule.onNodeWithText("Midnight Indigo").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Calm Teal").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Soft Blue").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("High Contrast").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Warm Light").performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -99,10 +99,10 @@ class GuidedSetupNewStepsTest {
 
         composeRule.onNodeWithTag("guided_setup_permissions_explanation").assertPresent()
         composeRule.onNodeWithText("Allow helpful features").assertIsDisplayed()
-        composeRule.onNodeWithText("Phone / Dialer").assertIsDisplayed()
-        composeRule.onNodeWithText("Contacts").assertIsDisplayed()
-        composeRule.onNodeWithText("Camera").assertIsDisplayed()
-        composeRule.onNodeWithText("Backup / Restore files").assertIsDisplayed()
+        composeRule.onNodeWithText("Phone / Dialer").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Contacts").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Camera").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Backup / Restore files").performScrollTo().assertIsDisplayed()
     }
 }
 

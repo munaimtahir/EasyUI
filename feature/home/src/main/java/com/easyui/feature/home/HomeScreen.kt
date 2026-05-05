@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -165,18 +164,31 @@ fun HomeScreen(
                 
                 // Page navigation UI (only show if multiple pages)
                 if (pageCount > 1) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        OutlinedButton(
+                            onClick = { scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) } },
+                            enabled = pagerState.currentPage > 0,
+                            modifier = Modifier
+                                .weight(1f)
+                                .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
+                                .testTag("home_page_previous"),
+                            shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+                        ) {
+                            Text(
+                                text = "Previous",
+                                color = SeniorHomeTokens.textPrimary,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
                         // Page indicator dots
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .testTag("home_page_indicators"),
-                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.testTag("home_page_indicators"),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             repeat(pageCount) { pageIndex ->
@@ -193,10 +205,23 @@ fun HomeScreen(
                                         )
                                         .testTag("home_page_indicator_$pageIndex"),
                                 )
-                                if (pageIndex < pageCount - 1) {
-                                    Box(modifier = Modifier.width(8.dp))
-                                }
                             }
+                        }
+                        OutlinedButton(
+                            onClick = { scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) } },
+                            enabled = pagerState.currentPage < pageCount - 1,
+                            modifier = Modifier
+                                .weight(1f)
+                                .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
+                                .testTag("home_page_next"),
+                            shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+                        ) {
+                            Text(
+                                text = "Next",
+                                color = SeniorHomeTokens.textPrimary,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
                         }
                     }
                 }
