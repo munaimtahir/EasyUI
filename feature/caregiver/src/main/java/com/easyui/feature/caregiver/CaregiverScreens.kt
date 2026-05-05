@@ -371,13 +371,15 @@ fun AllowedAppsScreen(
                             ?: "Select a home slot above before placing an app.",
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    LazyColumn(
-                        modifier = Modifier
-                            .height(220.dp)
-                            .testTag("allowed_apps_installed_list"),
+                    // Non-lazy list: all items are always composed so that Compose test
+                    // framework and the outer verticalScroll can reach every "Place Here"
+                    // button without relying on LazyColumn's lazy item composition.
+                    // (LazyColumn nested inside verticalScroll is unreliable in tests.)
+                    Column(
+                        modifier = Modifier.testTag("allowed_apps_installed_list"),
                         verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
                     ) {
-                        items(installedApps, key = { it.packageName }) { app ->
+                        installedApps.forEach { app ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
