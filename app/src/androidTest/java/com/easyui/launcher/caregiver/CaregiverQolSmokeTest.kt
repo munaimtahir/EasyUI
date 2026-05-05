@@ -185,7 +185,14 @@ class CaregiverQolSmokeTest {
         // and sets selectedPosition = 2, which enables the "Place Here" button.
         composeRule.onNodeWithTag("slot_select_2").performScrollTo().performClick()
         composeRule.waitForIdle()
-        composeRule.onNodeWithText("Place Here").performScrollTo().assertIsEnabled().performClick()
+        // Scroll the outer Column (verticalScroll) to bring the installed-apps card into view.
+        // "Installed Apps" lives directly inside the outer Column (not inside the LazyColumn),
+        // so its nearest scrollable ancestor IS the outer Column — this correctly scrolls the
+        // screen down rather than the inner LazyColumn, making "Place Here" visually on-screen.
+        composeRule.onNodeWithText("Installed Apps").performScrollTo()
+        composeRule.waitForIdle()
+        // "Place Here" is now visible on screen; selectedPosition == 2 so the button is enabled.
+        composeRule.onNodeWithText("Place Here").assertIsEnabled().performClick()
 
         assert(assignedPackage == "com.maps") { "Expected onAssignApp to receive com.maps, got $assignedPackage" }
         assert(assignedPosition == 2) { "Expected onAssignApp to receive position 2, got $assignedPosition" }
