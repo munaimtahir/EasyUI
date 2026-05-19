@@ -16,9 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -286,6 +285,7 @@ fun AllowedAppsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(EasyUiSpacing.lg)
                 .testTag("allowed_apps_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
@@ -295,7 +295,7 @@ fun AllowedAppsScreen(
                 "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
                 style = MaterialTheme.typography.bodyLarge,
             )
-            
+
             // Add preview of the home layout
             HomeLayoutPreviewCard(
                 pages = pages,
@@ -325,24 +325,38 @@ fun AllowedAppsScreen(
                 }
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                itemsIndexed(currentPage, key = { slotIndex, tile -> tile?.id ?: "slot-$slotIndex" }) { slotIndex, tile ->
-                    val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
-                    AllowedAppSlotCard(
-                        tile = tile,
-                        position = position,
-                        selected = selectedPosition == position,
-                        onSelect = { selectedPosition = position },
-                        onRemove = {
-                            tile?.packageName?.let(onRemoveApp)
-                            if (selectedPosition == position) selectedPosition = null
-                        },
-                    )
+            // Non-lazy slot grid: 2 columns rendered as Row pairs so the scrollable Column works correctly.
+            // (LazyVerticalGrid cannot be nested inside a vertically scrollable Column.)
+            val slotsPerRow = 2
+            // Ceiling division: number of rows needed to display all slots in pairs
+            val numRows = (currentPage.size + slotsPerRow - 1) / slotsPerRow
+            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+                repeat(numRows) { rowIndex ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                    ) {
+                        repeat(slotsPerRow) { colIndex ->
+                            val slotIndex = rowIndex * slotsPerRow + colIndex
+                            if (slotIndex < currentPage.size) {
+                                val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
+                                val tile = currentPage.getOrNull(slotIndex)
+                                AllowedAppSlotCard(
+                                    tile = tile,
+                                    position = position,
+                                    selected = selectedPosition == position,
+                                    onSelect = { selectedPosition = position },
+                                    onRemove = {
+                                        tile?.packageName?.let(onRemoveApp)
+                                        if (selectedPosition == position) selectedPosition = null
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
                 }
             }
 
@@ -357,11 +371,15 @@ fun AllowedAppsScreen(
                             ?: "Select a home slot above before placing an app.",
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    LazyColumn(
-                        modifier = Modifier.height(220.dp),
+                    // Non-lazy list: all items are always composed so that Compose test
+                    // framework and the outer verticalScroll can reach every "Place Here"
+                    // button without relying on LazyColumn's lazy item composition.
+                    // (LazyColumn nested inside verticalScroll is unreliable in tests.)
+                    Column(
+                        modifier = Modifier.testTag("allowed_apps_installed_list"),
                         verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
                     ) {
-                        items(installedApps, key = { it.packageName }) { app ->
+                        installedApps.forEach { app ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -402,8 +420,9 @@ private fun AllowedAppSlotCard(
     selected: Boolean,
     onSelect: () -> Unit,
     onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    FeaturePanelCard(modifier = Modifier.fillMaxWidth()) {
+    FeaturePanelCard(modifier = modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -435,11 +454,21 @@ private fun AllowedAppSlotCard(
             Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
                 if (tile == null || tile.type == HomeTileType.APP) {
                     if (selected) {
-                        Button(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
+                        Button(
+                            onClick = onSelect,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("slot_select_$position"),
+                        ) {
                             Text("Selected")
                         }
                     } else {
-                        OutlinedButton(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(
+                            onClick = onSelect,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("slot_select_$position"),
+                        ) {
                             Text("Use This Slot")
                         }
                     }

@@ -304,7 +304,7 @@ fun PermissionsExplanationScreen(
 
     WizardShell(
         modifier = Modifier.testTag("guided_setup_permissions_explanation"),
-        title = "Helpful Features Status",
+        title = "Allow helpful features",
         subtitle = "EasyUI uses standard intents to open other apps. This screen verifies if your device has the needed apps installed.",
         onNext = onNext,
         onBack = onBack,

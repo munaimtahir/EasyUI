@@ -141,7 +141,8 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Home Layout Preview").assertPresent()
         composeRule.onNodeWithText("Phone").assertPresent()
         composeRule.onNodeWithText("Messages").assertPresent()
-        composeRule.onNodeWithText("Camera").assertPresent()
+        // "Camera" appears in both the slot grid (as a HomeTile title) and the installed apps list.
+        composeRule.onAllNodesWithText("Camera").assertCountEquals(2)
         composeRule.onNodeWithText("Already on home").assertPresent()
     }
 
@@ -179,11 +180,19 @@ class CaregiverQolSmokeTest {
             }
         }
 
-        // Select a known empty slot: Page 1, Slot 3 -> absolute position 2.
-        composeRule.onNodeWithText("Page 1, Slot 3").assertIsDisplayed()
-        composeRule.onNodeWithText("Page 1, Slot 3").performClick()
-        composeRule.onNodeWithText("Place Here").assertIsEnabled()
-        composeRule.onNodeWithText("Place Here").performClick()
+        // Select slot at absolute position 2 (Page 1, Slot 3) via its testTag.
+        // Clicking the "slot_select_2" button (not the static label text) triggers onSelect
+        // and sets selectedPosition = 2, which enables the "Place Here" button.
+        composeRule.onNodeWithTag("slot_select_2").performScrollTo().performClick()
+        composeRule.waitForIdle()
+        // Scroll the outer Column (verticalScroll) to bring the installed-apps card into view.
+        // "Installed Apps" lives directly inside the outer Column (not inside the LazyColumn),
+        // so its nearest scrollable ancestor IS the outer Column — this correctly scrolls the
+        // screen down rather than the inner LazyColumn, making "Place Here" visually on-screen.
+        composeRule.onNodeWithText("Installed Apps").performScrollTo()
+        composeRule.waitForIdle()
+        // "Place Here" is now visible on screen; selectedPosition == 2 so the button is enabled.
+        composeRule.onNodeWithText("Place Here").assertIsEnabled().performClick()
 
         assert(assignedPackage == "com.maps") { "Expected onAssignApp to receive com.maps, got $assignedPackage" }
         assert(assignedPosition == 2) { "Expected onAssignApp to receive position 2, got $assignedPosition" }
