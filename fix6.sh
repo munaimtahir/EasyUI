@@ -1,0 +1,1 @@
+sed -i 's/composeRule.onNodeWithText("Place Here").assertIsEnabled().performClick()/composeRule.onAllNodesWithText("Place Here")[0].assertIsEnabled().performClick()/' app/src/androidTest/java/com/easyui/launcher/caregiver/CaregiverQolSmokeTest.kt

@@ -192,7 +192,7 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Installed Apps").performScrollTo()
         composeRule.waitForIdle()
         // "Place Here" is now visible on screen; selectedPosition == 2 so the button is enabled.
-        composeRule.onNodeWithText("Place Here").assertIsEnabled().performClick()
+        composeRule.onAllNodesWithText("Place Here")[0].assertIsEnabled().performClick()
 
         assert(assignedPackage == "com.maps") { "Expected onAssignApp to receive com.maps, got $assignedPackage" }
         assert(assignedPosition == 2) { "Expected onAssignApp to receive position 2, got $assignedPosition" }
