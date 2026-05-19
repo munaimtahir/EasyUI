@@ -105,3 +105,4 @@ fiz.sh
 *.tar.gz
 *.7z
 *.rar
+.gradle/
