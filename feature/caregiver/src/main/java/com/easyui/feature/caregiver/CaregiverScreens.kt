@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -283,113 +284,125 @@ fun AllowedAppsScreen(
     val currentPage = pages.getOrElse(selectedPageIndex) { List(HomeLayoutRules.SLOTS_PER_PAGE) { null } }
 
     Surface(modifier = modifier.fillMaxSize()) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(EasyUiSpacing.lg)
                 .testTag("allowed_apps_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
-            Text("Home Apps", style = MaterialTheme.typography.headlineLarge)
-            Text(
-                "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            item {
+                Text("Home Apps", style = MaterialTheme.typography.headlineLarge)
+            }
+            item {
+                Text(
+                    "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
             
-            // Add preview of the home layout
-            HomeLayoutPreviewCard(
-                pages = pages,
-                currentPageIndex = selectedPageIndex,
-                pageCount = pageCount,
-                layoutLocked = false,
-            )
-
-            Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                repeat(pageCount) { pageIndex ->
-                    val selected = pageIndex == selectedPageIndex
-                    if (selected) {
-                        Button(onClick = {
-                            selectedPageIndex = pageIndex
-                            selectedPosition = null
-                        }, modifier = Modifier.weight(1f)) {
-                            Text("Page ${pageIndex + 1}")
-                        }
-                    } else {
-                        OutlinedButton(onClick = {
-                            selectedPageIndex = pageIndex
-                            selectedPosition = null
-                        }, modifier = Modifier.weight(1f)) {
-                            Text("Page ${pageIndex + 1}")
-                        }
-                    }
-                }
+            item {
+                // Add preview of the home layout
+                HomeLayoutPreviewCard(
+                    pages = pages,
+                    currentPageIndex = selectedPageIndex,
+                    pageCount = pageCount,
+                    layoutLocked = false,
+                )
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                itemsIndexed(currentPage, key = { slotIndex, tile -> tile?.id ?: "slot-$slotIndex" }) { slotIndex, tile ->
-                    val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
-                    AllowedAppSlotCard(
-                        tile = tile,
-                        position = position,
-                        selected = selectedPosition == position,
-                        onSelect = { selectedPosition = position },
-                        onRemove = {
-                            tile?.packageName?.let(onRemoveApp)
-                            if (selectedPosition == position) selectedPosition = null
-                        },
-                    )
-                }
-            }
-
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(EasyUiSpacing.md),
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                ) {
-                    Text("Installed Apps", style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        selectedPosition?.let { "Selected home slot: ${slotLabel(it)}" }
-                            ?: "Select a home slot above before placing an app.",
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    LazyColumn(
-                        modifier = Modifier.height(220.dp),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
-                    ) {
-                        items(installedApps, key = { it.packageName }) { app ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(app.label, style = MaterialTheme.typography.bodyLarge)
-                                    if (app.packageName in assignedAppPackages) {
-                                        Text("Already on home", style = MaterialTheme.typography.bodyMedium)
-                                    }
-                                }
-                                Button(
-                                    onClick = { selectedPosition?.let { onAssignApp(app.packageName, it) } },
-                                    enabled = selectedPosition != null,
-                                ) {
-                                    Text("Place Here")
-                                }
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+                    repeat(pageCount) { pageIndex ->
+                        val selected = pageIndex == selectedPageIndex
+                        if (selected) {
+                            Button(onClick = {
+                                selectedPageIndex = pageIndex
+                                selectedPosition = null
+                            }, modifier = Modifier.weight(1f)) {
+                                Text("Page ${pageIndex + 1}")
+                            }
+                        } else {
+                            OutlinedButton(onClick = {
+                                selectedPageIndex = pageIndex
+                                selectedPosition = null
+                            }, modifier = Modifier.weight(1f)) {
+                                Text("Page ${pageIndex + 1}")
                             }
                         }
                     }
                 }
             }
 
-            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Home")
+            // Grid of slots manually implemented with Rows to fit in LazyColumn
+            items(3) { rowIndex ->
+                Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
+                    repeat(2) { colIndex ->
+                        val slotIndex = rowIndex * 2 + colIndex
+                        val tile = currentPage.getOrNull(slotIndex)
+                        val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
+                        Box(modifier = Modifier.weight(1f)) {
+                            AllowedAppSlotCard(
+                                tile = tile,
+                                position = position,
+                                selected = selectedPosition == position,
+                                onSelect = { selectedPosition = position },
+                                onRemove = {
+                                    tile?.packageName?.let(onRemoveApp)
+                                    if (selectedPosition == position) selectedPosition = null
+                                },
+                            )
+                        }
+                    }
+                }
             }
-            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Caregiver Settings")
+
+            item {
+                Text("Installed Apps", style = MaterialTheme.typography.titleLarge)
+            }
+            item {
+                Text(
+                    selectedPosition?.let { "Selected home slot: ${slotLabel(it)}" }
+                        ?: "Select a home slot above before placing an app.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+
+            items(installedApps, key = { it.packageName }) { app ->
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(EasyUiSpacing.md),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(app.label, style = MaterialTheme.typography.bodyLarge)
+                            if (app.packageName in assignedAppPackages) {
+                                Text("Already on home", style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                        Button(
+                            onClick = { selectedPosition?.let { onAssignApp(app.packageName, it) } },
+                            enabled = selectedPosition != null,
+                            modifier = Modifier.testTag("place_app_${app.packageName}")
+                        ) {
+                            Text("Place Here")
+                        }
+                    }
+                }
+            }
+
+            item {
+                Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
+                    Text("Back to Home")
+                }
+            }
+            item {
+                OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                    Text("Back to Caregiver Settings")
+                }
             }
         }
     }
@@ -403,11 +416,17 @@ private fun AllowedAppSlotCard(
     onSelect: () -> Unit,
     onRemove: () -> Unit,
 ) {
-    FeaturePanelCard(modifier = Modifier.fillMaxWidth()) {
+    val canSelect = tile == null || tile.type == HomeTileType.APP
+    FeaturePanelCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = canSelect, onClick = onSelect)
+            .testTag("allowed_app_slot_$position")
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f)
+                .aspectRatio(0.85f) // Adjusted for more space in LazyColumn
                 .padding(EasyUiSpacing.md),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -416,37 +435,27 @@ private fun AllowedAppSlotCard(
                 when {
                     tile == null -> {
                         Text("Empty slot", style = MaterialTheme.typography.titleLarge)
-                        Text("Ready for a home app.", style = MaterialTheme.typography.bodyLarge)
-                    }
-                    tile.action != null -> {
-                        Text(tile.title, style = MaterialTheme.typography.titleLarge)
-                        Text("Fixed for daily use.", style = MaterialTheme.typography.bodyLarge)
-                    }
-                    tile.type == HomeTileType.CONTACT -> {
-                        Text(tile.title, style = MaterialTheme.typography.titleLarge)
-                        Text("Managed in Call Shortcuts.", style = MaterialTheme.typography.bodyLarge)
                     }
                     else -> {
                         Text(tile.title, style = MaterialTheme.typography.titleLarge)
-                        Text("Allowed home app.", style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
             Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
-                if (tile == null || tile.type == HomeTileType.APP) {
+                if (canSelect) {
                     if (selected) {
                         Button(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
                             Text("Selected")
                         }
                     } else {
                         OutlinedButton(onClick = onSelect, modifier = Modifier.fillMaxWidth()) {
-                            Text("Use This Slot")
+                            Text("Use")
                         }
                     }
                 }
                 if (tile?.type == HomeTileType.APP) {
                     OutlinedButton(onClick = onRemove, modifier = Modifier.fillMaxWidth()) {
-                        Text("Remove App")
+                        Text("Remove")
                     }
                 }
             }
@@ -976,100 +985,122 @@ fun EmergencySettingsScreen(
     var error by rememberSaveable { mutableStateOf<String?>(null) }
 
     Surface(modifier = modifier.fillMaxSize()) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(EasyUiSpacing.lg)
                 .testTag("emergency_settings_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
-            Text("Emergency Number", style = MaterialTheme.typography.headlineLarge)
-            Text(
-                "Set the phone number the Emergency tile will dial. This only changes EasyUI and does not affect the system dialer or emergency services.",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                "Leave as 911 if you want the tile to open the dialer without pre-filling a number.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            OutlinedTextField(
-                value = number,
-                onValueChange = {
-                    number = it
-                    error = null
-                },
-                label = { Text("Emergency phone number") },
-                modifier = Modifier.fillMaxWidth().testTag("emergency_number_field"),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-            )
+            item {
+                Text("Emergency Number", style = MaterialTheme.typography.headlineLarge)
+            }
+            item {
+                Text(
+                    "Set the phone number the Emergency tile will dial. This only changes EasyUI and does not affect the system dialer or emergency services.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+            item {
+                Text(
+                    "Leave as 911 if you want the tile to open the dialer without pre-filling a number.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = number,
+                    onValueChange = {
+                        number = it
+                        error = null
+                    },
+                    label = { Text("Emergency phone number") },
+                    modifier = Modifier.fillMaxWidth().testTag("emergency_number_field"),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                )
+            }
             if (!error.isNullOrBlank()) {
-                Text(error ?: "", color = MaterialTheme.colorScheme.error)
+                item {
+                    Text(error ?: "", color = MaterialTheme.colorScheme.error)
+                }
             }
-            Button(
-                onClick = {
-                    val trimmed = number.trim()
-                    if (trimmed.isBlank()) {
-                        error = "Enter a phone number or use 911 as the default."
-                    } else {
-                        onSave(trimmed)
-                        onSaveEmergencyNumbers(
-                            listOf(
-                                com.easyui.core.domain.model.EmergencyNumber("Ambulance", ambulance.trim()),
-                                com.easyui.core.domain.model.EmergencyNumber("Police", police.trim()),
-                                com.easyui.core.domain.model.EmergencyNumber("Fire", fire.trim()),
-                            ) + listOfNotNull(
-                                custom1Label.trim().takeIf { it.isNotBlank() }?.let {
-                                    com.easyui.core.domain.model.EmergencyNumber(it, custom1Number.trim())
-                                },
-                                custom2Label.trim().takeIf { it.isNotBlank() }?.let {
-                                    com.easyui.core.domain.model.EmergencyNumber(it, custom2Number.trim())
-                                },
-                            ),
-                        )
-                        onSaveSosNumbers(listOf(sos1, sos2, sos3))
-                        onToggleEasyUiLock(lockEnabled)
-                        val timeout = timeoutSeconds.toIntOrNull()?.coerceIn(15, 300)
-                        if (timeout != null) {
-                            onSaveEasyUiLockTimeout(timeout)
+            item {
+                Button(
+                    onClick = {
+                        val trimmed = number.trim()
+                        if (trimmed.isBlank()) {
+                            error = "Enter a phone number or use 911 as the default."
+                        } else {
+                            onSave(trimmed)
+                            onSaveEmergencyNumbers(
+                                listOf(
+                                    com.easyui.core.domain.model.EmergencyNumber("Ambulance", ambulance.trim()),
+                                    com.easyui.core.domain.model.EmergencyNumber("Police", police.trim()),
+                                    com.easyui.core.domain.model.EmergencyNumber("Fire", fire.trim()),
+                                ) + listOfNotNull(
+                                    custom1Label.trim().takeIf { it.isNotBlank() }?.let {
+                                        com.easyui.core.domain.model.EmergencyNumber(it, custom1Number.trim())
+                                    },
+                                    custom2Label.trim().takeIf { it.isNotBlank() }?.let {
+                                        com.easyui.core.domain.model.EmergencyNumber(it, custom2Number.trim())
+                                    },
+                                ),
+                            )
+                            onSaveSosNumbers(listOf(sos1, sos2, sos3))
+                            onToggleEasyUiLock(lockEnabled)
+                            val timeout = timeoutSeconds.toIntOrNull()?.coerceIn(15, 300)
+                            if (timeout != null) {
+                                onSaveEasyUiLockTimeout(timeout)
+                            }
+                            onDone()
                         }
-                        onDone()
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Save")
+                    },
+                    modifier = Modifier.fillMaxWidth().testTag("emergency_save_button"),
+                ) {
+                    Text("Save")
+                }
             }
-            Text("Emergency quick numbers", style = MaterialTheme.typography.titleLarge)
-            OutlinedTextField(value = ambulance, onValueChange = { ambulance = it }, label = { Text("Ambulance") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = police, onValueChange = { police = it }, label = { Text("Police") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = fire, onValueChange = { fire = it }, label = { Text("Fire") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = custom1Label, onValueChange = { custom1Label = it }, label = { Text("Custom label 1") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = custom1Number, onValueChange = { custom1Number = it }, label = { Text("Custom number 1") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = custom2Label, onValueChange = { custom2Label = it }, label = { Text("Custom label 2") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = custom2Number, onValueChange = { custom2Number = it }, label = { Text("Custom number 2") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            item {
+                Text("Emergency quick numbers", style = MaterialTheme.typography.titleLarge)
+            }
+            item { OutlinedTextField(value = ambulance, onValueChange = { ambulance = it }, label = { Text("Ambulance") }, modifier = Modifier.fillMaxWidth().testTag("field_ambulance"), singleLine = true) }
+            item { OutlinedTextField(value = police, onValueChange = { police = it }, label = { Text("Police") }, modifier = Modifier.fillMaxWidth().testTag("field_police"), singleLine = true) }
+            item { OutlinedTextField(value = fire, onValueChange = { fire = it }, label = { Text("Fire") }, modifier = Modifier.fillMaxWidth().testTag("field_fire"), singleLine = true) }
+            item { OutlinedTextField(value = custom1Label, onValueChange = { custom1Label = it }, label = { Text("Custom label 1") }, modifier = Modifier.fillMaxWidth().testTag("field_custom1_label"), singleLine = true) }
+            item { OutlinedTextField(value = custom1Number, onValueChange = { custom1Number = it }, label = { Text("Custom number 1") }, modifier = Modifier.fillMaxWidth().testTag("field_custom1_number"), singleLine = true) }
+            item { OutlinedTextField(value = custom2Label, onValueChange = { custom2Label = it }, label = { Text("Custom label 2") }, modifier = Modifier.fillMaxWidth().testTag("field_custom2_label"), singleLine = true) }
+            item { OutlinedTextField(value = custom2Number, onValueChange = { custom2Number = it }, label = { Text("Custom number 2") }, modifier = Modifier.fillMaxWidth().testTag("field_custom2_number"), singleLine = true) }
 
-            Text("SOS numbers (up to 3)", style = MaterialTheme.typography.titleLarge)
-            OutlinedTextField(value = sos1, onValueChange = { sos1 = it }, label = { Text("SOS number 1") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = sos2, onValueChange = { sos2 = it }, label = { Text("SOS number 2") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = sos3, onValueChange = { sos3 = it }, label = { Text("SOS number 3") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            item {
+                Text("SOS numbers (up to 3)", style = MaterialTheme.typography.titleLarge)
+            }
+            item { OutlinedTextField(value = sos1, onValueChange = { sos1 = it }, label = { Text("SOS number 1") }, modifier = Modifier.fillMaxWidth().testTag("field_sos1"), singleLine = true) }
+            item { OutlinedTextField(value = sos2, onValueChange = { sos2 = it }, label = { Text("SOS number 2") }, modifier = Modifier.fillMaxWidth().testTag("field_sos2"), singleLine = true) }
+            item { OutlinedTextField(value = sos3, onValueChange = { sos3 = it }, label = { Text("SOS number 3") }, modifier = Modifier.fillMaxWidth().testTag("field_sos3"), singleLine = true) }
 
-            SettingToggleRow(
-                label = "Enable EasyUI lock overlay",
-                checked = lockEnabled,
-                onCheckedChange = { lockEnabled = it },
-            )
-            OutlinedTextField(
-                value = timeoutSeconds,
-                onValueChange = { timeoutSeconds = it },
-                label = { Text("Lock timeout (15-300 sec)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            )
-            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Cancel")
+            item {
+                SettingToggleRow(
+                    label = "Enable EasyUI lock overlay",
+                    checked = lockEnabled,
+                    onCheckedChange = { lockEnabled = it },
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = timeoutSeconds,
+                    onValueChange = { timeoutSeconds = it },
+                    label = { Text("Lock timeout (15-300 sec)") },
+                    modifier = Modifier.fillMaxWidth().testTag("field_lock_timeout"),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+            }
+            item {
+                OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth().testTag("emergency_cancel_button")) {
+                    Text("Cancel")
+                }
             }
         }
     }
@@ -1112,7 +1143,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = fullName,
                     onValueChange = { fullName = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_name"),
                     label = { Text("Name") },
                     singleLine = true,
                 )
@@ -1121,7 +1152,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = age,
                     onValueChange = { age = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_age"),
                     label = { Text("Age") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -1131,7 +1162,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = bloodGroup,
                     onValueChange = { bloodGroup = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_blood"),
                     label = { Text("Blood Group") },
                     singleLine = true,
                 )
@@ -1140,7 +1171,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = allergies,
                     onValueChange = { allergies = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_allergies"),
                     label = { Text("Allergies") },
                 )
             }
@@ -1148,7 +1179,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = conditions,
                     onValueChange = { conditions = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_conditions"),
                     label = { Text("Medical Conditions") },
                 )
             }
@@ -1156,7 +1187,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = medicines,
                     onValueChange = { medicines = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_medicines"),
                     label = { Text("Medicines") },
                 )
             }
@@ -1164,7 +1195,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = doctorContact,
                     onValueChange = { doctorContact = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_doctor"),
                     label = { Text("Doctor / Emergency Contact") },
                 )
             }
@@ -1172,7 +1203,7 @@ fun HealthInfoEditorScreen(
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("field_health_notes"),
                     label = { Text("Notes") },
                     minLines = 3,
                 )
@@ -1194,13 +1225,13 @@ fun HealthInfoEditorScreen(
                         )
                         onDone()
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("health_info_save_button"),
                 ) {
                     Text("Save Health Info")
                 }
             }
             item {
-                OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth().testTag("health_info_cancel_button")) {
                     Text("Back to Caregiver Settings")
                 }
             }
