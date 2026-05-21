@@ -86,8 +86,10 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.material3.ExperimentalMaterial3Api
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EasyUiNavGraph(
     container: AppContainer,
@@ -437,8 +439,10 @@ fun EasyUiNavGraph(
                                 caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() - 1)
                             },
                             onSelectLayoutMode = caregiverViewModel::updateSkinLayoutMode,
-                            onSelectVisualTheme = caregiverViewModel::updateSkinVisualTheme,
-                            onSelectAccessibilityMode = caregiverViewModel::updateSkinAccessibilityMode,
+                            onSelectTheme = { theme, mode ->
+                                caregiverViewModel.updateSkinVisualTheme(theme)
+                                caregiverViewModel.updateSkinAccessibilityMode(mode)
+                            },
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()

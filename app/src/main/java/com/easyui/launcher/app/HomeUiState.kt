@@ -11,4 +11,5 @@ data class HomeUiState(
     val skinConfig: SkinConfig = SkinConfig(),
     val pageCount: Int = 1,
     val layoutLocked: Boolean = false,
+    val emergencyPhoneNumber: String = "",
 )

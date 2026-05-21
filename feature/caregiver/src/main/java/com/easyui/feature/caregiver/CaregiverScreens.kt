@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -135,8 +136,8 @@ fun LayoutPagesScreen(
     onIncreasePageCount: () -> Unit,
     onDecreasePageCount: () -> Unit,
     onSelectLayoutMode: (LayoutMode) -> Unit,
-    onSelectVisualTheme: (VisualTheme) -> Unit,
-    onSelectAccessibilityMode: (AccessibilityMode) -> Unit,
+    onSelectTheme: (VisualTheme, AccessibilityMode) -> Unit,
+    
     onDone: () -> Unit,
     onFinishSetup: () -> Unit,
     modifier: Modifier = Modifier,
@@ -223,7 +224,7 @@ fun LayoutPagesScreen(
                         if (selected) {
                             Text("Current choice", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                         } else {
-                            Button(onClick = { onSelectVisualTheme(theme) }, modifier = Modifier.fillMaxWidth()) {
+                            Button(onClick = { onSelectTheme(theme, AccessibilityMode.NONE) }, modifier = Modifier.fillMaxWidth()) {
                                 Text("Use ${visualThemeLabel(theme)}")
                             }
                         }
@@ -244,7 +245,7 @@ fun LayoutPagesScreen(
                         if (selected) {
                             Text("Current choice", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                         } else {
-                            Button(onClick = { onSelectAccessibilityMode(mode) }, modifier = Modifier.fillMaxWidth()) {
+                            Button(onClick = { onSelectTheme(skinConfig.visualTheme, mode) }, modifier = Modifier.fillMaxWidth()) {
                                 Text("Use ${accessibilityModeLabel(mode)}")
                             }
                         }
@@ -266,6 +267,7 @@ fun LayoutPagesScreen(
 }
 
 @Composable
+@androidx.compose.material3.ExperimentalMaterial3Api
 fun AllowedAppsScreen(
     pageCount: Int,
     pages: List<List<HomeTile?>>,
@@ -360,40 +362,77 @@ fun AllowedAppsScreen(
                 }
             }
 
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(EasyUiSpacing.md),
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                ) {
-                    Text("Installed Apps", style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        selectedPosition?.let { "Selected home slot: ${slotLabel(it)}" }
-                            ?: "Select a home slot above before placing an app.",
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    // Non-lazy list: all items are always composed so that Compose test
-                    // framework and the outer verticalScroll can reach every "Place Here"
-                    // button without relying on LazyColumn's lazy item composition.
-                    // (LazyColumn nested inside verticalScroll is unreliable in tests.)
+            if (selectedPosition == null) {
+                Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
-                        modifier = Modifier.testTag("allowed_apps_installed_list"),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                        modifier = Modifier.padding(EasyUiSpacing.md),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
                     ) {
-                        installedApps.forEach { app ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(app.label, style = MaterialTheme.typography.bodyLarge)
-                                    if (app.packageName in assignedAppPackages) {
-                                        Text("Already on home", style = MaterialTheme.typography.bodyMedium)
-                                    }
-                                }
+                        Text("Installed Apps", style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            "Select an empty home slot above to pick an app to place there.",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
+    if (selectedPosition != null) {
+        androidx.compose.material3.ModalBottomSheet(
+            onDismissRequest = { selectedPosition = null },
+            sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = EasyUiSpacing.md, vertical = EasyUiSpacing.sm)
+                    .testTag("allowed_apps_installed_list"),
+                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)
+            ) {
+                Text(
+                    text = "Select an app for this slot",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                
+                val currentPkg = pages.flatten().firstOrNull { 
+                    it?.position == selectedPosition 
+                }?.packageName
+                
+                if (currentPkg != null) {
+                    OutlinedButton(
+                        onClick = {
+                            onRemoveApp(currentPkg)
+                            selectedPosition = null
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Remove Current App")
+                    }
+                }
+                
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().heightIn(max = 600.dp),
+                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)
+                ) {
+                    items(installedApps.size) { index ->
+                        val app = installedApps[index]
+                        val isAssigned = app.packageName in assignedAppPackages
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = EasyUiSpacing.xs),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(app.label, style = MaterialTheme.typography.bodyLarge)
+                            if (isAssigned) {
+                                Text("Placed", style = MaterialTheme.typography.labelMedium)
+                            } else {
                                 Button(
-                                    onClick = { selectedPosition?.let { onAssignApp(app.packageName, it) } },
-                                    enabled = selectedPosition != null,
+                                    onClick = { 
+                                        onAssignApp(app.packageName, selectedPosition!!)
+                                        selectedPosition = null 
+                                    }
                                 ) {
                                     Text("Place Here")
                                 }
@@ -401,13 +440,7 @@ fun AllowedAppsScreen(
                         }
                     }
                 }
-            }
-
-            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Home")
-            }
-            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Caregiver Settings")
+                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(EasyUiSpacing.lg))
             }
         }
     }

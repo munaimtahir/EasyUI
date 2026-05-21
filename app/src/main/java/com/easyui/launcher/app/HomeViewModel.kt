@@ -73,11 +73,12 @@ class HomeViewModel(
                     },
                 ),
                 dateText = base.now.format(DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.getDefault())),
-                tiles = primaryTiles(base.tiles, base.installedApps),
+                tiles = primaryTiles(base.tiles, base.installedApps, base.settings),
                 pages = renderPages(base.tiles, base.installedApps, base.settings),
                 skinConfig = base.settings.skinConfig,
                 pageCount = base.settings.homePageCount,
                 layoutLocked = base.settings.layoutLocked,
+                emergencyPhoneNumber = base.settings.emergencyPhoneNumber,
             )
         }.stateIn(
             scope = viewModelScope,
@@ -180,6 +181,7 @@ class HomeViewModel(
     private fun primaryTiles(
         tiles: List<HomeTile>,
         installedApps: List<InstalledApp>,
+        settings: LauncherSettings,
     ): List<TileDisplayModel> {
         val fixed = HomeLayoutRules.ensureRequiredActions(tiles).filter { it.position in 0..5 }.sortedBy { it.position }
         return fixed.mapNotNull { tile ->
@@ -228,6 +230,7 @@ class HomeViewModel(
                     subtitle = "SOS",
                     enabled = true,
                     kind = TileDisplayKind.EMERGENCY,
+                    phoneNumber = settings.emergencyPhoneNumber
                 )
                 HomeTileAction.OPEN_APP_LIST,
                 HomeTileAction.FLASHLIGHT,
@@ -268,7 +271,7 @@ class HomeViewModel(
             pageTiles.mapIndexed { slotIndex, tile ->
                 when {
                     tile == null -> null
-                    pageIndex == 0 && slotIndex <= 5 -> firstPageTile(tile, installedApps)
+                    pageIndex == 0 && slotIndex <= 5 -> firstPageTile(tile, installedApps, settings)
                     tile.type == HomeTileType.APP -> {
                         val app = tile.packageName?.let(appLookup::get)
                         TileDisplayModel(
@@ -300,6 +303,7 @@ class HomeViewModel(
     private fun firstPageTile(
         tile: HomeTile,
         installedApps: List<InstalledApp>,
+        settings: LauncherSettings,
     ): TileDisplayModel? =
         when (tile.action) {
             HomeTileAction.OPEN_DIALER -> TileDisplayModel(
@@ -341,6 +345,7 @@ class HomeViewModel(
                 subtitle = if (tile.action == HomeTileAction.SOS) "SOS" else "Emergency",
                 enabled = true,
                 kind = TileDisplayKind.EMERGENCY,
+                phoneNumber = if (tile.action == HomeTileAction.SOS) settings.emergencyPhoneNumber else null
             )
             HomeTileAction.OPEN_APP_LIST,
             HomeTileAction.FLASHLIGHT,

@@ -51,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 internal fun CaregiverDashboardScreen(
@@ -85,7 +86,6 @@ internal fun CaregiverDashboardScreen(
     modifier: Modifier = Modifier,
 ) {
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
-    val securityAction = if (hasPinConfigured) onChangePin else onSetupPin
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -109,451 +109,122 @@ internal fun CaregiverDashboardScreen(
                 verticalArrangement = Arrangement.spacedBy(CaregiverDashboardTokens.sectionGap),
             ) {
                 item {
-                    DashboardHeaderCard(
-                        protectionEnabled = protectionEnabled,
-                        layoutLocked = layoutLocked,
-                        hasPinConfigured = hasPinConfigured,
-                    )
+                    Text("Caregiver Settings", fontSize = 34.sp, fontWeight = FontWeight.Bold, color = CaregiverDashboardTokens.textPrimary)
                 }
+                
                 item {
-                    DashboardCardRow(
-                        left = DashboardCardModel(
-                            title = "Home Layout",
-                            subtitle = "$currentPageCount page${if (currentPageCount == 1) "" else "s"} with the fixed senior 2x3 home.",
+                    DashboardSurface(elevated = true) {
+                        SectionHeader(title = "Appearance & Layout", subtitle = "Manage pages, themes, and basic layout.")
+                        DashboardActionRow(
+                            title = "Theme & Pages",
+                            subtitle = "$currentPageCount page(s)",
+                            detail = "Edit",
                             icon = Icons.Filled.DashboardCustomize,
                             accent = CaregiverDashboardTokens.accentPrimary,
-                            status = "Pages $currentPageCount",
-                            onClick = onOpenLayoutPages,
-                        ),
-                        right = DashboardCardModel(
-                            title = "Contacts & Emergency",
-                            subtitle = "$favoriteContactCount favorites, ${sosStatusLabel(sosNumberCount)}, emergency ready.",
-                            icon = Icons.Filled.Favorite,
-                            accent = CaregiverDashboardTokens.accentWarning,
-                            status = if (favoriteContactCount > 0) "Ready" else "Needs setup",
-                            onClick = onManageFavoriteContacts,
-                        ),
-                    )
+                            onClick = onOpenLayoutPages
+                        )
+                    }
                 }
+                
                 item {
-                    DashboardCardRow(
-                        left = DashboardCardModel(
+                    DashboardSurface(elevated = true) {
+                        SectionHeader(title = "Home Apps", subtitle = "Choose which apps are visible on home pages.")
+                        DashboardActionRow(
                             title = "Allowed Apps",
-                            subtitle = "$allowedAppCount home apps placed, $hiddenAppCount hidden from EasyUI.",
+                            subtitle = "$allowedAppCount apps placed",
+                            detail = "Edit",
                             icon = Icons.Filled.Widgets,
                             accent = CaregiverDashboardTokens.accentInfo,
-                            status = if (allowedAppCount > 0) "Configured" else "Review",
-                            onClick = onOpenAllowedApps,
-                        ),
-                        right = DashboardCardModel(
-                            title = "Security & Lock",
-                            subtitle = securitySummary(
-                                hasPinConfigured = hasPinConfigured,
-                                protectionEnabled = protectionEnabled,
-                                layoutLocked = layoutLocked,
-                                easyUiLockEnabled = easyUiLockEnabled,
-                            ),
+                            onClick = onOpenAllowedApps
+                        )
+                        DashboardActionRow(
+                            title = "Hidden Apps",
+                            subtitle = "$hiddenAppCount hidden apps",
+                            detail = "Manage",
+                            icon = Icons.Filled.VisibilityOff,
+                            accent = CaregiverDashboardTokens.textTertiary,
+                            onClick = onOpenHiddenApps
+                        )
+                    }
+                }
+                
+                item {
+                    DashboardSurface(elevated = true) {
+                        SectionHeader(title = "Contacts & Emergency", subtitle = "Favorites, emergency numbers, and health info.")
+                        DashboardActionRow(
+                            title = "Call Shortcuts",
+                            subtitle = "$favoriteContactCount favorites",
+                            detail = "Edit",
+                            icon = Icons.Filled.Favorite,
+                            accent = CaregiverDashboardTokens.accentWarning,
+                            onClick = onManageFavoriteContacts
+                        )
+                        DashboardActionRow(
+                            title = "Emergency Settings",
+                            subtitle = "Emergency button and SOS",
+                            detail = "Edit",
+                            icon = Icons.Filled.Warning,
+                            accent = CaregiverDashboardTokens.accentDanger,
+                            onClick = onOpenEmergencySettings
+                        )
+                        DashboardActionRow(
+                            title = "Health Information",
+                            subtitle = if (healthInfoConfigured) "Configured" else "Not setup",
+                            detail = "Edit",
+                            icon = Icons.Filled.MedicalServices,
+                            accent = Color(0xFF2D6A4F),
+                            onClick = onOpenHealthInfo
+                        )
+                    }
+                }
+                
+                item {
+                    DashboardSurface(elevated = true) {
+                        SectionHeader(title = "Security & Protection", subtitle = "Lock down the home screen or require PINs.")
+                        DashboardToggleRow(
+                            title = "Layout Lock",
+                            subtitle = "Prevent accidental moves or deletes on home screen",
+                            checked = layoutLocked,
+                            onCheckedChange = { onToggleLayoutLock() }
+                        )
+                        DashboardActionRow(
+                            title = "Caregiver PIN",
+                            subtitle = if (hasPinConfigured) "PIN configured" else "No PIN set",
+                            detail = if (hasPinConfigured) "Change" else "Setup",
                             icon = Icons.Filled.Security,
                             accent = CaregiverDashboardTokens.accentPrimary,
-                            status = if (hasPinConfigured) "Protected" else "Needs PIN",
-                            onClick = securityAction,
-                        ),
-                    )
+                            onClick = if (hasPinConfigured) onChangePin else onSetupPin
+                        )
+                    }
                 }
+                
                 item {
-                    SetupStatusCard(
-                        protectionEnabled = protectionEnabled,
-                        layoutLocked = layoutLocked,
-                        showBatteryInfo = showBatteryInfo,
-                        healthInfoConfigured = healthInfoConfigured,
-                        emergencyPhoneNumber = emergencyPhoneNumber,
-                        sosNumberCount = sosNumberCount,
-                        easyUiLockEnabled = easyUiLockEnabled,
-                        easyUiLockTimeoutSeconds = easyUiLockTimeoutSeconds,
-                    )
+                    DashboardSurface(elevated = true) {
+                        SectionHeader(title = "Device & Backup", subtitle = "Battery, backups, and reset options.")
+                        DashboardToggleRow(
+                            title = "Show Battery Info",
+                            subtitle = "Display battery percentage on home screen",
+                            checked = showBatteryInfo,
+                            onCheckedChange = { onToggleBatteryInfo(it) }
+                        )
+                        DashboardActionRow(
+                            title = "Backup & Restore",
+                            subtitle = "Save layout and settings to file",
+                            detail = "Open",
+                            icon = Icons.Filled.Backup,
+                            accent = CaregiverDashboardTokens.textSecondary,
+                            onClick = onOpenBackupRestore
+                        )
+                    }
                 }
+                
                 item {
-                    QuickTogglesCard(
-                        protectionEnabled = protectionEnabled,
-                        layoutLocked = layoutLocked,
-                        showBatteryInfo = showBatteryInfo,
-                        easyUiLockEnabled = easyUiLockEnabled,
-                        easyUiLockTimeoutSeconds = easyUiLockTimeoutSeconds,
-                        onToggleProtection = onToggleProtection,
-                        onToggleLayoutLock = onToggleLayoutLock,
-                        onToggleBatteryInfo = onToggleBatteryInfo,
-                    )
-                }
-                item {
-                    SupportToolsCard(
-                        favoriteContactCount = favoriteContactCount,
-                        hiddenAppCount = hiddenAppCount,
-                        healthInfoConfigured = healthInfoConfigured,
-                        sosNumberCount = sosNumberCount,
-                        onManageFavoriteContacts = onManageFavoriteContacts,
-                        onOpenEmergencySettings = onOpenEmergencySettings,
-                        onOpenHealthInfo = onOpenHealthInfo,
-                        onOpenBackupRestore = onOpenBackupRestore,
-                        onOpenHiddenApps = onOpenHiddenApps,
-                    )
-                }
-                item {
-                    QuickActionsCard(
-                        onOpenEmergencySettings = onOpenEmergencySettings,
-                        onFinishSetup = onFinishSetup,
-                        onOpenBackupRestore = onOpenBackupRestore,
-                        onResetLauncher = onResetLauncher,
-                        onRedoGuidedSetup = onRedoGuidedSetup,
-                    )
+                    DashboardDangerButton(text = "Reset Launcher to Defaults", onClick = onResetLauncher, modifier = Modifier.fillMaxWidth())
+                    OutlinedButton(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
+                        Text("Exit to Senior Home")
+                    }
                 }
             }
-        }
-    }
-}
-
-private data class DashboardCardModel(
-    val title: String,
-    val subtitle: String,
-    val icon: ImageVector,
-    val accent: Color,
-    val status: String,
-    val onClick: () -> Unit,
-)
-
-@Composable
-private fun DashboardHeaderCard(
-    protectionEnabled: Boolean,
-    layoutLocked: Boolean,
-    hasPinConfigured: Boolean,
-) {
-    DashboardSurface(
-        elevated = true,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(CaregiverDashboardTokens.sectionGap),
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(
-                    text = "Caregiver",
-                    color = CaregiverDashboardTokens.textPrimary,
-                    fontSize = CaregiverDashboardTokens.titleSize,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = "Manage launcher, safety, and home setup with the same calm EasyUI design language.",
-                    color = CaregiverDashboardTokens.textSecondary,
-                    fontSize = CaregiverDashboardTokens.bodySize,
-                )
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatusChip(
-                    label = if (hasPinConfigured && protectionEnabled) "Protected" else if (hasPinConfigured) "PIN Ready" else "Needs PIN",
-                    accent = when {
-                        hasPinConfigured && protectionEnabled -> CaregiverDashboardTokens.accentSuccess
-                        hasPinConfigured -> CaregiverDashboardTokens.accentPrimary
-                        else -> CaregiverDashboardTokens.accentWarning
-                    },
-                )
-                StatusChip(
-                    label = if (layoutLocked) "Home Locked" else "Review Layout",
-                    accent = if (layoutLocked) CaregiverDashboardTokens.accentPrimary else CaregiverDashboardTokens.accentWarning,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun DashboardCardRow(
-    left: DashboardCardModel,
-    right: DashboardCardModel,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(CaregiverDashboardTokens.sectionGap),
-    ) {
-        DashboardSectionCard(model = left, modifier = Modifier.weight(1f))
-        DashboardSectionCard(model = right, modifier = Modifier.weight(1f))
-    }
-}
-
-@Composable
-private fun DashboardSectionCard(
-    model: DashboardCardModel,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        onClick = model.onClick,
-        modifier = modifier.heightIn(min = CaregiverDashboardTokens.dashboardCardMinHeight),
-        shape = RoundedCornerShape(CaregiverDashboardTokens.radius),
-        colors = CardDefaults.cardColors(containerColor = CaregiverDashboardTokens.surfacePrimary),
-        border = BorderStroke(1.dp, CaregiverDashboardTokens.outlineSubtle),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(CaregiverDashboardTokens.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(CaregiverDashboardTokens.iconContainerSize)
-                        .background(model.accent.copy(alpha = 0.18f), CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = model.icon,
-                        contentDescription = null,
-                        tint = model.accent,
-                    )
-                }
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = CaregiverDashboardTokens.textTertiary,
-                )
-            }
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    text = model.title,
-                    color = CaregiverDashboardTokens.textPrimary,
-                    fontSize = CaregiverDashboardTokens.sectionTitleSize,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Text(
-                    text = model.subtitle,
-                    color = CaregiverDashboardTokens.textSecondary,
-                    fontSize = CaregiverDashboardTokens.bodySize,
-                )
-            }
-            StatusChip(label = model.status, accent = model.accent)
-        }
-    }
-}
-
-@Composable
-private fun SetupStatusCard(
-    protectionEnabled: Boolean,
-    layoutLocked: Boolean,
-    showBatteryInfo: Boolean,
-    healthInfoConfigured: Boolean,
-    emergencyPhoneNumber: String,
-    sosNumberCount: Int,
-    easyUiLockEnabled: Boolean,
-    easyUiLockTimeoutSeconds: Int,
-) {
-    DashboardSurface(modifier = Modifier.fillMaxWidth()) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader(
-                title = "Setup Status",
-                subtitle = "Color is reserved for meaning here: what is protected, what is ready, and what still needs attention.",
-            )
-            DashboardStatusRow(
-                label = "Caregiver protection",
-                value = if (protectionEnabled) "PIN required" else "Optional",
-                chipLabel = if (protectionEnabled) "Enabled" else "Review",
-                accent = if (protectionEnabled) CaregiverDashboardTokens.accentSuccess else CaregiverDashboardTokens.accentWarning,
-            )
-            DashboardStatusRow(
-                label = "Senior home layout",
-                value = if (layoutLocked) "Locked against accidental changes" else "Unlocked for review",
-                chipLabel = if (layoutLocked) "Locked" else "Open",
-                accent = if (layoutLocked) CaregiverDashboardTokens.accentPrimary else CaregiverDashboardTokens.accentWarning,
-            )
-            DashboardStatusRow(
-                label = "Emergency setup",
-                value = "Primary number: ${emergencyPhoneNumber.ifBlank { "911" }}",
-                chipLabel = if (sosNumberCount > 0) "SOS Ready" else "Needs setup",
-                accent = if (sosNumberCount > 0) CaregiverDashboardTokens.accentDanger else CaregiverDashboardTokens.accentWarning,
-            )
-            DashboardStatusRow(
-                label = "Health info",
-                value = if (healthInfoConfigured) "Medical shortcut has saved details." else "No health details saved yet.",
-                chipLabel = if (healthInfoConfigured) "Saved" else "Review",
-                accent = if (healthInfoConfigured) CaregiverDashboardTokens.accentSuccess else CaregiverDashboardTokens.accentWarning,
-            )
-            DashboardStatusRow(
-                label = "Home battery info",
-                value = if (showBatteryInfo) "Visible on the senior home." else "Hidden for a cleaner home.",
-                chipLabel = if (showBatteryInfo) "Shown" else "Hidden",
-                accent = CaregiverDashboardTokens.accentInfo,
-            )
-            DashboardStatusRow(
-                label = "EasyUI lock overlay",
-                value = if (easyUiLockEnabled) "Active after ${easyUiLockTimeoutSeconds}s of inactivity." else "Not enabled.",
-                chipLabel = if (easyUiLockEnabled) "Enabled" else "Off",
-                accent = if (easyUiLockEnabled) CaregiverDashboardTokens.accentSuccess else CaregiverDashboardTokens.accentPrimary,
-            )
-        }
-    }
-}
-
-@Composable
-private fun QuickTogglesCard(
-    protectionEnabled: Boolean,
-    layoutLocked: Boolean,
-    showBatteryInfo: Boolean,
-    easyUiLockEnabled: Boolean,
-    easyUiLockTimeoutSeconds: Int,
-    onToggleProtection: () -> Unit,
-    onToggleLayoutLock: () -> Unit,
-    onToggleBatteryInfo: (Boolean) -> Unit,
-) {
-    DashboardSurface(modifier = Modifier.fillMaxWidth()) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader(
-                title = "Quick Toggles",
-                subtitle = "Use restrained controls for common configuration changes.",
-            )
-            DashboardToggleRow(
-                title = "Require caregiver PIN",
-                subtitle = "Gate caregiver entry behind the configured PIN.",
-                checked = protectionEnabled,
-                onCheckedChange = { onToggleProtection() },
-            )
-            DashboardToggleRow(
-                title = "Lock launcher layout",
-                subtitle = "Prevent casual edits and movement on the senior home.",
-                checked = layoutLocked,
-                onCheckedChange = { onToggleLayoutLock() },
-            )
-            DashboardToggleRow(
-                title = "Show battery on senior home",
-                subtitle = "Only show this if it reduces support calls.",
-                checked = showBatteryInfo,
-                onCheckedChange = onToggleBatteryInfo,
-            )
-            DashboardStatusRow(
-                label = "EasyUI lock overlay",
-                value = if (easyUiLockEnabled) "Currently enabled with a ${easyUiLockTimeoutSeconds}s timeout." else "Currently disabled.",
-                chipLabel = if (easyUiLockEnabled) "Locked" else "Off",
-                accent = if (easyUiLockEnabled) CaregiverDashboardTokens.accentPrimary else CaregiverDashboardTokens.accentInfo,
-            )
-        }
-    }
-}
-
-@Composable
-private fun SupportToolsCard(
-    favoriteContactCount: Int,
-    hiddenAppCount: Int,
-    healthInfoConfigured: Boolean,
-    sosNumberCount: Int,
-    onManageFavoriteContacts: () -> Unit,
-    onOpenEmergencySettings: () -> Unit,
-    onOpenHealthInfo: () -> Unit,
-    onOpenBackupRestore: () -> Unit,
-    onOpenHiddenApps: () -> Unit,
-) {
-    DashboardSurface(modifier = Modifier.fillMaxWidth()) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader(
-                title = "Device & Support",
-                subtitle = "Keep related caregiver tasks grouped instead of scattering them across bright tiles.",
-            )
-            DashboardActionRow(
-                title = "Emergency Settings",
-                subtitle = "Emergency number, SOS numbers, and lock overlay behavior.",
-                detail = if (sosNumberCount > 0) "$sosNumberCount SOS numbers" else "Needs review",
-                icon = Icons.Filled.Warning,
-                accent = CaregiverDashboardTokens.accentDanger,
-                onClick = onOpenEmergencySettings,
-            )
-            DashboardActionRow(
-                title = "Health Info",
-                subtitle = "Manage the senior medical shortcut and saved details.",
-                detail = if (healthInfoConfigured) "Saved" else "Not saved",
-                icon = Icons.Filled.MedicalServices,
-                accent = CaregiverDashboardTokens.accentInfo,
-                onClick = onOpenHealthInfo,
-            )
-            DashboardActionRow(
-                title = "Hidden Apps",
-                subtitle = "Control which apps disappear from EasyUI surfaces and search.",
-                detail = "$hiddenAppCount hidden",
-                icon = Icons.Filled.VisibilityOff,
-                accent = CaregiverDashboardTokens.accentPrimary,
-                onClick = onOpenHiddenApps,
-            )
-            DashboardActionRow(
-                title = "Backup & Restore",
-                subtitle = "Export or restore the local caregiver configuration safely.",
-                detail = "Local only",
-                icon = Icons.Filled.Backup,
-                accent = CaregiverDashboardTokens.accentSuccess,
-                onClick = onOpenBackupRestore,
-            )
-            DashboardActionRow(
-                title = "Favorite Contacts",
-                subtitle = "Manage the people the senior can reach quickly.",
-                detail = "$favoriteContactCount favorites",
-                icon = Icons.Filled.HealthAndSafety,
-                accent = CaregiverDashboardTokens.accentWarning,
-                onClick = onManageFavoriteContacts,
-            )
-        }
-    }
-}
-
-@Composable
-private fun QuickActionsCard(
-    onOpenEmergencySettings: () -> Unit,
-    onFinishSetup: () -> Unit,
-    onOpenBackupRestore: () -> Unit,
-    onResetLauncher: () -> Unit,
-    onRedoGuidedSetup: () -> Unit,
-) {
-    DashboardSurface(modifier = Modifier.fillMaxWidth()) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader(
-                title = "Setup & Admin",
-                subtitle = "Re-run the first-run wizard or reset the launcher state.",
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(CaregiverDashboardTokens.sectionGap),
-            ) {
-                DashboardPrimaryButton(
-                    text = "Back to Home",
-                    onClick = onFinishSetup,
-                    modifier = Modifier.weight(1f),
-                )
-                DashboardSecondaryButton(
-                    text = "Restart Setup",
-                    onClick = onRedoGuidedSetup,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(CaregiverDashboardTokens.sectionGap),
-            ) {
-                DashboardSecondaryButton(
-                    text = "Emergency",
-                    onClick = onOpenEmergencySettings,
-                    modifier = Modifier.weight(1f),
-                )
-                DashboardSecondaryButton(
-                    text = "Backup",
-                    onClick = onOpenBackupRestore,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            DashboardDangerButton(
-                text = "Reset Launcher",
-                onClick = onResetLauncher,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
     }
 }

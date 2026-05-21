@@ -42,6 +42,7 @@ data class GuidedSetupUiState(
     val hasPinConfigured: Boolean = false,
     val layoutLocked: Boolean = false,
     val emergencyMode: String = "MENU",
+    val emergencyPhoneNumber: String = "911",
 )
 
 class GuidedSetupViewModel(
@@ -75,7 +76,8 @@ class GuidedSetupViewModel(
             setupOptionalPermissions = settings.setupOptionalPermissions.mapNotNull { name ->
                 runCatching { OptionalPermission.valueOf(name) }.getOrNull()
             }.toSet(),
-            emergencyMode = settings.emergencyMode
+            emergencyMode = settings.emergencyMode,
+            emergencyPhoneNumber = settings.emergencyPhoneNumber
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, GuidedSetupUiState())
 
@@ -105,6 +107,12 @@ class GuidedSetupViewModel(
         viewModelScope.launch {
             container.launcherSettingsRepository.updateGuidedSetupCompleted(true)
             container.launcherSettingsRepository.updateOnboardingComplete(true)
+        }
+    }
+
+    fun updateEmergencyNumber(number: String) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateEmergencyPhoneNumber(number)
         }
     }
 
