@@ -337,4 +337,12 @@ object HomeLayoutRules {
         maxPosition: Int,
     ): Int? =
         (start..maxPosition).firstOrNull { it !in occupied && it !in reservedPositions }
+    fun forcePageCount(
+        tiles: List<HomeTile>,
+        pageCount: Int,
+    ): List<HomeTile> {
+        val maxPosition = totalSlots(pageCount) - 1
+        val safeTiles = tiles.filter { it.position <= maxPosition || isPrimarySurfaceTile(it) }
+        return ensureRequiredActions(safeTiles, pageCount)
+    }
 }

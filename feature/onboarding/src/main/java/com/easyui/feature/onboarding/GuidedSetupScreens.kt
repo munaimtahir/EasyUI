@@ -946,6 +946,28 @@ fun CompletionScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
             )
+            
+            Spacer(modifier = Modifier.height(EasyUiSpacing.md))
+            
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(EasyUiSpacing.md),
+                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)
+                ) {
+                    Text(
+                        text = "Change settings later",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "You can change these settings later.\n\nOn the home screen, tap the clock 5 times to open Caregiver Settings. If you set a PIN, you'll need it before making changes.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
     }
 }

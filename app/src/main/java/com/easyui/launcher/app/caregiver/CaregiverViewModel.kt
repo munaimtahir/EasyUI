@@ -214,16 +214,12 @@ class CaregiverViewModel(
 
     fun updateHomePageCount(pageCount: Int) {
         val clamped = HomeLayoutRules.clampPageCount(pageCount)
-        if (!HomeLayoutRules.canUsePageCount(state.value.layoutTiles, clamped)) {
-            viewModelScope.launch {
-                messages.emit("Move home tiles off the last page before using fewer pages.")
-            }
-            return
-        }
+        updateLayout { tiles -> HomeLayoutRules.forcePageCount(tiles, clamped) }
         viewModelScope.launch {
             container.launcherSettingsRepository.updateHomePageCount(clamped)
             messages.emit("EasyUI home now uses $clamped page${if (clamped == 1) "" else "s"}.")
         }
+
     }
 
     fun moveTileUp(tileId: String) {

@@ -234,6 +234,8 @@ fun EasyUiNavGraph(
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
                         9 -> ContactsSetupScreen(
+                            currentStep = guidedSetupState.guidedSetupStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             tiles = caregiverViewModel.contactTiles(),
                             onMoveUp = caregiverViewModel::moveTileUp,
                             onMoveDown = caregiverViewModel::moveTileDown,
@@ -241,6 +243,8 @@ fun EasyUiNavGraph(
                             onRemove = caregiverViewModel::removeTile,
                             emergencyMode = guidedSetupState.emergencyMode,
                             onEmergencyModeChange = { guidedSetupViewModel.updateEmergencyMode(it) },
+                            emergencyPhoneNumber = guidedSetupState.emergencyPhoneNumber,
+                            onEmergencyPhoneNumberChange = { guidedSetupViewModel.updateEmergencyNumber(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
@@ -257,6 +261,8 @@ fun EasyUiNavGraph(
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
                         12 -> ReviewConfirmScreen(
+                            currentStep = guidedSetupState.guidedSetupStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             onConfirm = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                             readability = guidedSetupState.homeReadabilityPreset.name.replace("_", " "),
