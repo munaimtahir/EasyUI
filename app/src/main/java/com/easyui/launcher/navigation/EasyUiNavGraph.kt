@@ -86,8 +86,10 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.material3.ExperimentalMaterial3Api
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EasyUiNavGraph(
     container: AppContainer,
@@ -234,8 +236,6 @@ fun EasyUiNavGraph(
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
                         9 -> ContactsSetupScreen(
-                            currentStep = guidedSetupState.guidedSetupStep,
-                            totalSteps = guidedSetupState.totalSteps,
                             tiles = caregiverViewModel.contactTiles(),
                             onMoveUp = caregiverViewModel::moveTileUp,
                             onMoveDown = caregiverViewModel::moveTileDown,
@@ -243,8 +243,6 @@ fun EasyUiNavGraph(
                             onRemove = caregiverViewModel::removeTile,
                             emergencyMode = guidedSetupState.emergencyMode,
                             onEmergencyModeChange = { guidedSetupViewModel.updateEmergencyMode(it) },
-                            emergencyPhoneNumber = guidedSetupState.emergencyPhoneNumber,
-                            onEmergencyPhoneNumberChange = { guidedSetupViewModel.updateEmergencyNumber(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
@@ -261,8 +259,6 @@ fun EasyUiNavGraph(
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
                         12 -> ReviewConfirmScreen(
-                            currentStep = guidedSetupState.guidedSetupStep,
-                            totalSteps = guidedSetupState.totalSteps,
                             onConfirm = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                             readability = guidedSetupState.homeReadabilityPreset.name.replace("_", " "),
@@ -443,8 +439,10 @@ fun EasyUiNavGraph(
                                 caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() - 1)
                             },
                             onSelectLayoutMode = caregiverViewModel::updateSkinLayoutMode,
-                            onSelectVisualTheme = caregiverViewModel::updateSkinVisualTheme,
-                            onSelectAccessibilityMode = caregiverViewModel::updateSkinAccessibilityMode,
+                            onSelectTheme = { theme, mode ->
+                                caregiverViewModel.updateSkinVisualTheme(theme)
+                                caregiverViewModel.updateSkinAccessibilityMode(mode)
+                            },
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()

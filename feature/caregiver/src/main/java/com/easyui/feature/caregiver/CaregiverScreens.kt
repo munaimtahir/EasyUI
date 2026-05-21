@@ -443,14 +443,6 @@ fun AllowedAppsScreen(
                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(EasyUiSpacing.lg))
             }
         }
-
-            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Home")
-            }
-            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                Text("Back to Caregiver Settings")
-            }
-        }
     }
 }
 
