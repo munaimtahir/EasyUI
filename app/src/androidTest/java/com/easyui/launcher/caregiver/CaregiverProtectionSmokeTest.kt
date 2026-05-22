@@ -45,6 +45,7 @@ class CaregiverProtectionSmokeTest {
                         protectionEnabled = true,
                         layoutLocked = true,
                         hasPinConfigured = true,
+                        allAppsVisible = true,
                         currentPageCount = 2,
                         showBatteryInfo = false,
                         skinConfig = SkinConfig(),
@@ -60,6 +61,7 @@ class CaregiverProtectionSmokeTest {
                         onChangePin = { showPin = true },
                         onToggleProtection = {},
                         onToggleLayoutLock = {},
+                        onToggleAllAppsVisible = {},
                         onToggleBatteryInfo = {},
                         onOpenLayoutPages = {},
                         onOpenAllowedApps = {},
@@ -76,7 +78,7 @@ class CaregiverProtectionSmokeTest {
             }
         }
 
-        composeRule.onNodeWithText("Security & Lock").performScrollTo().performClick()
+        composeRule.onNodeWithText("Caregiver PIN").performScrollTo().performClick()
         composeRule.onNodeWithTag("pin_entry_screen").assertPresent()
         composeRule.onNodeWithText("Enter Caregiver PIN").assertIsDisplayed()
     }

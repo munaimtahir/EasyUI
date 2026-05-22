@@ -27,10 +27,13 @@ import com.easyui.feature.caregiver.LayoutPagesScreen
 import org.junit.Rule
 import org.junit.Test
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+
 class CaregiverQolSmokeTest {
     @get:Rule
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun caregiverSettingsShowsNewSections() {
         composeRule.setContent {
@@ -39,6 +42,7 @@ class CaregiverQolSmokeTest {
                     protectionEnabled = true,
                     layoutLocked = true,
                     hasPinConfigured = true,
+                    allAppsVisible = true,
                     currentPageCount = 2,
                     showBatteryInfo = true,
                     skinConfig = SkinConfig(),
@@ -54,6 +58,7 @@ class CaregiverQolSmokeTest {
                     onChangePin = {},
                     onToggleProtection = {},
                     onToggleLayoutLock = {},
+                    onToggleAllAppsVisible = {},
                     onToggleBatteryInfo = {},
                     onOpenLayoutPages = {},
                     onOpenAllowedApps = {},
@@ -70,16 +75,16 @@ class CaregiverQolSmokeTest {
         }
 
         composeRule.onNodeWithTag("caregiver_tools_screen").assertPresent()
-        composeRule.onNodeWithText("Caregiver").assertPresent()
-        composeRule.onNodeWithText("Home Layout").assertPresent()
-        composeRule.onNodeWithText("Allowed Apps").assertPresent()
+        composeRule.onNodeWithText("Caregiver Settings").assertPresent()
+        composeRule.onNodeWithText("Appearance & Layout").assertPresent()
+        composeRule.onNodeWithText("Home Apps").assertPresent()
         composeRule.onNodeWithText("Contacts & Emergency").assertPresent()
-        composeRule.onNodeWithText("Security & Lock").assertPresent()
-        composeRule.onAllNodesWithText("Protected").assertCountEquals(2)
-        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Device & Support"))
-        composeRule.onNodeWithText("Device & Support").assertPresent()
+        composeRule.onNodeWithText("Security & Protection").assertPresent()
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Device & Backup"))
+        composeRule.onNodeWithText("Device & Backup").assertPresent()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun layoutPagesScreenShowsPageControls() {
         composeRule.setContent {
@@ -90,8 +95,7 @@ class CaregiverQolSmokeTest {
                     onIncreasePageCount = {},
                     onDecreasePageCount = {},
                     onSelectLayoutMode = {},
-                    onSelectVisualTheme = {},
-                    onSelectAccessibilityMode = {},
+                    onSelectTheme = { _, _ -> },
                     onDone = {},
                     onFinishSetup = {},
                 )
@@ -105,6 +109,7 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Visual Theme").assertIsDisplayed()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun allowedAppsScreenKeepsFixedAndAllowedAppsSeparate() {
         composeRule.setContent {
@@ -146,6 +151,7 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Already on home").assertPresent()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun allowedAppsScreenPlacesIntoSelectedSlot() {
         var assignedPackage: String? = null

@@ -11,7 +11,6 @@ import com.easyui.core.domain.model.OptionalPermission
 import com.easyui.core.domain.model.SetupProtectionLevel
 import com.easyui.core.domain.model.VisualTheme
 import com.easyui.core.ui.theme.EasyUiTheme
-import com.easyui.feature.onboarding.PermissionsExplanationScreen
 import com.easyui.feature.onboarding.ProtectionOptionsScreen
 import com.easyui.feature.onboarding.ThemePickerScreen
 import com.easyui.feature.onboarding.WelcomeScreen
@@ -30,7 +29,7 @@ class GuidedSetupNewStepsTest {
             }
         }
 
-        composeRule.onNodeWithTag("guided_setup_welcome").assertPresent()
+        composeRule.onNodeWithTag("guided_setup_welcome").assertExists()
         composeRule.onNodeWithText("Welcome to EasyUI").assertIsDisplayed()
         composeRule
             .onNodeWithText("This app does not lock the phone down. It gives you a clearer home screen and an easier setup path while keeping ownership of setup data on the device.")
@@ -44,6 +43,8 @@ class GuidedSetupNewStepsTest {
         composeRule.setContent {
             EasyUiTheme {
                 ProtectionOptionsScreen(
+                    currentStep = 1,
+                    totalSteps = 10,
                     current = SetupProtectionLevel.RECOMMENDED,
                     onSelect = {},
                     onNext = {},
@@ -52,7 +53,7 @@ class GuidedSetupNewStepsTest {
             }
         }
 
-        composeRule.onNodeWithTag("guided_setup_protection_options").assertPresent()
+        composeRule.onNodeWithTag("guided_setup_protection_options").assertExists()
         composeRule.onNodeWithText("Choose protection level").assertIsDisplayed()
         composeRule.onNodeWithText("Recommended").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("Flexible").performScrollTo().assertIsDisplayed()
@@ -64,6 +65,8 @@ class GuidedSetupNewStepsTest {
         composeRule.setContent {
             EasyUiTheme {
                 ThemePickerScreen(
+                    currentStep = 2,
+                    totalSteps = 10,
                     visualTheme = VisualTheme.DARK_COMFORT,
                     accessibilityMode = AccessibilityMode.NONE,
                     onSelectVisualTheme = {},
@@ -74,35 +77,12 @@ class GuidedSetupNewStepsTest {
             }
         }
 
-        composeRule.onNodeWithTag("guided_setup_theme_picker").assertPresent()
+        composeRule.onNodeWithTag("guided_setup_theme_picker").assertExists()
         composeRule.onNodeWithText("Choose display style").assertIsDisplayed()
-        composeRule.onNodeWithText("Midnight Indigo").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Calm Teal").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Soft Blue").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Dark").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Light").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("High Contrast").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Warm Light").performScrollTo().assertIsDisplayed()
-    }
-
-    @Test
-    fun permissionsExplanationScreenShowsToggleRows() {
-        val enabled = setOf(OptionalPermission.PHONE_DIALER, OptionalPermission.CONTACTS)
-        composeRule.setContent {
-            EasyUiTheme {
-                PermissionsExplanationScreen(
-                    enabledPermissions = enabled,
-                    onSetEnabled = { _, _ -> },
-                    onNext = {},
-                    onBack = {},
-                )
-            }
-        }
-
-        composeRule.onNodeWithTag("guided_setup_permissions_explanation").assertPresent()
-        composeRule.onNodeWithText("Allow helpful features").assertIsDisplayed()
-        composeRule.onNodeWithText("Phone / Dialer").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Contacts").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Camera").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Backup / Restore files").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Auto").performScrollTo().assertIsDisplayed()
     }
 }
 
