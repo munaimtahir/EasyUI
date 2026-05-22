@@ -4,6 +4,7 @@ data class SkinConfig(
     val layoutMode: LayoutMode = LayoutMode.SIMPLE_CLASSIC,
     val visualTheme: VisualTheme = VisualTheme.DARK_COMFORT,
     val accessibilityMode: AccessibilityMode = AccessibilityMode.NONE,
+    val readabilityPreset: HomeReadabilityPreset = HomeReadabilityPreset.STANDARD,
 )
 
 enum class LayoutMode {
@@ -18,6 +19,7 @@ enum class VisualTheme {
     DARK_COMFORT,
     CLINICAL_PROFESSIONAL,
     SOFT_CALM,
+    AUTO,
 }
 
 enum class AccessibilityMode {

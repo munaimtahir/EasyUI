@@ -55,6 +55,7 @@ class CaregiverViewModel(
                 hiddenPackages = hiddenPackages,
                 installedApps = apps,
                 layoutTiles = layoutTiles,
+                allAppsVisible = settings.allAppsVisible,
             )
         }.stateIn(
             scope = viewModelScope,
@@ -205,10 +206,17 @@ class CaregiverViewModel(
         }
     }
 
-    fun setBatteryInfoVisible(enabled: Boolean) {
+    fun setBatteryInfoVisible(visible: Boolean) {
         viewModelScope.launch {
-            container.launcherSettingsRepository.updateShowBatteryInfo(enabled)
-            messages.emit(if (enabled) "Battery details now show on home." else "Battery details are hidden.")
+            container.launcherSettingsRepository.updateShowBatteryInfo(visible)
+            messages.emit(if (visible) "Battery details now show on home." else "Battery details are hidden.")
+        }
+    }
+
+    fun setAllAppsVisible(visible: Boolean) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateAllAppsVisible(visible)
+            messages.emit(if (visible) "'All Apps' button is now visible." else "'All Apps' button is hidden.")
         }
     }
 
@@ -307,7 +315,10 @@ class CaregiverViewModel(
                 -> LayoutMode.VERY_SIMPLE
             }
             container.launcherSettingsRepository.setSkinConfig(
-                state.value.settings.skinConfig.copy(layoutMode = mappedLayoutMode),
+                state.value.settings.skinConfig.copy(
+                    layoutMode = mappedLayoutMode,
+                    readabilityPreset = preset
+                ),
             )
             messages.emit(
                 when (preset) {

@@ -108,7 +108,7 @@ class SkinManager(
         )
 
         val visual = when (config.visualTheme) {
-            VisualTheme.LIGHT_PREMIUM -> base
+            VisualTheme.LIGHT_PREMIUM, VisualTheme.AUTO -> base
             VisualTheme.DARK_COMFORT -> base.copy(
                 colors = base.colors.copy(
                     background = androidx.compose.ui.graphics.Color(0xFF161A1B),

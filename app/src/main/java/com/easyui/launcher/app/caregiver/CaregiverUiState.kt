@@ -17,4 +17,5 @@ data class CaregiverUiState(
     val pendingAction: ProtectedAction? = null,
     val sessionLastActivityTimeMs: Long = 0,
     val sessionTimeoutWarningShown: Boolean = false,
+    val allAppsVisible: Boolean = true,
 )

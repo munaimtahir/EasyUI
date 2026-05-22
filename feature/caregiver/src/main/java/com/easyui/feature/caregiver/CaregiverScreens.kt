@@ -68,6 +68,7 @@ fun CaregiverToolsScreen(
     protectionEnabled: Boolean,
     layoutLocked: Boolean,
     hasPinConfigured: Boolean,
+    allAppsVisible: Boolean,
     currentPageCount: Int,
     showBatteryInfo: Boolean,
     skinConfig: SkinConfig,
@@ -83,6 +84,7 @@ fun CaregiverToolsScreen(
     onChangePin: () -> Unit,
     onToggleProtection: () -> Unit,
     onToggleLayoutLock: () -> Unit,
+    onToggleAllAppsVisible: (Boolean) -> Unit,
     onToggleBatteryInfo: (Boolean) -> Unit,
     onOpenLayoutPages: () -> Unit,
     onOpenAllowedApps: () -> Unit,
@@ -100,6 +102,7 @@ fun CaregiverToolsScreen(
         protectionEnabled = protectionEnabled,
         layoutLocked = layoutLocked,
         hasPinConfigured = hasPinConfigured,
+        allAppsVisible = allAppsVisible,
         currentPageCount = currentPageCount,
         showBatteryInfo = showBatteryInfo,
         favoriteContactCount = favoriteContactCount,
@@ -114,6 +117,7 @@ fun CaregiverToolsScreen(
         onChangePin = onChangePin,
         onToggleProtection = onToggleProtection,
         onToggleLayoutLock = onToggleLayoutLock,
+        onToggleAllAppsVisible = onToggleAllAppsVisible,
         onToggleBatteryInfo = onToggleBatteryInfo,
         onOpenLayoutPages = onOpenLayoutPages,
         onOpenAllowedApps = onOpenAllowedApps,
@@ -998,6 +1002,7 @@ private fun visualThemeLabel(theme: VisualTheme): String =
         VisualTheme.DARK_COMFORT -> "Dark Comfort"
         VisualTheme.CLINICAL_PROFESSIONAL -> "Clinical Professional"
         VisualTheme.SOFT_CALM -> "Soft Calm"
+        VisualTheme.AUTO -> "Auto (Follow System)"
     }
 
 private fun accessibilityModeLabel(mode: AccessibilityMode): String =

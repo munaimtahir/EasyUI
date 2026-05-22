@@ -1,0 +1,16 @@
+package com.easyui.feature.onboarding
+
+enum class GuidedSetupStep {
+    LAUNCHER_ACTIVATION,
+    WELCOME,
+    PROTECTION_OPTIONS,
+    SECURITY_SETUP,
+    THEME_PICKER,
+    READABILITY_PRESET,
+    HOME_LAYOUT_SETUP,
+    ALLOWED_APPS_SETUP,
+    CONTACTS_SETUP,
+    DEVICE_SUPPORT,
+    REVIEW_CONFIRM,
+    COMPLETION
+}

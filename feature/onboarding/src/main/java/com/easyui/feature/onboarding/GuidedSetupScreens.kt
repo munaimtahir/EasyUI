@@ -15,6 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Surface
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.CloudOff
@@ -86,6 +93,8 @@ fun WelcomeScreen(
 
 @Composable
 fun ProtectionOptionsScreen(
+    currentStep: Int,
+    totalSteps: Int,
     current: SetupProtectionLevel,
     onSelect: (SetupProtectionLevel) -> Unit,
     onNext: () -> Unit,
@@ -97,8 +106,8 @@ fun ProtectionOptionsScreen(
         subtitle = "Pick how strongly EasyUI should protect setup and home layout from accidental changes.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 2,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
         nextLabel = "Continue",
     ) {
         Text(
@@ -109,13 +118,13 @@ fun ProtectionOptionsScreen(
 
         ProtectionChoiceCard(
             title = "Recommended",
-            subtitle = "Caregiver PIN required for editing. Layout locks after setup. Hidden caregiver entry stays available.",
+            subtitle = "Caregiver PIN required for editing. Layout locks after setup. Hidden caregiver entry stays available. This is the safest choice for most seniors.",
             selected = current == SetupProtectionLevel.RECOMMENDED,
             onClick = { onSelect(SetupProtectionLevel.RECOMMENDED) },
         )
         ProtectionChoiceCard(
             title = "Flexible",
-            subtitle = "Caregiver PIN enabled, but layout can remain unlocked initially. Flexible Mode does not require a PIN to change settings or enter caregiver setup. It is easier to manage, but less protected from accidental changes.",
+            subtitle = "Caregiver PIN enabled, but layout can remain unlocked initially. It is easier to manage, but less protected from accidental changes.",
             selected = current == SetupProtectionLevel.FLEXIBLE,
             onClick = { onSelect(SetupProtectionLevel.FLEXIBLE) },
         )
@@ -141,11 +150,17 @@ private fun ProtectionChoiceCard(
     } else {
         CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     }
+    val border = if (selected) {
+        androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+    } else {
+        null
+    }
     Card(
         modifier = modifier
             .fillMaxWidth()
             .testTag("protection_choice_${title.lowercase().replace(' ', '_')}"),
         colors = colors,
+        border = border,
         onClick = onClick,
     ) {
         Column(modifier = Modifier.padding(EasyUiSpacing.md), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
@@ -157,6 +172,8 @@ private fun ProtectionChoiceCard(
 
 @Composable
 fun ThemePickerScreen(
+    currentStep: Int,
+    totalSteps: Int,
     visualTheme: VisualTheme,
     accessibilityMode: AccessibilityMode,
     onSelectVisualTheme: (VisualTheme) -> Unit,
@@ -170,13 +187,13 @@ fun ThemePickerScreen(
         subtitle = "Pick a style that stays readable in everyday lighting.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 3,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
         nextLabel = "Continue",
     ) {
         ThemeChoiceCard(
-            label = "Midnight Indigo",
-            description = "Default dark style with calm contrast.",
+            label = "Dark",
+            description = "High contrast dark mode, easier on the eyes in low light.",
             selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.DARK_COMFORT,
             swatch = androidx.compose.ui.graphics.Color(0xFF161A1B),
             onClick = {
@@ -185,28 +202,18 @@ fun ThemePickerScreen(
             },
         )
         ThemeChoiceCard(
-            label = "Calm Teal",
-            description = "Dark teal accents with a soft feel.",
-            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.SOFT_CALM,
-            swatch = androidx.compose.ui.graphics.Color(0xFF102625),
+            label = "Light",
+            description = "Classic light mode with clear black text on bright background.",
+            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.LIGHT_PREMIUM,
+            swatch = androidx.compose.ui.graphics.Color(0xFFF6F1E8),
             onClick = {
                 onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.SOFT_CALM)
-            },
-        )
-        ThemeChoiceCard(
-            label = "Soft Blue",
-            description = "Bright background with a clean blue focus color.",
-            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.CLINICAL_PROFESSIONAL,
-            swatch = androidx.compose.ui.graphics.Color(0xFFD8E2FF),
-            onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.CLINICAL_PROFESSIONAL)
+                onSelectVisualTheme(VisualTheme.LIGHT_PREMIUM)
             },
         )
         ThemeChoiceCard(
             label = "High Contrast",
-            description = "Strong contrast and clear outlines for maximum readability.",
+            description = "Maximum visibility with bold outlines and strong colors.",
             selected = accessibilityMode == AccessibilityMode.HIGH_CONTRAST,
             swatch = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
             onClick = {
@@ -214,13 +221,13 @@ fun ThemePickerScreen(
             },
         )
         ThemeChoiceCard(
-            label = "Warm Light",
-            description = "Light theme with warm surfaces.",
-            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.LIGHT_PREMIUM,
-            swatch = androidx.compose.ui.graphics.Color(0xFFF6F1E8),
+            label = "Auto",
+            description = "Follows the phone's system theme (Light or Dark).",
+            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.AUTO,
+            swatch = androidx.compose.ui.graphics.Color(0xFF808080),
             onClick = {
                 onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.LIGHT_PREMIUM)
+                onSelectVisualTheme(VisualTheme.AUTO)
             },
         )
     }
@@ -279,128 +286,11 @@ private fun ThemeChoiceCard(
     }
 }
 
-@Composable
-fun PermissionsExplanationScreen(
-    enabledPermissions: Set<OptionalPermission>,
-    onSetEnabled: (OptionalPermission, Boolean) -> Unit,
-    onNext: () -> Unit,
-    onBack: () -> Unit,
-) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val pm = context.packageManager
-    
-    val dialerAvailable = remember(pm) {
-        android.content.Intent(android.content.Intent.ACTION_DIAL).resolveActivity(pm) != null
-    }
-    val cameraAvailable = remember(pm) {
-        android.content.Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE).resolveActivity(pm) != null
-    }
-    val photosAvailable = remember(pm) {
-        android.content.Intent(android.content.Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI).resolveActivity(pm) != null
-    }
-    val backupAvailable = remember(pm) {
-        android.content.Intent(android.content.Intent.ACTION_CREATE_DOCUMENT).setType("*/*").resolveActivity(pm) != null
-    }
-
-    WizardShell(
-        modifier = Modifier.testTag("guided_setup_permissions_explanation"),
-        title = "Allow helpful features",
-        subtitle = "EasyUI uses standard intents to open other apps. This screen verifies if your device has the needed apps installed.",
-        onNext = onNext,
-        onBack = onBack,
-        currentStep = 4,
-        totalSteps = 13,
-        nextLabel = "Continue",
-    ) {
-        PermissionRow(
-            title = "Phone / Dialer",
-            body = "Lets EasyUI start a call when a tile is tapped.",
-            enabled = enabledPermissions.contains(OptionalPermission.PHONE_DIALER) && dialerAvailable,
-            onToggle = { onSetEnabled(OptionalPermission.PHONE_DIALER, it) },
-            statusText = if (dialerAvailable) "Ready (System Dialer Found)" else "Not available on this device",
-            isAvailable = dialerAvailable
-        )
-        PermissionRow(
-            title = "Contacts",
-            body = "Lets EasyUI show favorite contacts and place calls more easily.",
-            enabled = enabledPermissions.contains(OptionalPermission.CONTACTS) && dialerAvailable, // Contacts relies on dialer
-            onToggle = { onSetEnabled(OptionalPermission.CONTACTS, it) },
-            statusText = if (dialerAvailable) "Ready" else "Not available on this device",
-            isAvailable = dialerAvailable
-        )
-        PermissionRow(
-            title = "Camera",
-            body = "Lets EasyUI launch the camera tile reliably.",
-            enabled = enabledPermissions.contains(OptionalPermission.CAMERA) && cameraAvailable,
-            onToggle = { onSetEnabled(OptionalPermission.CAMERA, it) },
-            statusText = if (cameraAvailable) "Ready (Camera App Found)" else "Not available on this device",
-            isAvailable = cameraAvailable
-        )
-        PermissionRow(
-            title = "Photos / Media",
-            body = "Lets EasyUI open photos from tiles and pick contact photos.",
-            enabled = enabledPermissions.contains(OptionalPermission.PHOTOS_MEDIA) && photosAvailable,
-            onToggle = { onSetEnabled(OptionalPermission.PHOTOS_MEDIA, it) },
-            statusText = if (photosAvailable) "Ready (Gallery/Photos Found)" else "Not available on this device",
-            isAvailable = photosAvailable
-        )
-        PermissionRow(
-            title = "Backup / Restore files",
-            body = "Lets EasyUI import and export backups using system pickers.",
-            enabled = enabledPermissions.contains(OptionalPermission.BACKUP_RESTORE_FILES) && backupAvailable,
-            onToggle = { onSetEnabled(OptionalPermission.BACKUP_RESTORE_FILES, it) },
-            statusText = if (backupAvailable) "Ready (File Picker Found)" else "Not available on this device",
-            isAvailable = backupAvailable
-        )
-        PermissionRow(
-            title = "Notifications",
-            body = "Optional. Used only for helpful reminders inside EasyUI.",
-            enabled = enabledPermissions.contains(OptionalPermission.NOTIFICATIONS),
-            onToggle = { onSetEnabled(OptionalPermission.NOTIFICATIONS, it) },
-            statusText = "Ready",
-            isAvailable = true
-        )
-        Text(
-            text = "EasyUI does not request broad file access like MANAGE_EXTERNAL_STORAGE. All feature checks use safe system intents.",
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
-}
-
-@Composable
-private fun PermissionRow(
-    title: String,
-    body: String,
-    enabled: Boolean,
-    onToggle: (Boolean) -> Unit,
-    statusText: String,
-    isAvailable: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    Card(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(EasyUiSpacing.md),
-            horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
-                Text(body, style = MaterialTheme.typography.bodyMedium)
-                Text(
-                    text = statusText,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (isAvailable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                )
-            }
-            Switch(checked = enabled, onCheckedChange = onToggle, enabled = isAvailable)
-        }
-    }
-}
 
 @Composable
 fun LauncherActivationScreen(
+    currentStep: Int,
+    totalSteps: Int,
     isDefaultLauncher: Boolean,
     onOpenSettings: () -> Unit,
     onNext: () -> Unit,
@@ -411,8 +301,8 @@ fun LauncherActivationScreen(
         subtitle = "EasyUI works best when it's the default home app. This keeps the senior from accidentally leaving the simple interface.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 5,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
         nextLabel = if (isDefaultLauncher) "Next" else "Waiting for EasyUI...",
         isNextEnabled = isDefaultLauncher
     ) {
@@ -447,6 +337,8 @@ fun LauncherActivationScreen(
 
 @Composable
 fun ReadabilityPresetScreen(
+    currentStep: Int,
+    totalSteps: Int,
     currentPreset: HomeReadabilityPreset,
     onPresetSelected: (HomeReadabilityPreset) -> Unit,
     onNext: () -> Unit,
@@ -457,8 +349,8 @@ fun ReadabilityPresetScreen(
         subtitle = "How large should tiles and text be? This controls the senior home's look and feel.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 6,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
         scrollMode = WizardScrollMode.ParentScroll
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
@@ -471,7 +363,7 @@ fun ReadabilityPresetScreen(
                     border = if (selected) androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
                 ) {
                     Column(modifier = Modifier.padding(EasyUiSpacing.md)) {
-                        Text(preset.name.replace("_", " "), style = MaterialTheme.typography.titleLarge)
+                        Text(preset.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.titleLarge)
                         Text(
                             when (preset) {
                                 HomeReadabilityPreset.STANDARD -> "Standard size for users with good vision."
@@ -490,6 +382,8 @@ fun ReadabilityPresetScreen(
 
 @Composable
 fun HomeLayoutSetupScreen(
+    currentStep: Int,
+    totalSteps: Int,
     homePageCount: Int,
     onPageCountChange: (Int) -> Unit,
     onNext: () -> Unit,
@@ -500,8 +394,8 @@ fun HomeLayoutSetupScreen(
         subtitle = "EasyUI uses a fixed 2x3 home for essentials. You can add extra pages for more apps.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 7,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
         scrollMode = WizardScrollMode.ParentScroll
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
@@ -533,30 +427,42 @@ fun HomeLayoutSetupScreen(
                 }
             }
             Text("Senior Home Preview", style = MaterialTheme.typography.titleMedium)
-            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
-                val mockTiles = listOf("Phone", "Messages", "Contacts", "Photos", "Camera", "Emergency")
-                repeat(homePageCount) { pageIndex ->
+            // Compact Preview: Show only the selected page preview or dots
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            ) {
+                Column(modifier = Modifier.padding(EasyUiSpacing.md), horizontalAlignment = Alignment.CenterHorizontally) {
+                    val mockTiles = listOf("Phone", "Messages", "Contacts", "Photos", "Camera", "Emergency")
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("Page ${pageIndex + 1}", style = MaterialTheme.typography.titleSmall)
+                        Text("Page 1 (Essentials)", style = MaterialTheme.typography.labelMedium)
                         repeat(3) { row ->
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(0.6f), // Make it smaller
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
                                 repeat(2) { col ->
                                     val index = row * 2 + col
                                     Card(
                                         modifier = Modifier.weight(1f).aspectRatio(1.5f),
-                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
                                     ) {
                                         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                                            val label = if (pageIndex == 0) mockTiles.getOrElse(index) { "" } else "Empty"
-                                            Text(label, style = MaterialTheme.typography.labelSmall)
+                                            Text(mockTiles.getOrElse(index) { "" }, style = MaterialTheme.typography.labelSmall, fontSize = 8.sp)
                                         }
                                     }
                                 }
                             }
                         }
+                    }
+                    if (homePageCount > 1) {
+                        Spacer(modifier = Modifier.height(EasyUiSpacing.sm))
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            repeat(homePageCount) { i ->
+                                Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(if (i == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)))
+                            }
+                        }
+                        Text("+ ${homePageCount - 1} extra page(s) enabled", style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
@@ -566,6 +472,8 @@ fun HomeLayoutSetupScreen(
 
 @Composable
 fun AllowedAppsSetupScreen(
+    currentStep: Int,
+    totalSteps: Int,
     pageCount: Int,
     pages: List<List<HomeTile?>>,
     installedApps: List<InstalledApp>,
@@ -577,18 +485,19 @@ fun AllowedAppsSetupScreen(
 ) {
     var selectedPageIndex by rememberSaveable { mutableIntStateOf(0) }
     var selectedPosition by remember { mutableStateOf<Int?>(null) }
+    var showPicker by remember { mutableStateOf(false) }
     val currentPage = pages.getOrElse(selectedPageIndex) { List(6) { null } }
 
     WizardShell(
         title = "Apps on Home",
-        subtitle = "Select an empty slot on a page, then pick an app to place there.",
+        subtitle = "Tap an empty slot on a page to pick an app for it, or tap a placed app to remove it.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 8,
-        totalSteps = 13,
-        scrollMode = WizardScrollMode.ChildOwnsScroll
+        currentStep = currentStep,
+        totalSteps = totalSteps,
+        scrollMode = WizardScrollMode.ParentScroll
     ) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             // Page selection
             Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
                 repeat(pageCount) { i ->
@@ -606,49 +515,95 @@ fun AllowedAppsSetupScreen(
             }
 
             // Grid of slots
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                 repeat(3) { row ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                         repeat(2) { col ->
                             val slotIndex = row * 2 + col
                             val tile = currentPage.getOrNull(slotIndex)
                             val position = (selectedPageIndex * 6) + slotIndex
-                            val isSelected = selectedPosition == position
                             Card(
-                                onClick = { selectedPosition = position },
-                                modifier = Modifier.weight(1f).aspectRatio(2.0f),
-                                colors = if (isSelected) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer) else CardDefaults.cardColors(),
-                                border = if (isSelected) androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+                                onClick = { 
+                                    if (tile == null) {
+                                        selectedPosition = position
+                                        showPicker = true
+                                    } else {
+                                        onRemoveApp(tile.packageName!!)
+                                    }
+                                },
+                                modifier = Modifier.weight(1f).aspectRatio(1.5f),
+                                colors = if (tile != null) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else CardDefaults.cardColors(),
+                                border = if (tile != null) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
                             ) {
                                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                                    Text(tile?.title ?: "Empty Slot", style = MaterialTheme.typography.labelMedium)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                                        if (tile != null) {
+                                            Box(modifier = Modifier.size(32.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape))
+                                            Text(tile.title, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
+                                            Text("Tap to remove", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error, fontSize = 10.sp)
+                                        } else {
+                                            Icon(imageVector = androidx.compose.material.icons.Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
+                                            Text("Empty Slot", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.outline)
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            Card(modifier = Modifier.fillMaxWidth().weight(1f)) {
+        }
+    }
+
+    if (showPicker) {
+        Dialog(
+            onDismissRequest = { showPicker = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
                 Column(modifier = Modifier.fillMaxSize().padding(EasyUiSpacing.md)) {
-                    Text("Pick an App", style = MaterialTheme.typography.titleMedium)
-                    LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Pick an App", style = MaterialTheme.typography.headlineSmall)
+                        androidx.compose.material3.IconButton(onClick = { showPicker = false }) {
+                            Icon(imageVector = androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Close")
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(EasyUiSpacing.md))
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)
+                    ) {
                         items(installedApps) { app ->
                             val isAssigned = app.packageName in assignedAppPackages
-                            Row(
+                            Card(
+                                onClick = {
+                                    if (!isAssigned) {
+                                        selectedPosition?.let { onAssignApp(app.packageName, it) }
+                                        showPicker = false
+                                    }
+                                },
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                enabled = !isAssigned,
+                                colors = if (isAssigned) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)) else CardDefaults.cardColors()
                             ) {
-                                Text(app.label, style = MaterialTheme.typography.bodyMedium)
-                                if (isAssigned) {
-                                    Text("Placed", style = MaterialTheme.typography.labelSmall)
-                                } else {
-                                    Button(
-                                        onClick = { selectedPosition?.let { onAssignApp(app.packageName, it) } },
-                                        enabled = selectedPosition != null,
-                                        modifier = Modifier.height(32.dp)
-                                    ) {
-                                        Text("Place")
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(EasyUiSpacing.md),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
+                                        Box(modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.outline.copy(alpha = 0.1f), CircleShape)) // Icon placeholder
+                                        Text(app.label, style = MaterialTheme.typography.bodyLarge)
+                                    }
+                                    if (isAssigned) {
+                                        Text("Already placed", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
                                     }
                                 }
                             }
@@ -662,6 +617,8 @@ fun AllowedAppsSetupScreen(
 
 @Composable
 fun SecuritySetupScreen(
+    currentStep: Int,
+    totalSteps: Int,
     pin: String,
     confirmPin: String,
     errorMessage: String?,
@@ -678,10 +635,9 @@ fun SecuritySetupScreen(
         subtitle = "Protect the setup by setting a local PIN and locking the home layout from accidental moves.",
         onNext = onNext,
         onBack = onBack,
-        onSkip = onSkip,
-        currentStep = 10,
-        totalSteps = 13,
-        nextLabel = "Apply Security"
+        currentStep = currentStep,
+        totalSteps = totalSteps,
+        nextLabel = "Continue"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -705,7 +661,8 @@ fun SecuritySetupScreen(
                 label = { Text("Caregiver PIN (4+ digits)") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
             )
             OutlinedTextField(
                 value = confirmPin,
@@ -713,21 +670,31 @@ fun SecuritySetupScreen(
                 label = { Text("Confirm PIN") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
             )
             if (errorMessage != null) {
                 Text(errorMessage, color = MaterialTheme.colorScheme.error)
             }
+            
             Text(
                 "If you skip this, caregiver settings will be open to anyone. You can always set a PIN later.",
                 style = MaterialTheme.typography.bodyMedium
             )
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                androidx.compose.material3.TextButton(onClick = onSkip) {
+                    Text("Skip PIN for now")
+                }
+            }
         }
     }
 }
 
 @Composable
 fun DeviceSupportScreen(
+    currentStep: Int,
+    totalSteps: Int,
     showBattery: Boolean,
     onToggleBattery: (Boolean) -> Unit,
     onNext: () -> Unit,
@@ -738,8 +705,8 @@ fun DeviceSupportScreen(
         subtitle = "Fine-tune what appears on the senior home screen.",
         onNext = onNext,
         onBack = onBack,
-        currentStep = 11,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -761,6 +728,8 @@ fun DeviceSupportScreen(
 
 @Composable
 fun ContactsSetupScreen(
+    currentStep: Int,
+    totalSteps: Int,
     tiles: List<HomeTile>,
     onMoveUp: (String) -> Unit,
     onMoveDown: (String) -> Unit,
@@ -768,6 +737,8 @@ fun ContactsSetupScreen(
     onRemove: (String) -> Unit,
     emergencyMode: String,
     onEmergencyModeChange: (String) -> Unit,
+    emergencyPhoneNumber: String,
+    onEmergencyPhoneNumberChange: (String) -> Unit,
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -775,6 +746,7 @@ fun ContactsSetupScreen(
     var phoneNumber by rememberSaveable { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val hasNoContacts = tiles.isEmpty()
+    val isEmergencyNumberValid = emergencyPhoneNumber.length >= 3
 
     WizardShell(
         title = "Call Shortcuts & Emergency",
@@ -785,33 +757,59 @@ fun ContactsSetupScreen(
         },
         onNext = onNext,
         onBack = onBack,
-        currentStep = 9,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
         scrollMode = WizardScrollMode.ParentScroll
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(EasyUiSpacing.md), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                     Text("Emergency Button Mode", style = MaterialTheme.typography.titleMedium)
+                    
+                    Text("Primary Emergency Number", style = MaterialTheme.typography.labelLarge)
+                    OutlinedTextField(
+                        value = emergencyPhoneNumber,
+                        onValueChange = onEmergencyPhoneNumberChange,
+                        label = { Text("e.g. 911 or a family member") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone)
+                    )
+
+                    Spacer(modifier = Modifier.height(EasyUiSpacing.xs))
+
                     Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
                         val modes = listOf("MENU", "SOS")
                         modes.forEach { mode ->
                             val selected = mode == emergencyMode
+                            val enabled = mode == "MENU" || isEmergencyNumberValid
                             if (selected) {
-                                Button(onClick = { onEmergencyModeChange(mode) }, modifier = Modifier.weight(1f)) {
+                                Button(
+                                    onClick = { onEmergencyModeChange(mode) }, 
+                                    modifier = Modifier.weight(1f),
+                                    enabled = enabled
+                                ) {
                                     Text(if (mode == "MENU") "Choice Menu" else "Direct Dial")
                                 }
                             } else {
-                                OutlinedButton(onClick = { onEmergencyModeChange(mode) }, modifier = Modifier.weight(1f)) {
+                                OutlinedButton(
+                                    onClick = { onEmergencyModeChange(mode) }, 
+                                    modifier = Modifier.weight(1f),
+                                    enabled = enabled
+                                ) {
                                     Text(if (mode == "MENU") "Choice Menu" else "Direct Dial")
                                 }
                             }
                         }
                     }
                     Text(
-                        if (emergencyMode == "MENU") "Opens a menu with Ambulance, Police, and Fire." else "Dials the primary emergency contact immediately.",
-                        style = MaterialTheme.typography.bodyMedium
+                        if (emergencyMode == "MENU") "Opens a menu with Ambulance, Police, and Fire." else "Dials $emergencyPhoneNumber immediately when tapped.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (emergencyMode == "SOS" && !isEmergencyNumberValid) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                     )
+                    if (!isEmergencyNumberValid && emergencyMode == "SOS") {
+                        Text("Enter a valid number to use Direct Dial.", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
+                    }
                 }
             }
 
@@ -876,6 +874,8 @@ fun ContactsSetupScreen(
 
 @Composable
 fun ReviewConfirmScreen(
+    currentStep: Int,
+    totalSteps: Int,
     onConfirm: () -> Unit,
     onBack: () -> Unit,
     readability: String,
@@ -891,18 +891,21 @@ fun ReviewConfirmScreen(
         onNext = onConfirm,
         onBack = onBack,
         nextLabel = "Looks Good",
-        currentStep = 12,
-        totalSteps = 13,
+        currentStep = currentStep,
+        totalSteps = totalSteps,
         scrollMode = WizardScrollMode.ParentScroll
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
             ReviewCard(title = "Readability", value = readability)
             ReviewCard(title = "Home Pages", value = "$pageCount page(s) configured")
             ReviewCard(title = "Emergency Mode", value = if (emergencyMode == "SOS") "Direct Dial" else "Choice Menu")
-            ReviewCard(title = "Home Apps", value = "$allowedAppCount apps placed on home")
+            ReviewCard(
+                title = "Home Apps", 
+                value = "Essential tiles: 6 enabled\nExtra apps: $allowedAppCount added"
+            )
             ReviewCard(
                 title = "Security",
-                value = (if (hasPin) "PIN set" else "No PIN") + (if (layoutLocked) ", Layout locked" else ", Layout open")
+                value = (if (hasPin) "PIN configured" else "No PIN") + (if (layoutLocked) "\nLayout locked" else "\nLayout open")
             )
             Spacer(modifier = Modifier.height(EasyUiSpacing.md))
         }

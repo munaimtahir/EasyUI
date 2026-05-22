@@ -57,7 +57,7 @@ import com.easyui.feature.onboarding.DefaultLauncherGuidanceScreen
 import com.easyui.feature.onboarding.IntroScreen
 import com.easyui.feature.onboarding.WelcomeScreen
 import com.easyui.feature.onboarding.LauncherActivationScreen
-import com.easyui.feature.onboarding.PermissionsExplanationScreen
+import com.easyui.feature.onboarding.GuidedSetupStep
 import com.easyui.feature.onboarding.ProtectionOptionsScreen
 import com.easyui.feature.onboarding.ReadabilityPresetScreen
 import com.easyui.feature.onboarding.ThemePickerScreen
@@ -171,15 +171,19 @@ fun EasyUiNavGraph(
                     val currentTiles = caregiverState.layoutTiles
                     val currentSettings = caregiverState.settings
                     
-                    when (guidedSetupState.guidedSetupStep) {
-                        1 -> LauncherActivationScreen(
+                    when (guidedSetupState.currentStepEnum) {
+                        GuidedSetupStep.LAUNCHER_ACTIVATION -> LauncherActivationScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             isDefaultLauncher = guidedSetupState.isDefaultLauncher,
                             onOpenSettings = { guidedSetupViewModel.openLauncherSettings() },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        2 -> WelcomeScreen(onNext = { guidedSetupViewModel.nextStep() })
-                        3 -> ProtectionOptionsScreen(
+                        GuidedSetupStep.WELCOME -> WelcomeScreen(onNext = { guidedSetupViewModel.nextStep() })
+                        GuidedSetupStep.PROTECTION_OPTIONS -> ProtectionOptionsScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             current = guidedSetupState.setupProtectionLevel,
                             onSelect = { level ->
                                 guidedSetupViewModel.updateSetupProtectionLevel(level)
@@ -188,7 +192,9 @@ fun EasyUiNavGraph(
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                         )
-                        4 -> SecuritySetupScreen(
+                        GuidedSetupStep.SECURITY_SETUP -> SecuritySetupScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             pin = guidedSetupState.pinInput,
                             confirmPin = guidedSetupState.confirmPinInput,
                             errorMessage = guidedSetupState.pinError,
@@ -205,7 +211,9 @@ fun EasyUiNavGraph(
                             onBack = { guidedSetupViewModel.previousStep() },
                             onSkip = { guidedSetupViewModel.nextStep() }
                         )
-                        5 -> ThemePickerScreen(
+                        GuidedSetupStep.THEME_PICKER -> ThemePickerScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             visualTheme = appState.settings.skinConfig.visualTheme,
                             accessibilityMode = appState.settings.skinConfig.accessibilityMode,
                             onSelectVisualTheme = guidedSetupViewModel::updateVisualTheme,
@@ -213,19 +221,25 @@ fun EasyUiNavGraph(
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                         )
-                        6 -> ReadabilityPresetScreen(
+                        GuidedSetupStep.READABILITY_PRESET -> ReadabilityPresetScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             currentPreset = guidedSetupState.homeReadabilityPreset,
                             onPresetSelected = { guidedSetupViewModel.updateReadabilityPreset(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        7 -> HomeLayoutSetupScreen(
+                        GuidedSetupStep.HOME_LAYOUT_SETUP -> HomeLayoutSetupScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             homePageCount = guidedSetupState.homePageCount,
                             onPageCountChange = { caregiverViewModel.updateHomePageCount(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        8 -> AllowedAppsSetupScreen(
+                        GuidedSetupStep.ALLOWED_APPS_SETUP -> AllowedAppsSetupScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             pageCount = caregiverViewModel.effectivePageCount(),
                             pages = caregiverViewModel.homePages(),
                             installedApps = caregiverViewModel.installedAppsForAllowedApps(),
@@ -235,7 +249,9 @@ fun EasyUiNavGraph(
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        9 -> ContactsSetupScreen(
+                        GuidedSetupStep.CONTACTS_SETUP -> ContactsSetupScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             tiles = caregiverViewModel.contactTiles(),
                             onMoveUp = caregiverViewModel::moveTileUp,
                             onMoveDown = caregiverViewModel::moveTileDown,
@@ -243,22 +259,22 @@ fun EasyUiNavGraph(
                             onRemove = caregiverViewModel::removeTile,
                             emergencyMode = guidedSetupState.emergencyMode,
                             onEmergencyModeChange = { guidedSetupViewModel.updateEmergencyMode(it) },
+                            emergencyPhoneNumber = guidedSetupState.emergencyPhoneNumber,
+                            onEmergencyPhoneNumberChange = { guidedSetupViewModel.updateEmergencyPhoneNumber(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        10 -> PermissionsExplanationScreen(
-                            enabledPermissions = guidedSetupState.setupOptionalPermissions,
-                            onSetEnabled = guidedSetupViewModel::setOptionalPermission,
-                            onNext = { guidedSetupViewModel.nextStep() },
-                            onBack = { guidedSetupViewModel.previousStep() },
-                        )
-                        11 -> DeviceSupportScreen(
+                        GuidedSetupStep.DEVICE_SUPPORT -> DeviceSupportScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             showBattery = caregiverState.settings.showBatteryInfo,
                             onToggleBattery = { caregiverViewModel.setBatteryInfoVisible(it) },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() }
                         )
-                        12 -> ReviewConfirmScreen(
+                        GuidedSetupStep.REVIEW_CONFIRM -> ReviewConfirmScreen(
+                            currentStep = guidedSetupState.currentStep,
+                            totalSteps = guidedSetupState.totalSteps,
                             onConfirm = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                             readability = guidedSetupState.homeReadabilityPreset.name.replace("_", " "),
@@ -268,7 +284,7 @@ fun EasyUiNavGraph(
                             layoutLocked = guidedSetupState.layoutLocked,
                             hasPin = guidedSetupState.hasPinConfigured
                         )
-                        13 -> CompletionScreen(
+                        GuidedSetupStep.COMPLETION -> CompletionScreen(
                             onFinish = {
                                 guidedSetupViewModel.completeSetup()
                                 navController.navigate(Routes.Home.route) {
@@ -276,7 +292,6 @@ fun EasyUiNavGraph(
                                 }
                             }
                         )
-                        else -> WelcomeScreen(onNext = { guidedSetupViewModel.setStep(1) })
                     }
                 }
                 composable(Routes.Home.route) {
@@ -291,6 +306,10 @@ fun EasyUiNavGraph(
                         skinConfig = homeState.skinConfig,
                         pageCount = homeState.pageCount,
                         layoutLocked = homeState.layoutLocked,
+                        batteryPercentage = homeState.batteryPercentage,
+                        isCharging = homeState.isCharging,
+                        isBatteryLow = homeState.isBatteryLow,
+                        showBatteryInfo = homeState.showBatteryInfo,
                         onTileClick = { tileId ->
                             homeViewModel.onTileClick(
                                 tileId = tileId,
@@ -362,6 +381,7 @@ fun EasyUiNavGraph(
                             protectionEnabled = caregiverState.settings.caregiverProtectionEnabled,
                             layoutLocked = caregiverState.settings.layoutLocked,
                             hasPinConfigured = caregiverState.settings.pinHashHex != null && caregiverState.settings.pinSaltHex != null,
+                            allAppsVisible = caregiverState.allAppsVisible,
                             currentPageCount = caregiverViewModel.effectivePageCount(),
                             showBatteryInfo = caregiverState.settings.showBatteryInfo,
                             skinConfig = caregiverState.settings.skinConfig,
@@ -385,6 +405,7 @@ fun EasyUiNavGraph(
                                 }
                             },
                             onToggleLayoutLock = { caregiverViewModel.toggleLayoutLock() },
+                            onToggleAllAppsVisible = { caregiverViewModel.setAllAppsVisible(it) },
                             onToggleBatteryInfo = caregiverViewModel::setBatteryInfoVisible,
                             onOpenLayoutPages = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_LAYOUT_PAGES))

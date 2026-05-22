@@ -15,6 +15,7 @@ import com.easyui.core.domain.model.AccessibilityMode
 import com.easyui.core.domain.model.VisualTheme
 import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.domain.security.PinHasher
+import com.easyui.feature.onboarding.GuidedSetupStep
 import com.easyui.launcher.di.AppContainer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,11 +27,12 @@ import kotlinx.coroutines.launch
 
 data class GuidedSetupUiState(
     val currentStep: Int = 1,
-    val totalSteps: Int = 13,
+    val totalSteps: Int = GuidedSetupStep.entries.size,
     val settingsLoaded: Boolean = false,
     val onboardingComplete: Boolean = false,
     val guidedSetupCompleted: Boolean = false,
-    val guidedSetupStep: Int = 1,
+    val guidedSetupStep: Int = 1, // This is the index (1-based)
+    val currentStepEnum: GuidedSetupStep = GuidedSetupStep.LAUNCHER_ACTIVATION,
     val isDefaultLauncher: Boolean = false,
     val homeReadabilityPreset: HomeReadabilityPreset = HomeReadabilityPreset.STANDARD,
     val homePageCount: Int = 2,
@@ -57,11 +59,15 @@ class GuidedSetupViewModel(
         _launcherRefreshTrigger,
         _localState
     ) { settings, _, local ->
+        val stepIndex = settings.guidedSetupStep.coerceIn(1, GuidedSetupStep.entries.size)
         local.copy(
             settingsLoaded = true,
             onboardingComplete = settings.onboardingComplete,
             guidedSetupCompleted = settings.guidedSetupCompleted,
-            guidedSetupStep = settings.guidedSetupStep.coerceAtLeast(1),
+            guidedSetupStep = stepIndex,
+            currentStep = stepIndex,
+            totalSteps = GuidedSetupStep.entries.size,
+            currentStepEnum = GuidedSetupStep.entries[stepIndex - 1],
             homeReadabilityPreset = try {
                 HomeReadabilityPreset.valueOf(settings.homeReadabilityPreset)
             } catch (e: Exception) {
@@ -83,13 +89,13 @@ class GuidedSetupViewModel(
 
     fun setStep(step: Int) {
         viewModelScope.launch {
-            container.launcherSettingsRepository.updateGuidedSetupStep(step)
+            container.launcherSettingsRepository.updateGuidedSetupStep(step.coerceIn(1, GuidedSetupStep.entries.size))
         }
     }
 
     fun nextStep() {
         val current = state.value.guidedSetupStep
-        if (current < state.value.totalSteps) {
+        if (current < GuidedSetupStep.entries.size) {
             setStep(current + 1)
         } else {
             completeSetup()
@@ -125,6 +131,12 @@ class GuidedSetupViewModel(
         }
     }
 
+    fun updateEmergencyPhoneNumber(number: String) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateEmergencyPhoneNumber(number)
+        }
+    }
+
     fun updateLayoutLocked(locked: Boolean) {
         viewModelScope.launch {
             container.launcherSettingsRepository.updateLayoutLocked(locked)
@@ -134,6 +146,13 @@ class GuidedSetupViewModel(
     fun updateSetupProtectionLevel(level: SetupProtectionLevel) {
         viewModelScope.launch {
             container.launcherSettingsRepository.updateSetupProtectionLevel(level.name)
+            // Recommended level defaults to locked layout and hidden all apps
+            if (level == SetupProtectionLevel.RECOMMENDED) {
+                container.launcherSettingsRepository.updateLayoutLocked(true)
+                container.launcherSettingsRepository.updateAllAppsVisible(false)
+            } else {
+                container.launcherSettingsRepository.updateAllAppsVisible(true)
+            }
         }
     }
 
@@ -167,7 +186,10 @@ class GuidedSetupViewModel(
                 else -> LayoutMode.VERY_SIMPLE
             }
             val currentSkin = container.launcherSettingsRepository.getSkinConfig()
-            container.launcherSettingsRepository.setSkinConfig(currentSkin.copy(layoutMode = mappedLayoutMode))
+            container.launcherSettingsRepository.setSkinConfig(currentSkin.copy(
+                layoutMode = mappedLayoutMode,
+                readabilityPreset = preset
+            ))
         }
     }
 

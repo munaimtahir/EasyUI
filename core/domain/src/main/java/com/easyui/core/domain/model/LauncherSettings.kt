@@ -35,4 +35,5 @@ data class LauncherSettings(
     val guidedSetupStep: Int = 0,
     val guidedSetupCompleted: Boolean = false,
     val emergencyMode: String = "MENU",
+    val allAppsVisible: Boolean = true,
 )

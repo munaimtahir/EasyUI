@@ -12,4 +12,9 @@ data class HomeUiState(
     val pageCount: Int = 1,
     val layoutLocked: Boolean = false,
     val emergencyPhoneNumber: String = "",
+    val batteryPercentage: Int? = null,
+    val isCharging: Boolean = false,
+    val isBatteryLow: Boolean = false,
+    val showBatteryInfo: Boolean = false,
+    val allAppsVisible: Boolean = true,
 )

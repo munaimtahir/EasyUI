@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val ClockTapWindowMs = 3_000L
-private const val ClockTapTriggerCount = 4
+private const val ClockTapTriggerCount = 5
 private const val CaregiverAccessDebounceMs = 1_500L
 
 class HomeViewModel(
@@ -48,6 +48,7 @@ class HomeViewModel(
         val installedApps: List<InstalledApp>,
         val settings: LauncherSettings,
         val now: LocalDateTime,
+        val battery: com.easyui.core.domain.model.BatteryStatus,
     )
 
     val state: StateFlow<HomeUiState> =
@@ -56,12 +57,14 @@ class HomeViewModel(
             container.appCatalogRepository.observeInstalledApps(),
             settingsState,
             timeFlow(),
-        ) { tiles, installedApps, settings, now ->
+            container.batteryStatusRepository.observeBatteryStatus(),
+        ) { tiles, installedApps, settings, now, battery ->
             BaseHomeState(
                 tiles = tiles,
                 installedApps = installedApps,
                 settings = settings,
                 now = now,
+                battery = battery,
             )
         }.combine(localState) { base, _ ->
             HomeUiState(
@@ -79,6 +82,11 @@ class HomeViewModel(
                 pageCount = base.settings.homePageCount,
                 layoutLocked = base.settings.layoutLocked,
                 emergencyPhoneNumber = base.settings.emergencyPhoneNumber,
+                batteryPercentage = base.battery.percentage,
+                isCharging = base.battery.isCharging,
+                isBatteryLow = base.battery.isLow || (base.battery.percentage ?: 100) <= 20,
+                showBatteryInfo = base.settings.showBatteryInfo,
+                allAppsVisible = base.settings.allAppsVisible,
             )
         }.stateIn(
             scope = viewModelScope,

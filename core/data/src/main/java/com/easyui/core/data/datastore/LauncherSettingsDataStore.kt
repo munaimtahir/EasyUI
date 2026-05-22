@@ -12,6 +12,7 @@ import com.easyui.core.domain.model.HealthInfo
 import com.easyui.core.domain.model.LayoutMode
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.EmergencyNumber
+import com.easyui.core.domain.model.HomeReadabilityPreset
 import com.easyui.core.domain.model.OptionalPermission
 import com.easyui.core.domain.model.PinCredential
 import com.easyui.core.domain.model.SetupProtectionLevel
@@ -65,6 +66,7 @@ class DataStoreLauncherSettingsRepository(
                     layoutModeName = preferences[Keys.SKIN_LAYOUT_MODE],
                     visualThemeName = preferences[Keys.SKIN_VISUAL_THEME],
                     accessibilityModeName = preferences[Keys.SKIN_ACCESSIBILITY_MODE],
+                    readabilityPresetName = preferences[Keys.HOME_READABILITY_PRESET],
                     verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
                 ),
                 setupProtectionLevel = preferences[Keys.SETUP_PROTECTION_LEVEL] ?: SetupProtectionLevel.RECOMMENDED.name,
@@ -72,6 +74,7 @@ class DataStoreLauncherSettingsRepository(
                 guidedSetupStep = preferences[Keys.GUIDED_SETUP_STEP] ?: 0,
                 guidedSetupCompleted = preferences[Keys.GUIDED_SETUP_COMPLETED] ?: false,
                 emergencyMode = preferences[Keys.EMERGENCY_MODE] ?: "MENU",
+                allAppsVisible = preferences[Keys.ALL_APPS_VISIBLE] ?: true,
             )
         }
 
@@ -177,6 +180,7 @@ class DataStoreLauncherSettingsRepository(
             preferences[Keys.SKIN_LAYOUT_MODE] = config.layoutMode.name
             preferences[Keys.SKIN_VISUAL_THEME] = config.visualTheme.name
             preferences[Keys.SKIN_ACCESSIBILITY_MODE] = config.accessibilityMode.name
+            preferences[Keys.HOME_READABILITY_PRESET] = config.readabilityPreset.name
         }
     }
 
@@ -186,6 +190,7 @@ class DataStoreLauncherSettingsRepository(
             layoutModeName = preferences[Keys.SKIN_LAYOUT_MODE],
             visualThemeName = preferences[Keys.SKIN_VISUAL_THEME],
             accessibilityModeName = preferences[Keys.SKIN_ACCESSIBILITY_MODE],
+            readabilityPresetName = preferences[Keys.HOME_READABILITY_PRESET],
             verySimpleModeEnabled = preferences[Keys.VERY_SIMPLE_MODE_ENABLED] ?: false,
         )
     }
@@ -224,6 +229,12 @@ class DataStoreLauncherSettingsRepository(
     override suspend fun updateEmergencyMode(mode: String) {
         dataStore.edit { preferences ->
             preferences[Keys.EMERGENCY_MODE] = mode
+        }
+    }
+
+    override suspend fun updateAllAppsVisible(visible: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.ALL_APPS_VISIBLE] = visible
         }
     }
 
@@ -269,6 +280,7 @@ class DataStoreLauncherSettingsRepository(
         val GUIDED_SETUP_STEP = intPreferencesKey("guided_setup_step")
         val GUIDED_SETUP_COMPLETED = booleanPreferencesKey("guided_setup_completed")
         val EMERGENCY_MODE = stringPreferencesKey("emergency_mode")
+        val ALL_APPS_VISIBLE = booleanPreferencesKey("all_apps_visible")
     }
 
     private fun encodeEmergencyNumbers(numbers: List<EmergencyNumber>): String {
@@ -340,6 +352,7 @@ class DataStoreLauncherSettingsRepository(
         layoutModeName: String?,
         visualThemeName: String?,
         accessibilityModeName: String?,
+        readabilityPresetName: String?,
         verySimpleModeEnabled: Boolean,
     ): SkinConfig {
         val layoutMode = runCatching { LayoutMode.valueOf(layoutModeName.orEmpty()) }
@@ -348,10 +361,13 @@ class DataStoreLauncherSettingsRepository(
             .getOrDefault(VisualTheme.DARK_COMFORT)
         val accessibilityMode = runCatching { AccessibilityMode.valueOf(accessibilityModeName.orEmpty()) }
             .getOrDefault(AccessibilityMode.NONE)
+        val readabilityPreset = runCatching { HomeReadabilityPreset.valueOf(readabilityPresetName.orEmpty()) }
+            .getOrDefault(HomeReadabilityPreset.STANDARD)
         return SkinConfig(
             layoutMode = layoutMode,
             visualTheme = visualTheme,
             accessibilityMode = accessibilityMode,
+            readabilityPreset = readabilityPreset,
         )
     }
 }

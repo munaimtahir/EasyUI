@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.BatteryAlert
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -74,6 +76,11 @@ fun HomeScreen(
     onOpenAppList: () -> Unit,
     onStatusBarLongPress: () -> Unit,
     onClockTapped: () -> Unit,
+    batteryPercentage: Int? = null,
+    isCharging: Boolean = false,
+    isBatteryLow: Boolean = false,
+    showBatteryInfo: Boolean = false,
+    allAppsVisible: Boolean = true,
     pageCount: Int = 1,
     layoutLocked: Boolean = false,
     modifier: Modifier = Modifier,
@@ -109,7 +116,11 @@ fun HomeScreen(
                 HomeHeaderCard(
                     timeText = timeText,
                     dateText = dateText,
-                    accessibilityMode = skinConfig.accessibilityMode,
+                    batteryPercentage = batteryPercentage,
+                    isCharging = isCharging,
+                    isBatteryLow = isBatteryLow,
+                    showBatteryInfo = showBatteryInfo,
+                    skinConfig = skinConfig,
                     onLongPressConfirmed = onStatusBarLongPress,
                     onClockTapped = onClockTapped,
                 )
@@ -120,7 +131,7 @@ fun HomeScreen(
                         .testTag("home_pager")
                         .weight(1f),
                     userScrollEnabled = pageCount > 1,
-                    pageSpacing = SeniorHomeTokens.gridGap
+                    pageSpacing = SeniorHomeTokens.gridGap(skinConfig)
                 ) { page ->
                     val pageStartIndex = page * slotsPerPage
                     val pageEndIndex = (page + 1) * slotsPerPage
@@ -131,14 +142,14 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(),
-                        verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                        verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap(skinConfig)),
                     ) {
                         repeat(3) { row ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(1f),
-                                horizontalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap),
+                                horizontalArrangement = Arrangement.spacedBy(SeniorHomeTokens.gridGap(skinConfig)),
                             ) {
                                 repeat(2) { column ->
                                     val index = (row * 2) + column
@@ -146,7 +157,7 @@ fun HomeScreen(
                                     if (tile != null) {
                                         HomeActionTile(
                                             tile = tile,
-                                            accessibilityMode = skinConfig.accessibilityMode,
+                                            skinConfig = skinConfig,
                                             layoutLocked = layoutLocked,
                                             onClick = { onTileClick(tile.id) },
                                             modifier = Modifier
@@ -162,29 +173,13 @@ fun HomeScreen(
                     }
                 }
                 
-                // Page navigation UI (only show if multiple pages)
+                // Page indicator (only show if multiple pages)
                 if (pageCount > 1) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        OutlinedButton(
-                            onClick = { scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) } },
-                            enabled = pagerState.currentPage > 0,
-                            modifier = Modifier
-                                .weight(1f)
-                                .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
-                                .testTag("home_page_previous"),
-                            shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
-                        ) {
-                            Text(
-                                text = "Previous",
-                                color = SeniorHomeTokens.textPrimary,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                        }
                         // Page indicator dots
                         Row(
                             modifier = Modifier.testTag("home_page_indicators"),
@@ -207,42 +202,26 @@ fun HomeScreen(
                                 )
                             }
                         }
-                        OutlinedButton(
-                            onClick = { scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) } },
-                            enabled = pagerState.currentPage < pageCount - 1,
-                            modifier = Modifier
-                                .weight(1f)
-                                .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
-                                .testTag("home_page_next"),
-                            shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
-                        ) {
-                            Text(
-                                text = "Next",
-                                color = SeniorHomeTokens.textPrimary,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                        }
                     }
                 }
                 
-                OutlinedButton(
-                    onClick = onOpenAppList,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
-                        .testTag("home_all_apps_button"),
-                    shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
-                ) {
-                    Text(
-                        text = "All Apps",
-                        color = SeniorHomeTokens.textPrimary,
-                        fontSize = when (skinConfig.accessibilityMode) {
-                            AccessibilityMode.BOLD_ACCESSIBILITY -> 24.sp
-                            else -> 22.sp
-                        },
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                // All Apps button - visibility controlled by settings
+                if (allAppsVisible) {
+                    OutlinedButton(
+                        onClick = onOpenAppList,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = SeniorHomeTokens.minimumTargetSize)
+                            .testTag("home_all_apps_button"),
+                        shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+                    ) {
+                        Text(
+                            text = "All Apps",
+                            color = SeniorHomeTokens.textPrimary,
+                            fontSize = SeniorHomeTokens.labelTextSize(skinConfig),
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 }
             }
         }
@@ -253,7 +232,11 @@ fun HomeScreen(
 private fun HomeHeaderCard(
     timeText: String,
     dateText: String,
-    accessibilityMode: AccessibilityMode,
+    batteryPercentage: Int?,
+    isCharging: Boolean,
+    isBatteryLow: Boolean,
+    showBatteryInfo: Boolean,
+    skinConfig: SkinConfig,
     onLongPressConfirmed: () -> Unit,
     onClockTapped: () -> Unit,
 ) {
@@ -290,31 +273,46 @@ private fun HomeHeaderCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(
-                text = timeText,
-                color = SeniorHomeTokens.textPrimary,
-                fontSize = when (accessibilityMode) {
-                    AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.timeTextSizeLarge
-                    else -> SeniorHomeTokens.timeTextSize
-                },
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .testTag("home_clock_text")
-                    .pointerInput(onClockTapped) {
-                        detectTapGestures(onTap = { onClockTapped() })
-                    },
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (showBatteryInfo && isBatteryLow && !isCharging) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.BatteryAlert,
+                        contentDescription = "Low Battery",
+                        tint = SeniorHomeTokens.tileEmergency,
+                        modifier = Modifier.size(24.dp).padding(end = 8.dp)
+                    )
+                }
+                Text(
+                    text = timeText,
+                    color = SeniorHomeTokens.textPrimary,
+                    fontSize = SeniorHomeTokens.timeTextSize(skinConfig),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .testTag("home_clock_text")
+                        .pointerInput(onClockTapped) {
+                            detectTapGestures(onTap = { onClockTapped() })
+                        },
+                )
+            }
             Text(
                 text = dateText,
                 color = SeniorHomeTokens.textSecondaryOnHeader,
-                fontSize = when (accessibilityMode) {
-                    AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.dateTextSizeLarge
-                    else -> SeniorHomeTokens.dateTextSize
-                },
+                fontSize = SeniorHomeTokens.dateTextSize(skinConfig),
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
             )
+            if (showBatteryInfo && batteryPercentage != null) {
+                Text(
+                    text = "Battery: $batteryPercentage%${if (isCharging) " (Charging)" else ""}",
+                    color = if (isBatteryLow && !isCharging) SeniorHomeTokens.tileEmergency else SeniorHomeTokens.textSecondaryOnHeader,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
         }
     }
 }
@@ -322,7 +320,7 @@ private fun HomeHeaderCard(
 @Composable
 private fun HomeActionTile(
     tile: TileDisplayModel,
-    accessibilityMode: AccessibilityMode,
+    skinConfig: SkinConfig,
     layoutLocked: Boolean = false,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -378,15 +376,12 @@ private fun HomeActionTile(
                     imageVector = SeniorHomeTokens.tileIcon(tile.kind),
                     contentDescription = null,
                     tint = SeniorHomeTokens.textPrimary,
-                    modifier = Modifier.size(SeniorHomeTokens.iconSize),
+                    modifier = Modifier.size(SeniorHomeTokens.tileIconSize(skinConfig)),
                 )
                 Text(
                     text = tile.title,
                     color = SeniorHomeTokens.textPrimary,
-                    fontSize = when (accessibilityMode) {
-                        AccessibilityMode.BOLD_ACCESSIBILITY -> SeniorHomeTokens.labelTextSizeLarge
-                        else -> SeniorHomeTokens.labelTextSize
-                    },
+                    fontSize = SeniorHomeTokens.labelTextSize(skinConfig),
                     fontWeight = FontWeight.SemiBold,
                     lineHeight = 20.sp,
                     textAlign = TextAlign.Center,

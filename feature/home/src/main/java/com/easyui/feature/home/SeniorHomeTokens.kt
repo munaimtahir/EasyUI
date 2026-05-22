@@ -14,6 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.TextUnit
+import com.easyui.core.domain.model.HomeReadabilityPreset
+import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.TileDisplayKind
 
 object SeniorHomeTokens {
@@ -49,12 +52,37 @@ object SeniorHomeTokens {
     val iconSize = 32.dp
     val minimumTargetSize = 64.dp
 
-    val timeTextSize = 36.sp
-    val timeTextSizeLarge = 40.sp
-    val dateTextSize = 15.sp
-    val dateTextSizeLarge = 16.sp
-    val labelTextSize = 15.sp
-    val labelTextSizeLarge = 16.sp
+    fun timeTextSize(skinConfig: SkinConfig): TextUnit = when (skinConfig.readabilityPreset) {
+        HomeReadabilityPreset.STANDARD -> 36.sp
+        HomeReadabilityPreset.LARGER_TEXT -> 44.sp
+        HomeReadabilityPreset.LARGER_TILES -> 36.sp
+        HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> 48.sp
+    }
+
+    fun dateTextSize(skinConfig: SkinConfig): TextUnit = when (skinConfig.readabilityPreset) {
+        HomeReadabilityPreset.STANDARD -> 15.sp
+        HomeReadabilityPreset.LARGER_TEXT -> 18.sp
+        HomeReadabilityPreset.LARGER_TILES -> 15.sp
+        HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> 20.sp
+    }
+
+    fun labelTextSize(skinConfig: SkinConfig): TextUnit = when (skinConfig.readabilityPreset) {
+        HomeReadabilityPreset.STANDARD -> 15.sp
+        HomeReadabilityPreset.LARGER_TEXT -> 18.sp
+        HomeReadabilityPreset.LARGER_TILES -> 18.sp
+        HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> 20.sp
+    }
+
+    fun tileIconSize(skinConfig: SkinConfig) = when (skinConfig.readabilityPreset) {
+        HomeReadabilityPreset.LARGER_TILES -> 40.dp
+        HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> 40.dp
+        else -> 32.dp
+    }
+
+    fun gridGap(skinConfig: SkinConfig) = when (skinConfig.readabilityPreset) {
+        HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> 24.dp
+        else -> 12.dp
+    }
 
     val backgroundBrush: Brush
         get() = Brush.verticalGradient(

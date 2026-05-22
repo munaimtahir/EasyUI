@@ -25,6 +25,10 @@ import androidx.compose.ui.Modifier
 import com.easyui.core.ui.theme.EasyUiSpacing
 import androidx.compose.ui.unit.dp
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.safeDrawing
+
 @Composable
 fun WizardShell(
     title: String,
@@ -41,25 +45,30 @@ fun WizardShell(
     scrollMode: WizardScrollMode = WizardScrollMode.ParentScroll,
     content: @Composable (androidx.compose.foundation.layout.ColumnScope.() -> Unit)
 ) {
+    val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Surface(
                 tonalElevation = NavigationBarDefaults.Elevation,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shadowElevation = 8.dp
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(EasyUiSpacing.md)
-                        .navigationBarsPadding(),
+                        .padding(horizontal = EasyUiSpacing.md, vertical = EasyUiSpacing.sm)
+                        .padding(bottom = safeDrawingPadding.calculateBottomPadding()),
                     verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)
                 ) {
                     if (showProgress) {
                         Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
                             LinearProgressIndicator(
                                 progress = { (currentStep.toFloat() / totalSteps.toFloat()).coerceIn(0f, 1f) },
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
                             )
                             Text(
                                 text = "Step $currentStep of $totalSteps",
@@ -102,7 +111,8 @@ fun WizardShell(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(top = safeDrawingPadding.calculateTopPadding())
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             Column(
                 modifier = Modifier
@@ -110,7 +120,7 @@ fun WizardShell(
                     .padding(
                         start = EasyUiSpacing.lg,
                         end = EasyUiSpacing.lg,
-                        top = EasyUiSpacing.lg,
+                        top = EasyUiSpacing.md,
                         bottom = EasyUiSpacing.md
                     )
             ) {
@@ -133,7 +143,7 @@ fun WizardShell(
                     .padding(
                         start = EasyUiSpacing.lg,
                         end = EasyUiSpacing.lg,
-                        bottom = EasyUiSpacing.lg
+                        bottom = EasyUiSpacing.xl // Extra bottom padding to avoid cutting off last card
                     ),
                 verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
                 content = content

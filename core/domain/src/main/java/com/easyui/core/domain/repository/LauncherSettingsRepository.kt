@@ -31,4 +31,5 @@ interface LauncherSettingsRepository {
     suspend fun updateGuidedSetupStep(step: Int)
     suspend fun updateGuidedSetupCompleted(completed: Boolean)
     suspend fun updateEmergencyMode(mode: String)
+    suspend fun updateAllAppsVisible(visible: Boolean)
 }

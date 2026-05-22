@@ -1,5 +1,6 @@
 package com.easyui.core.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
@@ -47,7 +48,8 @@ fun EasyUiTheme(
     skinConfig: SkinConfig = SkinConfig(),
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = resolveColorScheme(skinConfig)
+    val darkTheme = isSystemInDarkTheme()
+    val colorScheme = resolveColorScheme(skinConfig, darkTheme)
     MaterialTheme(
         colorScheme = colorScheme,
         typography = EasyUiTypography,
@@ -55,7 +57,7 @@ fun EasyUiTheme(
     )
 }
 
-private fun resolveColorScheme(config: SkinConfig): ColorScheme {
+private fun resolveColorScheme(config: SkinConfig, isSystemInDarkTheme: Boolean): ColorScheme {
     if (config.accessibilityMode == AccessibilityMode.HIGH_CONTRAST) {
         return lightColorScheme(
             primary = Color(0xFF0033CC),
@@ -75,6 +77,7 @@ private fun resolveColorScheme(config: SkinConfig): ColorScheme {
     }
 
     return when (config.visualTheme) {
+        VisualTheme.AUTO -> if (isSystemInDarkTheme) MidnightIndigoColors else WarmLightColors
         VisualTheme.DARK_COMFORT -> MidnightIndigoColors
         VisualTheme.SOFT_CALM -> darkColorScheme(
             primary = Color(0xFF4DB6AC),

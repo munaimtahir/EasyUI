@@ -58,6 +58,7 @@ internal fun CaregiverDashboardScreen(
     protectionEnabled: Boolean,
     layoutLocked: Boolean,
     hasPinConfigured: Boolean,
+    allAppsVisible: Boolean,
     currentPageCount: Int,
     showBatteryInfo: Boolean,
     favoriteContactCount: Int,
@@ -72,6 +73,7 @@ internal fun CaregiverDashboardScreen(
     onChangePin: () -> Unit,
     onToggleProtection: () -> Unit,
     onToggleLayoutLock: () -> Unit,
+    onToggleAllAppsVisible: (Boolean) -> Unit,
     onToggleBatteryInfo: (Boolean) -> Unit,
     onOpenLayoutPages: () -> Unit,
     onOpenAllowedApps: () -> Unit,
@@ -186,6 +188,12 @@ internal fun CaregiverDashboardScreen(
                             subtitle = "Prevent accidental moves or deletes on home screen",
                             checked = layoutLocked,
                             onCheckedChange = { onToggleLayoutLock() }
+                        )
+                        DashboardToggleRow(
+                            title = "Show 'All Apps'",
+                            subtitle = "Allow the senior to see and search all installed apps",
+                            checked = allAppsVisible,
+                            onCheckedChange = onToggleAllAppsVisible
                         )
                         DashboardActionRow(
                             title = "Caregiver PIN",
@@ -517,6 +525,7 @@ private fun CaregiverDashboardPreview() {
         protectionEnabled = true,
         layoutLocked = true,
         hasPinConfigured = true,
+        allAppsVisible = true,
         currentPageCount = 2,
         showBatteryInfo = true,
         favoriteContactCount = 3,
@@ -531,6 +540,7 @@ private fun CaregiverDashboardPreview() {
         onChangePin = {},
         onToggleProtection = {},
         onToggleLayoutLock = {},
+        onToggleAllAppsVisible = {},
         onToggleBatteryInfo = {},
         onOpenLayoutPages = {},
         onOpenAllowedApps = {},

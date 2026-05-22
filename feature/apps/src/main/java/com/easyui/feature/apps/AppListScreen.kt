@@ -75,11 +75,6 @@ fun AppListScreen(
                                 .testTag("app_item_${app.packageName}"),
                         ) {
                             Text(app.label.ifBlank { "Unnamed app" }, style = MaterialTheme.typography.titleLarge)
-                            Text(
-                                app.packageName,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
                         }
                     }
                 }
