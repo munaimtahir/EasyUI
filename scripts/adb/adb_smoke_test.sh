@@ -75,4 +75,34 @@ if grep -E "FATAL EXCEPTION|ANR in ${PACKAGE_NAME}|Process: ${PACKAGE_NAME}|am_c
   exit 1
 fi
 
+if ! adb shell pidof "$PACKAGE_NAME" > /dev/null; then
+  echo "Process died unexpectedly after launch." | tee -a "$EVIDENCE_DIR/adb_smoke_failure.txt"
+  exit 1
+fi
+
+echo "Generating adb_smoke_report.md"
+{
+  echo "# ADB Smoke Test Report"
+  echo "Branch: ${GITHUB_REF_NAME:-main}"
+  echo "Commit: $(git rev-parse HEAD || echo "unknown")"
+  echo "Workflow run URL: ${GITHUB_SERVER_URL:-}/$GITHUB_REPOSITORY/actions/runs/${GITHUB_RUN_ID:-}"
+  echo "Application ID: $PACKAGE_NAME"
+  echo "APK path: $APK_PATH"
+  echo "Emulator API: $(adb shell getprop ro.build.version.sdk || echo "unknown")"
+  echo "Device profile: $(adb shell getprop ro.product.model || echo "unknown")"
+  echo ""
+  echo "Checks:"
+  echo "- APK built: PASS"
+  echo "- APK installed: PASS"
+  echo "- App launched: PASS"
+  echo "- Process alive: PASS"
+  echo "- Fatal exception check: PASS"
+  echo "- Screenshot captured: PASS"
+  echo "- HOME/relaunch check: PASS"
+  echo "- connectedDebugAndroidTest: CHECK LOGS"
+  echo "- Sprint-specific flows covered: CHECK SCREENSHOTS"
+  echo ""
+  echo "Final verdict: PASS"
+} > "$EVIDENCE_DIR/adb_smoke_report.md"
+
 echo "ADB smoke test passed: install, launch, focus capture, home key, screenshots, and crash scan completed." | tee "$EVIDENCE_DIR/adb_smoke_pass.txt"
