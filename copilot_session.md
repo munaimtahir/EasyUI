@@ -1,45 +1,52 @@
-# EasyUI V1.3 — Guardian Alert Pro
+# EasyUI V1.5 — Physical Device Validation & UX Refinement
 
-## Current Repository State Summary
-- V1.2 Completed: Remote Link (Sharing health status via Deep Links).
-- Starting V1.3: Proactive Guardian Alerts for Seniors.
+## Current Branch and Commit
+- Branch: main
+- Commit: ff7eec6 (Target)
 
-## Execution Plan
-1. Discovery Phase (V1.3): Define critical trigger states and alert UI/UX.
-2. Logic implementation: Update GuardianRules to include alert triggers.
-3. UI implementation: Create Senior Alert component on Home screen.
-4. Integration: Link Alert action to the V1.2 sharing mechanism.
-5. Verification: Unit tests for alert logic. Build pass.
-6. Documentation: Evidence reports for V1.3.
+## Repository State
+- V1.4 Completed: Assisted Recovery & Guided Fixes.
+- Environment: YOLO mode active.
+- Connected Devices: TBD (will check with adb)
 
-## Task Checklist
-- [x] Create V1.3 DISCOVERY.md
-- [x] Implement Alert Detection Logic
-- [x] Implement Senior Alert UI (Home Screen)
-- [x] Integrate Alert with Share Mechanism
-- [x] Run verification (assemble, test, lint)
-- [x] Create documentation reports for V1.3
+## Existing V1.1–V1.4 Feature Summary
+- V1.1: Synchronized Consumer Launcher (Home tiles -> EasyUI screens, Health Card, Setup Dashboard).
+- V1.2: Remote Link (Local-first sharing via deep links).
+- V1.3: Guardian Alert Pro (Proactive critical state detection & alert banner).
+- V1.4: Assisted Recovery (Guided Fixes, clickable health card, system settings intents).
+
+## Test Plan
+1. Preliminary: Lint validation (previously missing).
+2. Device Validation: Verify Guardian triggers, Alert Banner, Assisted Recovery, Remote Link sharing/importing.
+3. UX Refinement: Visual/Contrast/Target size check on real hardware.
+
+## Execution Checklist
+- [ ] Overwrite copilot_session.md
+- [ ] Create V1.5 evidence folder
+- [ ] Phase 0: Repository & evidence discovery
+- [ ] Phase 1: Lint validation & Consolidation verification
+- [ ] Phase 2: Device Test Plan creation
+- [ ] Phase 3: ADB-supported Device Testing
+- [ ] Phase 4: UX Refinement & Bug Fixes
+- [ ] Phase 5: Final Verification & Documentation
 
 ## Files Inspected
-- core/domain/src/main/java/com/easyui/core/domain/rules/GuardianRules.kt
-- feature/home/src/main/java/com/easyui/feature/home/HomeScreen.kt
-- app/src/main/java/com/easyui/launcher/app/HomeViewModel.kt
+- TBD
 
 ## Files Changed
-- core/domain/src/main/java/com/easyui/core/domain/model/GuardianModels.kt
-- core/domain/src/main/java/com/easyui/core/domain/rules/GuardianRules.kt
-- feature/home/src/main/java/com/easyui/feature/home/HomeScreen.kt
-- app/src/main/java/com/easyui/launcher/navigation/EasyUiNavGraph.kt
-
-## Tests Added/Updated
-- core/domain/src/test/java/com/easyui/core/domain/rules/GuardianRulesTest.kt
+- TBD
 
 ## Commands Run
-- ./gradlew :core:domain:testDebugUnitTest --tests "com.easyui.core.domain.rules.GuardianRulesTest"
-- ./gradlew assembleDebug
+- TBD
 
-## Current Blockers
-- None
+## Device Test Results
+- TBD
 
-## Final Status
-- V1.3 Completed Successfully
+## Screenshots/Artifacts Captured
+- TBD
+
+## Bugs Found
+- TBD
+
+## Final Verdict
+- TBD

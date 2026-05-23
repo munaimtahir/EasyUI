@@ -13,6 +13,7 @@ sealed class Routes(val route: String) {
     data object Messages : Routes("messages")
     data object Photos : Routes("photos")
     data object Camera : Routes("camera")
+    data object AssistedRecovery : Routes("assisted_recovery")
     data object SafeHandoff : Routes("safe_handoff/{action}/{packageName}/{activityName}") {
         fun createRoute(action: String, packageName: String?, activityName: String?) =
             "safe_handoff/$action/${packageName ?: "none"}/${activityName ?: "none"}"

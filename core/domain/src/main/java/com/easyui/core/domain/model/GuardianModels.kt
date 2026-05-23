@@ -21,14 +21,16 @@ data class GuardianCheckResult(
     val type: GuardianCheckType,
     val status: GuardianCheckStatus,
     val message: String,
-    val detail: String? = null
+    val detail: String? = null,
+    val recoveryGuidance: RecoveryGuidance? = null
 )
 
 data class PhoneHealthState(
     val checks: List<GuardianCheckResult>,
     val overallStatus: GuardianCheckStatus,
     val primaryMessage: String,
-    val shouldPromptAlert: Boolean = false
+    val shouldPromptAlert: Boolean = false,
+    val primaryRecoveryGuidance: RecoveryGuidance? = null
 )
 
 data class SetupCompletenessItem(

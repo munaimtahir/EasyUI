@@ -52,8 +52,10 @@ import com.easyui.feature.caregiver.GuardianSettingsScreen
 import com.easyui.feature.caregiver.LinkedDevicesScreen
 import com.easyui.feature.caregiver.RemoteDeviceDetailScreen
 import com.easyui.feature.home.HealthInfoScreen
+import com.easyui.feature.home.AssistedRecoveryScreen
 import com.easyui.feature.home.EmergencyCallScreen
 import com.easyui.feature.home.HomeScreen
+import com.easyui.core.domain.model.RecoveryActionType
 import com.easyui.feature.home.PhoneContactsScreen
 import com.easyui.feature.home.SeniorMessagesScreen
 import com.easyui.feature.home.SeniorPhotosScreen
@@ -138,6 +140,19 @@ fun EasyUiNavGraph(
     }
     var launcherStatusVersion by remember { mutableIntStateOf(0) }
     var lastInteractionAt by remember { mutableLongStateOf(android.os.SystemClock.elapsedRealtime()) }
+    val alertCaregiver = {
+        val packet = com.easyui.core.domain.model.RemoteStatusPacket(
+            deviceName = android.os.Build.MODEL,
+            healthState = homeState.healthState,
+            setupCompleteness = caregiverState.setupCompleteness
+        )
+        val link = remoteLinkViewModel.generateShareLink(packet)
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "EasyUI Remote Status for ${packet.deviceName}:\n$link")
+        }
+        context.startActivity(Intent.createChooser(shareIntent, "Share Status Link"))
+    }
     var easyUiLocked by remember { mutableStateOf(false) }
     var lockPinInput by remember { mutableStateOf("") }
     var lockPinError by remember { mutableStateOf<String?>(null) }
@@ -356,21 +371,54 @@ fun EasyUiNavGraph(
                         onClockTapped = {
                             homeViewModel.onClockTappedCaregiverAccess(openCaregiverAccess)
                         },
-                        onAlertCaregiver = {
-                            val packet = com.easyui.core.domain.model.RemoteStatusPacket(
-                                deviceName = android.os.Build.MODEL,
-                                healthState = homeState.healthState,
-                                setupCompleteness = caregiverState.setupCompleteness
-                            )
-                            val link = remoteLinkViewModel.generateShareLink(packet)
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, "EasyUI Remote Status for ${packet.deviceName}:\n$link")
-                            }
-                            context.startActivity(Intent.createChooser(shareIntent, "Share Status Link"))
+                        onAlertCaregiver = { alertCaregiver() },
+                        onOpenRecovery = {
+                            navController.navigate(Routes.AssistedRecovery.route)
                         },
                         healthState = homeState.healthState
                     )
+                }
+                composable(Routes.AssistedRecovery.route) {
+                    val guidance = homeState.healthState.primaryRecoveryGuidance
+                    if (guidance != null) {
+                        AssistedRecoveryScreen(
+                            guidance = guidance,
+                            onExecuteAction = {
+                                when (guidance.type) {
+                                    RecoveryActionType.OPEN_WIFI_SETTINGS -> {
+                                        context.startActivity(Intent(android.provider.Settings.ACTION_WIFI_SETTINGS))
+                                    }
+                                    RecoveryActionType.OPEN_BATTERY_SETTINGS -> {
+                                        context.startActivity(Intent(Intent.ACTION_POWER_USAGE_SUMMARY))
+                                    }
+                                    RecoveryActionType.SET_DEFAULT_LAUNCHER -> {
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                            context.startActivity(Intent(android.provider.Settings.ACTION_HOME_SETTINGS))
+                                        } else {
+                                            context.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
+                                        }
+                                    }
+                                    RecoveryActionType.OPEN_EMERGENCY_SETTINGS -> {
+                                        navController.navigate(Routes.EmergencySettings.route)
+                                    }
+                                    RecoveryActionType.OPEN_CAREGIVER_TOOLS -> {
+                                        navController.navigate(Routes.CaregiverTools.route)
+                                    }
+                                    RecoveryActionType.REQUEST_PERMISSIONS -> {
+                                        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                            data = Uri.fromParts("package", context.packageName, null)
+                                        }
+                                        context.startActivity(intent)
+                                    }
+                                    RecoveryActionType.NONE -> {}
+                                }
+                            },
+                            onAlertCaregiver = { alertCaregiver() },
+                            onBackHome = { navController.popBackStack() }
+                        )
+                    } else {
+                        navController.popBackStack()
+                    }
                 }
                 composable(Routes.PhoneContacts.route) {
                     PhoneContactsScreen(

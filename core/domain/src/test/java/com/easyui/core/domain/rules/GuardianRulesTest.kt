@@ -3,6 +3,7 @@ package com.easyui.core.domain.rules
 import com.easyui.core.domain.model.GuardianCheckStatus
 import com.easyui.core.domain.model.GuardianCheckType
 import com.easyui.core.domain.model.LauncherSettings
+import com.easyui.core.domain.model.RecoveryActionType
 import com.easyui.core.domain.model.SetupCompleteness
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -159,5 +160,47 @@ class GuardianRulesTest {
         )
         assertEquals(GuardianCheckStatus.WARNING, state.overallStatus)
         assertEquals(false, state.shouldPromptAlert)
+    }
+
+    @Test
+    fun `recovery guidance for no internet`() {
+        val state = GuardianRules.calculatePhoneHealthState(
+            settings = defaultSettings,
+            batteryPercentage = 80,
+            isCharging = false,
+            isInternetAvailable = false,
+            isDefaultLauncher = true,
+            hasRequiredPermissions = true,
+            setupCompleteness = fullSetup
+        )
+        assertEquals(RecoveryActionType.OPEN_WIFI_SETTINGS, state.primaryRecoveryGuidance?.type)
+    }
+
+    @Test
+    fun `recovery guidance for critical battery is none`() {
+        val state = GuardianRules.calculatePhoneHealthState(
+            settings = defaultSettings,
+            batteryPercentage = 5,
+            isCharging = false,
+            isInternetAvailable = true,
+            isDefaultLauncher = true,
+            hasRequiredPermissions = true,
+            setupCompleteness = fullSetup
+        )
+        assertEquals(RecoveryActionType.NONE, state.primaryRecoveryGuidance?.type)
+    }
+
+    @Test
+    fun `recovery guidance for not default launcher`() {
+        val state = GuardianRules.calculatePhoneHealthState(
+            settings = defaultSettings,
+            batteryPercentage = 80,
+            isCharging = false,
+            isInternetAvailable = true,
+            isDefaultLauncher = false,
+            hasRequiredPermissions = true,
+            setupCompleteness = fullSetup
+        )
+        assertEquals(RecoveryActionType.SET_DEFAULT_LAUNCHER, state.primaryRecoveryGuidance?.type)
     }
 }

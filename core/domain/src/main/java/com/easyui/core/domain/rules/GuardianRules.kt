@@ -5,6 +5,8 @@ import com.easyui.core.domain.model.GuardianCheckStatus
 import com.easyui.core.domain.model.GuardianCheckType
 import com.easyui.core.domain.model.LauncherSettings
 import com.easyui.core.domain.model.PhoneHealthState
+import com.easyui.core.domain.model.RecoveryActionType
+import com.easyui.core.domain.model.RecoveryGuidance
 import com.easyui.core.domain.model.SetupCompleteness
 import com.easyui.core.domain.model.SetupCompletenessItem
 
@@ -29,7 +31,12 @@ object GuardianRules {
                         type = GuardianCheckType.BATTERY_CRITICAL,
                         status = GuardianCheckStatus.CRITICAL,
                         message = "Please charge phone",
-                        detail = "Battery is very low ($batteryPercentage%)"
+                        detail = "Battery is very low ($batteryPercentage%)",
+                        recoveryGuidance = RecoveryGuidance(
+                            type = RecoveryActionType.NONE,
+                            label = "Battery Critical",
+                            description = "Your phone is about to turn off. Please plug in your charger immediately."
+                        )
                     )
                 )
             } else if (batteryPercentage <= settings.batteryLowThreshold) {
@@ -38,7 +45,12 @@ object GuardianRules {
                         type = GuardianCheckType.BATTERY_LOW,
                         status = GuardianCheckStatus.WARNING,
                         message = "Battery low",
-                        detail = "Battery is at $batteryPercentage%"
+                        detail = "Battery is at $batteryPercentage%",
+                        recoveryGuidance = RecoveryGuidance(
+                            type = RecoveryActionType.NONE,
+                            label = "Battery Low",
+                            description = "Your battery is getting low. You should find a charger soon."
+                        )
                     )
                 )
             }
@@ -51,7 +63,13 @@ object GuardianRules {
                     type = GuardianCheckType.EMERGENCY_CONTACT_MISSING,
                     status = GuardianCheckStatus.CRITICAL,
                     message = "Emergency contact missing",
-                    detail = "Senior cannot call for help in one tap."
+                    detail = "Senior cannot call for help in one tap.",
+                    recoveryGuidance = RecoveryGuidance(
+                        type = RecoveryActionType.OPEN_EMERGENCY_SETTINGS,
+                        label = "No Emergency Contact",
+                        description = "You don't have an emergency contact set up. This is important for your safety.",
+                        actionButtonLabel = "Add Emergency Contact"
+                    )
                 )
             )
         }
@@ -63,7 +81,13 @@ object GuardianRules {
                     type = GuardianCheckType.NOT_DEFAULT_LAUNCHER,
                     status = GuardianCheckStatus.WARNING,
                     message = "EasyUI not set as home",
-                    detail = "Phone might go back to normal Android layout."
+                    detail = "Phone might go back to normal Android layout.",
+                    recoveryGuidance = RecoveryGuidance(
+                        type = RecoveryActionType.SET_DEFAULT_LAUNCHER,
+                        label = "EasyUI Not Primary",
+                        description = "EasyUI is not set as your main home screen. This can make the phone harder to use.",
+                        actionButtonLabel = "Set as Main Home"
+                    )
                 )
             )
         }
@@ -75,7 +99,13 @@ object GuardianRules {
                     type = GuardianCheckType.NO_INTERNET,
                     status = GuardianCheckStatus.WARNING,
                     message = "Internet is off",
-                    detail = "Senior might not receive messages."
+                    detail = "Senior might not receive messages.",
+                    recoveryGuidance = RecoveryGuidance(
+                        type = RecoveryActionType.OPEN_WIFI_SETTINGS,
+                        label = "No Internet Connection",
+                        description = "Your phone is not connected to the internet. You might not receive messages or calls.",
+                        actionButtonLabel = "Check Internet"
+                    )
                 )
             )
         }
@@ -87,7 +117,13 @@ object GuardianRules {
                     type = GuardianCheckType.SETUP_INCOMPLETE,
                     status = GuardianCheckStatus.WARNING,
                     message = "Ask caregiver to fix setup",
-                    detail = "Some features are not configured yet."
+                    detail = "Some features are not configured yet.",
+                    recoveryGuidance = RecoveryGuidance(
+                        type = RecoveryActionType.OPEN_CAREGIVER_TOOLS,
+                        label = "Setup Incomplete",
+                        description = "Some features of your phone are not fully set up yet. A caregiver can fix this.",
+                        actionButtonLabel = "Open Setup Status"
+                    )
                 )
             )
         }
@@ -113,8 +149,11 @@ object GuardianRules {
             it.type == GuardianCheckType.NO_INTERNET ||
             it.type == GuardianCheckType.NOT_DEFAULT_LAUNCHER
         }
+        
+        val primaryRecoveryGuidance = checks.firstOrNull { it.status == GuardianCheckStatus.CRITICAL }?.recoveryGuidance
+            ?: checks.firstOrNull { it.status == GuardianCheckStatus.WARNING }?.recoveryGuidance
 
-        return PhoneHealthState(checks, overallStatus, primaryMessage, shouldPromptAlert)
+        return PhoneHealthState(checks, overallStatus, primaryMessage, shouldPromptAlert, primaryRecoveryGuidance)
     }
 
     fun calculateSetupCompleteness(

@@ -3,6 +3,7 @@ package com.easyui.feature.home
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -81,6 +82,7 @@ fun HomeScreen(
     onStatusBarLongPress: () -> Unit,
     onClockTapped: () -> Unit,
     onAlertCaregiver: () -> Unit = {},
+    onOpenRecovery: () -> Unit = {},
     healthState: com.easyui.core.domain.model.PhoneHealthState = com.easyui.core.domain.model.PhoneHealthState(
         checks = emptyList(),
         overallStatus = com.easyui.core.domain.model.GuardianCheckStatus.OK,
@@ -137,7 +139,11 @@ fun HomeScreen(
                 PhoneHealthCard(
                     healthState = healthState,
                     skinConfig = skinConfig,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(enabled = healthState.overallStatus != com.easyui.core.domain.model.GuardianCheckStatus.OK) { 
+                            onOpenRecovery() 
+                        }
                 )
                 if (healthState.shouldPromptAlert) {
                     SeniorAlertBanner(
