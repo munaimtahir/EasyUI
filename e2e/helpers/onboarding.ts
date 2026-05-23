@@ -14,10 +14,9 @@ const buttonLabels = [
   "Continue Anyway",
   "Finish Setup",
 ];
-const onboardingProgressLabels = ["Step 1 of 10", "Step 2 of 10", "Step 3 of 10", "Step 4 of 10", "Step 5 of 10", "Step 6 of 10", "Step 7 of 10", "Step 8 of 10", "Step 9 of 10", "Step 10 of 10"];
-
 function isOnboardingWizard(xml: string): boolean {
-  return onboardingProgressLabels.some((label) => xmlContains(xml, label));
+  // Matches dynamic step formats such as "Step 1 of 12" using regex to avoid hardcoded step totals.
+  return /Step \d+ of \d+/.test(xml);
 }
 
 function isHomeSurface(xml: string): boolean {
@@ -29,7 +28,7 @@ function isHomeSurface(xml: string): boolean {
 }
 
 export async function ensureOnboardingFinished(serial: string, uiDumpPrefix: string): Promise<"home" | "onboarding"> {
-  for (let step = 0; step < 14; step += 1) {
+  for (let step = 0; step < 20; step += 1) {
     // Best effort to avoid getting stuck on OEM default-launcher screens.
     trySetDefaultLauncher(serial);
     launchApp(serial);

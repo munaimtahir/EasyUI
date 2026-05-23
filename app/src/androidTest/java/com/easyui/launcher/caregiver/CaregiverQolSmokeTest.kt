@@ -11,9 +11,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.printToLog
 import com.easyui.launcher.assertPresent
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.domain.model.HomeTile
@@ -76,10 +78,19 @@ class CaregiverQolSmokeTest {
 
         composeRule.onNodeWithTag("caregiver_tools_screen").assertPresent()
         composeRule.onNodeWithText("Caregiver Settings").assertPresent()
+        
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Appearance & Layout"))
         composeRule.onNodeWithText("Appearance & Layout").assertPresent()
+        
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Home Apps"))
         composeRule.onNodeWithText("Home Apps").assertPresent()
+        
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Contacts & Emergency"))
         composeRule.onNodeWithText("Contacts & Emergency").assertPresent()
+        
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Security & Protection"))
         composeRule.onNodeWithText("Security & Protection").assertPresent()
+        
         composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Device & Backup"))
         composeRule.onNodeWithText("Device & Backup").assertPresent()
     }
@@ -146,9 +157,19 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithText("Home Layout Preview").assertPresent()
         composeRule.onNodeWithText("Phone").assertPresent()
         composeRule.onNodeWithText("Messages").assertPresent()
-        // "Camera" appears in both the slot grid (as a HomeTile title) and the installed apps list.
+        
+        // Select an empty slot (Slot 3) to show the Installed Apps list in the BottomSheet
+        composeRule.onNodeWithTag("slot_select_3").performScrollTo().performClick()
+        composeRule.waitForIdle()
+        
+        // Wait up to 5 seconds for the bottom sheet to display "Placed"
+        composeRule.waitUntil(5000) {
+            composeRule.onAllNodesWithText("Placed").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        // "Camera" appears in both the slot grid (as a HomeTile title) and the bottom sheet list.
         composeRule.onAllNodesWithText("Camera").assertCountEquals(2)
-        composeRule.onNodeWithText("Already on home").assertPresent()
+        composeRule.onNodeWithText("Placed").assertIsDisplayed()
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -187,18 +208,26 @@ class CaregiverQolSmokeTest {
         }
 
         // Select slot at absolute position 2 (Page 1, Slot 3) via its testTag.
-        // Clicking the "slot_select_2" button (not the static label text) triggers onSelect
-        // and sets selectedPosition = 2, which enables the "Place Here" button.
+        // Clicking the "slot_select_2" button triggers onSelect and opens the bottom sheet.
         composeRule.onNodeWithTag("slot_select_2").performScrollTo().performClick()
         composeRule.waitForIdle()
-        // Scroll the outer Column (verticalScroll) to bring the installed-apps card into view.
-        // "Installed Apps" lives directly inside the outer Column (not inside the LazyColumn),
-        // so its nearest scrollable ancestor IS the outer Column — this correctly scrolls the
-        // screen down rather than the inner LazyColumn, making "Place Here" visually on-screen.
-        composeRule.onNodeWithText("Installed Apps").performScrollTo()
-        composeRule.waitForIdle()
-        // "Place Here" is now visible on screen; selectedPosition == 2 so the button is enabled.
-        composeRule.onAllNodesWithText("Place Here")[0].assertIsEnabled().performClick()
+        
+        try {
+            // Wait up to 5 seconds for the bottom sheet to display "Place Here"
+            composeRule.waitUntil(5000) {
+                composeRule.onAllNodesWithText("Place Here").fetchSemanticsNodes().isNotEmpty()
+            }
+            
+            // "Place Here" is now visible inside the bottom sheet; selectedPosition == 2 so the button is enabled.
+            composeRule.onNodeWithText("Place Here").assertIsEnabled().performClick()
+        } catch (e: Throwable) {
+            try {
+                composeRule.onRoot(useUnmergedTree = true).printToLog("SEMANTICS")
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+            throw e
+        }
 
         assert(assignedPackage == "com.maps") { "Expected onAssignApp to receive com.maps, got $assignedPackage" }
         assert(assignedPosition == 2) { "Expected onAssignApp to receive position 2, got $assignedPosition" }

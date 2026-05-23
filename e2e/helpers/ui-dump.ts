@@ -9,8 +9,15 @@ export function dumpUi(serial: string, outputPath: string): string {
   let lastError: Error | null = null;
   for (let attempt = 0; attempt < 5; attempt += 1) {
     try {
-      runAdb(serial, ["shell", "uiautomator", "dump", "/sdcard/window_dump.xml"]);
+      runAdb(serial, ["shell", "rm", "-f", "/sdcard/window_dump.xml"], { allowFailure: true });
+      const dumpOutput = runAdb(serial, ["shell", "uiautomator", "dump", "/sdcard/window_dump.xml"]);
+      if (dumpOutput.includes("ERROR: null root node") || dumpOutput.includes("null root node")) {
+        throw new Error("uiautomator dump returned null root node");
+      }
       const xml = runAdb(serial, ["exec-out", "cat", "/sdcard/window_dump.xml"]);
+      if (!xml.trim().startsWith("<?xml")) {
+        throw new Error("uiautomator dump file is not valid XML");
+      }
       writeFileSync(outputPath, xml, "utf8");
       return xml;
     } catch (error) {
@@ -59,7 +66,9 @@ function shouldRetryUiDump(message: string): boolean {
     message.includes("FtCpuInfo") ||
     message.includes("user_cpu_freq") ||
     message.includes("Permission denied") ||
-    message.includes("EACCES")
+    message.includes("EACCES") ||
+    message.includes("null root node") ||
+    message.includes("not valid XML")
   );
 }
 

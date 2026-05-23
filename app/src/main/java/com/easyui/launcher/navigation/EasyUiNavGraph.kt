@@ -140,8 +140,11 @@ fun EasyUiNavGraph(
     }
     DisposableEffect(lifecycleOwner, appState.settings.easyUiLockEnabled) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && appState.settings.easyUiLockEnabled) {
-                easyUiLocked = true
+            if (event == Lifecycle.Event.ON_RESUME) {
+                guidedSetupViewModel.refreshLauncherStatus()
+                if (appState.settings.easyUiLockEnabled) {
+                    easyUiLocked = true
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)

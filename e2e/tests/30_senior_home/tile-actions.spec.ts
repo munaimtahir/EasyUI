@@ -6,7 +6,7 @@ import { tap } from "../../helpers/actions.js";
 import { assertDeviceConnected, unlockScreen } from "../../helpers/device.js";
 import { ensureOnboardingFinished } from "../../helpers/onboarding.js";
 import { dumpUi } from "../../helpers/ui-dump.js";
-import { xmlContains } from "../../helpers/selectors.js";
+import { findNodeCenterByText, xmlContains } from "../../helpers/selectors.js";
 import { withScenario } from "../../helpers/test-runner.js";
 import { sleep } from "../../helpers/waits.js";
 
@@ -23,7 +23,13 @@ test("B4 simple app access and visible tile actions", async ({}, testInfo) => {
         note: "The app list screen exists in code, but the docs and current feature flags still mark the senior-facing home entry as not wired in this build.",
       };
     }
-    tap(serial, 820, 1950);
+    const homeXml = dumpUi(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b4-home.xml`);
+    const allAppsCenter = findNodeCenterByText(homeXml, "All Apps");
+    if (allAppsCenter) {
+      tap(serial, allAppsCenter.x, allAppsCenter.y);
+    } else {
+      tap(serial, 820, 1950);
+    }
     await sleep(1200);
     const xml = dumpUi(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b4-app-list.xml`);
     return {

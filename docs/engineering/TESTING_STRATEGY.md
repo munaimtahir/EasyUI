@@ -256,7 +256,7 @@ fun welcomeScreen_displaysCorrectContent() {
 **Journey 1: First-Time Setup**
 1. Install app
 2. Launch app
-3. Complete Guided Setup (all 10 steps)
+3. Complete Guided Setup (all 12 steps)
 4. Verify home screen configured correctly
 5. Restart app → no re-prompt
 
@@ -270,7 +270,7 @@ fun welcomeScreen_displaysCorrectContent() {
 7. Verify torch on/off
 
 **Journey 3: Caregiver Configuration**
-1. Enter caregiver mode (PIN if set)
+1. Enter caregiver mode (PIN if set) - triggered via 5 rapid clock taps or status-bar long-press
 2. Navigate to settings
 3. Change readability preset
 4. Add hidden app
@@ -379,7 +379,7 @@ object LauncherSettingsFixtures {
     
     fun withGuidedSetupComplete() = default().copy(
         guidedSetupCompleted = true,
-        guidedSetupStep = 10
+        guidedSetupStep = 12
     )
 }
 ```

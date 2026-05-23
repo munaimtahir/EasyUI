@@ -6,11 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import com.easyui.launcher.assertPresent
 import com.easyui.core.domain.model.SkinConfig
 import com.easyui.core.ui.theme.EasyUiTheme
@@ -78,7 +81,8 @@ class CaregiverProtectionSmokeTest {
             }
         }
 
-        composeRule.onNodeWithText("Caregiver PIN").performScrollTo().performClick()
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Caregiver PIN"))
+        composeRule.onNodeWithText("Caregiver PIN").performClick()
         composeRule.onNodeWithTag("pin_entry_screen").assertPresent()
         composeRule.onNodeWithText("Enter Caregiver PIN").assertIsDisplayed()
     }

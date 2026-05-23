@@ -6,7 +6,7 @@ import { openCaregiverEntry } from "../../helpers/caregiver.js";
 import { assertDeviceConnected, unlockScreen } from "../../helpers/device.js";
 import { ensureOnboardingFinished } from "../../helpers/onboarding.js";
 import { dumpUi } from "../../helpers/ui-dump.js";
-import { xmlContains } from "../../helpers/selectors.js";
+import { findNodeCenterByText, xmlContains } from "../../helpers/selectors.js";
 import { withScenario } from "../../helpers/test-runner.js";
 import { sleep } from "../../helpers/waits.js";
 
@@ -21,11 +21,18 @@ test("B7 hidden apps and layout stability", async ({}, testInfo) => {
     }
     launchApp(serial);
     await sleep(1000);
-    const opened = await openCaregiverEntry(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b7-caregiver.xml`);
+    const caregiverXmlPath = `${process.env.EASYUI_RUN_DIR}/ui_dumps/b7-caregiver.xml`;
+    const opened = await openCaregiverEntry(serial, caregiverXmlPath);
     if (!opened) {
       return { status: "BLOCKED", note: "Caregiver entry could not be opened, so hidden-app verification is blocked." };
     }
-    tap(serial, 550, 1200);
+    const xmlBefore = dumpUi(serial, caregiverXmlPath);
+    const center = findNodeCenterByText(xmlBefore, "Hidden Apps");
+    if (center) {
+      tap(serial, center.x, center.y);
+    } else {
+      tap(serial, 550, 1200);
+    }
     await sleep(1200);
     const xml = dumpUi(serial, `${process.env.EASYUI_RUN_DIR}/ui_dumps/b7-hidden-apps.xml`);
     return {
