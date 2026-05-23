@@ -50,12 +50,20 @@ class CaregiverViewModel(
             container.homeLayoutRepository.observeTiles(),
             localState,
         ) { settings, hiddenPackages, apps, layoutTiles, local ->
+            val setupCompleteness = com.easyui.core.domain.rules.GuardianRules.calculateSetupCompleteness(
+                settings = settings,
+                isDefaultLauncher = container.defaultLauncherManager.isDefaultLauncher(),
+                hasRequiredPermissions = true, // Simplified
+                favoriteContactCount = layoutTiles.count { it.type == HomeTileType.CONTACT },
+                allowedAppCount = layoutTiles.count { it.type == HomeTileType.APP }
+            )
             local.copy(
                 settings = settings,
                 hiddenPackages = hiddenPackages,
                 installedApps = apps,
                 layoutTiles = layoutTiles,
                 allAppsVisible = settings.allAppsVisible,
+                setupCompleteness = setupCompleteness
             )
         }.stateIn(
             scope = viewModelScope,

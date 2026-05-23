@@ -10,6 +10,13 @@ sealed class Routes(val route: String) {
     data object EmergencyCall : Routes("emergency_call")
     data object HealthInfo : Routes("health_info")
     data object AppList : Routes("app_list")
+    data object Messages : Routes("messages")
+    data object Photos : Routes("photos")
+    data object Camera : Routes("camera")
+    data object SafeHandoff : Routes("safe_handoff/{action}/{packageName}/{activityName}") {
+        fun createRoute(action: String, packageName: String?, activityName: String?) =
+            "safe_handoff/$action/${packageName ?: "none"}/${activityName ?: "none"}"
+    }
     data object CaregiverTools : Routes("caregiver_tools")
     data object LayoutPages : Routes("layout_pages")
     data object AllowedApps : Routes("allowed_apps")
@@ -21,4 +28,9 @@ sealed class Routes(val route: String) {
     data object HealthInfoEditor : Routes("health_info_editor")
     data object BackupRestore : Routes("backup_restore")
     data object ManageHiddenApps : Routes("manage_hidden_apps")
+    data object GuardianSettings : Routes("guardian_settings")
+    data object LinkedDevices : Routes("linked_devices")
+    data object RemoteDeviceDetail : Routes("remote_device_detail/{deviceId}") {
+        fun createRoute(deviceId: String) = "remote_device_detail/$deviceId"
+    }
 }

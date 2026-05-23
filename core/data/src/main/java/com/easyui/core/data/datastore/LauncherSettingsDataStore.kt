@@ -75,6 +75,15 @@ class DataStoreLauncherSettingsRepository(
                 guidedSetupCompleted = preferences[Keys.GUIDED_SETUP_COMPLETED] ?: false,
                 emergencyMode = preferences[Keys.EMERGENCY_MODE] ?: "MENU",
                 allAppsVisible = preferences[Keys.ALL_APPS_VISIBLE] ?: true,
+                batteryLowCheckEnabled = preferences[Keys.BATTERY_LOW_CHECK_ENABLED] ?: true,
+                batteryLowThreshold = preferences[Keys.BATTERY_LOW_THRESHOLD] ?: 20,
+                batteryCriticalThreshold = preferences[Keys.BATTERY_CRITICAL_THRESHOLD] ?: 10,
+                internetCheckEnabled = preferences[Keys.INTERNET_CHECK_ENABLED] ?: true,
+                noInternetDelayMinutes = preferences[Keys.NO_INTERNET_DELAY_MINUTES] ?: 30,
+                defaultLauncherCheckEnabled = preferences[Keys.DEFAULT_LAUNCHER_CHECK_ENABLED] ?: true,
+                emergencyContactCheckEnabled = preferences[Keys.EMERGENCY_CONTACT_CHECK_ENABLED] ?: true,
+                layoutLockCheckEnabled = preferences[Keys.LAYOUT_LOCK_CHECK_ENABLED] ?: true,
+                permissionCheckEnabled = preferences[Keys.PERMISSION_CHECK_ENABLED] ?: true,
             )
         }
 
@@ -238,6 +247,60 @@ class DataStoreLauncherSettingsRepository(
         }
     }
 
+    override suspend fun updateBatteryLowCheckEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.BATTERY_LOW_CHECK_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun updateBatteryLowThreshold(threshold: Int) {
+        dataStore.edit { preferences ->
+            preferences[Keys.BATTERY_LOW_THRESHOLD] = threshold.coerceIn(5, 50)
+        }
+    }
+
+    override suspend fun updateBatteryCriticalThreshold(threshold: Int) {
+        dataStore.edit { preferences ->
+            preferences[Keys.BATTERY_CRITICAL_THRESHOLD] = threshold.coerceIn(2, 20)
+        }
+    }
+
+    override suspend fun updateInternetCheckEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.INTERNET_CHECK_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun updateNoInternetDelayMinutes(minutes: Int) {
+        dataStore.edit { preferences ->
+            preferences[Keys.NO_INTERNET_DELAY_MINUTES] = minutes.coerceIn(0, 1440)
+        }
+    }
+
+    override suspend fun updateDefaultLauncherCheckEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.DEFAULT_LAUNCHER_CHECK_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun updateEmergencyContactCheckEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.EMERGENCY_CONTACT_CHECK_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun updateLayoutLockCheckEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.LAYOUT_LOCK_CHECK_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun updatePermissionCheckEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.PERMISSION_CHECK_ENABLED] = enabled
+        }
+    }
+
     private fun defaultOptionalPermissions(): Set<String> = setOf(
         OptionalPermission.PHONE_DIALER.name,
         OptionalPermission.CONTACTS.name,
@@ -281,6 +344,15 @@ class DataStoreLauncherSettingsRepository(
         val GUIDED_SETUP_COMPLETED = booleanPreferencesKey("guided_setup_completed")
         val EMERGENCY_MODE = stringPreferencesKey("emergency_mode")
         val ALL_APPS_VISIBLE = booleanPreferencesKey("all_apps_visible")
+        val BATTERY_LOW_CHECK_ENABLED = booleanPreferencesKey("battery_low_check_enabled")
+        val BATTERY_LOW_THRESHOLD = intPreferencesKey("battery_low_threshold")
+        val BATTERY_CRITICAL_THRESHOLD = intPreferencesKey("battery_critical_threshold")
+        val INTERNET_CHECK_ENABLED = booleanPreferencesKey("internet_check_enabled")
+        val NO_INTERNET_DELAY_MINUTES = intPreferencesKey("no_internet_delay_minutes")
+        val DEFAULT_LAUNCHER_CHECK_ENABLED = booleanPreferencesKey("default_launcher_check_enabled")
+        val EMERGENCY_CONTACT_CHECK_ENABLED = booleanPreferencesKey("emergency_contact_check_enabled")
+        val LAYOUT_LOCK_CHECK_ENABLED = booleanPreferencesKey("layout_lock_check_enabled")
+        val PERMISSION_CHECK_ENABLED = booleanPreferencesKey("permission_check_enabled")
     }
 
     private fun encodeEmergencyNumbers(numbers: List<EmergencyNumber>): String {

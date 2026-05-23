@@ -6,6 +6,7 @@ enum class PrimaryHomeAppKind {
     MESSAGES,
     CONTACTS,
     PHOTOS,
+    CAMERA,
 }
 
 object PrimaryHomeAppRules {
@@ -25,6 +26,12 @@ object PrimaryHomeAppRules {
             "com.sec.android.gallery3d",
             "com.miui.gallery",
             "com.oneplus.gallery",
+        ),
+        PrimaryHomeAppKind.CAMERA to listOf(
+            "com.google.android.GoogleCamera",
+            "com.sec.android.app.camera",
+            "com.android.camera",
+            "com.android.camera2",
         ),
     )
 
@@ -46,6 +53,7 @@ object PrimaryHomeAppRules {
             PrimaryHomeAppKind.PHOTOS -> {
                 "photo" in normalized || "photos" in normalized || "gallery" in normalized || "pictures" in normalized
             }
+            PrimaryHomeAppKind.CAMERA -> "camera" in normalized
         }
     }
 }

@@ -32,4 +32,13 @@ interface LauncherSettingsRepository {
     suspend fun updateGuidedSetupCompleted(completed: Boolean)
     suspend fun updateEmergencyMode(mode: String)
     suspend fun updateAllAppsVisible(visible: Boolean)
+    suspend fun updateBatteryLowCheckEnabled(enabled: Boolean)
+    suspend fun updateBatteryLowThreshold(threshold: Int)
+    suspend fun updateBatteryCriticalThreshold(threshold: Int)
+    suspend fun updateInternetCheckEnabled(enabled: Boolean)
+    suspend fun updateNoInternetDelayMinutes(minutes: Int)
+    suspend fun updateDefaultLauncherCheckEnabled(enabled: Boolean)
+    suspend fun updateEmergencyContactCheckEnabled(enabled: Boolean)
+    suspend fun updateLayoutLockCheckEnabled(enabled: Boolean)
+    suspend fun updatePermissionCheckEnabled(enabled: Boolean)
 }

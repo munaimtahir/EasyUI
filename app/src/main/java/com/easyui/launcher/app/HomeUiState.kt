@@ -17,4 +17,10 @@ data class HomeUiState(
     val isBatteryLow: Boolean = false,
     val showBatteryInfo: Boolean = false,
     val allAppsVisible: Boolean = true,
+    val installedApps: List<com.easyui.core.domain.model.InstalledApp> = emptyList(),
+    val healthState: com.easyui.core.domain.model.PhoneHealthState = com.easyui.core.domain.model.PhoneHealthState(
+        checks = emptyList(),
+        overallStatus = com.easyui.core.domain.model.GuardianCheckStatus.OK,
+        primaryMessage = "Phone is ready"
+    )
 )

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.DashboardCustomize
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.Phonelink
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Widgets
@@ -82,9 +83,13 @@ internal fun CaregiverDashboardScreen(
     onOpenHealthInfo: () -> Unit,
     onOpenBackupRestore: () -> Unit,
     onOpenHiddenApps: () -> Unit,
+    onOpenGuardianSettings: () -> Unit,
+    onOpenLinkedDevices: () -> Unit,
+    onShareMyStatus: () -> Unit,
     onFinishSetup: () -> Unit,
     onResetLauncher: () -> Unit,
     onRedoGuidedSetup: () -> Unit,
+    setupCompleteness: com.easyui.core.domain.model.SetupCompleteness = com.easyui.core.domain.model.SetupCompleteness(emptyList(), 0f),
     modifier: Modifier = Modifier,
 ) {
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
@@ -112,6 +117,31 @@ internal fun CaregiverDashboardScreen(
             ) {
                 item {
                     Text("Caregiver Settings", fontSize = 34.sp, fontWeight = FontWeight.Bold, color = CaregiverDashboardTokens.textPrimary)
+                }
+
+                item {
+                    DashboardSurface(elevated = true) {
+                        SectionHeader(title = "Setup Status", subtitle = "Verify if EasyUI is correctly configured.")
+                        setupCompleteness.items.forEach { item ->
+                            DashboardStatusRow(
+                                label = item.label,
+                                value = if (item.isComplete) "Complete" else if (item.isRequired) "Action needed" else "Optional",
+                                chipLabel = if (item.isComplete) "Done" else "Fix",
+                                accent = if (item.isComplete) Color(0xFF2D6A4F) else if (item.isRequired) CaregiverDashboardTokens.accentDanger else CaregiverDashboardTokens.accentWarning,
+                                onClick = if (!item.isComplete) {
+                                    when (item.id) {
+                                        "default_launcher" -> onRedoGuidedSetup
+                                        "caregiver_pin" -> onSetupPin
+                                        "layout_locked" -> onToggleLayoutLock
+                                        "emergency_contact" -> onOpenEmergencySettings
+                                        "favorite_contacts" -> onManageFavoriteContacts
+                                        "allowed_apps" -> onOpenAllowedApps
+                                        else -> null
+                                    }
+                                } else null
+                            )
+                        }
+                    }
                 }
                 
                 item {
@@ -223,6 +253,30 @@ internal fun CaregiverDashboardScreen(
                             accent = CaregiverDashboardTokens.textSecondary,
                             onClick = onOpenBackupRestore
                         )
+                        DashboardActionRow(
+                            title = "Guardian Checks",
+                            subtitle = "Local monitoring & phone health",
+                            detail = "Manage",
+                            icon = Icons.Filled.HealthAndSafety,
+                            accent = Color(0xFF2D6A4F),
+                            onClick = onOpenGuardianSettings
+                        )
+                        DashboardActionRow(
+                            title = "Linked Phones",
+                            subtitle = "View status of other EasyUI devices",
+                            detail = "Open",
+                            icon = Icons.Filled.Phonelink,
+                            accent = CaregiverDashboardTokens.accentInfo,
+                            onClick = onOpenLinkedDevices
+                        )
+                        DashboardActionRow(
+                            title = "Share My Status",
+                            subtitle = "Send health link to another caregiver",
+                            detail = "Share",
+                            icon = Icons.AutoMirrored.Filled.ArrowForward,
+                            accent = CaregiverDashboardTokens.accentPrimary,
+                            onClick = onShareMyStatus
+                        )
                     }
                 }
                 
@@ -238,7 +292,7 @@ internal fun CaregiverDashboardScreen(
 }
 
 @Composable
-private fun DashboardSurface(
+fun DashboardSurface(
     modifier: Modifier = Modifier,
     elevated: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
@@ -267,10 +321,11 @@ private fun DashboardSurface(
 }
 
 @Composable
-private fun SectionHeader(
+fun SectionHeader(
     title: String,
-    subtitle: String,
+    subtitle: String? = null,
 ) {
+
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = title,
@@ -278,11 +333,13 @@ private fun SectionHeader(
             fontSize = CaregiverDashboardTokens.sectionTitleSize,
             fontWeight = FontWeight.SemiBold,
         )
-        Text(
-            text = subtitle,
-            color = CaregiverDashboardTokens.textSecondary,
-            fontSize = CaregiverDashboardTokens.bodySize,
-        )
+        if (subtitle != null) {
+            Text(
+                text = subtitle,
+                color = CaregiverDashboardTokens.textSecondary,
+                fontSize = CaregiverDashboardTokens.bodySize,
+            )
+        }
     }
 }
 
@@ -292,9 +349,12 @@ private fun DashboardStatusRow(
     value: String,
     chipLabel: String,
     accent: Color,
+    onClick: (() -> Unit)? = null,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -423,7 +483,7 @@ private fun DashboardActionRow(
 }
 
 @Composable
-private fun StatusChip(
+fun StatusChip(
     label: String,
     accent: Color,
 ) {
@@ -549,6 +609,9 @@ private fun CaregiverDashboardPreview() {
         onOpenHealthInfo = {},
         onOpenBackupRestore = {},
         onOpenHiddenApps = {},
+        onOpenGuardianSettings = {},
+        onOpenLinkedDevices = {},
+        onShareMyStatus = {},
         onFinishSetup = {},
         onResetLauncher = {},
         onRedoGuidedSetup = {},

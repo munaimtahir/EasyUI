@@ -36,4 +36,13 @@ data class LauncherSettings(
     val guidedSetupCompleted: Boolean = false,
     val emergencyMode: String = "MENU",
     val allAppsVisible: Boolean = true,
+    val batteryLowCheckEnabled: Boolean = true,
+    val batteryLowThreshold: Int = 20,
+    val batteryCriticalThreshold: Int = 10,
+    val internetCheckEnabled: Boolean = true,
+    val noInternetDelayMinutes: Int = 30,
+    val defaultLauncherCheckEnabled: Boolean = true,
+    val emergencyContactCheckEnabled: Boolean = true,
+    val layoutLockCheckEnabled: Boolean = true,
+    val permissionCheckEnabled: Boolean = true,
 )

@@ -23,6 +23,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -76,6 +80,12 @@ fun HomeScreen(
     onOpenAppList: () -> Unit,
     onStatusBarLongPress: () -> Unit,
     onClockTapped: () -> Unit,
+    onAlertCaregiver: () -> Unit = {},
+    healthState: com.easyui.core.domain.model.PhoneHealthState = com.easyui.core.domain.model.PhoneHealthState(
+        checks = emptyList(),
+        overallStatus = com.easyui.core.domain.model.GuardianCheckStatus.OK,
+        primaryMessage = "Phone is ready"
+    ),
     batteryPercentage: Int? = null,
     isCharging: Boolean = false,
     isBatteryLow: Boolean = false,
@@ -124,6 +134,18 @@ fun HomeScreen(
                     onLongPressConfirmed = onStatusBarLongPress,
                     onClockTapped = onClockTapped,
                 )
+                PhoneHealthCard(
+                    healthState = healthState,
+                    skinConfig = skinConfig,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (healthState.shouldPromptAlert) {
+                    SeniorAlertBanner(
+                        message = healthState.primaryMessage,
+                        onAlertClick = onAlertCaregiver,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
@@ -312,6 +334,111 @@ private fun HomeHeaderCard(
                     color = if (isBatteryLow && !isCharging) SeniorHomeTokens.tileEmergency else SeniorHomeTokens.textSecondaryOnHeader,
                     style = MaterialTheme.typography.labelMedium
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PhoneHealthCard(
+    healthState: com.easyui.core.domain.model.PhoneHealthState,
+    skinConfig: SkinConfig,
+    modifier: Modifier = Modifier,
+) {
+    val backgroundColor = when (healthState.overallStatus) {
+        com.easyui.core.domain.model.GuardianCheckStatus.CRITICAL -> SeniorHomeTokens.tileEmergency.copy(alpha = 0.2f)
+        com.easyui.core.domain.model.GuardianCheckStatus.WARNING -> Color.Yellow.copy(alpha = 0.15f)
+        com.easyui.core.domain.model.GuardianCheckStatus.OK -> SeniorHomeTokens.headerBackground
+    }
+    
+    val textColor = when (healthState.overallStatus) {
+        com.easyui.core.domain.model.GuardianCheckStatus.CRITICAL -> SeniorHomeTokens.tileEmergency
+        com.easyui.core.domain.model.GuardianCheckStatus.WARNING -> Color.Yellow
+        com.easyui.core.domain.model.GuardianCheckStatus.OK -> SeniorHomeTokens.textSecondaryOnHeader
+    }
+
+    val icon = when (healthState.overallStatus) {
+        com.easyui.core.domain.model.GuardianCheckStatus.CRITICAL -> "⚠️"
+        com.easyui.core.domain.model.GuardianCheckStatus.WARNING -> "ℹ️"
+        com.easyui.core.domain.model.GuardianCheckStatus.OK -> "✅"
+    }
+
+    Card(
+        modifier = modifier.testTag("home_health_card"),
+        shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = icon,
+                modifier = Modifier.padding(end = 8.dp),
+                fontSize = 18.sp
+            )
+            Text(
+                text = healthState.primaryMessage,
+                color = if (healthState.overallStatus == com.easyui.core.domain.model.GuardianCheckStatus.OK) SeniorHomeTokens.textPrimary else textColor,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun SeniorAlertBanner(
+    message: String,
+    onAlertClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.testTag("senior_alert_banner"),
+        shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
+        colors = CardDefaults.cardColors(
+            containerColor = SeniorHomeTokens.tileEmergency,
+            contentColor = Color.White
+        ),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Icon(
+                Icons.Filled.Warning,
+                contentDescription = null,
+                modifier = Modifier.size(32.dp)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Phone Issue",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = message,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Button(
+                onClick = onAlertClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = SeniorHomeTokens.tileEmergency
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Alert Caregiver", fontWeight = FontWeight.Bold)
             }
         }
     }

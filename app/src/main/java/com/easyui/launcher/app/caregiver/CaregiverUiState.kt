@@ -18,4 +18,8 @@ data class CaregiverUiState(
     val sessionLastActivityTimeMs: Long = 0,
     val sessionTimeoutWarningShown: Boolean = false,
     val allAppsVisible: Boolean = true,
+    val setupCompleteness: com.easyui.core.domain.model.SetupCompleteness = com.easyui.core.domain.model.SetupCompleteness(
+        items = emptyList(),
+        score = 0f
+    )
 )

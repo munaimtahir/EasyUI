@@ -48,10 +48,17 @@ import com.easyui.feature.caregiver.HiddenAppsScreen
 import com.easyui.feature.caregiver.LayoutPagesScreen
 import com.easyui.feature.caregiver.PinEntryScreen
 import com.easyui.feature.caregiver.ResetLauncherScreen
+import com.easyui.feature.caregiver.GuardianSettingsScreen
+import com.easyui.feature.caregiver.LinkedDevicesScreen
+import com.easyui.feature.caregiver.RemoteDeviceDetailScreen
 import com.easyui.feature.home.HealthInfoScreen
 import com.easyui.feature.home.EmergencyCallScreen
 import com.easyui.feature.home.HomeScreen
 import com.easyui.feature.home.PhoneContactsScreen
+import com.easyui.feature.home.SeniorMessagesScreen
+import com.easyui.feature.home.SeniorPhotosScreen
+import com.easyui.feature.home.SeniorCameraScreen
+import com.easyui.feature.home.SafeHandoffScreen
 import com.easyui.feature.onboarding.CaregiverHelpScreen
 import com.easyui.feature.onboarding.DefaultLauncherGuidanceScreen
 import com.easyui.feature.onboarding.IntroScreen
@@ -74,9 +81,12 @@ import com.easyui.launcher.app.GuidedSetupViewModel
 import com.easyui.launcher.app.HomeViewModel
 import com.easyui.launcher.app.caregiver.BackupViewModel
 import com.easyui.launcher.app.caregiver.CaregiverViewModel
+import com.easyui.launcher.app.caregiver.RemoteLinkViewModel
 import com.easyui.launcher.di.AppContainer
 import com.easyui.launcher.ui.AppViewModelFactory
 import com.easyui.core.domain.model.ProtectedAction
+import com.easyui.core.domain.rules.PrimaryHomeAppKind
+import com.easyui.core.domain.rules.PrimaryHomeAppRules
 import com.easyui.core.domain.model.PinCredential
 import com.easyui.core.domain.security.PinHasher
 import com.easyui.core.ui.theme.EasyUiSpacing
@@ -94,22 +104,38 @@ import kotlinx.coroutines.launch
 fun EasyUiNavGraph(
     container: AppContainer,
     navController: NavHostController = rememberNavController(),
+    initialIntent: Intent? = null,
 ) {
     val factory = remember(container) { AppViewModelFactory(container) }
     val appViewModel: AppViewModel = viewModel(factory = factory)
     val homeViewModel: HomeViewModel = viewModel(factory = factory)
     val appListViewModel: AppListViewModel = viewModel(factory = factory)
     val caregiverViewModel: CaregiverViewModel = viewModel(factory = factory)
+    val remoteLinkViewModel: RemoteLinkViewModel = viewModel(factory = factory)
     val backupViewModel: BackupViewModel = viewModel(factory = factory)
     val guidedSetupViewModel: GuidedSetupViewModel = viewModel(factory = factory)
     val appState by appViewModel.state.collectAsState()
     val homeState by homeViewModel.state.collectAsState()
     val appListState by appListViewModel.state.collectAsState()
     val caregiverState by caregiverViewModel.state.collectAsState()
+    val remoteLinkDevices by remoteLinkViewModel.linkedDevices.collectAsState()
     val guidedSetupState by guidedSetupViewModel.state.collectAsState()
     val uiScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    LaunchedEffect(remoteLinkViewModel) {
+        remoteLinkViewModel.messages.collect { snackbarHostState.showSnackbar(it) }
+    }
+
+    LaunchedEffect(initialIntent) {
+        val data = initialIntent?.dataString
+        if (data != null && data.startsWith("easyui://status")) {
+            remoteLinkViewModel.importStatusFromDeepLink(data)
+            navController.navigate(Routes.LinkedDevices.route)
+        }
+    }
     var launcherStatusVersion by remember { mutableIntStateOf(0) }
     var lastInteractionAt by remember { mutableLongStateOf(android.os.SystemClock.elapsedRealtime()) }
     var easyUiLocked by remember { mutableStateOf(false) }
@@ -318,6 +344,9 @@ fun EasyUiNavGraph(
                                 tileId = tileId,
                                 onOpenPhoneContacts = { navController.navigate(Routes.PhoneContacts.route) },
                                 onOpenEmergency = { navController.navigate(Routes.EmergencyCall.route) },
+                                onOpenMessages = { navController.navigate(Routes.Messages.route) },
+                                onOpenPhotos = { navController.navigate(Routes.Photos.route) },
+                                onOpenCamera = { navController.navigate(Routes.Camera.route) },
                             )
                         },
                         onOpenAppList = { navController.navigate(Routes.AppList.route) },
@@ -327,6 +356,20 @@ fun EasyUiNavGraph(
                         onClockTapped = {
                             homeViewModel.onClockTappedCaregiverAccess(openCaregiverAccess)
                         },
+                        onAlertCaregiver = {
+                            val packet = com.easyui.core.domain.model.RemoteStatusPacket(
+                                deviceName = android.os.Build.MODEL,
+                                healthState = homeState.healthState,
+                                setupCompleteness = caregiverState.setupCompleteness
+                            )
+                            val link = remoteLinkViewModel.generateShareLink(packet)
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "EasyUI Remote Status for ${packet.deviceName}:\n$link")
+                            }
+                            context.startActivity(Intent.createChooser(shareIntent, "Share Status Link"))
+                        },
+                        healthState = homeState.healthState
                     )
                 }
                 composable(Routes.PhoneContacts.route) {
@@ -340,7 +383,72 @@ fun EasyUiNavGraph(
                                 }
                             }
                         },
+                        onOpenDialer = {
+                            uiScope.launch {
+                                val launched = container.emergencyActionHandler.launchDialer(null)
+                                if (!launched) {
+                                    snackbarHostState.showSnackbar("Dialer is not available on this device.")
+                                }
+                            }
+                        },
                         onBackHome = { navController.popBackStack(Routes.Home.route, false) },
+                    )
+                }
+                composable(Routes.Messages.route) {
+                    val app = PrimaryHomeAppRules.resolve(PrimaryHomeAppKind.MESSAGES, homeState.installedApps)
+                    SeniorMessagesScreen(
+                        onOpenMessages = {
+                            navController.navigate(Routes.SafeHandoff.createRoute("Messages", app?.packageName, app?.activityName))
+                        },
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) }
+                    )
+                }
+                composable(Routes.Photos.route) {
+                    val app = PrimaryHomeAppRules.resolve(PrimaryHomeAppKind.PHOTOS, homeState.installedApps)
+                    SeniorPhotosScreen(
+                        onOpenPhotos = {
+                            navController.navigate(Routes.SafeHandoff.createRoute("Photos", app?.packageName, app?.activityName))
+                        },
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) }
+                    )
+                }
+                composable(Routes.Camera.route) {
+                    val app = PrimaryHomeAppRules.resolve(PrimaryHomeAppKind.CAMERA, homeState.installedApps)
+                    SeniorCameraScreen(
+                        onOpenCamera = {
+                            navController.navigate(Routes.SafeHandoff.createRoute("Camera", app?.packageName, app?.activityName))
+                        },
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) }
+                    )
+                }
+                composable(
+                    route = Routes.SafeHandoff.route,
+                    arguments = listOf(
+                        androidx.navigation.navArgument("action") { type = androidx.navigation.NavType.StringType },
+                        androidx.navigation.navArgument("packageName") { type = androidx.navigation.NavType.StringType },
+                        androidx.navigation.navArgument("activityName") { type = androidx.navigation.NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val action = backStackEntry.arguments?.getString("action") ?: ""
+                    val packageName = backStackEntry.arguments?.getString("packageName")?.takeIf { it != "none" }
+                    val activityName = backStackEntry.arguments?.getString("activityName")?.takeIf { it != "none" }
+
+                    SafeHandoffScreen(
+                        actionTitle = action,
+                        onContinue = {
+                            uiScope.launch {
+                                if (packageName != null && activityName != null) {
+                                    val launched = container.appLauncher.launch(packageName, activityName)
+                                    if (!launched) {
+                                        snackbarHostState.showSnackbar("$action is not available on this device.")
+                                    }
+                                } else {
+                                    snackbarHostState.showSnackbar("$action is not available on this device.")
+                                }
+                                navController.popBackStack()
+                            }
+                        },
+                        onCancel = { navController.popBackStack() }
                     )
                 }
                 composable(Routes.EmergencyCall.route) {
@@ -431,6 +539,25 @@ fun EasyUiNavGraph(
                             onOpenHiddenApps = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_HIDDEN_APPS))
                             },
+                            onOpenGuardianSettings = {
+                                navController.navigate(Routes.GuardianSettings.route)
+                            },
+                            onOpenLinkedDevices = {
+                                navController.navigate(Routes.LinkedDevices.route)
+                            },
+                            onShareMyStatus = {
+                                val packet = com.easyui.core.domain.model.RemoteStatusPacket(
+                                    deviceName = android.os.Build.MODEL,
+                                    healthState = homeState.healthState,
+                                    setupCompleteness = caregiverState.setupCompleteness
+                                )
+                                val link = remoteLinkViewModel.generateShareLink(packet)
+                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, "EasyUI Remote Status for ${packet.deviceName}:\n$link")
+                                }
+                                context.startActivity(Intent.createChooser(shareIntent, "Share Status Link"))
+                            },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()
                                 navController.navigate(Routes.Home.route) {
@@ -443,7 +570,76 @@ fun EasyUiNavGraph(
                             onRedoGuidedSetup = {
                                 guidedSetupViewModel.setStep(1)
                                 navController.navigate(Routes.GuidedSetup.route)
-                            }
+                            },
+                            setupCompleteness = caregiverState.setupCompleteness
+                        )
+                    }
+                }
+                composable(Routes.LinkedDevices.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
+                        navController = navController,
+                    ) {
+                        LinkedDevicesScreen(
+                            devices = remoteLinkDevices,
+                            onViewDevice = { device ->
+                                navController.navigate(Routes.RemoteDeviceDetail.createRoute(device.id))
+                            },
+                            onRemoveDevice = { remoteLinkViewModel.removeDevice(it) },
+                            onDone = { navController.popBackStack() }
+                        )
+                    }
+                }
+                composable(
+                    route = Routes.RemoteDeviceDetail.route,
+                    arguments = listOf(androidx.navigation.navArgument("deviceId") { type = androidx.navigation.NavType.StringType })
+                ) { backStackEntry ->
+                    val deviceId = backStackEntry.arguments?.getString("deviceId")
+                    val device = remoteLinkDevices.find { it.id == deviceId }
+                    if (device != null) {
+                        RemoteDeviceDetailScreen(
+                            device = device,
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                }
+                composable(Routes.GuardianSettings.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
+                        navController = navController,
+                    ) {
+                        GuardianSettingsScreen(
+                            settings = caregiverState.settings,
+                            onUpdateBatteryLowCheck = {
+                                uiScope.launch { container.launcherSettingsRepository.updateBatteryLowCheckEnabled(it) }
+                            },
+                            onUpdateBatteryLowThreshold = {
+                                uiScope.launch { container.launcherSettingsRepository.updateBatteryLowThreshold(it) }
+                            },
+                            onUpdateBatteryCriticalThreshold = {
+                                uiScope.launch { container.launcherSettingsRepository.updateBatteryCriticalThreshold(it) }
+                            },
+                            onUpdateInternetCheck = {
+                                uiScope.launch { container.launcherSettingsRepository.updateInternetCheckEnabled(it) }
+                            },
+                            onUpdateNoInternetDelay = {
+                                uiScope.launch { container.launcherSettingsRepository.updateNoInternetDelayMinutes(it) }
+                            },
+                            onUpdateDefaultLauncherCheck = {
+                                uiScope.launch { container.launcherSettingsRepository.updateDefaultLauncherCheckEnabled(it) }
+                            },
+                            onUpdateEmergencyContactCheck = {
+                                uiScope.launch { container.launcherSettingsRepository.updateEmergencyContactCheckEnabled(it) }
+                            },
+                            onUpdateLayoutLockCheck = {
+                                uiScope.launch { container.launcherSettingsRepository.updateLayoutLockCheckEnabled(it) }
+                            },
+                            onUpdatePermissionCheck = {
+                                uiScope.launch { container.launcherSettingsRepository.updatePermissionCheckEnabled(it) }
+                            },
+                            onDone = { navController.popBackStack() }
                         )
                     }
                 }

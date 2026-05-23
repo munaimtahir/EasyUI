@@ -93,9 +93,13 @@ fun CaregiverToolsScreen(
     onOpenHealthInfo: () -> Unit,
     onOpenBackupRestore: () -> Unit,
     onOpenHiddenApps: () -> Unit,
+    onOpenGuardianSettings: () -> Unit,
+    onOpenLinkedDevices: () -> Unit,
+    onShareMyStatus: () -> Unit,
     onFinishSetup: () -> Unit,
     onResetLauncher: () -> Unit,
     onRedoGuidedSetup: () -> Unit,
+    setupCompleteness: com.easyui.core.domain.model.SetupCompleteness,
     modifier: Modifier = Modifier,
 ) {
     CaregiverDashboardScreen(
@@ -126,9 +130,13 @@ fun CaregiverToolsScreen(
         onOpenHealthInfo = onOpenHealthInfo,
         onOpenBackupRestore = onOpenBackupRestore,
         onOpenHiddenApps = onOpenHiddenApps,
+        onOpenGuardianSettings = onOpenGuardianSettings,
+        onOpenLinkedDevices = onOpenLinkedDevices,
+        onShareMyStatus = onShareMyStatus,
         onFinishSetup = onFinishSetup,
         onResetLauncher = onResetLauncher,
         onRedoGuidedSetup = onRedoGuidedSetup,
+        setupCompleteness = setupCompleteness,
         modifier = modifier,
     )
 }

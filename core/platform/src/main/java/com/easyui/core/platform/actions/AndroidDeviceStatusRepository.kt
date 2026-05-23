@@ -36,6 +36,9 @@ class AndroidDeviceStatusRepository(
     @SuppressLint("NewApi", "MissingPermission")
     private fun readStatus(): DeviceStatus {
         val networkCapabilities = readNetworkCapabilities()
+        val isInternetAvailable = networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
+                networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true
+        
         val wifiLabel = when {
             networkCapabilities == null -> "Wi-Fi unknown"
             networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "Wi-Fi connected"
@@ -73,6 +76,7 @@ class AndroidDeviceStatusRepository(
             signalLabel = signalLabel,
             simLabel = simLabel,
             wifiLabel = wifiLabel,
+            isInternetAvailable = isInternetAvailable,
         )
     }
 

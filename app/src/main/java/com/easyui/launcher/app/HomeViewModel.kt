@@ -49,6 +49,8 @@ class HomeViewModel(
         val settings: LauncherSettings,
         val now: LocalDateTime,
         val battery: com.easyui.core.domain.model.BatteryStatus,
+        val deviceStatus: com.easyui.core.domain.model.DeviceStatus,
+        val isDefaultLauncher: Boolean,
     )
 
     val state: StateFlow<HomeUiState> =
@@ -58,15 +60,36 @@ class HomeViewModel(
             settingsState,
             timeFlow(),
             container.batteryStatusRepository.observeBatteryStatus(),
-        ) { tiles, installedApps, settings, now, battery ->
+            container.deviceStatusRepository.observeDeviceStatus(),
+        ) { args: Array<Any?> ->
             BaseHomeState(
-                tiles = tiles,
-                installedApps = installedApps,
-                settings = settings,
-                now = now,
-                battery = battery,
+                tiles = args[0] as List<HomeTile>,
+                installedApps = args[1] as List<InstalledApp>,
+                settings = args[2] as LauncherSettings,
+                now = args[3] as LocalDateTime,
+                battery = args[4] as com.easyui.core.domain.model.BatteryStatus,
+                deviceStatus = args[5] as com.easyui.core.domain.model.DeviceStatus,
+                isDefaultLauncher = container.defaultLauncherManager.isDefaultLauncher()
             )
         }.combine(localState) { base, _ ->
+            val setupCompleteness = com.easyui.core.domain.rules.GuardianRules.calculateSetupCompleteness(
+                settings = base.settings,
+                isDefaultLauncher = base.isDefaultLauncher,
+                hasRequiredPermissions = true, // Simplified for now, can be improved
+                favoriteContactCount = base.tiles.count { it.type == HomeTileType.CONTACT },
+                allowedAppCount = base.tiles.count { it.type == HomeTileType.APP }
+            )
+            
+            val healthState = com.easyui.core.domain.rules.GuardianRules.calculatePhoneHealthState(
+                settings = base.settings,
+                batteryPercentage = base.battery.percentage,
+                isCharging = base.battery.isCharging,
+                isInternetAvailable = base.deviceStatus.isInternetAvailable,
+                isDefaultLauncher = base.isDefaultLauncher,
+                hasRequiredPermissions = true,
+                setupCompleteness = setupCompleteness
+            )
+
             HomeUiState(
                 timeText = base.now.format(
                     if (base.settings.use24HourClock) {
@@ -87,6 +110,8 @@ class HomeViewModel(
                 isBatteryLow = base.battery.isLow || (base.battery.percentage ?: 100) <= 20,
                 showBatteryInfo = base.settings.showBatteryInfo,
                 allAppsVisible = base.settings.allAppsVisible,
+                installedApps = base.installedApps,
+                healthState = healthState
             )
         }.stateIn(
             scope = viewModelScope,
@@ -98,27 +123,25 @@ class HomeViewModel(
         tileId: String,
         onOpenPhoneContacts: () -> Unit,
         onOpenEmergency: () -> Unit,
+        onOpenMessages: () -> Unit,
+        onOpenPhotos: () -> Unit,
+        onOpenCamera: () -> Unit,
     ) {
         val tile = state.value.tiles.firstOrNull { it.id == tileId } ?: return
         viewModelScope.launch {
             when (tile.kind) {
-                TileDisplayKind.PHONE -> launchDialer()
+                TileDisplayKind.PHONE -> onOpenPhoneContacts()
                 TileDisplayKind.CONTACTS -> onOpenPhoneContacts()
-                TileDisplayKind.MESSAGES,
-                TileDisplayKind.PHOTOS,
-                TileDisplayKind.APP,
-                -> launchResolvedApp(tile)
+                TileDisplayKind.MESSAGES -> onOpenMessages()
+                TileDisplayKind.PHOTOS -> onOpenPhotos()
+                TileDisplayKind.APP -> launchResolvedApp(tile)
                 TileDisplayKind.FAVORITE_CONTACT -> {
                     val number = tile.phoneNumber
                     if (number.isNullOrBlank() || !container.emergencyActionHandler.callPhone(number)) {
                         messages.emit("This contact is not available right now.")
                     }
                 }
-                TileDisplayKind.CAMERA -> {
-                    if (!container.cameraActionHandler.launchCamera()) {
-                        messages.emit("Camera is not available on this device.")
-                    }
-                }
+                TileDisplayKind.CAMERA -> onOpenCamera()
                 TileDisplayKind.EMERGENCY -> {
                     if (tile.id == "emergency-sos") {
                         val number = settingsState.value.emergencyPhoneNumber

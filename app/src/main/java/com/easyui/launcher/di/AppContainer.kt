@@ -7,6 +7,8 @@ import com.easyui.core.data.database.EasyUiDatabase
 import com.easyui.core.data.datastore.DataStoreLauncherSettingsRepository
 import com.easyui.core.data.repository.DataStoreHiddenAppRepository
 import com.easyui.core.data.repository.RoomHomeLayoutRepository
+import com.easyui.core.data.repository.DataStoreRemoteLinkRepository
+import com.easyui.core.domain.repository.RemoteLinkRepository
 import com.easyui.core.domain.model.HomeTile
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.repository.AppCatalogRepository
@@ -44,6 +46,7 @@ class AppContainer(
     val launcherSettingsRepository: LauncherSettingsRepository =
         DataStoreLauncherSettingsRepository(appContext)
     val hiddenAppRepository: HiddenAppRepository = DataStoreHiddenAppRepository(appContext)
+    val remoteLinkRepository: RemoteLinkRepository = DataStoreRemoteLinkRepository(appContext)
     val flashlightController: FlashlightController = AndroidFlashlightController(appContext)
     val emergencyActionHandler: EmergencyActionHandler = AndroidEmergencyActionHandler(appContext)
     val cameraActionHandler: CameraActionHandler = AndroidCameraActionHandler(appContext)

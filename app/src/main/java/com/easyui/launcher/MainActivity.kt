@@ -1,6 +1,7 @@
 package com.easyui.launcher
 
 import android.os.Bundle
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.OnBackPressedCallback
@@ -22,12 +23,17 @@ class MainActivity : ComponentActivity() {
         })
         
         setContent {
-            EasyUiApp((application as EasyUiApplication))
+            EasyUiApp((application as EasyUiApplication), intent)
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 }
 
 @Composable
-private fun EasyUiApp(application: EasyUiApplication) {
-    EasyUiNavGraph(container = application.container)
+private fun EasyUiApp(application: EasyUiApplication, intent: Intent?) {
+    EasyUiNavGraph(container = application.container, initialIntent = intent)
 }
