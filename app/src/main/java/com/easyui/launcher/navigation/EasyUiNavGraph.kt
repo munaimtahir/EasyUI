@@ -384,33 +384,39 @@ fun EasyUiNavGraph(
                         AssistedRecoveryScreen(
                             guidance = guidance,
                             onExecuteAction = {
-                                when (guidance.type) {
-                                    RecoveryActionType.OPEN_WIFI_SETTINGS -> {
-                                        context.startActivity(Intent(android.provider.Settings.ACTION_WIFI_SETTINGS))
-                                    }
-                                    RecoveryActionType.OPEN_BATTERY_SETTINGS -> {
-                                        context.startActivity(Intent(Intent.ACTION_POWER_USAGE_SUMMARY))
-                                    }
-                                    RecoveryActionType.SET_DEFAULT_LAUNCHER -> {
-                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                            context.startActivity(Intent(android.provider.Settings.ACTION_HOME_SETTINGS))
-                                        } else {
-                                            context.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
+                                try {
+                                    when (guidance.type) {
+                                        RecoveryActionType.OPEN_WIFI_SETTINGS -> {
+                                            context.startActivity(Intent(android.provider.Settings.ACTION_WIFI_SETTINGS))
                                         }
-                                    }
-                                    RecoveryActionType.OPEN_EMERGENCY_SETTINGS -> {
-                                        navController.navigate(Routes.EmergencySettings.route)
-                                    }
-                                    RecoveryActionType.OPEN_CAREGIVER_TOOLS -> {
-                                        navController.navigate(Routes.CaregiverTools.route)
-                                    }
-                                    RecoveryActionType.REQUEST_PERMISSIONS -> {
-                                        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                            data = Uri.fromParts("package", context.packageName, null)
+                                        RecoveryActionType.OPEN_BATTERY_SETTINGS -> {
+                                            context.startActivity(Intent(Intent.ACTION_POWER_USAGE_SUMMARY))
                                         }
-                                        context.startActivity(intent)
+                                        RecoveryActionType.SET_DEFAULT_LAUNCHER -> {
+                                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                                context.startActivity(Intent(android.provider.Settings.ACTION_HOME_SETTINGS))
+                                            } else {
+                                                context.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
+                                            }
+                                        }
+                                        RecoveryActionType.OPEN_EMERGENCY_SETTINGS -> {
+                                            navController.navigate(Routes.EmergencySettings.route)
+                                        }
+                                        RecoveryActionType.OPEN_CAREGIVER_TOOLS -> {
+                                            navController.navigate(Routes.CaregiverTools.route)
+                                        }
+                                        RecoveryActionType.REQUEST_PERMISSIONS -> {
+                                            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                                data = Uri.fromParts("package", context.packageName, null)
+                                            }
+                                            context.startActivity(intent)
+                                        }
+                                        RecoveryActionType.NONE -> {}
                                     }
-                                    RecoveryActionType.NONE -> {}
+                                } catch (e: Exception) {
+                                    uiScope.launch {
+                                        snackbarHostState.showSnackbar("Could not open system settings. Please find them manually.")
+                                    }
                                 }
                             },
                             onAlertCaregiver = { alertCaregiver() },
