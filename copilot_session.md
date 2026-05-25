@@ -1,48 +1,46 @@
-# Copilot Session - Alpha Readiness Sprint (Options 1, 2, 3)
+Repo: munaimtahir/easyui (/home/munaim/srv/apps/easyui)
+Branch: UNKNOWN (update after git status)
+Sprint: Settings Stabilization Sprint (2026-05-25)
 
-- **Sprint Name:** Multi-Phase Alpha Readiness Sprint
-- **Branch:** main
-- **Device:** vivo V2109 (34081500040008N), Android 13
+Bug List (User-Reported)
+1. Apps added on additional pages are not visible on the home screen.
+2. Layout lock shows a lock icon on every tile.
+3. Clock 5-tap does not open caregiver flow when PIN not set.
+4. Theme changes revert after a moment.
+5. Onboarding and caregiver settings are inconsistent.
+6. Layout options in caregiver settings do not work.
+7. Font options in onboarding do not work.
+8. Contact/emergency/direct-call shortcuts do not render.
 
-## Sprint Strategy
-1. **Senior App List & Launcher Hardening (Completed)**
-2. **Limited Alpha Preparation (Completed)**
-3. **Multi-OEM Validation (Completed)**
+Execution Checklist
+- [ ] Phase 1: Repository discovery and truth map
+- [ ] Phase 2: Canonical settings contract
+- [ ] Phase 3: Implementation fixes
+- [ ] Phase 4: Tests added/updated
+- [ ] Phase 5: Commands run
+- [ ] Phase 6: Manual/ADB verification guide + evidence
+- [ ] Phase 7: Final report
 
-## Execution Checklist
-- [x] Phase 1: App List Performance & Filtering Review
-- [x] Phase 2: Senior Search UX Improvement
-- [x] Phase 3: Boot & Persistence Hardening
-- [x] Phase 4: Caregiver Hidden Apps Management Refinement
-- [x] Phase 5: String Audit & Senior UI Polish
-- [x] Phase 6: Multi-OEM Intent Paths & Resilience
-- [x] Phase 7: Verification & Reporting
+Commands To Run
+- ./gradlew clean assembleDebug
+- ./gradlew testDebugUnitTest
+- ./gradlew lintDebug
+- ./gradlew connectedDebugAndroidTest (if device/emulator available)
 
-## Files Changed
-- `core/domain/.../rules/GuardianRules.kt` (String refinement)
-- `core/domain/.../rules/AppCatalogRules.kt` (Optimization)
-- `core/platform/.../launcher/AndroidDefaultLauncherManager.kt` (OEM Intents)
-- `feature/apps/.../AppListScreen.kt` (Search UI, Cards)
-- `feature/caregiver/.../HiddenAppsScreen.kt` (Search UI)
-- `feature/home/.../HomeScreen.kt` (String refinement)
-- `feature/home/.../AssistedRecoveryScreen.kt` (String refinement)
-- `feature/home/.../SeniorSynchronizedScreens.kt` (Handoff instruction improvement)
-- `app/src/main/AndroidManifest.xml` (BootReceiver)
-- `app/src/main/java/com/easyui/launcher/BootReceiver.kt` (New)
-- `app/src/main/java/com/easyui/launcher/app/AppListViewModel.kt` (Optimization)
-- `docs/delivery/CAREGIVER_ALPHA_GUIDE.md` (New)
-- `docs/delivery/MULTI_OEM_VALIDATION_CHECKLIST.md` (New)
+Files Inspected
+- (pending)
 
-## Commands Run
-- `./gradlew assembleDebug testDebugUnitTest`
-- `adb devices`
-- `adb install -r ...`
-- `adb shell cmd package set-home-activity ...`
-- `adb shell uiautomator dump`
+Files Changed
+- copilot_session.md
 
-## Final Verdict
-- **GO**: The app is significantly more resilient, the UI is senior-proofed, and documentation is ready for the first alpha testers.
+Tests Added/Updated
+- (pending)
 
-## Recommended Next Sprint
-**Limited Alpha Distribution & Feedback Loop**
-Focus on managing the first real-world deployments and fixing reported edge cases.
+Verification Results
+- (pending)
+
+Remaining Issues
+- (pending)
+
+Final Verdict
+- NO-GO (pending evidence)
