@@ -2,6 +2,8 @@ package com.easyui.launcher.caregiver
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -43,8 +45,12 @@ class CaregiverSupportSmokeTest {
 
         composeRule.onNodeWithTag("backup_restore_screen").assertPresent()
         composeRule.onNodeWithText("Backup and Restore").assertPresent()
-        composeRule.onNodeWithTag("export_button").assertPresent()
-        composeRule.onNodeWithTag("import_button").assertPresent()
+        
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasTestTag("export_button"))
+        composeRule.onNodeWithTag("export_button").assertIsDisplayed()
+        
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasTestTag("import_button"))
+        composeRule.onNodeWithTag("import_button").assertIsDisplayed()
     }
 
     @Test

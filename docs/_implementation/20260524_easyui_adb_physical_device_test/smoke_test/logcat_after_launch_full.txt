@@ -1,0 +1,31 @@
+--------- beginning of main
+05-24 02:40:33.154 E/Finsky  (21773): [123] [Counters] attempted to use a non-positive increment for: 4752
+05-24 02:40:33.232 E/Finsky  (21773): [123] [Counters] attempted to use a non-positive increment for: 4753
+05-24 02:40:33.293 E/Finsky  (21773): [123] [Counters] attempted to use a non-positive increment for: 4752
+05-24 02:40:33.293 E/Finsky  (21773): [123] [Counters] attempted to use a non-positive increment for: 4753
+05-24 02:40:33.367 E/Finsky  (21773): [122] [Counters] attempted to use a non-positive increment for: 4752
+05-24 02:40:33.374 E/Finsky  (21773): [122] [Counters] attempted to use a non-positive increment for: 4753
+05-24 02:40:33.981 E/VivoConfigStore(15870): key:vivo.software.multilandscape isCached is false and normal value is false
+05-24 02:40:33.983 E/VivoConfigStore(15870): key:vivo.software.splitrecents isCached is false and normal value is false
+05-24 02:40:33.985 E/VivoConfigStore(15870): key:vivo.software.splitratio isCached is false and normal value is false
+05-24 02:40:33.987 E/VivoConfigStore(15870): key:vivo.software.multiwindowresidentbar isCached is false and normal value is false
+05-24 02:40:33.989 E/VivoConfigStore(15870): key:vivo.software.hovermode isCached is false and normal value is false
+05-24 02:40:35.412 E/VivoConfigStore(15870): key:vivo.software.multiwindow isCached is false and normal value is true
+05-24 02:40:35.413 E/VivoConfigStore(15870): key:vivo.software.freeform isCached is false and normal value is true
+05-24 02:40:35.469 E/VivoConfigStore(15870): key:vivo.software.nightmode isCached is false and normal value is true
+05-24 02:40:35.477 E/native  (12874): E0000 00:00:1779572435.477492   13684 model-utils.cc:41] Not a valid Model flatbuffer
+05-24 02:40:35.478 E/native  (12874): E0000 00:00:1779572435.478118   13684 model-provider-from-fb.cc:105] Unable to initialize ModelProviderFromFlatbuffer
+05-24 02:40:36.086 E/FBI     (15870): Can't load library: dlopen failed: library "libmagtsync.so" not found
+05-24 02:40:36.133 E/OpenGLRenderer(15870): Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+05-24 02:40:36.167 E/ion     (15870): ioctl c0044901 failed with code -1: Invalid argument
+05-24 02:40:40.177 E/SoLoader(16021): Waiting on SoSource BackupSoSource
+05-24 02:40:40.180 E/SoLoader(16021): Checking /data/app missing libraries.
+05-24 02:40:40.183 E/SoLoader(16021): No libraries missing from /data/app/~~afRuEiIuUgVT6G9WgLkXhw==/com.facebook.services-FD9lSFUW5WxrGhTSNCcukw==/lib/arm64
+05-24 02:40:40.183 E/SoLoader(16021): Checking /data/data missing libraries.
+05-24 02:40:40.183 E/SoLoader(16021): No libraries missing from unpacking so paths while recovering /data/data failure
+05-24 02:40:40.183 E/SoLoader(16021): Waiting on SoSource BackupSoSource
+05-24 02:40:40.562 E/SlowAppComponent(23613): 0ms: FbnsInitBroadcastReceiver instantiating…
+05-24 02:40:40.562 E/SlowAppComponent(23613): Main thread was blocked for 51ms in the background starting with FbnsInitBroadcastReceiver
+05-24 02:40:44.982 E/ion     (16144): ioctl c0044901 failed with code -1: Invalid argument
+05-24 02:40:51.143 E/ion     (16218): ioctl c0044901 failed with code -1: Invalid argument
+05-24 02:40:58.148 E/ion     (16301): ioctl c0044901 failed with code -1: Invalid argument

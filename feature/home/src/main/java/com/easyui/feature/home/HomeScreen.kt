@@ -244,7 +244,7 @@ fun HomeScreen(
                         shape = RoundedCornerShape(SeniorHomeTokens.cornerRadius),
                     ) {
                         Text(
-                            text = "All Apps",
+                            text = "More Apps",
                             color = SeniorHomeTokens.textPrimary,
                             fontSize = SeniorHomeTokens.labelTextSize(skinConfig),
                             fontWeight = FontWeight.SemiBold,
@@ -426,7 +426,7 @@ private fun SeniorAlertBanner(
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Phone Issue",
+                    text = "Problem Found",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -444,7 +444,7 @@ private fun SeniorAlertBanner(
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Alert Caregiver", fontWeight = FontWeight.Bold)
+                Text("Get Help", fontWeight = FontWeight.Bold)
             }
         }
     }

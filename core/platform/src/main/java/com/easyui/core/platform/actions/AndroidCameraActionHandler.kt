@@ -6,6 +6,8 @@ import android.provider.MediaStore
 import com.easyui.core.domain.ActionAvailabilityResolver
 import com.easyui.core.domain.CameraActionHandler
 
+import com.easyui.core.platform.util.IntentHardener
+
 class AndroidCameraActionHandler(
     private val context: Context,
 ) : CameraActionHandler {
@@ -13,12 +15,7 @@ class AndroidCameraActionHandler(
         ActionAvailabilityResolver.camera(cameraIntent().resolveActivity(context.packageManager) != null)
 
     override suspend fun launchCamera(): Boolean {
-        val intent = cameraIntent()
-        if (intent.resolveActivity(context.packageManager) == null) {
-            return false
-        }
-        context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        return true
+        return IntentHardener.attemptLaunch(context, cameraIntent())
     }
 
     private fun cameraIntent(): Intent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)

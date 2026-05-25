@@ -8,14 +8,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -30,6 +37,15 @@ fun HiddenAppsScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var query by remember { mutableStateOf("") }
+    val filteredApps = remember(installedApps, query) {
+        if (query.isBlank()) installedApps
+        else installedApps.filter { 
+            it.label.contains(query, ignoreCase = true) || 
+            it.packageName.contains(query, ignoreCase = true) 
+        }
+    }
+
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -39,16 +55,21 @@ fun HiddenAppsScreen(
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
             Text("Hidden Apps", style = MaterialTheme.typography.headlineLarge)
-            Text(
-                "Apps toggled off here will not appear in EasyUI app surfaces that expose app inventory. They are still installed on the device.",
-                style = MaterialTheme.typography.bodyLarge,
+            
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                modifier = Modifier.fillMaxWidth().testTag("hidden_apps_search"),
+                label = { Text("Search apps to hide") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true
             )
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
             ) {
-                items(installedApps, key = { it.packageName }) { app ->
+                items(filteredApps, key = { it.packageName }) { app ->
                     val isHidden = app.packageName in hiddenPackages
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Row(

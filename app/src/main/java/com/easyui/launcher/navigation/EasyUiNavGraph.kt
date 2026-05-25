@@ -61,6 +61,7 @@ import com.easyui.feature.home.SeniorMessagesScreen
 import com.easyui.feature.home.SeniorPhotosScreen
 import com.easyui.feature.home.SeniorCameraScreen
 import com.easyui.feature.home.SafeHandoffScreen
+import com.easyui.feature.home.SafeFallbackScreen
 import com.easyui.feature.onboarding.CaregiverHelpScreen
 import com.easyui.feature.onboarding.DefaultLauncherGuidanceScreen
 import com.easyui.feature.onboarding.IntroScreen
@@ -386,17 +387,19 @@ fun EasyUiNavGraph(
                             onExecuteAction = {
                                 try {
                                     when (guidance.type) {
+                                        RecoveryActionType.SET_DEFAULT_LAUNCHER -> {
+                                            container.defaultLauncherManager.triggerLauncherChooser()
+                                        }
                                         RecoveryActionType.OPEN_WIFI_SETTINGS -> {
-                                            context.startActivity(Intent(android.provider.Settings.ACTION_WIFI_SETTINGS))
+                                            val intent = Intent(android.provider.Settings.ACTION_WIFI_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            if (!com.easyui.core.platform.util.IntentHardener.attemptLaunch(context, intent)) {
+                                                navController.navigate(Routes.SafeFallback.createRoute("Wi-Fi Settings"))
+                                            }
                                         }
                                         RecoveryActionType.OPEN_BATTERY_SETTINGS -> {
-                                            context.startActivity(Intent(Intent.ACTION_POWER_USAGE_SUMMARY))
-                                        }
-                                        RecoveryActionType.SET_DEFAULT_LAUNCHER -> {
-                                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                                context.startActivity(Intent(android.provider.Settings.ACTION_HOME_SETTINGS))
-                                            } else {
-                                                context.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
+                                            val intent = Intent(Intent.ACTION_POWER_USAGE_SUMMARY).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            if (!com.easyui.core.platform.util.IntentHardener.attemptLaunch(context, intent)) {
+                                                navController.navigate(Routes.SafeFallback.createRoute("Battery Settings"))
                                             }
                                         }
                                         RecoveryActionType.OPEN_EMERGENCY_SETTINGS -> {
@@ -408,8 +411,11 @@ fun EasyUiNavGraph(
                                         RecoveryActionType.REQUEST_PERMISSIONS -> {
                                             val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                                 data = Uri.fromParts("package", context.packageName, null)
+                                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                             }
-                                            context.startActivity(intent)
+                                            if (!com.easyui.core.platform.util.IntentHardener.attemptLaunch(context, intent)) {
+                                                navController.navigate(Routes.SafeFallback.createRoute("Permission Settings"))
+                                            }
                                         }
                                         RecoveryActionType.NONE -> {}
                                     }
@@ -433,7 +439,7 @@ fun EasyUiNavGraph(
                             uiScope.launch {
                                 val launched = container.emergencyActionHandler.callPhone(number)
                                 if (!launched) {
-                                    snackbarHostState.showSnackbar("Calling is not available on this device.")
+                                    navController.navigate(Routes.SafeFallback.createRoute("Calling"))
                                 }
                             }
                         },
@@ -441,7 +447,7 @@ fun EasyUiNavGraph(
                             uiScope.launch {
                                 val launched = container.emergencyActionHandler.launchDialer(null)
                                 if (!launched) {
-                                    snackbarHostState.showSnackbar("Dialer is not available on this device.")
+                                    navController.navigate(Routes.SafeFallback.createRoute("Phone Dialer"))
                                 }
                             }
                         },
@@ -494,15 +500,33 @@ fun EasyUiNavGraph(
                                 if (packageName != null && activityName != null) {
                                     val launched = container.appLauncher.launch(packageName, activityName)
                                     if (!launched) {
-                                        snackbarHostState.showSnackbar("$action is not available on this device.")
+                                        navController.navigate(Routes.SafeFallback.createRoute(action)) {
+                                            popUpTo(Routes.SafeHandoff.route) { inclusive = true }
+                                        }
+                                    } else {
+                                        navController.popBackStack()
                                     }
                                 } else {
-                                    snackbarHostState.showSnackbar("$action is not available on this device.")
+                                    navController.navigate(Routes.SafeFallback.createRoute(action)) {
+                                        popUpTo(Routes.SafeHandoff.route) { inclusive = true }
+                                    }
                                 }
-                                navController.popBackStack()
                             }
                         },
                         onCancel = { navController.popBackStack() }
+                    )
+                }
+                composable(
+                    route = Routes.SafeFallback.route,
+                    arguments = listOf(
+                        androidx.navigation.navArgument("featureName") { type = androidx.navigation.NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val featureName = backStackEntry.arguments?.getString("featureName") ?: "Feature"
+                    SafeFallbackScreen(
+                        featureName = featureName,
+                        onBackHome = { navController.popBackStack(Routes.Home.route, false) },
+                        onAlertCaregiver = { alertCaregiver() }
                     )
                 }
                 composable(Routes.EmergencyCall.route) {
@@ -512,7 +536,7 @@ fun EasyUiNavGraph(
                             uiScope.launch {
                                 val launched = homeViewModel.triggerDirectEmergencyCall(number)
                                 if (!launched) {
-                                    snackbarHostState.showSnackbar("Emergency calling is not available on this device.")
+                                    navController.navigate(Routes.SafeFallback.createRoute("Emergency Call"))
                                 }
                             }
                         },

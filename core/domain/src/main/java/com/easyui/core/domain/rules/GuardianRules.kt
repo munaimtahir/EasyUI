@@ -80,13 +80,13 @@ object GuardianRules {
                 GuardianCheckResult(
                     type = GuardianCheckType.NOT_DEFAULT_LAUNCHER,
                     status = GuardianCheckStatus.WARNING,
-                    message = "EasyUI not set as home",
+                    message = "HomeScreen needs fixing",
                     detail = "Phone might go back to normal Android layout.",
                     recoveryGuidance = RecoveryGuidance(
                         type = RecoveryActionType.SET_DEFAULT_LAUNCHER,
-                        label = "EasyUI Not Primary",
+                        label = "HomeScreen Problem",
                         description = "EasyUI is not set as your main home screen. This can make the phone harder to use.",
-                        actionButtonLabel = "Set as Main Home"
+                        actionButtonLabel = "Fix HomeScreen"
                     )
                 )
             )
@@ -98,13 +98,13 @@ object GuardianRules {
                 GuardianCheckResult(
                     type = GuardianCheckType.NO_INTERNET,
                     status = GuardianCheckStatus.WARNING,
-                    message = "Internet is off",
+                    message = "Connection is off",
                     detail = "Senior might not receive messages.",
                     recoveryGuidance = RecoveryGuidance(
                         type = RecoveryActionType.OPEN_WIFI_SETTINGS,
-                        label = "No Internet Connection",
+                        label = "Internet is off",
                         description = "Your phone is not connected to the internet. You might not receive messages or calls.",
-                        actionButtonLabel = "Check Internet"
+                        actionButtonLabel = "Fix Internet"
                     )
                 )
             )
@@ -116,11 +116,11 @@ object GuardianRules {
                 GuardianCheckResult(
                     type = GuardianCheckType.SETUP_INCOMPLETE,
                     status = GuardianCheckStatus.WARNING,
-                    message = "Ask caregiver to fix setup",
+                    message = "Tell caregiver to finish setup",
                     detail = "Some features are not configured yet.",
                     recoveryGuidance = RecoveryGuidance(
                         type = RecoveryActionType.OPEN_CAREGIVER_TOOLS,
-                        label = "Setup Incomplete",
+                        label = "Setup Needs Finishing",
                         description = "Some features of your phone are not fully set up yet. A caregiver can fix this.",
                         actionButtonLabel = "Open Setup Status"
                     )
@@ -137,10 +137,10 @@ object GuardianRules {
         val primaryMessage = when {
             checks.any { it.type == GuardianCheckType.BATTERY_CRITICAL } -> "Please charge phone"
             checks.any { it.type == GuardianCheckType.EMERGENCY_CONTACT_MISSING } -> "Emergency contact missing"
-            checks.any { it.type == GuardianCheckType.NOT_DEFAULT_LAUNCHER } -> "EasyUI not set as home"
-            checks.any { it.type == GuardianCheckType.NO_INTERNET } -> "Internet is off"
+            checks.any { it.type == GuardianCheckType.NOT_DEFAULT_LAUNCHER } -> "HomeScreen needs fixing"
+            checks.any { it.type == GuardianCheckType.NO_INTERNET } -> "Connection is off"
             checks.any { it.type == GuardianCheckType.BATTERY_LOW } -> "Battery low"
-            checks.any { it.type == GuardianCheckType.SETUP_INCOMPLETE } -> "Ask caregiver to fix setup"
+            checks.any { it.type == GuardianCheckType.SETUP_INCOMPLETE } -> "Tell caregiver to finish setup"
             else -> "Phone is ready"
         }
 

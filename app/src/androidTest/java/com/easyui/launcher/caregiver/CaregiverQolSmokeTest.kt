@@ -69,9 +69,13 @@ class CaregiverQolSmokeTest {
                     onOpenHealthInfo = {},
                     onOpenBackupRestore = {},
                     onOpenHiddenApps = {},
+                    onOpenGuardianSettings = {},
+                    onOpenLinkedDevices = {},
+                    onShareMyStatus = {},
                     onFinishSetup = {},
                     onResetLauncher = {},
                     onRedoGuidedSetup = {},
+                    setupCompleteness = com.easyui.core.domain.model.SetupCompleteness(emptyList(), 0f),
                 )
             }
         }

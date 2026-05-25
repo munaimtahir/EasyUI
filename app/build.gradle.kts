@@ -10,23 +10,24 @@ android {
     compileSdk = 35
 
     val localSigningProperties = Properties().apply {
-        val signingFile = rootProject.file("keystore.properties")
+        val signingFile = rootProject.file("release_keys/keystore.properties")
         if (signingFile.exists()) {
             signingFile.inputStream().use(::load)
         }
     }
-    fun readSigningValue(name: String): String? =
+    fun readSigningValue(name: String, fallbackName: String): String? =
         System.getenv(name)
             ?: (project.findProperty(name) as String?)
             ?: localSigningProperties.getProperty(name)
+            ?: localSigningProperties.getProperty(fallbackName)
 
-    val releaseKeystorePath: String? = readSigningValue("EASYUI_KEYSTORE_PATH")
+    val releaseKeystorePath: String? = readSigningValue("EASYUI_KEYSTORE_PATH", "storeFile")
     val releaseKeystoreFile = releaseKeystorePath
         ?.takeIf { it.isNotBlank() }
         ?.let { rootProject.file(it) }
-    val releaseStorePassword: String? = readSigningValue("EASYUI_KEYSTORE_PASSWORD")
-    val releaseKeyAlias: String? = readSigningValue("EASYUI_KEY_ALIAS")
-    val releaseKeyPassword: String? = readSigningValue("EASYUI_KEY_PASSWORD")
+    val releaseStorePassword: String? = readSigningValue("EASYUI_KEYSTORE_PASSWORD", "storePassword")
+    val releaseKeyAlias: String? = readSigningValue("EASYUI_KEY_ALIAS", "keyAlias")
+    val releaseKeyPassword: String? = readSigningValue("EASYUI_KEY_PASSWORD", "keyPassword")
     val hasReleaseSigning = releaseKeystoreFile?.exists() == true &&
         !releaseStorePassword.isNullOrBlank() &&
         !releaseKeyAlias.isNullOrBlank() &&
@@ -37,7 +38,7 @@ android {
         minSdk = 26
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "0.1.0-alpha01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

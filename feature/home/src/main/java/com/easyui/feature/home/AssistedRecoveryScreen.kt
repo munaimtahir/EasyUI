@@ -59,7 +59,7 @@ fun AssistedRecoveryScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Help & Support",
+                    text = "Phone Help",
                     style = MaterialTheme.typography.headlineMedium,
                     color = SeniorHomeTokens.textPrimary,
                     modifier = Modifier.padding(top = 16.dp)
@@ -122,7 +122,7 @@ fun AssistedRecoveryScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = SeniorHomeTokens.tileEmergency)
                 ) {
                     Text(
-                        text = "Alert Caregiver",
+                        text = "Tell Caregiver",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp)

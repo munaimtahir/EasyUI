@@ -1,5 +1,6 @@
 package com.easyui.launcher.di
 
+import android.content.ComponentName
 import android.content.Context
 import com.easyui.core.data.repository.LocalBackupRepository
 import com.easyui.core.domain.repository.BackupRepository
@@ -53,7 +54,10 @@ class AppContainer(
     val batteryStatusRepository: BatteryStatusRepository = AndroidBatteryStatusRepository(appContext)
     val deviceStatusRepository: DeviceStatusRepository = AndroidDeviceStatusRepository(appContext)
     val appLauncher: AppLauncher = AndroidAppLauncher(appContext)
-    val defaultLauncherManager: DefaultLauncherManager = AndroidDefaultLauncherManager(appContext)
+    val defaultLauncherManager: DefaultLauncherManager = AndroidDefaultLauncherManager(
+        context = appContext,
+        fakeLauncherComponent = ComponentName(appContext, "com.easyui.launcher.FakeLauncherActivity")
+    )
     val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     val backupRepository: BackupRepository = LocalBackupRepository(
         homeLayoutRepository = homeLayoutRepository,

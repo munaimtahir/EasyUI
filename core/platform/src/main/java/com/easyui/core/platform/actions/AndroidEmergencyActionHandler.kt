@@ -11,6 +11,8 @@ import com.easyui.core.domain.ActionAvailabilityResolver
 import com.easyui.core.domain.EmergencyActionHandler
 import com.easyui.core.domain.LauncherActionState
 
+import com.easyui.core.platform.util.IntentHardener
+
 class AndroidEmergencyActionHandler(
     private val context: Context,
 ) : EmergencyActionHandler {
@@ -25,11 +27,7 @@ class AndroidEmergencyActionHandler(
     }
 
     override suspend fun launchDialer(phoneNumber: String?): Boolean {
-        val dialIntent = dialIntent(phoneNumber)
-        val activity = dialIntent.resolveActivity(context.packageManager) ?: return false
-        dialIntent.setClassName(activity.packageName, activity.className)
-        context.startActivity(dialIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        return true
+        return IntentHardener.attemptLaunch(context, dialIntent(phoneNumber))
     }
 
     override suspend fun sendSms(phoneNumber: String, message: String): Boolean {
@@ -44,14 +42,12 @@ class AndroidEmergencyActionHandler(
 
     override suspend fun callPhone(phoneNumber: String): Boolean {
         val callIntent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phoneNumber")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val canResolve = callIntent.resolveActivity(context.packageManager) != null
-        if (!canResolve) return false
+        
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            return runCatching {
-                context.startActivity(callIntent)
-                true
-            }.getOrDefault(false)
+            if (IntentHardener.attemptLaunch(context, callIntent)) return true
         }
+        
+        // Fallback to dialer
         return launchDialer(phoneNumber)
     }
 

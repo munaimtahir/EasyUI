@@ -222,7 +222,7 @@ class GuidedSetupViewModel(
     }
 
     fun openLauncherSettings() {
-        container.defaultLauncherManager.openDefaultLauncherSettings()
+        container.defaultLauncherManager.triggerLauncherChooser()
         // Refresh after a delay to catch the change when returning
         viewModelScope.launch {
             kotlinx.coroutines.delay(1000)

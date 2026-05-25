@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import com.easyui.core.domain.AppLauncher
 
+import com.easyui.core.platform.util.IntentHardener
+
 class AndroidAppLauncher(
     private val context: Context,
 ) : AppLauncher {
@@ -13,8 +15,6 @@ class AndroidAppLauncher(
             setClassName(packageName, activityName)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        if (launchIntent.resolveActivity(context.packageManager) == null) return false
-        context.startActivity(launchIntent)
-        return true
+        return IntentHardener.attemptLaunch(context, launchIntent)
     }
 }

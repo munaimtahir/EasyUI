@@ -153,13 +153,14 @@ fun SafeHandoffScreen(
         ) {
             Text(
                 text = "Opening $actionTitle",
-                style = MaterialTheme.typography.headlineMedium,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             
             Text(
-                text = "Press the Back button or Home button at the bottom to return to EasyUI when you are finished.",
-                style = MaterialTheme.typography.bodyLarge,
+                text = "Press the Home button at the bottom to go back when you are finished.",
+                fontSize = 22.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 32.dp)
             )
@@ -168,14 +169,14 @@ fun SafeHandoffScreen(
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Continue", fontSize = 22.sp, modifier = Modifier.padding(vertical = 12.dp))
+                Text("Continue", fontSize = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 12.dp))
             }
 
             OutlinedButton(
                 onClick = onCancel,
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
             ) {
-                Text("Stay in EasyUI")
+                Text("Stay here", fontSize = 22.sp, modifier = Modifier.padding(vertical = 8.dp))
             }
         }
     }

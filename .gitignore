@@ -106,3 +106,4 @@ fiz.sh
 *.7z
 *.rar
 .gradle/
+release_keys/

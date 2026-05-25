@@ -9,6 +9,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedButton
@@ -17,6 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.ui.components.SectionHeader
 import com.easyui.core.ui.theme.EasyUiSpacing
@@ -48,8 +56,17 @@ fun AppListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("app_search_field"),
-                label = { Text("Search apps") },
+                label = { Text("Search apps", fontSize = 18.sp) },
                 singleLine = true,
+                textStyle = MaterialTheme.typography.titleLarge,
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = {
+                    if (query.isNotEmpty()) {
+                        IconButton(onClick = { onQueryChange("") }) {
+                            Icon(Icons.Default.Close, contentDescription = "Clear search")
+                        }
+                    }
+                }
             )
             if (apps.isEmpty() && emptyTitle != null && emptyBody != null) {
                 Column(
@@ -64,17 +81,20 @@ fun AppListScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
+                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
                 ) {
                     items(apps, key = { it.packageName }) { app ->
-                        Column(
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable { onAppClick(app) }
-                                .padding(vertical = EasyUiSpacing.sm)
                                 .testTag("app_item_${app.packageName}"),
                         ) {
-                            Text(app.label.ifBlank { "Unnamed app" }, style = MaterialTheme.typography.titleLarge)
+                            Text(
+                                text = app.label.ifBlank { "Unnamed app" },
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(EasyUiSpacing.md)
+                            )
                         }
                     }
                 }

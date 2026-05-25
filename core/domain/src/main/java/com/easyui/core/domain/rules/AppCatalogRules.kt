@@ -11,9 +11,9 @@ object AppCatalogRules {
         )
 
     fun filterByQuery(apps: List<InstalledApp>, query: String): List<InstalledApp> {
-        if (query.isBlank()) return sortAlphabetically(apps)
+        if (query.isBlank()) return apps
         val normalizedQuery = query.trim().lowercase(Locale.getDefault())
-        return sortAlphabetically(apps).filter { app ->
+        return apps.filter { app ->
             app.label.lowercase(Locale.getDefault()).contains(normalizedQuery) ||
                 app.packageName.lowercase(Locale.getDefault()).contains(normalizedQuery)
         }

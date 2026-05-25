@@ -332,7 +332,7 @@ class GuidedSetupViewModelTest {
         viewModel.openLauncherSettings()
         testDispatcher.scheduler.advanceUntilIdle()
         
-        verify { mockLauncherManager.openDefaultLauncherSettings() }
+        verify { mockLauncherManager.triggerLauncherChooser() }
     }
 
     @Test

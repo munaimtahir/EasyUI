@@ -1,0 +1,3 @@
+Installing APK: app/build/outputs/apk/debug/app-debug.apk
+Performing Streamed Install
+Success

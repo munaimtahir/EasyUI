@@ -1,0 +1,8 @@
+Launching component: com.easyui.launcher.debug/com.easyui.launcher.MainActivity
+Starting: Intent { cmp=com.easyui.launcher.debug/com.easyui.launcher.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.easyui.launcher.debug/com.easyui.launcher.MainActivity
+TotalTime: 3006
+WaitTime: 3040
+Complete

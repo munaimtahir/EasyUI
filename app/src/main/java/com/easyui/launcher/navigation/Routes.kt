@@ -18,6 +18,9 @@ sealed class Routes(val route: String) {
         fun createRoute(action: String, packageName: String?, activityName: String?) =
             "safe_handoff/$action/${packageName ?: "none"}/${activityName ?: "none"}"
     }
+    data object SafeFallback : Routes("safe_fallback/{featureName}") {
+        fun createRoute(featureName: String) = "safe_fallback/$featureName"
+    }
     data object CaregiverTools : Routes("caregiver_tools")
     data object LayoutPages : Routes("layout_pages")
     data object AllowedApps : Routes("allowed_apps")

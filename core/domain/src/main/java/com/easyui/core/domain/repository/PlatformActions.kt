@@ -29,6 +29,7 @@ interface AppLauncher {
 interface DefaultLauncherManager {
     fun isDefaultLauncher(): Boolean
     fun openDefaultLauncherSettings()
+    fun triggerLauncherChooser()
 }
 
 interface BatteryStatusRepository {

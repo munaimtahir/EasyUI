@@ -71,7 +71,7 @@ class GuardianRulesTest {
             setupCompleteness = fullSetup
         )
         assertEquals(GuardianCheckStatus.WARNING, state.overallStatus)
-        assertEquals("Internet is off", state.primaryMessage)
+        assertEquals("Connection is off", state.primaryMessage)
     }
 
     @Test
@@ -101,7 +101,7 @@ class GuardianRulesTest {
             setupCompleteness = incompleteSetup
         )
         assertEquals(GuardianCheckStatus.WARNING, state.overallStatus)
-        assertEquals("Ask caregiver to fix setup", state.primaryMessage)
+        assertEquals("Tell caregiver to finish setup", state.primaryMessage)
     }
 
     @Test
