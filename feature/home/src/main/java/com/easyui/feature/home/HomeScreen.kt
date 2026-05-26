@@ -125,6 +125,7 @@ fun HomeScreen(
                     ),
                 verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.sectionGap),
             ) {
+                // Header and cards take up space, pager fills remaining
                 HomeHeaderCard(
                     timeText = timeText,
                     dateText = dateText,
@@ -136,22 +137,32 @@ fun HomeScreen(
                     onLongPressConfirmed = onStatusBarLongPress,
                     onClockTapped = onClockTapped,
                 )
-                PhoneHealthCard(
-                    healthState = healthState,
-                    skinConfig = skinConfig,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(enabled = healthState.overallStatus != com.easyui.core.domain.model.GuardianCheckStatus.OK) { 
-                            onOpenRecovery() 
-                        }
-                )
-                if (healthState.shouldPromptAlert) {
-                    SeniorAlertBanner(
-                        message = healthState.primaryMessage,
-                        onAlertClick = onAlertCaregiver,
-                        modifier = Modifier.fillMaxWidth()
+                
+                // Wrap cards in a container that allows collapsing/resizing
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(SeniorHomeTokens.sectionGap),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    PhoneHealthCard(
+                        healthState = healthState,
+                        skinConfig = skinConfig,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = healthState.overallStatus != com.easyui.core.domain.model.GuardianCheckStatus.OK) { 
+                                onOpenRecovery() 
+                            }
                     )
+                    if (healthState.shouldPromptAlert) {
+                        SeniorAlertBanner(
+                            message = healthState.primaryMessage,
+                            onAlertClick = onAlertCaregiver,
+                            skinConfig = skinConfig,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
+                
+                // Pager takes available weight
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
@@ -385,12 +396,12 @@ private fun PhoneHealthCard(
             Text(
                 text = icon,
                 modifier = Modifier.padding(end = 8.dp),
-                fontSize = 18.sp
+                fontSize = SeniorHomeTokens.labelTextSize(skinConfig)
             )
             Text(
                 text = healthState.primaryMessage,
                 color = if (healthState.overallStatus == com.easyui.core.domain.model.GuardianCheckStatus.OK) SeniorHomeTokens.textPrimary else textColor,
-                fontSize = 18.sp,
+                fontSize = SeniorHomeTokens.labelTextSize(skinConfig),
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )
@@ -402,6 +413,7 @@ private fun PhoneHealthCard(
 private fun SeniorAlertBanner(
     message: String,
     onAlertClick: () -> Unit,
+    skinConfig: SkinConfig,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -427,12 +439,12 @@ private fun SeniorAlertBanner(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Problem Found",
-                    fontSize = 16.sp,
+                    fontSize = SeniorHomeTokens.dateTextSize(skinConfig),
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = message,
-                    fontSize = 20.sp,
+                    fontSize = SeniorHomeTokens.labelTextSize(skinConfig),
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -505,12 +517,38 @@ private fun HomeActionTile(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Icon(
-                    imageVector = SeniorHomeTokens.tileIcon(tile.kind),
-                    contentDescription = null,
-                    tint = SeniorHomeTokens.textPrimary,
-                    modifier = Modifier.size(SeniorHomeTokens.tileIconSize(skinConfig)),
-                )
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val packageName = tile.packageName
+                val appIcon = remember(packageName) {
+                    if (tile.kind == TileDisplayKind.APP && packageName != null) {
+                        try {
+                            context.packageManager.getApplicationIcon(packageName)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    } else {
+                        null
+                    }
+                }
+
+                if (appIcon != null) {
+                    androidx.compose.ui.viewinterop.AndroidView(
+                        factory = { ctx ->
+                            android.widget.ImageView(ctx).apply {
+                                setImageDrawable(appIcon)
+                                scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+                            }
+                        },
+                        modifier = Modifier.size(SeniorHomeTokens.tileIconSize(skinConfig))
+                    )
+                } else {
+                    Icon(
+                        imageVector = SeniorHomeTokens.tileIcon(tile.kind),
+                        contentDescription = null,
+                        tint = SeniorHomeTokens.textPrimary,
+                        modifier = Modifier.size(SeniorHomeTokens.tileIconSize(skinConfig)),
+                    )
+                }
                 Text(
                     text = tile.title,
                     color = SeniorHomeTokens.textPrimary,

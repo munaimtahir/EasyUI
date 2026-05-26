@@ -154,6 +154,7 @@ fun LayoutPagesScreen(
     skinConfig: SkinConfig,
     onIncreasePageCount: () -> Unit,
     onDecreasePageCount: () -> Unit,
+    onOpenAllowedApps: () -> Unit,
     onSelectLayoutMode: (LayoutMode) -> Unit,
     onOpenThemeSelection: () -> Unit,
     onDone: () -> Unit,
@@ -169,41 +170,20 @@ fun LayoutPagesScreen(
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
         ) {
             item {
-                Text("Layout and Pages", style = MaterialTheme.typography.headlineLarge)
+                Text("Home Layout", style = MaterialTheme.typography.headlineLarge)
             }
             item {
                 Text(
-                    "Keep home simple. Use one to three fixed pages with large slots that do not move during daily use.",
+                    "Page 1 is mandatory and contains essential items for the senior. You can continue to add more apps, and EasyUI will automatically add new pages as needed.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
             item {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(EasyUiSpacing.md),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                    ) {
-                        Text("Home Pages", style = MaterialTheme.typography.titleLarge)
-                        Text("Current pages: $currentPageCount", style = MaterialTheme.typography.bodyLarge)
-                        Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                            OutlinedButton(
-                                onClick = onDecreasePageCount,
-                                modifier = Modifier.weight(1f),
-                            ) {
-                                Text("Use Fewer")
-                            }
-                            Button(
-                                onClick = onIncreasePageCount,
-                                modifier = Modifier.weight(1f),
-                            ) {
-                                Text("Add Page")
-                            }
-                        }
-                        Text(
-                            "The senior home keeps its fixed essentials. These pages control caregiver-managed Home Apps slots.",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
+                Button(
+                    onClick = onOpenAllowedApps,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Select Apps & Manage Pages")
                 }
             }
             item {
@@ -881,14 +861,14 @@ fun EmergencySettingsScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var number by rememberSaveable { mutableStateOf(currentEmergencyNumber) }
-    var ambulance by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(0)?.phoneNumber ?: "911") }
-    var police by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(1)?.phoneNumber ?: "911") }
-    var fire by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(2)?.phoneNumber ?: "911") }
-    var custom1Label by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(3)?.label ?: "") }
-    var custom1Number by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(3)?.phoneNumber ?: "") }
-    var custom2Label by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(4)?.label ?: "") }
-    var custom2Number by rememberSaveable { mutableStateOf(emergencyNumbers.getOrNull(4)?.phoneNumber ?: "") }
+    var number by remember { mutableStateOf(currentEmergencyNumber) }
+    var ambulance by remember(emergencyNumbers) { mutableStateOf(emergencyNumbers.getOrNull(0)?.phoneNumber ?: "911") }
+    var police by remember(emergencyNumbers) { mutableStateOf(emergencyNumbers.getOrNull(1)?.phoneNumber ?: "911") }
+    var fire by remember(emergencyNumbers) { mutableStateOf(emergencyNumbers.getOrNull(2)?.phoneNumber ?: "911") }
+    var custom1Label by remember(emergencyNumbers) { mutableStateOf(emergencyNumbers.getOrNull(3)?.label ?: "") }
+    var custom1Number by remember(emergencyNumbers) { mutableStateOf(emergencyNumbers.getOrNull(3)?.phoneNumber ?: "") }
+    var custom2Label by remember(emergencyNumbers) { mutableStateOf(emergencyNumbers.getOrNull(4)?.label ?: "") }
+    var custom2Number by remember(emergencyNumbers) { mutableStateOf(emergencyNumbers.getOrNull(4)?.phoneNumber ?: "") }
     var sos1 by rememberSaveable { mutableStateOf(sosNumbers.getOrNull(0).orEmpty()) }
     var sos2 by rememberSaveable { mutableStateOf(sosNumbers.getOrNull(1).orEmpty()) }
     var sos3 by rememberSaveable { mutableStateOf(sosNumbers.getOrNull(2).orEmpty()) }

@@ -263,8 +263,9 @@ fun EasyUiNavGraph(
                             totalSteps = guidedSetupState.totalSteps,
                             visualTheme = appState.settings.skinConfig.visualTheme,
                             accessibilityMode = appState.settings.skinConfig.accessibilityMode,
-                            onSelectVisualTheme = guidedSetupViewModel::updateVisualTheme,
-                            onSelectAccessibilityMode = guidedSetupViewModel::updateAccessibilityMode,
+                            onThemeSelected = { theme, mode ->
+                                guidedSetupViewModel.updateSkinConfig(theme, mode)
+                            },
                             onNext = { guidedSetupViewModel.nextStep() },
                             onBack = { guidedSetupViewModel.previousStep() },
                         )
@@ -592,12 +593,13 @@ fun EasyUiNavGraph(
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.CHANGE_PIN))
                             },
                             onToggleProtection = {
-                                if (caregiverState.settings.pinHashHex == null) {
-                                    navController.navigate(Routes.PinSetup.route)
-                                } else {
-                                    caregiverViewModel.toggleProtectionEnabled()
-                                }
+                            if (caregiverState.settings.pinHashHex == null) {
+                                navController.navigate(caregiverViewModel.requestCaregiverAccess(ProtectedAction.TOGGLE_PROTECTION))
+                            } else {
+                                caregiverViewModel.toggleProtectionEnabled()
+                            }
                             },
+
                             onToggleLayoutLock = { caregiverViewModel.toggleLayoutLock() },
                             onToggleAllAppsVisible = { caregiverViewModel.setAllAppsVisible(it) },
                             onToggleBatteryInfo = caregiverViewModel::setBatteryInfoVisible,
@@ -747,6 +749,9 @@ fun EasyUiNavGraph(
                             onDecreasePageCount = {
                                 caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() - 1)
                             },
+                            onOpenAllowedApps = {
+                                navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_ALLOWED_APPS))
+                            },
                             onSelectLayoutMode = caregiverViewModel::updateSkinLayoutMode,
                             onOpenThemeSelection = { navController.navigate(Routes.ThemeSelection.route) },
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
@@ -799,8 +804,9 @@ fun EasyUiNavGraph(
                                 ThemeSelector(
                                     visualTheme = caregiverState.settings.skinConfig.visualTheme,
                                     accessibilityMode = caregiverState.settings.skinConfig.accessibilityMode,
-                                    onSelectVisualTheme = caregiverViewModel::updateSkinVisualTheme,
-                                    onSelectAccessibilityMode = caregiverViewModel::updateSkinAccessibilityMode,
+                                    onThemeSelected = { theme, mode ->
+                                        caregiverViewModel.updateSkinConfig(theme, mode)
+                                    },
                                 )
                                 OutlinedButton(
                                     onClick = { navController.popBackStack() },
@@ -813,11 +819,8 @@ fun EasyUiNavGraph(
                     }
                 }
                 composable(Routes.PinSetup.route) {
-                    RequireCaregiverSession(
-                        caregiverSessionActive = caregiverState.caregiverSessionActive,
-                        caregiverViewModel = caregiverViewModel,
-                        navController = navController,
-                    ) {
+                    val hasPin = caregiverState.settings.pinHashHex != null && caregiverState.settings.pinSaltHex != null
+                    val content: @Composable () -> Unit = {
                         PinEntryScreen(
                             title = if (caregiverState.settings.pinHashHex == null) "Set Caregiver PIN" else "Change Caregiver PIN",
                             description = "This PIN is a local barrier against accidental changes. It does not lock Android itself.",
@@ -835,6 +838,16 @@ fun EasyUiNavGraph(
                                     }
                                 }
                             },
+                        )
+                    }
+                    if (!hasPin) {
+                        content()
+                    } else {
+                        RequireCaregiverSession(
+                            caregiverSessionActive = caregiverState.caregiverSessionActive,
+                            caregiverViewModel = caregiverViewModel,
+                            navController = navController,
+                            content = content
                         )
                     }
                 }
@@ -932,6 +945,11 @@ fun EasyUiNavGraph(
                             easyUiLockTimeoutSeconds = caregiverState.settings.easyUiLockTimeoutSeconds,
                             onSave = { number ->
                                 caregiverViewModel.updateEmergencyNumber(number)
+                                caregiverViewModel.updateEmergencyNumbers(
+                                    listOf(
+                                        com.easyui.core.domain.model.EmergencyNumber("Ambulance", number), // Assuming number is intended for emergency list
+                                    )
+                                )
                             },
                             onSaveEmergencyNumbers = caregiverViewModel::updateEmergencyNumbers,
                             onSaveSosNumbers = caregiverViewModel::updateSosNumbers,
