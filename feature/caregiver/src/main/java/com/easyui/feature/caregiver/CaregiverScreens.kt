@@ -148,7 +148,7 @@ fun LayoutPagesScreen(
     onIncreasePageCount: () -> Unit,
     onDecreasePageCount: () -> Unit,
     onSelectLayoutMode: (LayoutMode) -> Unit,
-    onSelectTheme: (VisualTheme, AccessibilityMode) -> Unit,
+    onOpenThemeSelection: () -> Unit,
     
     onDone: () -> Unit,
     onFinishSetup: () -> Unit,
@@ -222,46 +222,9 @@ fun LayoutPagesScreen(
                     }
                 }
             }
-            item {
-                Text("Visual Theme", style = MaterialTheme.typography.titleLarge)
-            }
-            items(VisualTheme.entries) { theme ->
-                val selected = theme == skinConfig.visualTheme
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(EasyUiSpacing.md),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
-                    ) {
-                        Text(visualThemeLabel(theme), style = MaterialTheme.typography.titleLarge)
-                        if (selected) {
-                            Text("Current choice", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                        } else {
-                            Button(onClick = { onSelectTheme(theme, AccessibilityMode.NONE) }, modifier = Modifier.fillMaxWidth()) {
-                                Text("Use ${visualThemeLabel(theme)}")
-                            }
-                        }
-                    }
-                }
-            }
-            item {
-                Text("Accessibility", style = MaterialTheme.typography.titleLarge)
-            }
-            items(AccessibilityMode.entries) { mode ->
-                val selected = mode == skinConfig.accessibilityMode
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(EasyUiSpacing.md),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs),
-                    ) {
-                        Text(accessibilityModeLabel(mode), style = MaterialTheme.typography.titleLarge)
-                        if (selected) {
-                            Text("Current choice", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                        } else {
-                            Button(onClick = { onSelectTheme(skinConfig.visualTheme, mode) }, modifier = Modifier.fillMaxWidth()) {
-                                Text("Use ${accessibilityModeLabel(mode)}")
-                            }
-                        }
-                    }
+            item { // New Button to open Theme Selection
+                Button(onClick = onOpenThemeSelection, modifier = Modifier.fillMaxWidth()) {
+                    Text("Customize Visual Theme & Accessibility")
                 }
             }
             item {
@@ -1002,22 +965,6 @@ private fun layoutModeBody(mode: LayoutMode): String =
         LayoutMode.VERY_SIMPLE -> "Keeps the same fixed layout while favoring maximum readability."
         LayoutMode.CARE_MODE -> "Keeps the same fixed layout while prioritizing urgent caregiver-friendly actions."
         LayoutMode.COMMUNICATION_MODE -> "Keeps the same fixed layout while prioritizing calling and contacts."
-    }
-
-private fun visualThemeLabel(theme: VisualTheme): String =
-    when (theme) {
-        VisualTheme.LIGHT_PREMIUM -> "Warm Light"
-        VisualTheme.DARK_COMFORT -> "Dark Comfort"
-        VisualTheme.CLINICAL_PROFESSIONAL -> "Clinical Professional"
-        VisualTheme.SOFT_CALM -> "Soft Calm"
-        VisualTheme.AUTO -> "Auto (Follow System)"
-    }
-
-private fun accessibilityModeLabel(mode: AccessibilityMode): String =
-    when (mode) {
-        AccessibilityMode.NONE -> "None"
-        AccessibilityMode.HIGH_CONTRAST -> "High Contrast"
-        AccessibilityMode.BOLD_ACCESSIBILITY -> "Bold Accessibility"
     }
 
 @Composable
