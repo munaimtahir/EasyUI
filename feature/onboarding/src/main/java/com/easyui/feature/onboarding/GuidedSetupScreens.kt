@@ -181,8 +181,7 @@ fun ThemePickerScreen(
     totalSteps: Int,
     visualTheme: VisualTheme,
     accessibilityMode: AccessibilityMode,
-    onSelectVisualTheme: (VisualTheme) -> Unit,
-    onSelectAccessibilityMode: (AccessibilityMode) -> Unit,
+    onThemeSelected: (VisualTheme, AccessibilityMode) -> Unit,
     onNext: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -199,8 +198,7 @@ fun ThemePickerScreen(
         ThemeSelector(
             visualTheme = visualTheme,
             accessibilityMode = accessibilityMode,
-            onSelectVisualTheme = onSelectVisualTheme,
-            onSelectAccessibilityMode = onSelectAccessibilityMode,
+            onThemeSelected = onThemeSelected,
         )
     }
 }

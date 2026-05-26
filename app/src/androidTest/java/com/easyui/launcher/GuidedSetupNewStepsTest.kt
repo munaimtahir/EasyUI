@@ -69,8 +69,7 @@ class GuidedSetupNewStepsTest {
                     totalSteps = 10,
                     visualTheme = VisualTheme.DARK_COMFORT,
                     accessibilityMode = AccessibilityMode.NONE,
-                    onSelectVisualTheme = {},
-                    onSelectAccessibilityMode = {},
+                    onThemeSelected = { _, _ -> },
                     onNext = {},
                     onBack = {},
                 )

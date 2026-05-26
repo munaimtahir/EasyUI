@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,8 +33,7 @@ import com.easyui.core.ui.theme.EasyUiSpacing
 fun ThemeSelector(
     visualTheme: VisualTheme,
     accessibilityMode: AccessibilityMode,
-    onSelectVisualTheme: (VisualTheme) -> Unit,
-    onSelectAccessibilityMode: (AccessibilityMode) -> Unit,
+    onThemeSelected: (VisualTheme, AccessibilityMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -46,8 +46,7 @@ fun ThemeSelector(
             selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.DARK_COMFORT,
             swatch = Color(0xFF161A1B),
             onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.DARK_COMFORT)
+                onThemeSelected(VisualTheme.DARK_COMFORT, AccessibilityMode.NONE)
             },
         )
         ThemeChoiceCard(
@@ -56,8 +55,7 @@ fun ThemeSelector(
             selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.LIGHT_PREMIUM,
             swatch = Color(0xFFF6F1E8),
             onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.LIGHT_PREMIUM)
+                onThemeSelected(VisualTheme.LIGHT_PREMIUM, AccessibilityMode.NONE)
             },
         )
         ThemeChoiceCard(
@@ -66,7 +64,7 @@ fun ThemeSelector(
             selected = accessibilityMode == AccessibilityMode.HIGH_CONTRAST,
             swatch = Color(0xFFFFFFFF),
             onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.HIGH_CONTRAST)
+                onThemeSelected(visualTheme, AccessibilityMode.HIGH_CONTRAST)
             },
         )
         ThemeChoiceCard(
@@ -75,8 +73,7 @@ fun ThemeSelector(
             selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.AUTO,
             swatch = Color(0xFF808080),
             onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.AUTO)
+                onThemeSelected(VisualTheme.AUTO, AccessibilityMode.NONE)
             },
         )
     }
@@ -99,6 +96,7 @@ private fun ThemeChoiceCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .defaultMinSize(minHeight = 72.dp)
             .testTag("theme_choice_${label.lowercase().replace(' ', '_')}"),
         colors = colors,
         onClick = onClick,
@@ -128,8 +126,10 @@ private fun ThemeChoiceCard(
                 Text(label, style = MaterialTheme.typography.titleLarge)
                 Text(description, style = MaterialTheme.typography.bodyMedium)
             }
-            if (selected) {
-                Icon(imageVector = Icons.Outlined.CheckCircle, contentDescription = "Selected")
+            Box(modifier = Modifier.size(24.dp)) { // Reserve space
+                if (selected) {
+                    Icon(imageVector = Icons.Outlined.CheckCircle, contentDescription = "Selected")
+                }
             }
         }
     }

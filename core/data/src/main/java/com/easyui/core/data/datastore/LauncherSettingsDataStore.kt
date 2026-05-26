@@ -198,6 +198,16 @@ class DataStoreLauncherSettingsRepository(
         setSkinConfig(currentConfig.copy(visualTheme = theme))
     }
 
+    override suspend fun updateAccessibilityMode(mode: AccessibilityMode) {
+        val currentConfig = getSkinConfig()
+        setSkinConfig(currentConfig.copy(accessibilityMode = mode))
+    }
+
+    override suspend fun updateSkinConfig(theme: VisualTheme, mode: AccessibilityMode) {
+        val currentConfig = getSkinConfig()
+        setSkinConfig(currentConfig.copy(visualTheme = theme, accessibilityMode = mode))
+    }
+
     override suspend fun updateLayoutMode(mode: LayoutMode) {
         val currentConfig = getSkinConfig()
         setSkinConfig(currentConfig.copy(layoutMode = mode))

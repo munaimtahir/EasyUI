@@ -100,12 +100,6 @@ fun HomeLayoutPreview(
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center,
                                     )
-                                    if (layoutLocked) {
-                                        Text(
-                                            text = "🔒",
-                                            fontSize = 8.sp,
-                                        )
-                                    }
                                 }
                             }
                         }

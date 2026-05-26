@@ -25,6 +25,8 @@ interface LauncherSettingsRepository {
     suspend fun updateHealthInfo(healthInfo: HealthInfo)
     suspend fun setSkinConfig(config: SkinConfig)
     suspend fun updateVisualTheme(theme: com.easyui.core.domain.model.VisualTheme)
+    suspend fun updateAccessibilityMode(mode: com.easyui.core.domain.model.AccessibilityMode)
+    suspend fun updateSkinConfig(theme: com.easyui.core.domain.model.VisualTheme, mode: com.easyui.core.domain.model.AccessibilityMode)
     suspend fun updateLayoutMode(mode: com.easyui.core.domain.model.LayoutMode)
     suspend fun updateReadabilityPreset(preset: com.easyui.core.domain.model.HomeReadabilityPreset)
     suspend fun getSkinConfig(): SkinConfig

@@ -41,6 +41,7 @@
         android:theme="@style/Theme.EasyUI">
         <activity
             android:name=".MainActivity"
+            android:label="@string/app_name"
             android:exported="true"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
@@ -49,15 +50,16 @@
 
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <!-- Dummy activity for the "Fake Launcher" trick -->
         <activity
             android:name=".FakeLauncherActivity"
+            android:label="@string/app_name"
             android:enabled="false"
-            android:exported="true"
-            android:label="Set EasyUI as Home">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />

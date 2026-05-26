@@ -360,6 +360,13 @@ class CaregiverViewModel(
         }
     }
 
+    fun updateSkinConfig(theme: VisualTheme, mode: AccessibilityMode) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateSkinConfig(theme, mode)
+            messages.emit("Theme and accessibility updated.")
+        }
+    }
+
     fun resetLauncher() {
         viewModelScope.launch(container.ioDispatcher) {
             val starterLayout = LauncherResetRules.resetLayout(container.appCatalogRepository.getInstalledApps())
@@ -470,6 +477,8 @@ class CaregiverViewModel(
 
     fun contactTiles(): List<HomeTile> = HomeLayoutRules.contactTiles(state.value.layoutTiles)
 
+    fun requestCaregiverAccess(action: ProtectedAction): String = requestProtectedRoute(action)
+
     private fun requestProtectedRoute(action: ProtectedAction): String {
         localState.update { it.copy(pendingAction = action, pinError = null, pinInput = "") }
         if (state.value.caregiverSessionActive) {
@@ -480,7 +489,8 @@ class CaregiverViewModel(
         val hasPin = !settings.pinHashHex.isNullOrBlank() && !settings.pinSaltHex.isNullOrBlank()
 
         if (!hasPin) {
-            return Routes.PinSetup.route
+            localState.update { it.copy(pendingAction = null, caregiverSessionActive = true) }
+            return destinationFor(action)
         }
 
         val requiresPin = CaregiverProtectionRules.requiresPin(

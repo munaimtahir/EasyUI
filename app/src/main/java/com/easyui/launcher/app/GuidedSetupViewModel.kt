@@ -170,10 +170,15 @@ class GuidedSetupViewModel(
         }
     }
 
+    fun updateSkinConfig(theme: VisualTheme, mode: AccessibilityMode) {
+        viewModelScope.launch {
+            container.launcherSettingsRepository.updateSkinConfig(theme, mode)
+        }
+    }
+
     fun updateAccessibilityMode(mode: AccessibilityMode) {
         viewModelScope.launch {
-            val current = container.launcherSettingsRepository.getSkinConfig()
-            container.launcherSettingsRepository.setSkinConfig(current.copy(accessibilityMode = mode))
+            container.launcherSettingsRepository.updateAccessibilityMode(mode)
         }
     }
 
