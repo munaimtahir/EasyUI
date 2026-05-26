@@ -7,7 +7,8 @@ enum class RecoveryActionType {
     SET_DEFAULT_LAUNCHER,
     OPEN_EMERGENCY_SETTINGS,
     OPEN_CAREGIVER_TOOLS,
-    REQUEST_PERMISSIONS
+    REQUEST_PERMISSIONS,
+    FIX_BATTERY_OPTIMIZATION
 }
 
 data class RecoveryGuidance(

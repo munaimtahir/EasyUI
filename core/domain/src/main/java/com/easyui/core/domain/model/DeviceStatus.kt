@@ -5,4 +5,5 @@ data class DeviceStatus(
     val simLabel: String = "SIM",
     val wifiLabel: String = "Wi-Fi unknown",
     val isInternetAvailable: Boolean = false,
+    val isBatteryOptimized: Boolean = true,
 )

@@ -38,4 +38,5 @@ interface BatteryStatusRepository {
 
 interface DeviceStatusRepository {
     fun observeDeviceStatus(): Flow<DeviceStatus>
+    fun requestIgnoreBatteryOptimizations()
 }

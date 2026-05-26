@@ -417,6 +417,9 @@ fun EasyUiNavGraph(
                                                 navController.navigate(Routes.SafeFallback.createRoute("Permission Settings"))
                                             }
                                         }
+                                        RecoveryActionType.FIX_BATTERY_OPTIMIZATION -> {
+                                            container.deviceStatusRepository.requestIgnoreBatteryOptimizations()
+                                        }
                                         RecoveryActionType.NONE -> {}
                                     }
                                 } catch (e: Exception) {
