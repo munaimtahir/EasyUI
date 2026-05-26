@@ -18,6 +18,7 @@ object GuardianRules {
         isCharging: Boolean,
         isInternetAvailable: Boolean,
         isDefaultLauncher: Boolean,
+        isBatteryOptimized: Boolean,
         hasRequiredPermissions: Boolean,
         setupCompleteness: SetupCompleteness
     ): PhoneHealthState {
@@ -110,7 +111,25 @@ object GuardianRules {
             )
         }
 
-        // 5. Setup Incomplete
+        // 5. Battery Optimization
+        if (isBatteryOptimized) {
+            checks.add(
+                GuardianCheckResult(
+                    type = GuardianCheckType.BATTERY_OPTIMIZED,
+                    status = GuardianCheckStatus.WARNING,
+                    message = "Battery saving is on",
+                    detail = "System might close EasyUI to save power.",
+                    recoveryGuidance = RecoveryGuidance(
+                        type = RecoveryActionType.FIX_BATTERY_OPTIMIZATION,
+                        label = "Battery Restrictions",
+                        description = "Your phone might close EasyUI to save battery. This can stop important alerts from working.",
+                        actionButtonLabel = "Fix Battery"
+                    )
+                )
+            )
+        }
+
+        // 6. Setup Incomplete
         if (setupCompleteness.score < 1.0f) {
             checks.add(
                 GuardianCheckResult(
@@ -138,6 +157,7 @@ object GuardianRules {
             checks.any { it.type == GuardianCheckType.BATTERY_CRITICAL } -> "Please charge phone"
             checks.any { it.type == GuardianCheckType.EMERGENCY_CONTACT_MISSING } -> "Emergency contact missing"
             checks.any { it.type == GuardianCheckType.NOT_DEFAULT_LAUNCHER } -> "HomeScreen needs fixing"
+            checks.any { it.type == GuardianCheckType.BATTERY_OPTIMIZED } -> "Battery saving is on"
             checks.any { it.type == GuardianCheckType.NO_INTERNET } -> "Connection is off"
             checks.any { it.type == GuardianCheckType.BATTERY_LOW } -> "Battery low"
             checks.any { it.type == GuardianCheckType.SETUP_INCOMPLETE } -> "Tell caregiver to finish setup"
@@ -147,7 +167,8 @@ object GuardianRules {
         val shouldPromptAlert = checks.any { 
             it.status == GuardianCheckStatus.CRITICAL || 
             it.type == GuardianCheckType.NO_INTERNET ||
-            it.type == GuardianCheckType.NOT_DEFAULT_LAUNCHER
+            it.type == GuardianCheckType.NOT_DEFAULT_LAUNCHER ||
+            it.type == GuardianCheckType.BATTERY_OPTIMIZED
         }
         
         val primaryRecoveryGuidance = checks.firstOrNull { it.status == GuardianCheckStatus.CRITICAL }?.recoveryGuidance

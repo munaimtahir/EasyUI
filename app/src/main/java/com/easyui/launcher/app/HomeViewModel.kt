@@ -86,6 +86,7 @@ class HomeViewModel(
                 isCharging = base.battery.isCharging,
                 isInternetAvailable = base.deviceStatus.isInternetAvailable,
                 isDefaultLauncher = base.isDefaultLauncher,
+                isBatteryOptimized = base.deviceStatus.isBatteryOptimized,
                 hasRequiredPermissions = true,
                 setupCompleteness = setupCompleteness
             )
