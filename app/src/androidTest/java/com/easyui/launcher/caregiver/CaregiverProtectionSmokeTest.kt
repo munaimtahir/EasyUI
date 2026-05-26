@@ -67,6 +67,8 @@ class CaregiverProtectionSmokeTest {
                         onToggleAllAppsVisible = {},
                         onToggleBatteryInfo = {},
                         onOpenLayoutPages = {},
+                        onOpenReadabilityPreset = {},
+                        onOpenThemeSelection = {},
                         onOpenAllowedApps = {},
                         onManageFavoriteContacts = {},
                         onOpenEmergencySettings = {},

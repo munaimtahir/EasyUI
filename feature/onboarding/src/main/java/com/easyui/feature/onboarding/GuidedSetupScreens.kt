@@ -56,7 +56,12 @@ import com.easyui.core.domain.model.InstalledApp
 import com.easyui.core.domain.model.OptionalPermission
 import com.easyui.core.domain.model.SetupProtectionLevel
 import com.easyui.core.domain.model.VisualTheme
+import com.easyui.core.ui.components.ThemeSelector
+import com.easyui.core.ui.components.ReadabilityPresetSelector
+import com.easyui.core.ui.components.AppSelectionGrid
 import com.easyui.core.ui.components.WizardScrollMode
+import com.easyui.core.ui.components.WizardShell
+
 import com.easyui.core.ui.components.WizardShell
 import com.easyui.core.ui.theme.EasyUiSpacing
 
@@ -267,30 +272,10 @@ fun ReadabilityPresetScreen(
         totalSteps = totalSteps,
         scrollMode = WizardScrollMode.ParentScroll
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-            HomeReadabilityPreset.entries.forEach { preset ->
-                val selected = preset == currentPreset
-                Card(
-                    onClick = { onPresetSelected(preset) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = if (selected) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer) else CardDefaults.cardColors(),
-                    border = if (selected) androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
-                ) {
-                    Column(modifier = Modifier.padding(EasyUiSpacing.md)) {
-                        Text(preset.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            when (preset) {
-                                HomeReadabilityPreset.STANDARD -> "Standard size for users with good vision."
-                                HomeReadabilityPreset.LARGER_TEXT -> "Larger text for better legibility."
-                                HomeReadabilityPreset.LARGER_TILES -> "Larger buttons for easier targets."
-                                HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> "Simplified layout with maximum clarity."
-                            },
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
-        }
+        ReadabilityPresetSelector(
+            currentPreset = currentPreset,
+            onPresetSelected = onPresetSelected,
+        )
     }
 }
 
@@ -397,11 +382,6 @@ fun AllowedAppsSetupScreen(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    var selectedPageIndex by rememberSaveable { mutableIntStateOf(0) }
-    var selectedPosition by remember { mutableStateOf<Int?>(null) }
-    var showPicker by remember { mutableStateOf(false) }
-    val currentPage = pages.getOrElse(selectedPageIndex) { List(6) { null } }
-
     WizardShell(
         title = "Apps on Home",
         subtitle = "Tap an empty slot on a page to pick an app for it, or tap a placed app to remove it.",
@@ -411,121 +391,14 @@ fun AllowedAppsSetupScreen(
         totalSteps = totalSteps,
         scrollMode = WizardScrollMode.ParentScroll
     ) {
-        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
-            // Page selection
-            Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
-                repeat(pageCount) { i ->
-                    val selected = i == selectedPageIndex
-                    if (selected) {
-                        Button(onClick = { selectedPageIndex = i; selectedPosition = null }, modifier = Modifier.weight(1f)) {
-                            Text("Page ${i + 1}")
-                        }
-                    } else {
-                        OutlinedButton(onClick = { selectedPageIndex = i; selectedPosition = null }, modifier = Modifier.weight(1f)) {
-                            Text("Page ${i + 1}")
-                        }
-                    }
-                }
-            }
-
-            // Grid of slots
-            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                repeat(3) { row ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                        repeat(2) { col ->
-                            val slotIndex = row * 2 + col
-                            val tile = currentPage.getOrNull(slotIndex)
-                            val position = (selectedPageIndex * 6) + slotIndex
-                            Card(
-                                onClick = { 
-                                    if (tile == null) {
-                                        selectedPosition = position
-                                        showPicker = true
-                                    } else {
-                                        onRemoveApp(tile.packageName!!)
-                                    }
-                                },
-                                modifier = Modifier.weight(1f).aspectRatio(1.5f),
-                                colors = if (tile != null) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else CardDefaults.cardColors(),
-                                border = if (tile != null) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
-                            ) {
-                                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                                        if (tile != null) {
-                                            Box(modifier = Modifier.size(32.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape))
-                                            Text(tile.title, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
-                                            Text("Tap to remove", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error, fontSize = 10.sp)
-                                        } else {
-                                            Icon(imageVector = androidx.compose.material.icons.Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
-                                            Text("Empty Slot", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.outline)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if (showPicker) {
-        Dialog(
-            onDismissRequest = { showPicker = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                Column(modifier = Modifier.fillMaxSize().padding(EasyUiSpacing.md)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Pick an App", style = MaterialTheme.typography.headlineSmall)
-                        androidx.compose.material3.IconButton(onClick = { showPicker = false }) {
-                            Icon(imageVector = androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Close")
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(EasyUiSpacing.md))
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)
-                    ) {
-                        items(installedApps) { app ->
-                            val isAssigned = app.packageName in assignedAppPackages
-                            Card(
-                                onClick = {
-                                    if (!isAssigned) {
-                                        selectedPosition?.let { onAssignApp(app.packageName, it) }
-                                        showPicker = false
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                enabled = !isAssigned,
-                                colors = if (isAssigned) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)) else CardDefaults.cardColors()
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(EasyUiSpacing.md),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)) {
-                                        Box(modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.outline.copy(alpha = 0.1f), CircleShape)) // Icon placeholder
-                                        Text(app.label, style = MaterialTheme.typography.bodyLarge)
-                                    }
-                                    if (isAssigned) {
-                                        Text("Already placed", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        AppSelectionGrid(
+            pageCount = pageCount,
+            pages = pages,
+            installedApps = installedApps,
+            assignedAppPackages = assignedAppPackages,
+            onAssignApp = onAssignApp,
+            onRemoveApp = onRemoveApp,
+        )
     }
 }
 

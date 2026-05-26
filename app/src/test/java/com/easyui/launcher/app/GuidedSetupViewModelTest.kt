@@ -355,7 +355,7 @@ class GuidedSetupViewModelTest {
         viewModel.updateReadabilityPreset(HomeReadabilityPreset.LARGER_TEXT)
         testDispatcher.scheduler.advanceUntilIdle()
         
-        coVerify { mockSettingsRepository.updateHomeReadabilityPreset("LARGER_TEXT") }
+        coVerify { mockSettingsRepository.updateReadabilityPreset(HomeReadabilityPreset.LARGER_TEXT) }
     }
 
     @Test
@@ -363,9 +363,10 @@ class GuidedSetupViewModelTest {
         viewModel.updateReadabilityPreset(HomeReadabilityPreset.STANDARD)
         testDispatcher.scheduler.advanceUntilIdle()
         
-        coVerify { 
-            mockSettingsRepository.setSkinConfig(any())
-        }
+        coVerify { mockSettingsRepository.updateReadabilityPreset(HomeReadabilityPreset.STANDARD) }
+        settingsFlow.update { it.copy(homeReadabilityPreset = HomeReadabilityPreset.STANDARD.name) }
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(HomeReadabilityPreset.STANDARD, viewModel.state.value.homeReadabilityPreset)
     }
 
     @Test
@@ -373,9 +374,10 @@ class GuidedSetupViewModelTest {
         viewModel.updateReadabilityPreset(HomeReadabilityPreset.LARGER_TEXT)
         testDispatcher.scheduler.advanceUntilIdle()
         
-        coVerify { 
-            mockSettingsRepository.setSkinConfig(any())
-        }
+        coVerify { mockSettingsRepository.updateReadabilityPreset(HomeReadabilityPreset.LARGER_TEXT) }
+        settingsFlow.update { it.copy(homeReadabilityPreset = HomeReadabilityPreset.LARGER_TEXT.name) }
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(HomeReadabilityPreset.LARGER_TEXT, viewModel.state.value.homeReadabilityPreset)
     }
 
     @Test

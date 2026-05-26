@@ -63,6 +63,8 @@ class CaregiverQolSmokeTest {
                     onToggleAllAppsVisible = {},
                     onToggleBatteryInfo = {},
                     onOpenLayoutPages = {},
+                    onOpenReadabilityPreset = {},
+                    onOpenThemeSelection = {},
                     onOpenAllowedApps = {},
                     onManageFavoriteContacts = {},
                     onOpenEmergencySettings = {},
@@ -85,6 +87,8 @@ class CaregiverQolSmokeTest {
         
         composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Appearance & Layout"))
         composeRule.onNodeWithText("Appearance & Layout").assertPresent()
+        composeRule.onNodeWithText("Readability").assertPresent()
+        composeRule.onNodeWithText("Visual Theme").assertPresent()
         
         composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Home Apps"))
         composeRule.onNodeWithText("Home Apps").assertPresent()
@@ -110,7 +114,7 @@ class CaregiverQolSmokeTest {
                     onIncreasePageCount = {},
                     onDecreasePageCount = {},
                     onSelectLayoutMode = {},
-                    onSelectTheme = { _, _ -> },
+                    onOpenThemeSelection = {},
                     onDone = {},
                     onFinishSetup = {},
                 )
@@ -120,8 +124,8 @@ class CaregiverQolSmokeTest {
         composeRule.onNodeWithTag("layout_pages_screen").assertPresent()
         composeRule.onNodeWithText("Add Page").assertIsDisplayed()
         composeRule.onNodeWithText("Use Fewer").assertIsDisplayed()
-        composeRule.onNodeWithTag("layout_pages_screen").performScrollToNode(hasText("Visual Theme"))
-        composeRule.onNodeWithText("Visual Theme").assertIsDisplayed()
+        composeRule.onNodeWithTag("layout_pages_screen").performScrollToNode(hasText("Customize Visual Theme"))
+        composeRule.onNodeWithText("Customize Visual Theme").assertIsDisplayed()
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -157,13 +161,12 @@ class CaregiverQolSmokeTest {
 
         composeRule.onNodeWithTag("allowed_apps_screen").assertPresent()
         composeRule.onNodeWithText("Home Apps").assertPresent()
-        composeRule.onNodeWithText("Installed Apps").assertPresent()
-        composeRule.onNodeWithText("Home Layout Preview").assertPresent()
+        composeRule.onNodeWithText("Page 1").assertPresent()
         composeRule.onNodeWithText("Phone").assertPresent()
         composeRule.onNodeWithText("Messages").assertPresent()
         
         // Select an empty slot (Slot 3) to show the Installed Apps list in the BottomSheet
-        composeRule.onNodeWithTag("slot_select_3").performScrollTo().performClick()
+        composeRule.onNodeWithTag("slot_select_3").performClick()
         composeRule.waitForIdle()
         
         // Wait up to 5 seconds for the bottom sheet to display "Placed"
@@ -213,7 +216,7 @@ class CaregiverQolSmokeTest {
 
         // Select slot at absolute position 2 (Page 1, Slot 3) via its testTag.
         // Clicking the "slot_select_2" button triggers onSelect and opens the bottom sheet.
-        composeRule.onNodeWithTag("slot_select_2").performScrollTo().performClick()
+        composeRule.onNodeWithTag("slot_select_2").performClick()
         composeRule.waitForIdle()
         
         try {

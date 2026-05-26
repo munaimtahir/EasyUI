@@ -62,6 +62,7 @@ internal fun CaregiverDashboardScreen(
     allAppsVisible: Boolean,
     currentPageCount: Int,
     showBatteryInfo: Boolean,
+    skinConfig: com.easyui.core.domain.model.SkinConfig,
     favoriteContactCount: Int,
     allowedAppCount: Int,
     hiddenAppCount: Int,
@@ -77,6 +78,8 @@ internal fun CaregiverDashboardScreen(
     onToggleAllAppsVisible: (Boolean) -> Unit,
     onToggleBatteryInfo: (Boolean) -> Unit,
     onOpenLayoutPages: () -> Unit,
+    onOpenReadabilityPreset: () -> Unit,
+    onOpenThemeSelection: () -> Unit,
     onOpenAllowedApps: () -> Unit,
     onManageFavoriteContacts: () -> Unit,
     onOpenEmergencySettings: () -> Unit,
@@ -147,6 +150,22 @@ internal fun CaregiverDashboardScreen(
                 item {
                     DashboardSurface(elevated = true) {
                         SectionHeader(title = "Appearance & Layout", subtitle = "Manage pages, themes, and basic layout.")
+                        DashboardActionRow(
+                            title = "Readability",
+                            subtitle = readabilitySummary(skinConfig),
+                            detail = "Edit",
+                            icon = Icons.Filled.DashboardCustomize,
+                            accent = CaregiverDashboardTokens.accentPrimary,
+                            onClick = onOpenReadabilityPreset,
+                        )
+                        DashboardActionRow(
+                            title = "Visual Theme",
+                            subtitle = themeSummary(skinConfig),
+                            detail = "Edit",
+                            icon = Icons.Filled.DashboardCustomize,
+                            accent = CaregiverDashboardTokens.accentPrimary,
+                            onClick = onOpenThemeSelection
+                        )
                         DashboardActionRow(
                             title = "Theme & Pages",
                             subtitle = "$currentPageCount page(s)",
@@ -578,6 +597,22 @@ private fun securitySummary(
 private fun sosStatusLabel(sosNumberCount: Int): String =
     if (sosNumberCount > 0) "$sosNumberCount SOS numbers" else "SOS needs setup"
 
+private fun themeSummary(skinConfig: com.easyui.core.domain.model.SkinConfig): String =
+    when {
+        skinConfig.accessibilityMode == com.easyui.core.domain.model.AccessibilityMode.HIGH_CONTRAST -> "High contrast"
+        skinConfig.visualTheme == com.easyui.core.domain.model.VisualTheme.DARK_COMFORT -> "Dark comfort"
+        skinConfig.visualTheme == com.easyui.core.domain.model.VisualTheme.LIGHT_PREMIUM -> "Light premium"
+        else -> "Auto theme"
+    }
+
+private fun readabilitySummary(skinConfig: com.easyui.core.domain.model.SkinConfig): String =
+    when (skinConfig.readabilityPreset) {
+        com.easyui.core.domain.model.HomeReadabilityPreset.STANDARD -> "Standard"
+        com.easyui.core.domain.model.HomeReadabilityPreset.LARGER_TEXT -> "Larger text"
+        com.easyui.core.domain.model.HomeReadabilityPreset.LARGER_TILES -> "Larger tiles"
+        com.easyui.core.domain.model.HomeReadabilityPreset.EXTRA_SIMPLE_SPACING -> "Extra simple spacing"
+    }
+
 @Preview(showBackground = true, backgroundColor = 0xFF0D1238)
 @Composable
 private fun CaregiverDashboardPreview() {
@@ -588,6 +623,7 @@ private fun CaregiverDashboardPreview() {
         allAppsVisible = true,
         currentPageCount = 2,
         showBatteryInfo = true,
+        skinConfig = com.easyui.core.domain.model.SkinConfig(),
         favoriteContactCount = 3,
         allowedAppCount = 6,
         hiddenAppCount = 2,
@@ -603,6 +639,8 @@ private fun CaregiverDashboardPreview() {
         onToggleAllAppsVisible = {},
         onToggleBatteryInfo = {},
         onOpenLayoutPages = {},
+        onOpenReadabilityPreset = {},
+        onOpenThemeSelection = {},
         onOpenAllowedApps = {},
         onManageFavoriteContacts = {},
         onOpenEmergencySettings = {},

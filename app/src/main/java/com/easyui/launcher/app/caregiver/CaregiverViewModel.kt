@@ -314,20 +314,7 @@ class CaregiverViewModel(
 
     fun updateHomeReadabilityPreset(preset: HomeReadabilityPreset) {
         viewModelScope.launch {
-            container.launcherSettingsRepository.updateHomeReadabilityPreset(preset.name)
-            val mappedLayoutMode = when (preset) {
-                HomeReadabilityPreset.STANDARD -> LayoutMode.SIMPLE_CLASSIC
-                HomeReadabilityPreset.LARGER_TEXT,
-                HomeReadabilityPreset.LARGER_TILES,
-                HomeReadabilityPreset.EXTRA_SIMPLE_SPACING,
-                -> LayoutMode.VERY_SIMPLE
-            }
-            container.launcherSettingsRepository.setSkinConfig(
-                state.value.settings.skinConfig.copy(
-                    layoutMode = mappedLayoutMode,
-                    readabilityPreset = preset
-                ),
-            )
+            container.launcherSettingsRepository.updateReadabilityPreset(preset)
             messages.emit(
                 when (preset) {
                     HomeReadabilityPreset.STANDARD -> "Home display is set to Standard."

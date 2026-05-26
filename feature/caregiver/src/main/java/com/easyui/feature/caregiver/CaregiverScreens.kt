@@ -60,6 +60,8 @@ import com.easyui.core.domain.model.VisualTheme
 import com.easyui.core.domain.rules.ContactTileRules
 import com.easyui.core.domain.rules.HomeLayoutRules
 import com.easyui.core.ui.components.AvatarBadge
+import com.easyui.core.ui.components.AppSelectionGrid
+import com.easyui.core.ui.components.ReadabilityPresetSelector
 import com.easyui.core.ui.theme.EasyUiSpacing
 
 @Suppress("UNUSED_PARAMETER")
@@ -87,6 +89,8 @@ fun CaregiverToolsScreen(
     onToggleAllAppsVisible: (Boolean) -> Unit,
     onToggleBatteryInfo: (Boolean) -> Unit,
     onOpenLayoutPages: () -> Unit,
+    onOpenReadabilityPreset: () -> Unit,
+    onOpenThemeSelection: () -> Unit,
     onOpenAllowedApps: () -> Unit,
     onManageFavoriteContacts: () -> Unit,
     onOpenEmergencySettings: () -> Unit,
@@ -109,6 +113,7 @@ fun CaregiverToolsScreen(
         allAppsVisible = allAppsVisible,
         currentPageCount = currentPageCount,
         showBatteryInfo = showBatteryInfo,
+        skinConfig = skinConfig,
         favoriteContactCount = favoriteContactCount,
         allowedAppCount = allowedAppCount,
         hiddenAppCount = hiddenAppCount,
@@ -124,6 +129,8 @@ fun CaregiverToolsScreen(
         onToggleAllAppsVisible = onToggleAllAppsVisible,
         onToggleBatteryInfo = onToggleBatteryInfo,
         onOpenLayoutPages = onOpenLayoutPages,
+        onOpenReadabilityPreset = onOpenReadabilityPreset,
+        onOpenThemeSelection = onOpenThemeSelection,
         onOpenAllowedApps = onOpenAllowedApps,
         onManageFavoriteContacts = onManageFavoriteContacts,
         onOpenEmergencySettings = onOpenEmergencySettings,
@@ -149,7 +156,6 @@ fun LayoutPagesScreen(
     onDecreasePageCount: () -> Unit,
     onSelectLayoutMode: (LayoutMode) -> Unit,
     onOpenThemeSelection: () -> Unit,
-    
     onDone: () -> Unit,
     onFinishSetup: () -> Unit,
     modifier: Modifier = Modifier,
@@ -222,9 +228,9 @@ fun LayoutPagesScreen(
                     }
                 }
             }
-            item { // New Button to open Theme Selection
+            item {
                 Button(onClick = onOpenThemeSelection, modifier = Modifier.fillMaxWidth()) {
-                    Text("Customize Visual Theme & Accessibility")
+                    Text("Customize Visual Theme")
                 }
             }
             item {
@@ -236,6 +242,41 @@ fun LayoutPagesScreen(
                 OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                     Text("Back to Caregiver Settings")
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ReadabilityPresetScreen(
+    currentPreset: HomeReadabilityPreset,
+    onPresetSelected: (HomeReadabilityPreset) -> Unit,
+    onDone: () -> Unit,
+    onFinishSetup: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(EasyUiSpacing.lg)
+                .testTag("readability_preset_screen"),
+            verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+        ) {
+            Text("Readability", style = MaterialTheme.typography.headlineLarge)
+            Text(
+                "Choose how large and spacious EasyUI should look for the senior-facing home screen.",
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            ReadabilityPresetSelector(
+                currentPreset = currentPreset,
+                onPresetSelected = onPresetSelected,
+            )
+            Button(onClick = onFinishSetup, modifier = Modifier.fillMaxWidth()) {
+                Text("Back to Home")
+            }
+            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                Text("Back to Caregiver Settings")
             }
         }
     }
@@ -254,15 +295,10 @@ fun AllowedAppsScreen(
     onFinishSetup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedPageIndex by rememberSaveable { mutableIntStateOf(0) }
-    var selectedPosition by rememberSaveable { mutableStateOf<Int?>(null) }
-    val currentPage = pages.getOrElse(selectedPageIndex) { List(HomeLayoutRules.SLOTS_PER_PAGE) { null } }
-
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding(EasyUiSpacing.lg)
                 .testTag("allowed_apps_screen"),
             verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
@@ -272,151 +308,14 @@ fun AllowedAppsScreen(
                 "Choose which apps appear in EasyUI's caregiver-managed Home Apps area and place each app into a fixed slot.",
                 style = MaterialTheme.typography.bodyLarge,
             )
-
-            // Add preview of the home layout
-            HomeLayoutPreviewCard(
-                pages = pages,
-                currentPageIndex = selectedPageIndex,
+            AppSelectionGrid(
                 pageCount = pageCount,
-                layoutLocked = false,
+                pages = pages,
+                installedApps = installedApps,
+                assignedAppPackages = assignedAppPackages,
+                onAssignApp = onAssignApp,
+                onRemoveApp = onRemoveApp,
             )
-
-            Row(horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                repeat(pageCount) { pageIndex ->
-                    val selected = pageIndex == selectedPageIndex
-                    if (selected) {
-                        Button(onClick = {
-                            selectedPageIndex = pageIndex
-                            selectedPosition = null
-                        }, modifier = Modifier.weight(1f)) {
-                            Text("Page ${pageIndex + 1}")
-                        }
-                    } else {
-                        OutlinedButton(onClick = {
-                            selectedPageIndex = pageIndex
-                            selectedPosition = null
-                        }, modifier = Modifier.weight(1f)) {
-                            Text("Page ${pageIndex + 1}")
-                        }
-                    }
-                }
-            }
-
-            // Non-lazy slot grid: 2 columns rendered as Row pairs so the scrollable Column works correctly.
-            // (LazyVerticalGrid cannot be nested inside a vertically scrollable Column.)
-            val slotsPerRow = 2
-            // Ceiling division: number of rows needed to display all slots in pairs
-            val numRows = (currentPage.size + slotsPerRow - 1) / slotsPerRow
-            Column(verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)) {
-                repeat(numRows) { rowIndex ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                    ) {
-                        repeat(slotsPerRow) { colIndex ->
-                            val slotIndex = rowIndex * slotsPerRow + colIndex
-                            if (slotIndex < currentPage.size) {
-                                val position = (selectedPageIndex * HomeLayoutRules.SLOTS_PER_PAGE) + slotIndex
-                                val tile = currentPage.getOrNull(slotIndex)
-                                AllowedAppSlotCard(
-                                    tile = tile,
-                                    position = position,
-                                    selected = selectedPosition == position,
-                                    onSelect = { selectedPosition = position },
-                                    onRemove = {
-                                        tile?.packageName?.let(onRemoveApp)
-                                        if (selectedPosition == position) selectedPosition = null
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                )
-                            } else {
-                                Spacer(modifier = Modifier.weight(1f))
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (selectedPosition == null) {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(EasyUiSpacing.md),
-                        verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm),
-                    ) {
-                        Text("Installed Apps", style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            "Select an empty home slot above to pick an app to place there.",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
-                }
-            }
-        }
-    }
-    
-    if (selectedPosition != null) {
-        androidx.compose.material3.ModalBottomSheet(
-            onDismissRequest = { selectedPosition = null },
-            sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = EasyUiSpacing.md, vertical = EasyUiSpacing.sm)
-                    .testTag("allowed_apps_installed_list"),
-                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md)
-            ) {
-                Text(
-                    text = "Select an app for this slot",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                
-                val currentPkg = pages.flatten().firstOrNull { 
-                    it?.position == selectedPosition 
-                }?.packageName
-                
-                if (currentPkg != null) {
-                    OutlinedButton(
-                        onClick = {
-                            onRemoveApp(currentPkg)
-                            selectedPosition = null
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Remove Current App")
-                    }
-                }
-                
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth().heightIn(max = 600.dp),
-                    verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.sm)
-                ) {
-                    items(installedApps.size) { index ->
-                        val app = installedApps[index]
-                        val isAssigned = app.packageName in assignedAppPackages
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = EasyUiSpacing.xs),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(app.label, style = MaterialTheme.typography.bodyLarge)
-                            if (isAssigned) {
-                                Text("Placed", style = MaterialTheme.typography.labelMedium)
-                            } else {
-                                Button(
-                                    onClick = { 
-                                        onAssignApp(app.packageName, selectedPosition!!)
-                                        selectedPosition = null 
-                                    }
-                                ) {
-                                    Text("Place Here")
-                                }
-                            }
-                        }
-                    }
-                }
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(EasyUiSpacing.lg))
-            }
         }
     }
 }

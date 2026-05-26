@@ -1,84 +1,98 @@
 # SETTINGS CONTRACT: EasyUI Canonical State
 
-This document defines the single source of truth for all user-configurable settings in EasyUI. All new and existing code must adhere to this contract to ensure state consistency.
+This contract defines the single source of truth for the launcher after the stabilization sprint.
 
-## 1. Canonical Settings Models
+## 1. Canonical Models
 
-- **Primary Settings:** `com.easyui.core.domain.model.LauncherSettings` (persisted via `DataStoreLauncherSettingsRepository`). This holds most configuration values.
-- **Skin & Theme:** `com.easyui.core.domain.model.SkinConfig` (also in `LauncherSettingsRepository`). This is for visual customization.
-- **Home Screen Layout:** `List<com.easyui.core.domain.model.HomeTile>` (persisted via `RoomHomeLayoutRepository`). This defines the grid, pages, and all tiles (apps, contacts, actions).
+- `LauncherSettings` is the canonical DataStore-backed settings model.
+- `SkinConfig` is the canonical visual configuration model exposed through `LauncherSettingsRepository`.
+- `HomeTile` lists in `RoomHomeLayoutRepository` are the canonical home layout and shortcut model.
 
-There is **NO OTHER** source of truth. Caching in ViewModels is allowed, but `DataStore` and `Room` are the canonical stores.
+No screen may invent a parallel settings source for the same behavior.
 
-## 2. Canonical DataStore Keys
+## 2. Canonical Keys
 
-All keys are defined in `core/data/src/main/java/com/easyui/core/data/datastore/LauncherSettingsDataStore.kt`.
+The key names below are the canonical persistence fields used by the repository layer:
 
-- `ONBOARDING_COMPLETE`: `Boolean`
-- `LAYOUT_LOCKED`: `Boolean`
-- `PIN_HASH_HEX`: `String?`
-- `PIN_SALT_HEX`: `String?`
-- `CAREGIVER_PROTECTION_ENABLED`: `Boolean`
-- `EMERGENCY_PHONE_NUMBER`: `String`
-- `EMERGENCY_NUMBERS`: `Set<String>`
-- `SKIN_VISUAL_THEME`: `String` (enum name of `VisualTheme`)
-- `SKIN_LAYOUT_MODE`: `String` (enum name of `LayoutMode`)
-- `SKIN_READABILITY_PRESET`: `String` (enum name of `HomeReadabilityPreset`)
-- `USE_24_HOUR_CLOCK`: `Boolean`
-- ... and others as defined in the file.
+- `ONBOARDING_COMPLETE`
+- `LAYOUT_LOCKED`
+- `PIN_HASH_HEX`
+- `PIN_SALT_HEX`
+- `CAREGIVER_PROTECTION_ENABLED`
+- `EMERGENCY_PHONE_NUMBER`
+- `EMERGENCY_NUMBERS`
+- `SKIN_VISUAL_THEME`
+- `SKIN_LAYOUT_MODE`
+- `SKIN_READABILITY_PRESET`
+- `SKIN_FONT_SCALE_FACTOR`
+- `SKIN_FONT_SIZE_MODE`
+- `USE_24_HOUR_CLOCK`
 
-## 3. Allowed Values & Defaults
+## 3. Allowed Values
 
-| Setting             | Allowed Values (Enum) / Type      | Default on Fresh Install                        |
-| ------------------- | --------------------------------- | ----------------------------------------------- |
-| `visualTheme`       | `VisualTheme` enum                | `VisualTheme.DARK_COMFORT`                      |
-| `layoutMode`        | `LayoutMode` enum                 | `LayoutMode.SIMPLE_CLASSIC`                     |
-| `readabilityPreset` | `HomeReadabilityPreset` enum      | `HomeReadabilityPreset.STANDARD`                |
-| `layoutLocked`      | `Boolean`                         | `false`                                         |
-| `caregiverPin`      | `String` (4+ digits)              | `null` (no PIN)                                 |
-| `emergencyNumber`   | `String`                          | `"911"`                                         |
-| `homePageCount`     | `Int` (1-4)                       | `1`                                             |
+| Setting | Allowed Values | Fresh Install Default |
+| --- | --- | --- |
+| `visualTheme` | `VisualTheme` enum | `VisualTheme.DARK_COMFORT` |
+| `layoutMode` | Supported launcher `LayoutMode` values only | Supported fixed V1 layout |
+| `readabilityPreset` | `HomeReadabilityPreset` enum | `HomeReadabilityPreset.STANDARD` |
+| `layoutLocked` | `Boolean` | `false` |
+| `caregiverPin` | `null` or a user-created PIN hash | `null` |
+| `emergencyNumber` | Valid dialable string or `null` | `911` |
+| `homePageCount` | `Int` supported by the home tile model | `1` |
 
-**Unsupported Options:** Any UI controls for settings not listed here or marked as deprecated (e.g., layouts other than `SIMPLE_CLASSIC` if V1 is fixed) **MUST be removed or disabled**. Do not show non-functional options.
+Unsupported options must not be shown as fake controls. If the current V1 layout does not support a choice, the UI must remove it or disable it with a plain explanation.
 
-## 4. Read/Write Authority
+## 4. Write Authority
 
-To eliminate state conflicts, we define a strict separation of concerns:
+| Screen / ViewModel | May Write | May Read |
+| --- | --- | --- |
+| `GuidedSetupViewModel` | Initial onboarding settings only | Yes |
+| `CaregiverViewModel` | All caregiver-managed settings after onboarding | Yes |
+| `HomeViewModel` | No | Yes |
+| `AppViewModel` | No | Yes |
+| `AppListViewModel` | No | Yes |
 
-| ViewModel                  | Write Authority                                                                                                                              | Read Authority |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| `GuidedSetupViewModel`     | **ONCE** during onboarding. May write to `LauncherSettings`, `SkinConfig`, and initial `HomeTile` layout. Sets `onboardingComplete` to `true`. | Limited (own state) |
-| `CaregiverViewModel`       | **EXCLUSIVE** writer for all settings *after* onboarding. All user-driven changes from any screen must be funneled through this ViewModel.      | Full (all settings) |
-| `HomeViewModel`, `AppViewModel`, `AppListViewModel` | **NO WRITE AUTHORITY**. These are read-only consumers of the state exposed by the repositories. | Full (all settings) |
+The same repository methods must be used for overlapping values in onboarding and caregiver settings.
 
-## 5. Critical Scenarios & Behavior
+## 5. Behavior Rules
 
 ### Onboarding
-- Onboarding is the ONLY flow that uses `GuidedSetupViewModel`.
-- It collects initial preferences for theme, font, and emergency contact.
-- It MUST save these to the canonical `DataStore` and `Room` repositories.
-- Upon completion, it sets `onboardingComplete = true`. The app will then navigate to the `HomeScreen`, and `CaregiverViewModel` becomes the settings authority.
 
-### Caregiver Access (Clock 5-Tap)
-- The gesture listener is in `HomeViewModel`.
-- **`HomeViewModel` MUST NOT contain verification logic.**
-- On 5 taps, it will call a method on `CaregiverViewModel` (e.g., `requestCaregiverAccess()`).
-- `CaregiverViewModel` checks if a PIN is configured (`pinHashHex != null`).
-  - **If PIN exists:** Navigate to `PinEntryScreen` for verification.
-  - **If PIN does NOT exist:** Navigate to `PinEntryScreen` in "Create PIN" mode.
-- The user must **NEVER** be locked out because a PIN was never set.
+- Onboarding must stay minimal.
+- It can configure the values necessary for first launch: theme, readability, initial apps/contacts, and any required safety defaults.
+- It must write to the same canonical repository APIs that caregiver settings use later.
 
-### Home Screen Rendering
-- `HomeViewModel` is responsible for observing `LauncherSettingsRepository` and `HomeLayoutRepository`.
-- It transforms the canonical `List<HomeTile>` and `LauncherSettings` into a `HomeUiState` for the `HomeScreen`.
-- **Pagination:** The number of pages is determined by `HomeLayoutRules.effectivePageCount(tiles)`. The UI must render this many pages. If a tile's `page` property is outside this range, it's a data integrity issue that `CaregiverViewModel` must prevent during edits.
-- **Layout Lock:** When `layoutLocked` is `true`, the `HomeScreen` UI MUST disable all drag-and-drop or reordering gestures. It MUST NOT show a lock icon on every individual tile. A single, global indicator (e.g., in the top bar or a toast on attempted edit) is acceptable.
+### Caregiver Access
 
-### Settings Consistency (Onboarding vs. Caregiver)
-- **Problem:** Onboarding and Caregiver settings are inconsistent (Bug #5).
-- **Solution:**
-  1.  **Single Source of UI:** Any overlapping settings UI (like Theme selection) should be extracted into a common, reusable Composable if possible.
-  2.  **Single Source of Logic:** Both `GuidedSetupViewModel` and `CaregiverViewModel` must call the **exact same** repository methods. E.g., `updateVisualTheme(theme)`.
-  3.  **Audit & Prune:** Review all settings in the onboarding flow. If a setting is not essential for the first-run experience, remove it from onboarding and leave it for the full `CaregiverToolsScreen`. Keep onboarding simple.
+- The 5-tap clock gesture must always open caregiver access.
+- If a PIN exists, show PIN verification.
+- If no PIN exists, show PIN creation.
+- The user must never be locked out because a PIN was never created.
 
-This contract is the source of truth for the stabilization sprint. All fixes in Phase 3 must align with these rules.
+### Home Rendering
+
+- `HomeViewModel` observes the canonical repositories and produces the home UI state.
+- It must render all configured pages and slots that are supported by the current design.
+- If a layout is locked, editing is disabled, but the UI should not decorate every tile with a lock icon.
+
+### Theme / Readability / App Placement
+
+- Theme changes persist through navigation, recomposition, and resume.
+- Readability choices affect senior-facing UI text and spacing.
+- App placement uses the shared grid component and the Room tile model.
+
+### Unsupported Choices
+
+- Do not expose non-functional layout modes or dead onboarding controls.
+- If a control cannot affect the actual launcher state, remove it or disable it with a clear explanation.
+
+## 6. Summary
+
+The contract is intentionally narrow:
+
+- one repository path for settings
+- one repository path for home tiles
+- shared UI for overlapping configuration surfaces
+- read-only home rendering
+
+That is the stabilized model the app now uses.

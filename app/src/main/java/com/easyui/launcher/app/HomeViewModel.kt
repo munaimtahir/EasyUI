@@ -92,7 +92,7 @@ class HomeViewModel(
             )
 
             val pages = renderPages(base.tiles, base.installedApps, base.settings)
-            val allTiles = pages.flatten()
+            val allTiles = pages.flatten().filterNotNull()
             val effectivePageCount = HomeLayoutRules.effectivePageCount(
                 configuredPageCount = base.settings.homePageCount,
                 tiles = base.tiles,

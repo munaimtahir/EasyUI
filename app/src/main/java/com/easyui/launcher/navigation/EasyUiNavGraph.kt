@@ -9,6 +9,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,6 +52,7 @@ import com.easyui.feature.caregiver.ResetLauncherScreen
 import com.easyui.feature.caregiver.GuardianSettingsScreen
 import com.easyui.feature.caregiver.LinkedDevicesScreen
 import com.easyui.feature.caregiver.RemoteDeviceDetailScreen
+import com.easyui.core.ui.components.ThemeSelector
 import com.easyui.feature.home.HealthInfoScreen
 import com.easyui.feature.home.AssistedRecoveryScreen
 import com.easyui.feature.home.EmergencyCallScreen
@@ -602,6 +604,12 @@ fun EasyUiNavGraph(
                             onOpenLayoutPages = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_LAYOUT_PAGES))
                             },
+                            onOpenReadabilityPreset = {
+                                navController.navigate(Routes.ReadabilityPreset.route)
+                            },
+                            onOpenThemeSelection = {
+                                navController.navigate(Routes.ThemeSelection.route)
+                            },
                             onOpenAllowedApps = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_ALLOWED_APPS))
                             },
@@ -740,10 +748,7 @@ fun EasyUiNavGraph(
                                 caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() - 1)
                             },
                             onSelectLayoutMode = caregiverViewModel::updateSkinLayoutMode,
-                            onSelectTheme = { theme, mode ->
-                                caregiverViewModel.updateSkinVisualTheme(theme)
-                                caregiverViewModel.updateSkinAccessibilityMode(mode)
-                            },
+                            onOpenThemeSelection = { navController.navigate(Routes.ThemeSelection.route) },
                             onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
                             onFinishSetup = {
                                 caregiverViewModel.endCaregiverSession()
@@ -752,6 +757,59 @@ fun EasyUiNavGraph(
                                 }
                             },
                         )
+                    }
+                }
+                composable(Routes.ReadabilityPreset.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
+                        navController = navController,
+                    ) {
+                        com.easyui.feature.caregiver.ReadabilityPresetScreen(
+                            currentPreset = caregiverState.settings.skinConfig.readabilityPreset,
+                            onPresetSelected = caregiverViewModel::updateHomeReadabilityPreset,
+                            onDone = { navController.popBackStack(Routes.CaregiverTools.route, false) },
+                            onFinishSetup = {
+                                caregiverViewModel.endCaregiverSession()
+                                navController.navigate(Routes.Home.route) {
+                                    popUpTo(Routes.CaregiverTools.route) { inclusive = true }
+                                }
+                            },
+                        )
+                    }
+                }
+                composable(Routes.ThemeSelection.route) {
+                    RequireCaregiverSession(
+                        caregiverSessionActive = caregiverState.caregiverSessionActive,
+                        caregiverViewModel = caregiverViewModel,
+                        navController = navController,
+                    ) {
+                        Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
+                            Column(
+                                modifier = androidx.compose.ui.Modifier
+                                    .fillMaxSize()
+                                    .padding(EasyUiSpacing.lg),
+                                verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
+                            ) {
+                                Text("Visual Theme", style = MaterialTheme.typography.headlineLarge)
+                                Text(
+                                    "Pick the senior home look. High contrast stays separate from the regular light, dark, and auto themes.",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                                ThemeSelector(
+                                    visualTheme = caregiverState.settings.skinConfig.visualTheme,
+                                    accessibilityMode = caregiverState.settings.skinConfig.accessibilityMode,
+                                    onSelectVisualTheme = caregiverViewModel::updateSkinVisualTheme,
+                                    onSelectAccessibilityMode = caregiverViewModel::updateSkinAccessibilityMode,
+                                )
+                                OutlinedButton(
+                                    onClick = { navController.popBackStack() },
+                                    modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
+                                ) {
+                                    Text("Back")
+                                }
+                            }
+                        }
                     }
                 }
                 composable(Routes.PinSetup.route) {

@@ -23,6 +23,8 @@ sealed class Routes(val route: String) {
     }
     data object CaregiverTools : Routes("caregiver_tools")
     data object LayoutPages : Routes("layout_pages")
+    data object ReadabilityPreset : Routes("readability_preset")
+    data object ThemeSelection : Routes("theme_selection")
     data object AllowedApps : Routes("allowed_apps")
     data object PinSetup : Routes("pin_setup")
     data object PinVerify : Routes("pin_verify")
