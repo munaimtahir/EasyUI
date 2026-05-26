@@ -3,6 +3,7 @@ package com.easyui.core.domain.model
 enum class GuardianCheckType {
     BATTERY_LOW,
     BATTERY_CRITICAL,
+    BATTERY_OPTIMIZED,
     NO_INTERNET,
     NOT_DEFAULT_LAUNCHER,
     EMERGENCY_CONTACT_MISSING,

@@ -22,6 +22,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -37,6 +38,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -52,6 +54,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -67,6 +70,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = false,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -82,6 +86,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -97,6 +102,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = incompleteSetup
         )
@@ -112,6 +118,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = false,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -127,6 +134,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -141,6 +149,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = false,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -155,6 +164,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -170,6 +180,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = false,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -184,6 +195,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = true,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
@@ -198,6 +210,7 @@ class GuardianRulesTest {
             isCharging = false,
             isInternetAvailable = true,
             isDefaultLauncher = false,
+            isBatteryOptimized = false,
             hasRequiredPermissions = true,
             setupCompleteness = fullSetup
         )
