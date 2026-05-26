@@ -523,21 +523,9 @@ private fun HomeActionTile(
             }
         }
         
-        // Lock icon (top-right corner)
-        if (layoutLocked) {
-            Box(
-                modifier = Modifier
-                    .align(androidx.compose.ui.Alignment.TopEnd)
-                    .padding(4.dp)
-                    .background(Color.Black.copy(alpha = 0.6f), CircleShape)
-                    .padding(2.dp),
-            ) {
-                Text(
-                    text = "🔒",
-                    fontSize = 10.sp,
-                )
-            }
-        }
+        // Lock icon was here, but removed to avoid polluting every tile.
+        // A global indicator should be used instead.
+        
     }
 }
 

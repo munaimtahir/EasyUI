@@ -191,98 +191,12 @@ fun ThemePickerScreen(
         totalSteps = totalSteps,
         nextLabel = "Continue",
     ) {
-        ThemeChoiceCard(
-            label = "Dark",
-            description = "High contrast dark mode, easier on the eyes in low light.",
-            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.DARK_COMFORT,
-            swatch = androidx.compose.ui.graphics.Color(0xFF161A1B),
-            onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.DARK_COMFORT)
-            },
+        ThemeSelector(
+            visualTheme = visualTheme,
+            accessibilityMode = accessibilityMode,
+            onSelectVisualTheme = onSelectVisualTheme,
+            onSelectAccessibilityMode = onSelectAccessibilityMode,
         )
-        ThemeChoiceCard(
-            label = "Light",
-            description = "Classic light mode with clear black text on bright background.",
-            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.LIGHT_PREMIUM,
-            swatch = androidx.compose.ui.graphics.Color(0xFFF6F1E8),
-            onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.LIGHT_PREMIUM)
-            },
-        )
-        ThemeChoiceCard(
-            label = "High Contrast",
-            description = "Maximum visibility with bold outlines and strong colors.",
-            selected = accessibilityMode == AccessibilityMode.HIGH_CONTRAST,
-            swatch = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
-            onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.HIGH_CONTRAST)
-            },
-        )
-        ThemeChoiceCard(
-            label = "Auto",
-            description = "Follows the phone's system theme (Light or Dark).",
-            selected = accessibilityMode != AccessibilityMode.HIGH_CONTRAST && visualTheme == VisualTheme.AUTO,
-            swatch = androidx.compose.ui.graphics.Color(0xFF808080),
-            onClick = {
-                onSelectAccessibilityMode(AccessibilityMode.NONE)
-                onSelectVisualTheme(VisualTheme.AUTO)
-            },
-        )
-    }
-}
-
-@Composable
-private fun ThemeChoiceCard(
-    label: String,
-    description: String,
-    selected: Boolean,
-    swatch: androidx.compose.ui.graphics.Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colors = if (selected) {
-        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-    } else {
-        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    }
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .testTag("theme_choice_${label.lowercase().replace(' ', '_')}"),
-        colors = colors,
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(EasyUiSpacing.md),
-            horizontalArrangement = Arrangement.spacedBy(EasyUiSpacing.md),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .padding(0.dp)
-                    .let { it },
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(swatch),
-                )
-            }
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(EasyUiSpacing.xs)) {
-                Text(label, style = MaterialTheme.typography.titleLarge)
-                Text(description, style = MaterialTheme.typography.bodyMedium)
-            }
-            if (selected) {
-                Icon(imageVector = Icons.Outlined.CheckCircle, contentDescription = "Selected")
-            }
-        }
     }
 }
 

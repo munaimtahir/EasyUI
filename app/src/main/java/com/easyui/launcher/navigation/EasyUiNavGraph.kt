@@ -767,8 +767,11 @@ fun EasyUiNavGraph(
                             onPinChange = caregiverViewModel::updatePinInput,
                             onConfirmPinChange = caregiverViewModel::updateConfirmPinInput,
                             onSubmit = {
-                                if (caregiverViewModel.submitPinSetup()) {
-                                    navController.popBackStack(Routes.CaregiverTools.route, false)
+                                val destination = caregiverViewModel.submitPinSetup()
+                                if (destination != null) {
+                                    navController.navigate(destination) {
+                                        popUpTo(Routes.PinSetup.route) { inclusive = true }
+                                    }
                                 }
                             },
                         )

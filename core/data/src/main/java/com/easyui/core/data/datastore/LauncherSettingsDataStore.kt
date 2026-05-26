@@ -193,6 +193,32 @@ class DataStoreLauncherSettingsRepository(
         }
     }
 
+    override suspend fun updateVisualTheme(theme: VisualTheme) {
+        val currentConfig = getSkinConfig()
+        setSkinConfig(currentConfig.copy(visualTheme = theme))
+    }
+
+    override suspend fun updateLayoutMode(mode: LayoutMode) {
+        val currentConfig = getSkinConfig()
+        setSkinConfig(currentConfig.copy(layoutMode = mode))
+        val verySimple = mode == LayoutMode.VERY_SIMPLE
+        updateVerySimpleModeEnabled(verySimple)
+    }
+
+    override suspend fun updateReadabilityPreset(preset: HomeReadabilityPreset) {
+        val currentConfig = getSkinConfig()
+        val mappedLayoutMode = when (preset) {
+            HomeReadabilityPreset.STANDARD -> LayoutMode.SIMPLE_CLASSIC
+            else -> LayoutMode.VERY_SIMPLE
+        }
+        setSkinConfig(
+            currentConfig.copy(
+                readabilityPreset = preset,
+                layoutMode = mappedLayoutMode
+            )
+        )
+    }
+
     override suspend fun getSkinConfig(): SkinConfig {
         val preferences = dataStore.data.first()
         return decodeSkinConfig(

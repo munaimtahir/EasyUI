@@ -353,18 +353,14 @@ class CaregiverViewModel(
 
     fun updateSkinLayoutMode(mode: LayoutMode) {
         viewModelScope.launch {
-            val current = state.value.settings.skinConfig
-            container.launcherSettingsRepository.setSkinConfig(current.copy(layoutMode = mode))
-            val verySimple = mode == LayoutMode.VERY_SIMPLE
-            container.launcherSettingsRepository.updateVerySimpleModeEnabled(verySimple)
+            container.launcherSettingsRepository.updateLayoutMode(mode)
             messages.emit("Layout mode set to ${displayName(mode.name)}.")
         }
     }
 
     fun updateSkinVisualTheme(theme: VisualTheme) {
         viewModelScope.launch {
-            val current = state.value.settings.skinConfig
-            container.launcherSettingsRepository.setSkinConfig(current.copy(visualTheme = theme))
+            container.launcherSettingsRepository.updateVisualTheme(theme)
             messages.emit("Theme set to ${displayName(theme.name)}.")
         }
     }
@@ -495,6 +491,11 @@ class CaregiverViewModel(
         }
         val settings = state.value.settings
         val hasPin = !settings.pinHashHex.isNullOrBlank() && !settings.pinSaltHex.isNullOrBlank()
+
+        if (!hasPin) {
+            return Routes.PinSetup.route
+        }
+
         val requiresPin = CaregiverProtectionRules.requiresPin(
             protectionEnabled = settings.caregiverProtectionEnabled,
             hasPinConfigured = hasPin,
@@ -506,6 +507,22 @@ class CaregiverViewModel(
             localState.update { it.copy(pendingAction = null, caregiverSessionActive = true) }
             destinationFor(action)
         }
+    }
+
+    private fun grantCaregiverSession(): String {
+        val pendingAction = state.value.pendingAction
+        localState.update {
+            it.copy(
+                pinInput = "",
+                confirmPinInput = "",
+                pinError = null,
+                pendingAction = null,
+                caregiverSessionActive = true,
+                sessionLastActivityTimeMs = SystemClock.uptimeMillis(),
+                sessionTimeoutWarningShown = false,
+            )
+        }
+        return if (pendingAction != null) destinationFor(pendingAction) else Routes.CaregiverTools.route
     }
 
     private fun updateLayout(transform: (List<HomeTile>) -> List<HomeTile>) {

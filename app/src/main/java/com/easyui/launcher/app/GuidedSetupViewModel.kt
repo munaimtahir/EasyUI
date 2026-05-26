@@ -166,8 +166,7 @@ class GuidedSetupViewModel(
 
     fun updateVisualTheme(theme: VisualTheme) {
         viewModelScope.launch {
-            val current = container.launcherSettingsRepository.getSkinConfig()
-            container.launcherSettingsRepository.setSkinConfig(current.copy(visualTheme = theme))
+            container.launcherSettingsRepository.updateVisualTheme(theme)
         }
     }
 
@@ -180,16 +179,7 @@ class GuidedSetupViewModel(
 
     fun updateReadabilityPreset(preset: HomeReadabilityPreset) {
         viewModelScope.launch {
-            container.launcherSettingsRepository.updateHomeReadabilityPreset(preset.name)
-            val mappedLayoutMode = when (preset) {
-                HomeReadabilityPreset.STANDARD -> LayoutMode.SIMPLE_CLASSIC
-                else -> LayoutMode.VERY_SIMPLE
-            }
-            val currentSkin = container.launcherSettingsRepository.getSkinConfig()
-            container.launcherSettingsRepository.setSkinConfig(currentSkin.copy(
-                layoutMode = mappedLayoutMode,
-                readabilityPreset = preset
-            ))
+            container.launcherSettingsRepository.updateReadabilityPreset(preset)
         }
     }
 

@@ -24,6 +24,9 @@ interface LauncherSettingsRepository {
     suspend fun updateHomePageCount(pageCount: Int)
     suspend fun updateHealthInfo(healthInfo: HealthInfo)
     suspend fun setSkinConfig(config: SkinConfig)
+    suspend fun updateVisualTheme(theme: com.easyui.core.domain.model.VisualTheme)
+    suspend fun updateLayoutMode(mode: com.easyui.core.domain.model.LayoutMode)
+    suspend fun updateReadabilityPreset(preset: com.easyui.core.domain.model.HomeReadabilityPreset)
     suspend fun getSkinConfig(): SkinConfig
     suspend fun storePinCredential(credential: com.easyui.core.domain.model.PinCredential)
     suspend fun updateSetupProtectionLevel(levelName: String)
