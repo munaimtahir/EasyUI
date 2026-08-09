@@ -1,7 +1,0 @@
-## dumpsys window focus
-  mCurrentFocus=Window{30d5f2a u0 com.easyui.launcher.debug/com.easyui.launcher.MainActivity}
-  mFocusedApp=ActivityRecord{1f34f u0 com.easyui.launcher.debug/com.easyui.launcher.MainActivity} t4432 d0}
-
-## dumpsys activity focus
-    topResumedActivity=ActivityRecord{1f34f u0 com.easyui.launcher.debug/com.easyui.launcher.MainActivity} t4432 d0}
-  ResumedActivity: ActivityRecord{1f34f u0 com.easyui.launcher.debug/com.easyui.launcher.MainActivity} t4432 d0}

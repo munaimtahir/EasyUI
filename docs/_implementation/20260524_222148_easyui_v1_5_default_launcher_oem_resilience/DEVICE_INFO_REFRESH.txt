@@ -1,6 +1,0 @@
-Manufacturer:  vivo
-Model:  V2109
-Release:  13
-SDK:  33
-Physical size: 1080x2408
-Physical density: 440

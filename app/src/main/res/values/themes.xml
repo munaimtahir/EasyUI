@@ -1,5 +1,8 @@
-<resources>
-    <style name="Theme.EasyUI" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@android:color/transparent</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.Core" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
     </style>
+
 </resources>

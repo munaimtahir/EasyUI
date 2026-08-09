@@ -1,0 +1,244 @@
+# Roadmap
+
+## Current status — 2026-08-09
+
+`core v0.1` has completed the launcher foundation and the planned launcher-level MVP customization/runtime patch. The final audit repaired the Gradle wrapper, migrated stale tests, fixed the spec-dependent default home layout, repaired connected UI smoke tests, exposed Reset, and verified build/unit/lint/instrumentation/runtime evidence. See `docs/VERIFICATION/core-v0.1-baseline-report.md` for command-level evidence.
+
+Completed current launcher-level scope includes:
+
+- launcher HOME role, stable home surface, app discovery/icons/launching
+- persistent pages and 2x2/3x3/4x4 grids with migration/packing
+- app drawer search, Grid/List modes, and favorites
+- themes/appearance, top information strip, Quick Access, notifications test flow
+- contacts/dial/SMS shortcuts, built-in Clock/Date/Note tiles, and flashlight handling
+- visible reset flow and connected Compose smoke coverage
+
+Future product variants and managed-device work remain deferred until a separate product scope is approved.
+
+## Stage 0 — Documentation Foundation
+
+Goal:
+
+Create the project identity, scope, guardrails, AI-agent rules, testing strategy, and decision records.
+
+Outputs:
+
+- README
+- project context
+- greenfield policy
+- baseline scope
+- product guardrails
+- architecture plan
+- storage plan
+- UI baseline
+- testing strategy
+- definition of done
+- AI-agent instructions
+- Copilot instructions
+- Gemini instructions
+- decision records
+
+Exit criteria:
+
+- documentation committed
+- scope clearly locked
+- AI-agent instructions available
+
+## Stage 1 — Android Launcher Skeleton
+
+Goal:
+
+Create a clean Android project that can become a launcher.
+
+Includes:
+
+- Android project setup
+- launcher intent configuration
+- minimal home activity/screen
+- basic build
+- initial CI build
+
+Exit criteria:
+
+- app builds
+- app launches
+- launcher intent present
+- build workflow passes
+
+## Stage 2 — App Discovery and App List
+
+Goal:
+
+Detect installed apps and show a simple list.
+
+Includes:
+
+- installed app scanner
+- app labels
+- app icons
+- alphabetical list
+- tap to launch
+
+Exit criteria:
+
+- apps display
+- icons display
+- apps launch
+- tests pass
+
+## Stage 3 — Fixed Home Grid
+
+Goal:
+
+Create a stable home grid for selected apps/actions.
+
+Includes:
+
+- fixed grid
+- selected home apps
+- local persistence
+- fallback handling
+- app launch from home
+
+Exit criteria:
+
+- selected apps persist
+- home grid stable
+- no broken placeholders
+- app launch works
+
+## Stage 4 — Minimal Settings
+
+Goal:
+
+Add only the settings required for the baseline.
+
+Includes:
+
+- choose home apps
+- choose basic theme
+- reset home apps
+- status/debug information
+
+Exit criteria:
+
+- settings persist
+- reset works
+- theme persists
+- no state conflict
+
+## Stage 5 — CI and Emulator Verification
+
+Goal:
+
+Verify baseline behavior through automation.
+
+Includes:
+
+- build workflow
+- unit test workflow
+- lint workflow
+- emulator install/launch workflow
+- screenshot/log artifacts
+- final verification report
+
+Exit criteria:
+
+- all required workflows pass
+- artifacts available
+- baseline verdict documented
+
+## Stage 5B — Launcher Customization Planning
+
+Goal:
+
+Convert the allowed customization catalogue into staged implementation groups after the baseline is stable.
+
+Includes:
+
+- home page customization plan
+- grid size options plan
+- icon/text size options plan
+- launcher quick access panel plan
+- custom top launcher information bar plan
+- search plan
+- widgets plan
+- accessibility customization plan
+- contacts/phone shortcut plan
+- product variant split
+
+Exit criteria:
+
+- customization scope reviewed
+- features assigned to baseline/post-baseline/product-variant/advanced tracks
+- no Android system UI replacement claims
+- no kiosk/MDM behavior added to normal launcher scope
+
+## Stage 5C — MVP Customization and Runtime Patch
+
+Goal:
+
+Complete the implementation of groups A-H from the customization scope and stabilize runtime behavior.
+
+Includes:
+
+- Group A: Home screen customization (grid fix, page count, label toggle)
+- Group B: App drawer customization (search, layout modes, favorites)
+- Group C: Theme and appearance (expanded palettes, accents, shapes, motion)
+- Group D: Quick access panel (system shortcuts, app intents)
+- Group E: Top bar improvements (battery, network)
+- Group F: Notifications (launcher shortcut, test notification)
+- Group G: Dialer and contacts (phone shortcuts, favorite contact tiles)
+- Group H: Widgets (built-in local widgets)
+- Flashlight shortcut
+
+Exit criteria:
+
+- all features implemented and documented
+- grid size bug fixed with Option A migration
+- build/test/lint pass
+- final baseline verification report created
+
+## Stage 6 — First Product Variant Planning
+
+Start only after:
+
+- baseline GO
+- customization scope review
+- post-baseline launcher customization priorities are clear
+
+Possible first variant:
+
+- senior-friendly launcher
+
+This stage should create a separate product scope before implementation.
+
+## Stage 7 — Caregiver/Safety Layer Planning
+
+Start only after the first product variant is stable.
+
+Possible features:
+
+- caregiver settings
+- PIN-protected edit mode
+- layout lock
+- app visibility controls
+- reset tools
+
+## Stage 8 — Product Family Expansion
+
+Start only after foundation and first variant are stable.
+
+Possible directions:
+
+- parent launcher
+- child-safe launcher
+- school launcher
+- office launcher
+- home launcher
+
+## Roadmap rule
+
+Do not skip stages.
+
+Each stage should end with a GO, Conditional GO, or NO-GO verdict.

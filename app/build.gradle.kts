@@ -1,99 +1,32 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
-import java.util.Properties
-
 android {
-    namespace = "com.easyui.launcher"
-    compileSdk = 35
-
-    val localSigningProperties = Properties().apply {
-        val signingFile = rootProject.file("release_keys/keystore.properties")
-        if (signingFile.exists()) {
-            signingFile.inputStream().use(::load)
-        }
-    }
-    fun readSigningValue(name: String, fallbackName: String): String? =
-        System.getenv(name)
-            ?: (project.findProperty(name) as String?)
-            ?: localSigningProperties.getProperty(name)
-            ?: localSigningProperties.getProperty(fallbackName)
-
-    val releaseKeystorePath: String? = readSigningValue("EASYUI_KEYSTORE_PATH", "storeFile")
-    val releaseKeystoreFile = releaseKeystorePath
-        ?.takeIf { it.isNotBlank() }
-        ?.let { rootProject.file(it) }
-    val releaseStorePassword: String? = readSigningValue("EASYUI_KEYSTORE_PASSWORD", "storePassword")
-    val releaseKeyAlias: String? = readSigningValue("EASYUI_KEY_ALIAS", "keyAlias")
-    val releaseKeyPassword: String? = readSigningValue("EASYUI_KEY_PASSWORD", "keyPassword")
-    val hasReleaseSigning = releaseKeystoreFile?.exists() == true &&
-        !releaseStorePassword.isNullOrBlank() &&
-        !releaseKeyAlias.isNullOrBlank() &&
-        !releaseKeyPassword.isNullOrBlank()
+    namespace = "com.easyui.core"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.easyui.launcher"
-        minSdk = 26
-        targetSdk = 35
+        applicationId = "com.easyui.core"
+        minSdk = 24
+        targetSdk = 34
         versionCode = 1
-        versionName = "0.1.0-alpha01"
+        versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
-    }
-
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-    }
-
-    // Release signing — keys are read from local gradle.properties or CI environment variables.
-    // DO NOT commit real keystore values to source control.
-    // Set up by creating a keystore and adding these properties to your local gradle.properties:
-    //   EASYUI_KEYSTORE_PATH=<absolute path to .jks>
-    //   EASYUI_KEYSTORE_PASSWORD=<store password>
-    //   EASYUI_KEY_ALIAS=<key alias>
-    //   EASYUI_KEY_PASSWORD=<key password>
-    signingConfigs {
-        create("release") {
-            if (hasReleaseSigning) {
-                storeFile = releaseKeystoreFile
-                storePassword = releaseStorePassword
-                keyAlias = releaseKeyAlias
-                keyPassword = releaseKeyPassword
-            }
+        vectorDrawables {
+            useSupportLibrary = true
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            if (hasReleaseSigning) {
-                signingConfig = signingConfigs.getByName("release")
-            }
-        }
-        debug {
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
-        }
-    }
-
-    // Android App Bundle (AAB) is the required upload format for Play Store.
-    bundle {
-        language {
-            enableSplit = true
-        }
-        density {
-            enableSplit = true
-        }
-        abi {
-            enableSplit = true
         }
     }
 
@@ -101,58 +34,37 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
     kotlinOptions {
         jvmTarget = "17"
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
-
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     packaging {
-        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
-    implementation(project(":core:ui"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:data"))
-    implementation(project(":core:platform"))
-    implementation(project(":feature:home"))
-    implementation(project(":feature:apps"))
-    implementation(project(":feature:caregiver"))
-    implementation(project(":feature:onboarding"))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.material)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
 
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.activity:activity-compose:1.9.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.5")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.5")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
-    implementation("androidx.navigation:navigation-compose:2.8.0")
-    implementation("androidx.compose.ui:ui:1.7.1")
-    implementation("androidx.compose.foundation:foundation:1.7.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.7.1")
-    implementation("androidx.compose.material3:material3:1.3.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.7.1")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.1")
+    testImplementation(libs.junit4)
 
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
-    testImplementation("app.cash.turbine:turbine:1.0.0")
-    testImplementation("io.mockk:mockk:1.13.8")
-    testImplementation("org.robolectric:robolectric:4.11")
-
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.1")
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

@@ -1,135 +1,142 @@
 # AGENTS.md
 
+## Project
+
+Repository:
+
+```text
+core
+```
+
+Project:
+
+```text
+Core Launcher Foundation
+```
+
 ## Mission
 
-Build EasyUI Senior Launcher as an offline-first Android launcher for seniors and caregivers. Every change must improve clarity, safety, stability, or delivery readiness without expanding into unsupported Android control claims.
+Build a brand-new Android launcher foundation.
 
-## Source of truth
+The first priority is a stable baseline, not feature expansion.
 
-Read these documents before making substantial product or architecture changes:
+## Required reading before coding
 
-1. `/docs/product/project-brief.md`
-2. `/docs/product/mvp-scope.md`
-3. `/docs/product/v1-scope.md`
-4. `/docs/product/guardrails.md`
-5. `/docs/engineering/architecture.md`
-6. `/docs/engineering/data-model.md`
-7. `/docs/engineering/api-interfaces.md`
-8. `/docs/engineering/tasks.md`
+Read:
 
-If legacy documents differ from the canonical docs, prefer the canonical `docs/` tree and treat `archive/legacy-docs/` as historical input only.
+1. `README.md`
+2. `docs/PROJECT_CONTEXT.md`
+3. `docs/GREENFIELD_POLICY.md`
+4. `docs/BASELINE_SCOPE.md`
+5. `docs/PRODUCT_GUARDRAILS.md`
+6. `docs/ARCHITECTURE.md`
+7. `docs/TESTING/TESTING_STRATEGY.md`
+8. `docs/DEFINITION_OF_DONE.md`
+9. `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`
 
-## Product truth
+## Mandatory first action
 
-- This is a consumer Android launcher, not kiosk software.
-- Do not promise device-owner behavior, OS lockdown, or enterprise management.
-- Do not add cloud dependency, remote caregiver control, subscriptions, or ad-driven flows in MVP or v1.
-- Keep the daily senior experience simpler than stock Android, not more configurable than stock Android.
+Create or update:
 
-## Primary users
+```text
+copilot_session.md
+```
 
-- Senior users who need larger targets, clearer labels, and less visual clutter
-- Caregivers or adult children who set up the phone and want fewer support calls
+Before making code changes.
 
-## Non-negotiable product goals
+## Greenfield rule
 
-- Large, readable, high-contrast UI
-- Stable home layout with low accidental-change risk
-- Offline-first behavior with no account requirement
-- Clear first-run default-launcher guidance
-- Caregiver-only protection features for premium scope
+Do not reuse legacy code, architecture, workflows, UI flows, or state systems from any existing project.
 
-## Delivery phases
+## Baseline-only rule
 
-### Phase 0: Foundation
+During v0.1, do not implement:
 
-- Establish Android project structure
-- Add launcher manifest support
-- Set up navigation, Room, DataStore, and testing baseline
+- caregiver PIN
+- hidden settings entry
+- layout lock
+- app hiding
+- parent mode
+- child mode
+- school mode
+- office mode
+- remote sync
+- cloud account
+- premium unlock
+- ads
+- kiosk/device-owner behavior
 
-### Phase 1: MVP
+## Launcher customization rule
 
-- Onboarding and default launcher guidance
-- Large-tile home screen
-- Simple app list with search
-- Emergency action and flashlight shortcuts
-- Local persistence for layout and settings
+Launcher-level customization is allowed only within the current stage.
 
-### Phase 2: Caregiver Safety Pack
+Allowed launcher-level customization may include:
 
-- Caregiver PIN
-- Layout lock and disabled edit gestures in locked mode
-- Hidden apps
-- Photo contacts
-- One-time premium unlock
+- home screen layout
+- app list
+- app icons and labels
+- fixed grid
+- page options
+- themes
+- quick access panel inside launcher
+- top information bar inside launcher
+- search
+- widgets
+- contact shortcuts
+- accessibility presets
 
-### Phase 3: Stability and Restore
+Do not implement or claim:
 
-- Backup/export
-- Import with validation
-- Reset to defaults
-- Edge-case hardening
+- real Android status bar replacement
+- notification shade replacement
+- Quick Settings replacement
+- system settings replacement
+- direct restricted Wi-Fi/mobile-data control
+- full device lockdown
+- kiosk/device-owner behavior in normal launcher mode
 
-## Architecture expectations
+If a requested feature touches Android system UI, classify it before implementation as:
 
-- `app` owns startup, DI, app-wide navigation, and launcher registration
-- `feature/*` owns screens and feature-specific presentation logic
-- `core/domain` owns business rules and should remain as platform-independent as practical
-- `core/data` owns Room, DataStore, and repository implementations
-- `core/platform` wraps Android APIs such as PackageManager, launcher integration, torch, dial intents, and billing
-- `core/ui` owns shared design primitives and common composables
-- `core/testing` owns fixtures, fakes, and shared test utilities
+- launcher-level allowed feature
+- product-variant feature
+- advanced managed-device feature
+- not allowed for normal launcher
 
-## Coding rules
+## Verification rule
 
-- Use Kotlin and Compose
-- Prefer explicit state models and small composables
-- Keep business logic testable outside UI where practical
-- Avoid OEM-specific hacks as product foundations
-- Use defensive fallbacks for missing apps, unavailable torch, denied permissions, or billing failures
-- Keep strings plain, caregiver-friendly, and honest
+Run real commands.
 
-## UX guardrails
+Recommended minimum:
 
-- One obvious primary action per screen or panel
-- Large touch targets
-- High contrast
-- Clear labels
-- Minimal clutter
-- No hidden gestures for essential actions
-- No feature-heavy widgets in MVP or v1
+```bash
+./gradlew clean assembleDebug
+./gradlew testDebugUnitTest
+./gradlew lintDebug
+```
 
-## Data and privacy rules
+If a command fails, report it honestly.
 
-- No backend or account dependency in MVP/v1
-- No unnecessary network permissions
-- Persist user-owned configuration locally
-- Treat installed app inventory as refreshable device state, not owned data
-- Version backups and validate imports before applying
+## Handoff rule
 
-## Testing expectations
+Maintain `copilot_session.md` with:
 
-Each meaningful feature should include:
+- goal
+- plan
+- checklist
+- files inspected
+- files changed
+- commands run
+- verification results
+- remaining issues
+- next step
 
-- unit tests for rules and repository behavior where feasible
-- UI coverage for critical flows when feasible
-- manual QA notes for launcher-specific or device-specific behavior
+## Final report rule
 
-Always verify:
+End each session with:
 
-- default launcher flow
-- home stability after reboot
-- app list refresh on install/uninstall
-- graceful handling when a referenced app disappears
-- premium degradation to free mode if billing is unavailable
-
-## Change management
-
-- Keep changes small and scoped
-- Update canonical docs when product, UX, or architecture changes
-- Do not edit or resurrect archived legacy docs unless the user explicitly asks
-- Record assumptions in docs instead of leaving them implicit in code
-
-## When implementing
-
-Start from `docs/engineering/tasks.md`. If the task affects scope, check `docs/product/guardrails.md` before proceeding. If implementation pressure conflicts with product truth, choose the smaller and more honest feature.
+- summary
+- files changed
+- commands run
+- verification results
+- remaining issues
+- final verdict: GO / Conditional GO / NO-GO

@@ -1,6 +1,8 @@
+// Root build file for the `core` Android launcher foundation.
+//
+// Intentionally minimal: module-specific configuration lives in each module.
+
 plugins {
-    id("com.android.application") version "8.6.1" apply false
-    id("com.android.library") version "8.6.1" apply false
-    id("org.jetbrains.kotlin.android") version "1.9.25" apply false
-    id("org.jetbrains.kotlin.kapt") version "1.9.25" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
 }

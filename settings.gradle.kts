@@ -14,17 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "easyui-senior-launcher"
+rootProject.name = "core"
 
-include(
-    ":app",
-    ":core:ui",
-    ":core:domain",
-    ":core:data",
-    ":core:platform",
-    ":core:testing",
-    ":feature:home",
-    ":feature:apps",
-    ":feature:caregiver",
-    ":feature:onboarding",
-)
+include(":app")
