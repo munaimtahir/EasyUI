@@ -113,6 +113,7 @@ class CaregiverQolSmokeTest {
                     skinConfig = SkinConfig(),
                     onIncreasePageCount = {},
                     onDecreasePageCount = {},
+                    onOpenAllowedApps = {},
                     onSelectLayoutMode = {},
                     onOpenThemeSelection = {},
                     onDone = {},
@@ -122,8 +123,9 @@ class CaregiverQolSmokeTest {
         }
 
         composeRule.onNodeWithTag("layout_pages_screen").assertPresent()
-        composeRule.onNodeWithText("Add Page").assertIsDisplayed()
-        composeRule.onNodeWithText("Use Fewer").assertIsDisplayed()
+        composeRule.onNodeWithText("Home Layout").assertIsDisplayed()
+        composeRule.onNodeWithText("Select Apps & Manage Pages").assertIsDisplayed()
+        composeRule.onNodeWithText("Simple Classic").assertIsDisplayed()
         composeRule.onNodeWithTag("layout_pages_screen").performScrollToNode(hasText("Customize Visual Theme"))
         composeRule.onNodeWithText("Customize Visual Theme").assertIsDisplayed()
     }

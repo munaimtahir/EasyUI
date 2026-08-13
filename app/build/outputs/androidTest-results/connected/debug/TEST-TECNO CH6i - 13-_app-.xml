@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="com.easyui.launcher.AppListSmokeTest" tests="22" failures="0" errors="0" skipped="0" time="30.379" timestamp="2026-05-26T10:42:40" hostname="localhost">
+  <properties>
+    <property name="device" value="TECNO CH6i - 13" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="appListShowsCalmEmptyStateWhenNothingIsVisible" classname="com.easyui.launcher.AppListSmokeTest" time="2.858" />
+  <testcase name="appListRendersAndFiltersBySearchQuery" classname="com.easyui.launcher.AppListSmokeTest" time="2.193" />
+  <testcase name="welcomeScreenAllowsScrollingToFinalCopy" classname="com.easyui.launcher.GuidedSetupNewStepsTest" time="1.16" />
+  <testcase name="protectionOptionsScreenShowsAllChoices" classname="com.easyui.launcher.GuidedSetupNewStepsTest" time="1.514" />
+  <testcase name="themePickerScreenShowsAllThemeChoices" classname="com.easyui.launcher.GuidedSetupNewStepsTest" time="1.134" />
+  <testcase name="homePagerSwipesAndUpdatesButtons" classname="com.easyui.launcher.HomePagingSwipeTest" time="1.64" />
+  <testcase name="homeScreenRendersFixedGridAndTopStatusBar" classname="com.easyui.launcher.HomeScreenSmokeTest" time="0.957" />
+  <testcase name="caregiverHelpScreenKeepsFinishActionVisible" classname="com.easyui.launcher.OnboardingSmokeTest" time="0.759" />
+  <testcase name="defaultLauncherScreenShowsActionButtonsWhenNotDefault" classname="com.easyui.launcher.OnboardingSmokeTest" time="0.785" />
+  <testcase name="introScreenRendersPrimaryCopy" classname="com.easyui.launcher.OnboardingSmokeTest" time="0.783" />
+  <testcase name="defaultLauncherScreenHidesExtraButtonsWhenAlreadyDefault" classname="com.easyui.launcher.OnboardingSmokeTest" time="0.808" />
+  <testcase name="caregiverSettingsCanOpenPinScreen" classname="com.easyui.launcher.caregiver.CaregiverProtectionSmokeTest" time="2.141" />
+  <testcase name="allowedAppsScreenPlacesIntoSelectedSlot" classname="com.easyui.launcher.caregiver.CaregiverQolSmokeTest" time="1.26" />
+  <testcase name="layoutPagesScreenShowsPageControls" classname="com.easyui.launcher.caregiver.CaregiverQolSmokeTest" time="1.114" />
+  <testcase name="caregiverSettingsShowsNewSections" classname="com.easyui.launcher.caregiver.CaregiverQolSmokeTest" time="2.888" />
+  <testcase name="allowedAppsScreenKeepsFixedAndAllowedAppsSeparate" classname="com.easyui.launcher.caregiver.CaregiverQolSmokeTest" time="1.294" />
+  <testcase name="backupRestoreScreenShowsPrimaryActions" classname="com.easyui.launcher.caregiver.CaregiverSupportSmokeTest" time="0.781" />
+  <testcase name="healthInfoEditorScreenShowsMedicalFields" classname="com.easyui.launcher.caregiver.CaregiverSupportSmokeTest" time="1.562" />
+  <testcase name="hiddenAppsScreenShowsInstalledInventory" classname="com.easyui.launcher.caregiver.CaregiverSupportSmokeTest" time="0.707" />
+  <testcase name="emergencySettingsScreenShowsExpandedSafetyFields" classname="com.easyui.launcher.caregiver.CaregiverSupportSmokeTest" time="1.283" />
+  <testcase name="homeShowsNoVisibleCaregiverAccessByDefault" classname="com.easyui.launcher.caregiver.LockedHomeSmokeTest" time="0.58" />
+  <testcase name="resetScreenCanTriggerRestoreAction" classname="com.easyui.launcher.caregiver.ResetFlowSmokeTest" time="0.606" />
+</testsuite>

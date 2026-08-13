@@ -741,14 +741,7 @@ fun EasyUiNavGraph(
                         navController = navController,
                     ) {
                         LayoutPagesScreen(
-                            currentPageCount = caregiverViewModel.effectivePageCount(),
                             skinConfig = caregiverState.settings.skinConfig,
-                            onIncreasePageCount = {
-                                caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() + 1)
-                            },
-                            onDecreasePageCount = {
-                                caregiverViewModel.updateHomePageCount(caregiverViewModel.effectivePageCount() - 1)
-                            },
                             onOpenAllowedApps = {
                                 navController.navigate(caregiverViewModel.beginProtectedAction(ProtectedAction.MANAGE_ALLOWED_APPS))
                             },

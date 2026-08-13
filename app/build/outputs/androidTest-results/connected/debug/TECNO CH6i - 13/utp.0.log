@@ -1,0 +1,60 @@
+INFO: Constructing runner from config.
+INFO: Configuring Android Instrumentation driver: android_instrumentation_runtime {
+  instrumentation_info {
+    app_package: "com.easyui.launcher.debug"
+    test_package: "com.easyui.launcher.debug.test"
+    test_runner_class: "androidx.test.runner.AndroidJUnitRunner"
+  }
+  instrumentation_args {
+    args_map {
+      key: "additionalTestOutputDir"
+      value: "/sdcard/Android/media/com.easyui.launcher.debug/additional_test_output"
+    }
+  }
+}
+am_instrument_timeout: 31536000
+
+INFO: Configuring AndroidTestApkInstallerPlugin: apks_to_install {
+  apk_paths: "/home/munaim/Documents/github/easyui/app/build/outputs/apk/debug/app-debug.apk"
+  install_options {
+  }
+  uninstall_after_test: true
+}
+apks_to_install {
+  apk_paths: "/home/munaim/Documents/github/easyui/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk"
+  install_options {
+  }
+  uninstall_after_test: true
+}
+
+INFO: No installables found in test fixture. Nothing to install.
+INFO: Installing [/home/munaim/Documents/github/easyui/app/build/outputs/apk/debug/app-debug.apk] on device 08357252AE006901.
+INFO: Installing [/home/munaim/Documents/github/easyui/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk] on device 08357252AE006901.
+INFO: Start logcat streaming.
+INFO: Running Android Instrumentation driver.
+INFO: Copying files from device to host: /sdcard/Android/media/com.easyui.launcher.debug/additional_test_output to /home/munaim/Documents/github/easyui/app/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected/TECNO CH6i - 13
+INFO: Stop logcat streaming.
+INFO: Uninstalling com.easyui.launcher.debug for device 08357252AE006901.
+INFO: Uninstalling com.easyui.launcher.debug.test for device 08357252AE006901.
+INFO: Execute com.easyui.launcher.AppListSmokeTest.appListShowsCalmEmptyStateWhenNothingIsVisible: PASSED
+INFO: Execute com.easyui.launcher.AppListSmokeTest.appListRendersAndFiltersBySearchQuery: PASSED
+INFO: Execute com.easyui.launcher.GuidedSetupNewStepsTest.welcomeScreenAllowsScrollingToFinalCopy: PASSED
+INFO: Execute com.easyui.launcher.GuidedSetupNewStepsTest.protectionOptionsScreenShowsAllChoices: PASSED
+INFO: Execute com.easyui.launcher.GuidedSetupNewStepsTest.themePickerScreenShowsAllThemeChoices: PASSED
+INFO: Execute com.easyui.launcher.HomePagingSwipeTest.homePagerSwipesAndUpdatesButtons: PASSED
+INFO: Execute com.easyui.launcher.HomeScreenSmokeTest.homeScreenRendersFixedGridAndTopStatusBar: PASSED
+INFO: Execute com.easyui.launcher.OnboardingSmokeTest.caregiverHelpScreenKeepsFinishActionVisible: PASSED
+INFO: Execute com.easyui.launcher.OnboardingSmokeTest.defaultLauncherScreenShowsActionButtonsWhenNotDefault: PASSED
+INFO: Execute com.easyui.launcher.OnboardingSmokeTest.introScreenRendersPrimaryCopy: PASSED
+INFO: Execute com.easyui.launcher.OnboardingSmokeTest.defaultLauncherScreenHidesExtraButtonsWhenAlreadyDefault: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverProtectionSmokeTest.caregiverSettingsCanOpenPinScreen: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverQolSmokeTest.allowedAppsScreenPlacesIntoSelectedSlot: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverQolSmokeTest.layoutPagesScreenShowsPageControls: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverQolSmokeTest.caregiverSettingsShowsNewSections: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverQolSmokeTest.allowedAppsScreenKeepsFixedAndAllowedAppsSeparate: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverSupportSmokeTest.backupRestoreScreenShowsPrimaryActions: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverSupportSmokeTest.healthInfoEditorScreenShowsMedicalFields: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverSupportSmokeTest.hiddenAppsScreenShowsInstalledInventory: PASSED
+INFO: Execute com.easyui.launcher.caregiver.CaregiverSupportSmokeTest.emergencySettingsScreenShowsExpandedSafetyFields: PASSED
+INFO: Execute com.easyui.launcher.caregiver.LockedHomeSmokeTest.homeShowsNoVisibleCaregiverAccessByDefault: PASSED
+INFO: Execute com.easyui.launcher.caregiver.ResetFlowSmokeTest.resetScreenCanTriggerRestoreAction: PASSED

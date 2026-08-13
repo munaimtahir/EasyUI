@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="partial_results">
+    <map id="UnusedResources">
+        <entry
+            name="model"
+            string=""/>
+    </map>
+    <map id="UnsafeImplicitIntentLaunch">
+            <map id="actionsSent">
+                    <map id="android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS (used to start an activity)">
+                        <location id="0"
+                            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidDeviceStatusRepository.kt"
+                            line="127"
+                            column="42"
+                            startOffset="5403"
+                            endLine="127"
+                            endColumn="102"
+                            endOffset="5463"/>
+                    </map>
+                    <map id="android.settings.APPLICATION_DETAILS_SETTINGS (used to start an activity)">
+                        <location id="0"
+                            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidDeviceStatusRepository.kt"
+                            line="131"
+                            column="33"
+                            startOffset="5632"
+                            endLine="131"
+                            endColumn="85"
+                            endOffset="5684"/>
+                    </map>
+                    <map id="android.settings.SETTINGS (used to start an activity)">
+                        <location id="0"
+                            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt"
+                            line="77"
+                            column="39"
+                            startOffset="3674"
+                            endLine="77"
+                            endColumn="71"
+                            endOffset="3706"/>
+                    </map>
+                    <map id="android.intent.action.MAIN (used to start an activity)">
+                        <location id="0"
+                            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt"
+                            line="97"
+                            column="28"
+                            startOffset="4381"
+                            endLine="97"
+                            endColumn="54"
+                            endOffset="4407"/>
+                    </map>
+                    <map id="android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS (used to start an activity)">
+                        <location id="0"
+                            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidDeviceStatusRepository.kt"
+                            line="106"
+                            column="22"
+                            startOffset="3944"
+                            endLine="106"
+                            endColumn="82"
+                            endOffset="4004"/>
+                    </map>
+            </map>
+    </map>
+
+</incidents>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.ActionAvailabilityResolverTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:57" hostname="munaim" time="0.036">
+  <properties/>
+  <testcase name="flashlight state is disabled when unsupported" classname="com.easyui.core.domain.rules.ActionAvailabilityResolverTest" time="0.007"/>
+  <testcase name="emergency state is disabled without dialer" classname="com.easyui.core.domain.rules.ActionAvailabilityResolverTest" time="0.0"/>
+  <testcase name="emergency state is enabled when dialer and phone number exist" classname="com.easyui.core.domain.rules.ActionAvailabilityResolverTest" time="0.027"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

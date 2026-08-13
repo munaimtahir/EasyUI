@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.AppVisibilityPresetRulesTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:57" hostname="munaim" time="0.029">
+  <properties/>
+  <testcase name="custom preset does not hide anything" classname="com.easyui.core.domain.rules.AppVisibilityPresetRulesTest" time="0.025"/>
+  <testcase name="minimal common preset keeps common communication apps" classname="com.easyui.core.domain.rules.AppVisibilityPresetRulesTest" time="0.001"/>
+  <testcase name="essentials preset hides non-essential apps" classname="com.easyui.core.domain.rules.AppVisibilityPresetRulesTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="partial_results">
+    <map id="UnusedResources">
+        <entry
+            name="model"
+            string="color[ic_launcher_background(U)],drawable[ic_launcher_foreground(U),ic_launcher_monochrome(U)],mipmap[ic_launcher(U),ic_launcher_round(U)],string[app_name(U)],style[Theme_EasyUI(U),Theme_MaterialComponents_DayNight_NoActionBar(R)],xml[data_extraction_rules(U),backup_rules(U)];3^0^1^2,4^0^1^2,6^7;;;"/>
+    </map>
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.easyui.launcher.MainActivity"
+                    boolean="true"/>
+                <entry
+                    name="com.easyui.launcher.BootReceiver"
+                    boolean="true"/>
+                <entry
+                    name="com.easyui.launcher.FakeLauncherActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+
+</incidents>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="incidents">
+
+    <incident
+        id="KaptUsageInsteadOfKsp"
+        severity="warning"
+        message="This library supports using KSP instead of kapt, which greatly improves performance. Learn more: https://developer.android.com/studio/build/migrate-to-ksp">
+        <show-url
+            description="Learn about how to enable KSP and use the KSP processor for this dependency instead"
+            url="https://developer.android.com/studio/build/migrate-to-ksp"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="44"
+            column="5"
+            startOffset="1081"
+            endLine="44"
+            endColumn="46"
+            endOffset="1122"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.18.0">
+        <fix-replace
+            description="Change to 1.18.0"
+            family="Update versions"
+            oldString="1.13.1"
+            replacement="1.18.0"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="39"
+            column="20"
+            startOffset="803"
+            endLine="39"
+            endColumn="51"
+            endOffset="834"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1">
+        <fix-replace
+            description="Change to 1.2.1"
+            family="Update versions"
+            oldString="1.1.1"
+            replacement="1.2.1"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="40"
+            column="20"
+            startOffset="855"
+            endLine="40"
+            endColumn="68"
+            endOffset="903"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="41"
+            column="20"
+            startOffset="924"
+            endLine="41"
+            endColumn="50"
+            endOffset="954"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="42"
+            column="9"
+            startOffset="964"
+            endLine="42"
+            endColumn="43"
+            endOffset="998"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="44"
+            column="10"
+            startOffset="1086"
+            endLine="44"
+            endColumn="45"
+            endOffset="1121"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-testing than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="45"
+            column="31"
+            startOffset="1153"
+            endLine="45"
+            endColumn="65"
+            endOffset="1187"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0">
+        <fix-replace
+            description="Change to 1.7.0"
+            family="Update versions"
+            oldString="1.6.2"
+            replacement="1.7.0"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="46"
+            column="31"
+            startOffset="1219"
+            endLine="46"
+            endColumn="59"
+            endOffset="1247"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.2.1"
+            replacement="1.3.0"
+            priority="0"/>
+        <location
+            file="${:core:data*projectDir}/build.gradle.kts"
+            line="47"
+            column="31"
+            startOffset="1279"
+            endLine="47"
+            endColumn="62"
+            endOffset="1310"/>
+    </incident>
+
+</incidents>

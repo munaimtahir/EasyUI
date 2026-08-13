@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="com.easyui.core.data.database.EasyUiDatabaseMigrationTest" tests="1" failures="0" errors="0" skipped="0" time="1.053" timestamp="2026-05-26T08:23:16" hostname="localhost">
+  <properties>
+    <property name="device" value="TECNO CH6i - 13" />
+    <property name="flavor" value="" />
+    <property name="project" value=":core:data" />
+  </properties>
+  <testcase name="migrate1To2AddsContactColumns" classname="com.easyui.core.data.database.EasyUiDatabaseMigrationTest" time="0.196" />
+</testsuite>

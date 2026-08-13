@@ -1,0 +1,5 @@
+com.easyui.core.testing.test.testing-androidTest-0 /home/munaim/Documents/github/easyui/core/testing/build/generated/res/resValues/androidTest/debug
+com.easyui.core.testing.test.testing-mergeDebugAndroidTestResources-1 /home/munaim/Documents/github/easyui/core/testing/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
+com.easyui.core.testing.test.testing-mergeDebugAndroidTestResources-2 /home/munaim/Documents/github/easyui/core/testing/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
+com.easyui.core.testing.test.testing-debugAndroidTest-3 /home/munaim/Documents/github/easyui/core/testing/build/intermediates/merged_res/debugAndroidTest/mergeDebugAndroidTestResources
+com.easyui.core.testing.test.testing-debug-4 /home/munaim/Documents/github/easyui/core/testing/build/intermediates/packaged_res/debug/packageDebugResources

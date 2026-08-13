@@ -1,0 +1,41 @@
+/home/munaim/Documents/github/easyui/core/platform/src/main/java/com/easyui/core/platform/actions/AndroidDeviceStatusRepository.kt:106: Warning: Use of REQUEST_IGNORE_BATTERY_OPTIMIZATIONS violates the Play Store Content Policy regarding acceptable use cases, as described in https://developer.android.com/training/monitoring-device-state/doze-standby.html [BatteryLife]
+        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "BatteryLife":
+   This issue flags code that either
+   * negatively affects battery life, or
+   * uses APIs that have recently changed behavior to prevent background tasks
+   from consuming memory and battery excessively.
+
+   Generally, you should be using WorkManager instead.
+
+   For more details on how to update your code, please see
+   https://developer.android.com/topic/performance/background-optimization
+
+
+/home/munaim/Documents/github/easyui/core/platform/build.gradle.kts:26: Warning: A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.18.0 [GradleDependency]
+    implementation("androidx.core:core-ktx:1.13.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/home/munaim/Documents/github/easyui/core/platform/src/main/java/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt:53: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+        val defaultAppsSettings = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+0 errors, 3 warnings

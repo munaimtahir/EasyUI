@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.PrimaryHomeAppRulesTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:58" hostname="munaim" time="0.007">
+  <properties/>
+  <testcase name="resolve prefers known package for messages" classname="com.easyui.core.domain.rules.PrimaryHomeAppRulesTest" time="0.005"/>
+  <testcase name="resolve returns null when no suitable app exists" classname="com.easyui.core.domain.rules.PrimaryHomeAppRulesTest" time="0.001"/>
+  <testcase name="resolve falls back to label match for photos" classname="com.easyui.core.domain.rules.PrimaryHomeAppRulesTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

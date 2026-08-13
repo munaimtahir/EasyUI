@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.launcher.app.GuidedSetupViewModelTest" tests="36" skipped="0" failures="0" errors="0" timestamp="2026-05-26T10:39:08" hostname="munaim" time="5.526">
+  <properties/>
+  <testcase name="state should reflect current readability preset" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="3.944"/>
+  <testcase name="openLauncherSettings should refresh status after delay" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.092"/>
+  <testcase name="state should reflect PIN configured when hash exists" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.062"/>
+  <testcase name="updatePinInput should clear previous error" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.073"/>
+  <testcase name="completeSetup should mark guided setup as complete" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.099"/>
+  <testcase name="configure security and emergency mode together" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.129"/>
+  <testcase name="updateReadabilityPreset should update repository" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.053"/>
+  <testcase name="savePin with mismatched PINs should return false and show error" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.048"/>
+  <testcase name="updateEmergencyMode should update repository" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.045"/>
+  <testcase name="updateLayoutLocked to false should update repository" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.052"/>
+  <testcase name="updateLayoutLocked to true should update repository" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.055"/>
+  <testcase name="state should reflect no PIN when hash is blank" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.05"/>
+  <testcase name="state should reflect completed status after completion" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.028"/>
+  <testcase name="guidedSetupStep should never be less than 1 even with negative value" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.028"/>
+  <testcase name="previousStep should go back to step 1" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.031"/>
+  <testcase name="setStep should jump to specific step" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.029"/>
+  <testcase name="savePin with empty PIN should return true and not set PIN" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.023"/>
+  <testcase name="state should reflect current emergency mode" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.022"/>
+  <testcase name="complete wizard flow from step 1 to completion" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.06"/>
+  <testcase name="state should reflect layout locked status" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.031"/>
+  <testcase name="openLauncherSettings should call launcher manager" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.026"/>
+  <testcase name="savePin should clear PIN inputs after successful save" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.026"/>
+  <testcase name="guidedSetupStep should never be less than 1" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.023"/>
+  <testcase name="updateEmergencyMode to SOS should update home tiles" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.122"/>
+  <testcase name="nextStep from step 12 should complete setup" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.037"/>
+  <testcase name="isDefaultLauncher should reflect launcher manager status" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.021"/>
+  <testcase name="savePin with short PIN should return false and show error" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.025"/>
+  <testcase name="nextStep from step 5 should advance to step 6" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.04"/>
+  <testcase name="initial state should be at step 1" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.027"/>
+  <testcase name="updateReadabilityPreset to LARGER_TEXT should update skin config" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.033"/>
+  <testcase name="state should default to STANDARD for invalid preset name" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.024"/>
+  <testcase name="savePin with valid matched PIN should return true and store PIN" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.047"/>
+  <testcase name="state should be loaded after initialization" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.025"/>
+  <testcase name="updateReadabilityPreset to STANDARD should update skin config" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.026"/>
+  <testcase name="previousStep from step 1 should not go below 1" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.029"/>
+  <testcase name="nextStep should advance to step 2" classname="com.easyui.launcher.app.GuidedSetupViewModelTest" time="0.03"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

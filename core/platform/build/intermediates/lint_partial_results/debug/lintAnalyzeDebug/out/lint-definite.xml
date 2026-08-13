@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="incidents">
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 26">
+        <fix-data conditional="true"/>
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt"
+            line="53"
+            column="39"
+            startOffset="2307"
+            endLine="53"
+            endColumn="85"
+            endOffset="2353"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.18.0">
+        <fix-replace
+            description="Change to 1.18.0"
+            family="Update versions"
+            oldString="1.13.1"
+            replacement="1.18.0"
+            priority="0"/>
+        <location
+            file="${:core:platform*projectDir}/build.gradle.kts"
+            line="26"
+            column="20"
+            startOffset="458"
+            endLine="26"
+            endColumn="51"
+            endOffset="489"/>
+    </incident>
+
+</incidents>

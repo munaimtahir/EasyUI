@@ -1,1 +1,0 @@
-EasyUI Senior Launcher

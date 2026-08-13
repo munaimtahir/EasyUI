@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.FallbackStateRulesTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:58" hostname="munaim" time="0.004">
+  <properties/>
+  <testcase name="no fallback is shown for a fuller home" classname="com.easyui.core.domain.rules.FallbackStateRulesTest" time="0.001"/>
+  <testcase name="app list empty state is calm when no apps are visible" classname="com.easyui.core.domain.rules.FallbackStateRulesTest" time="0.001"/>
+  <testcase name="app list search state changes message for no match" classname="com.easyui.core.domain.rules.FallbackStateRulesTest" time="0.0"/>
+  <testcase name="home fallback highlights very simple mode" classname="com.easyui.core.domain.rules.FallbackStateRulesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

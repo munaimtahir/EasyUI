@@ -1,6 +1,0 @@
-Checking launcher/home resolution
-priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true
-com.easyui.launcher.debug/com.easyui.launcher.MainActivity
-Success
-  mCurrentFocus=Window{27dc631 u0 com.easyui.launcher.debug/com.easyui.launcher.MainActivity}
-  mFocusedApp=ActivityRecord{89be339 u0 com.easyui.launcher.debug/com.easyui.launcher.MainActivity} t4433 d0}

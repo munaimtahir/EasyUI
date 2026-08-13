@@ -1,0 +1,10 @@
+#Tue May 26 13:04:21 PKT 2026
+base.2=/home/munaim/Documents/github/easyui/core/testing/build/intermediates/dex/debugAndroidTest/mergeProjectDexDebugAndroidTest/0/classes.dex
+path.2=0/classes.dex
+base.1=/home/munaim/Documents/github/easyui/core/testing/build/intermediates/dex/debugAndroidTest/mergeLibDexDebugAndroidTest/14/classes.dex
+path.1=14/classes.dex
+base.0=/home/munaim/Documents/github/easyui/core/testing/build/intermediates/dex/debugAndroidTest/mergeExtDexDebugAndroidTest/classes.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+path.0=classes.dex

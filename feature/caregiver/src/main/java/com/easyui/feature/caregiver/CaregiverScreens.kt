@@ -150,10 +150,7 @@ fun CaregiverToolsScreen(
 
 @Composable
 fun LayoutPagesScreen(
-    currentPageCount: Int,
     skinConfig: SkinConfig,
-    onIncreasePageCount: () -> Unit,
-    onDecreasePageCount: () -> Unit,
     onOpenAllowedApps: () -> Unit,
     onSelectLayoutMode: (LayoutMode) -> Unit,
     onOpenThemeSelection: () -> Unit,
@@ -174,7 +171,7 @@ fun LayoutPagesScreen(
             }
             item {
                 Text(
-                    "Page 1 is mandatory and contains essential items for the senior. You can continue to add more apps, and EasyUI will automatically add new pages as needed.",
+                    "Page 1 is mandatory and contains essential items. Continue to add more apps, and EasyUI will automatically add new pages for you as needed.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -183,11 +180,8 @@ fun LayoutPagesScreen(
                     onClick = onOpenAllowedApps,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Select Apps & Manage Pages")
+                    Text("Select Apps")
                 }
-            }
-            item {
-                Text("Layout Behavior", style = MaterialTheme.typography.titleLarge)
             }
             items(LayoutMode.entries) { mode ->
                 val selected = mode == skinConfig.layoutMode

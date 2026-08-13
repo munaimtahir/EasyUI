@@ -1,0 +1,1159 @@
+# 2026-05-26T10:42:40.284677987Z:
+test_suite_meta_data {
+  scheduled_test_case_count: 22
+}
+test_status: PASSED
+test_result {
+  test_case {
+    test_class: "AppListSmokeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "appListShowsCalmEmptyStateWhenNothingIsVisible"
+    start_time {
+      seconds: 1779792129
+      nanos: 779000000
+    }
+    end_time {
+      seconds: 1779792132
+      nanos: 675000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.AppListSmokeTest-appListShowsCalmEmptyStateWhenNothingIsVisible.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "AppListSmokeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "appListRendersAndFiltersBySearchQuery"
+    start_time {
+      seconds: 1779792132
+      nanos: 737000000
+    }
+    end_time {
+      seconds: 1779792134
+      nanos: 926000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.AppListSmokeTest-appListRendersAndFiltersBySearchQuery.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "GuidedSetupNewStepsTest"
+    test_package: "com.easyui.launcher"
+    test_method: "welcomeScreenAllowsScrollingToFinalCopy"
+    start_time {
+      seconds: 1779792134
+      nanos: 931000000
+    }
+    end_time {
+      seconds: 1779792136
+      nanos: 87000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.GuidedSetupNewStepsTest-welcomeScreenAllowsScrollingToFinalCopy.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "GuidedSetupNewStepsTest"
+    test_package: "com.easyui.launcher"
+    test_method: "protectionOptionsScreenShowsAllChoices"
+    start_time {
+      seconds: 1779792136
+      nanos: 92000000
+    }
+    end_time {
+      seconds: 1779792137
+      nanos: 603000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.GuidedSetupNewStepsTest-protectionOptionsScreenShowsAllChoices.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "GuidedSetupNewStepsTest"
+    test_package: "com.easyui.launcher"
+    test_method: "themePickerScreenShowsAllThemeChoices"
+    start_time {
+      seconds: 1779792137
+      nanos: 608000000
+    }
+    end_time {
+      seconds: 1779792138
+      nanos: 740000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.GuidedSetupNewStepsTest-themePickerScreenShowsAllThemeChoices.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "HomePagingSwipeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "homePagerSwipesAndUpdatesButtons"
+    start_time {
+      seconds: 1779792138
+      nanos: 744000000
+    }
+    end_time {
+      seconds: 1779792140
+      nanos: 380000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.HomePagingSwipeTest-homePagerSwipesAndUpdatesButtons.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "HomeScreenSmokeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "homeScreenRendersFixedGridAndTopStatusBar"
+    start_time {
+      seconds: 1779792140
+      nanos: 383000000
+    }
+    end_time {
+      seconds: 1779792141
+      nanos: 340000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.HomeScreenSmokeTest-homeScreenRendersFixedGridAndTopStatusBar.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "OnboardingSmokeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "caregiverHelpScreenKeepsFinishActionVisible"
+    start_time {
+      seconds: 1779792141
+      nanos: 343000000
+    }
+    end_time {
+      seconds: 1779792142
+      nanos: 98000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.OnboardingSmokeTest-caregiverHelpScreenKeepsFinishActionVisible.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "OnboardingSmokeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "defaultLauncherScreenShowsActionButtonsWhenNotDefault"
+    start_time {
+      seconds: 1779792142
+      nanos: 104000000
+    }
+    end_time {
+      seconds: 1779792142
+      nanos: 885000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.OnboardingSmokeTest-defaultLauncherScreenShowsActionButtonsWhenNotDefault.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "OnboardingSmokeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "introScreenRendersPrimaryCopy"
+    start_time {
+      seconds: 1779792142
+      nanos: 890000000
+    }
+    end_time {
+      seconds: 1779792143
+      nanos: 670000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.OnboardingSmokeTest-introScreenRendersPrimaryCopy.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "OnboardingSmokeTest"
+    test_package: "com.easyui.launcher"
+    test_method: "defaultLauncherScreenHidesExtraButtonsWhenAlreadyDefault"
+    start_time {
+      seconds: 1779792143
+      nanos: 675000000
+    }
+    end_time {
+      seconds: 1779792144
+      nanos: 481000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.OnboardingSmokeTest-defaultLauncherScreenHidesExtraButtonsWhenAlreadyDefault.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverProtectionSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "caregiverSettingsCanOpenPinScreen"
+    start_time {
+      seconds: 1779792144
+      nanos: 484000000
+    }
+    end_time {
+      seconds: 1779792146
+      nanos: 623000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverProtectionSmokeTest-caregiverSettingsCanOpenPinScreen.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverQolSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "allowedAppsScreenPlacesIntoSelectedSlot"
+    start_time {
+      seconds: 1779792146
+      nanos: 627000000
+    }
+    end_time {
+      seconds: 1779792147
+      nanos: 885000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverQolSmokeTest-allowedAppsScreenPlacesIntoSelectedSlot.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverQolSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "layoutPagesScreenShowsPageControls"
+    start_time {
+      seconds: 1779792147
+      nanos: 888000000
+    }
+    end_time {
+      seconds: 1779792148
+      nanos: 996000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverQolSmokeTest-layoutPagesScreenShowsPageControls.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverQolSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "caregiverSettingsShowsNewSections"
+    start_time {
+      seconds: 1779792149
+    }
+    end_time {
+      seconds: 1779792151
+      nanos: 891000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverQolSmokeTest-caregiverSettingsShowsNewSections.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverQolSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "allowedAppsScreenKeepsFixedAndAllowedAppsSeparate"
+    start_time {
+      seconds: 1779792151
+      nanos: 920000000
+    }
+    end_time {
+      seconds: 1779792153
+      nanos: 203000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverQolSmokeTest-allowedAppsScreenKeepsFixedAndAllowedAppsSeparate.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverSupportSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "backupRestoreScreenShowsPrimaryActions"
+    start_time {
+      seconds: 1779792153
+      nanos: 214000000
+    }
+    end_time {
+      seconds: 1779792153
+      nanos: 994000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverSupportSmokeTest-backupRestoreScreenShowsPrimaryActions.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverSupportSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "healthInfoEditorScreenShowsMedicalFields"
+    start_time {
+      seconds: 1779792153
+      nanos: 997000000
+    }
+    end_time {
+      seconds: 1779792155
+      nanos: 557000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverSupportSmokeTest-healthInfoEditorScreenShowsMedicalFields.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverSupportSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "hiddenAppsScreenShowsInstalledInventory"
+    start_time {
+      seconds: 1779792155
+      nanos: 560000000
+    }
+    end_time {
+      seconds: 1779792156
+      nanos: 265000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverSupportSmokeTest-hiddenAppsScreenShowsInstalledInventory.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "CaregiverSupportSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "emergencySettingsScreenShowsExpandedSafetyFields"
+    start_time {
+      seconds: 1779792156
+      nanos: 268000000
+    }
+    end_time {
+      seconds: 1779792157
+      nanos: 551000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.CaregiverSupportSmokeTest-emergencySettingsScreenShowsExpandedSafetyFields.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "LockedHomeSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "homeShowsNoVisibleCaregiverAccessByDefault"
+    start_time {
+      seconds: 1779792157
+      nanos: 554000000
+    }
+    end_time {
+      seconds: 1779792158
+      nanos: 133000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.LockedHomeSmokeTest-homeShowsNoVisibleCaregiverAccessByDefault.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+test_result {
+  test_case {
+    test_class: "ResetFlowSmokeTest"
+    test_package: "com.easyui.launcher.caregiver"
+    test_method: "resetScreenCanTriggerRestoreAction"
+    start_time {
+      seconds: 1779792158
+      nanos: 136000000
+    }
+    end_time {
+      seconds: 1779792158
+      nanos: 741000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/logcat-com.easyui.launcher.caregiver.ResetFlowSmokeTest-resetScreenCanTriggerRestoreAction.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/cpuinfo"
+    }
+  }
+}
+output_artifact {
+  label {
+    label: "test-results.log"
+    namespace: "com.google.testing.platform.runtime.android.driver.AndroidInstrumentationDriver"
+  }
+  source_path {
+    path: "/home/munaim/Documents/github/easyui/app/build/outputs/androidTest-results/connected/debug/TECNO CH6i - 13/testlog/test-results.log"
+  }
+  type: TEST_DATA
+  mime_type: "text/plain"
+}

@@ -1,0 +1,3 @@
+
+08357252AE00690133 Íºë*	arm64-v8a*armeabi-v7a*armeabi2TECNO:08357252AE006901R
+TECNO CH6i

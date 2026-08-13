@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.RemoteLinkRulesTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:58" hostname="munaim" time="0.019">
+  <properties/>
+  <testcase name="encode and decode packet preserves data" classname="com.easyui.core.domain.rules.RemoteLinkRulesTest" time="0.019"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

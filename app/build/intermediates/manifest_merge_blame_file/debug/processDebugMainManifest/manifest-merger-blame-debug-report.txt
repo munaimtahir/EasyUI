@@ -1,0 +1,288 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.easyui.launcher.debug"
+4    android:versionCode="1"
+5    android:versionName="0.1.0-alpha01-debug" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="35" />
+10
+11    <uses-permission android:name="android.permission.SEND_SMS" />
+11-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:4:5-67
+11-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.CALL_PHONE" />
+12-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:5:5-69
+12-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:5:22-66
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:6:5-79
+13-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:6:22-76
+14    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+14-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:7:5-75
+14-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:7:22-72
+15    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+15-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:8:5-81
+15-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:8:22-78
+16    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+16-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:9:5-95
+16-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:9:22-92
+17
+18    <uses-feature
+18-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:10:5-12:36
+19        android:name="android.hardware.camera.flash"
+19-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:11:9-53
+20        android:required="false" />
+20-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:12:9-33
+21    <uses-feature
+21-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:13:5-15:36
+22        android:name="android.hardware.telephony"
+22-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:14:9-50
+23        android:required="false" />
+23-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:15:9-33
+24
+25    <!--
+26         Declare which intents this launcher resolves so PackageManager can answer
+27         resolveActivity() on Android 11+ (API 30+) without QUERY_ALL_PACKAGES.
+28    -->
+29    <queries>
+29-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:19:5-30:15
+30        <intent>
+30-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:20:9-22:18
+31            <action android:name="android.intent.action.DIAL" />
+31-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:21:13-65
+31-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:21:21-62
+32        </intent>
+33        <intent>
+33-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:23:9-25:18
+34            <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+34-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:24:13-78
+34-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:24:21-75
+35        </intent>
+36        <intent>
+36-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:26:9-29:18
+37            <action android:name="android.intent.action.MAIN" />
+37-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:13-65
+37-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:21-62
+38
+39            <category android:name="android.intent.category.LAUNCHER" />
+39-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:28:13-73
+39-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:28:23-70
+40        </intent>
+41    </queries>
+42
+43    <permission
+43-->[androidx.core:core:1.13.1] /home/munaim/.gradle/caches/transforms-4/ed5caf8405f0362e776226e56d6f21f7/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+44        android:name="com.easyui.launcher.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+44-->[androidx.core:core:1.13.1] /home/munaim/.gradle/caches/transforms-4/ed5caf8405f0362e776226e56d6f21f7/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+45        android:protectionLevel="signature" />
+45-->[androidx.core:core:1.13.1] /home/munaim/.gradle/caches/transforms-4/ed5caf8405f0362e776226e56d6f21f7/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+46
+47    <uses-permission android:name="com.easyui.launcher.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+47-->[androidx.core:core:1.13.1] /home/munaim/.gradle/caches/transforms-4/ed5caf8405f0362e776226e56d6f21f7/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+47-->[androidx.core:core:1.13.1] /home/munaim/.gradle/caches/transforms-4/ed5caf8405f0362e776226e56d6f21f7/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+48
+49    <application
+49-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:32:5-87:19
+50        android:name="com.easyui.launcher.EasyUiApplication"
+50-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:33:9-42
+51        android:allowBackup="false"
+51-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:34:9-36
+52        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+52-->[androidx.core:core:1.13.1] /home/munaim/.gradle/caches/transforms-4/ed5caf8405f0362e776226e56d6f21f7/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+53        android:dataExtractionRules="@xml/data_extraction_rules"
+53-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:35:9-65
+54        android:debuggable="true"
+55        android:extractNativeLibs="false"
+56        android:fullBackupContent="@xml/backup_rules"
+56-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:36:9-54
+57        android:icon="@android:drawable/sym_def_app_icon"
+57-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:37:9-58
+58        android:label="@string/app_name"
+58-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:38:9-41
+59        android:roundIcon="@android:drawable/sym_def_app_icon"
+59-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:39:9-63
+60        android:supportsRtl="true"
+60-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:40:9-35
+61        android:theme="@style/Theme.EasyUI" >
+61-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:41:9-44
+62        <activity
+62-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:42:9-53:20
+63            android:name="com.easyui.launcher.MainActivity"
+63-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:43:13-41
+64            android:exported="true"
+64-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:45:13-36
+65            android:label="@string/app_name"
+65-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:44:13-45
+66            android:launchMode="singleTask"
+66-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:46:13-44
+67            android:windowSoftInputMode="adjustResize" >
+67-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:47:13-55
+68            <intent-filter>
+68-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:48:13-52:29
+69                <action android:name="android.intent.action.MAIN" />
+69-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:13-65
+69-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:21-62
+70
+71                <category android:name="android.intent.category.HOME" />
+71-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:50:17-73
+71-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:50:27-70
+72                <category android:name="android.intent.category.DEFAULT" />
+72-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:51:17-76
+72-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:51:27-73
+73            </intent-filter>
+74        </activity>
+75        <activity
+75-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:55:9-63:20
+76            android:name="com.easyui.launcher.SetupActivity"
+76-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:56:13-42
+77            android:exported="true"
+77-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:58:13-36
+78            android:label="@string/app_name" >
+78-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:57:13-45
+79            <intent-filter>
+79-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:59:13-62:29
+80                <action android:name="android.intent.action.MAIN" />
+80-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:13-65
+80-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:21-62
+81
+82                <category android:name="android.intent.category.LAUNCHER" />
+82-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:28:13-73
+82-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:28:23-70
+83            </intent-filter>
+84        </activity>
+85
+86        <!-- Dummy activity for the "Fake Launcher" trick -->
+87        <activity
+87-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:66:9-76:20
+88            android:name="com.easyui.launcher.FakeLauncherActivity"
+88-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:67:13-49
+89            android:enabled="false"
+89-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:69:13-36
+90            android:exported="true"
+90-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:70:13-36
+91            android:label="@string/app_name" >
+91-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:68:13-45
+92            <intent-filter>
+92-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:48:13-52:29
+93                <action android:name="android.intent.action.MAIN" />
+93-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:13-65
+93-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:27:21-62
+94
+95                <category android:name="android.intent.category.HOME" />
+95-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:50:17-73
+95-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:50:27-70
+96                <category android:name="android.intent.category.DEFAULT" />
+96-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:51:17-76
+96-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:51:27-73
+97            </intent-filter>
+98        </activity>
+99
+100        <receiver
+100-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:78:9-86:20
+101            android:name="com.easyui.launcher.BootReceiver"
+101-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:79:13-41
+102            android:enabled="true"
+102-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:80:13-35
+103            android:exported="true" >
+103-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:81:13-36
+104            <intent-filter>
+104-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:82:13-85:29
+105                <action android:name="android.intent.action.BOOT_COMPLETED" />
+105-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:83:17-79
+105-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:83:25-76
+106                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+106-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:84:17-82
+106-->/home/munaim/Documents/github/easyui/app/src/main/AndroidManifest.xml:84:25-79
+107            </intent-filter>
+108        </receiver>
+109
+110        <activity
+110-->[androidx.compose.ui:ui-tooling-android:1.7.1] /home/munaim/.gradle/caches/transforms-4/691f0ce4405b955e090febf73970e08c/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+111            android:name="androidx.compose.ui.tooling.PreviewActivity"
+111-->[androidx.compose.ui:ui-tooling-android:1.7.1] /home/munaim/.gradle/caches/transforms-4/691f0ce4405b955e090febf73970e08c/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
+112            android:exported="true" />
+112-->[androidx.compose.ui:ui-tooling-android:1.7.1] /home/munaim/.gradle/caches/transforms-4/691f0ce4405b955e090febf73970e08c/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+113        <activity
+113-->[androidx.compose.ui:ui-test-manifest:1.7.1] /home/munaim/.gradle/caches/transforms-4/8546a714f2ac6a31bf419a9e66666c04/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:23:9-25:39
+114            android:name="androidx.activity.ComponentActivity"
+114-->[androidx.compose.ui:ui-test-manifest:1.7.1] /home/munaim/.gradle/caches/transforms-4/8546a714f2ac6a31bf419a9e66666c04/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:24:13-63
+115            android:exported="true" />
+115-->[androidx.compose.ui:ui-test-manifest:1.7.1] /home/munaim/.gradle/caches/transforms-4/8546a714f2ac6a31bf419a9e66666c04/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:25:13-36
+116
+117        <provider
+117-->[androidx.lifecycle:lifecycle-process:2.8.5] /home/munaim/.gradle/caches/transforms-4/a8aea3d4ed8379bb34f9cd5a648143df/transformed/lifecycle-process-2.8.5/AndroidManifest.xml:24:9-32:20
+118            android:name="androidx.startup.InitializationProvider"
+118-->[androidx.lifecycle:lifecycle-process:2.8.5] /home/munaim/.gradle/caches/transforms-4/a8aea3d4ed8379bb34f9cd5a648143df/transformed/lifecycle-process-2.8.5/AndroidManifest.xml:25:13-67
+119            android:authorities="com.easyui.launcher.debug.androidx-startup"
+119-->[androidx.lifecycle:lifecycle-process:2.8.5] /home/munaim/.gradle/caches/transforms-4/a8aea3d4ed8379bb34f9cd5a648143df/transformed/lifecycle-process-2.8.5/AndroidManifest.xml:26:13-68
+120            android:exported="false" >
+120-->[androidx.lifecycle:lifecycle-process:2.8.5] /home/munaim/.gradle/caches/transforms-4/a8aea3d4ed8379bb34f9cd5a648143df/transformed/lifecycle-process-2.8.5/AndroidManifest.xml:27:13-37
+121            <meta-data
+121-->[androidx.lifecycle:lifecycle-process:2.8.5] /home/munaim/.gradle/caches/transforms-4/a8aea3d4ed8379bb34f9cd5a648143df/transformed/lifecycle-process-2.8.5/AndroidManifest.xml:29:13-31:52
+122                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+122-->[androidx.lifecycle:lifecycle-process:2.8.5] /home/munaim/.gradle/caches/transforms-4/a8aea3d4ed8379bb34f9cd5a648143df/transformed/lifecycle-process-2.8.5/AndroidManifest.xml:30:17-78
+123                android:value="androidx.startup" />
+123-->[androidx.lifecycle:lifecycle-process:2.8.5] /home/munaim/.gradle/caches/transforms-4/a8aea3d4ed8379bb34f9cd5a648143df/transformed/lifecycle-process-2.8.5/AndroidManifest.xml:31:17-49
+124            <meta-data
+124-->[androidx.emoji2:emoji2:1.3.0] /home/munaim/.gradle/caches/transforms-4/386dc7620c655cc73b4053f8007a045b/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+125                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+125-->[androidx.emoji2:emoji2:1.3.0] /home/munaim/.gradle/caches/transforms-4/386dc7620c655cc73b4053f8007a045b/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+126                android:value="androidx.startup" />
+126-->[androidx.emoji2:emoji2:1.3.0] /home/munaim/.gradle/caches/transforms-4/386dc7620c655cc73b4053f8007a045b/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+127            <meta-data
+127-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+128                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+128-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+129                android:value="androidx.startup" />
+129-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+130        </provider>
+131
+132        <service
+132-->[androidx.room:room-runtime:2.6.1] /home/munaim/.gradle/caches/transforms-4/16b9a54ea3ef80e7c5bb00da29745093/transformed/room-runtime-2.6.1/AndroidManifest.xml:24:9-28:63
+133            android:name="androidx.room.MultiInstanceInvalidationService"
+133-->[androidx.room:room-runtime:2.6.1] /home/munaim/.gradle/caches/transforms-4/16b9a54ea3ef80e7c5bb00da29745093/transformed/room-runtime-2.6.1/AndroidManifest.xml:25:13-74
+134            android:directBootAware="true"
+134-->[androidx.room:room-runtime:2.6.1] /home/munaim/.gradle/caches/transforms-4/16b9a54ea3ef80e7c5bb00da29745093/transformed/room-runtime-2.6.1/AndroidManifest.xml:26:13-43
+135            android:exported="false" />
+135-->[androidx.room:room-runtime:2.6.1] /home/munaim/.gradle/caches/transforms-4/16b9a54ea3ef80e7c5bb00da29745093/transformed/room-runtime-2.6.1/AndroidManifest.xml:27:13-37
+136
+137        <receiver
+137-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+138            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+138-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+139            android:directBootAware="false"
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+140            android:enabled="true"
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+141            android:exported="true"
+141-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+142            android:permission="android.permission.DUMP" >
+142-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+143            <intent-filter>
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+144                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+145            </intent-filter>
+146            <intent-filter>
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+147                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+148            </intent-filter>
+149            <intent-filter>
+149-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+150                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+150-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+150-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+151            </intent-filter>
+152            <intent-filter>
+152-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+153                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+153-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+153-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/munaim/.gradle/caches/transforms-4/1c7f55e4b7955d153265d5a945be60aa/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+154            </intent-filter>
+155        </receiver>
+156    </application>
+157
+158</manifest>

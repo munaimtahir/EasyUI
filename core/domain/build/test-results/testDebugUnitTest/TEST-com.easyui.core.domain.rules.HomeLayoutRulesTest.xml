@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.HomeLayoutRulesTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:58" hostname="munaim" time="0.018">
+  <properties/>
+  <testcase name="pages keeps first page anchored and exposes caregiver page slots" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.01"/>
+  <testcase name="assignAppToPosition places app into requested slot" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.002"/>
+  <testcase name="ensure required actions replaces legacy first page tiles" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.0"/>
+  <testcase name="starter layout includes fixed senior actions" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.0"/>
+  <testcase name="upsertContactTile adds or updates a favorite contact tile" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.0"/>
+  <testcase name="isValid rejects duplicate positions" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.0"/>
+  <testcase name="normalize reorders tiles and removes duplicate ids" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.0"/>
+  <testcase name="canUsePageCount rejects removing page with configured tiles" classname="com.easyui.core.domain.rules.HomeLayoutRulesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="incidents">
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of org.robolectric:robolectric than 4.12.2 is available: 4.14.1">
+        <fix-replace
+            description="Change to 4.14.1"
+            family="Update versions"
+            oldString="4.12.2"
+            replacement="4.14.1"
+            priority="0"/>
+        <location
+            file="${:core:domain*projectDir}/build.gradle.kts"
+            line="28"
+            column="24"
+            startOffset="591"
+            endLine="28"
+            endColumn="60"
+            endOffset="627"/>
+    </incident>
+
+</incidents>

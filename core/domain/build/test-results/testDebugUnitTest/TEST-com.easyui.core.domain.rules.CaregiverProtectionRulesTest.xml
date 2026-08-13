@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.CaregiverProtectionRulesTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:58" hostname="munaim" time="0.008">
+  <properties/>
+  <testcase name="protected actions require pin only when configured" classname="com.easyui.core.domain.rules.CaregiverProtectionRulesTest" time="0.002"/>
+  <testcase name="validatePin requires digits and matching confirmation" classname="com.easyui.core.domain.rules.CaregiverProtectionRulesTest" time="0.002"/>
+  <testcase name="changing existing pin preserves current protection settings" classname="com.easyui.core.domain.rules.CaregiverProtectionRulesTest" time="0.001"/>
+  <testcase name="first pin setup enables protection and locks layout" classname="com.easyui.core.domain.rules.CaregiverProtectionRulesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

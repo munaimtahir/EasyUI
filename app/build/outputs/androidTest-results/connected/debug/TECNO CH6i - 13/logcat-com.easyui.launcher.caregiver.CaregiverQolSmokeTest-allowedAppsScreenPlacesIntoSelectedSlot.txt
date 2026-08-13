@@ -1,0 +1,777 @@
+05-26 15:42:26.606 32575 32597 I TestRunner: started: allowedAppsScreenPlacesIntoSelectedSlot(com.easyui.launcher.caregiver.CaregiverQolSmokeTest)
+05-26 15:42:26.608  1478  1867 D DynamicFrameRateController: isAllowedSetFPS -> mTranDfrcConfigHandler null, isDfrcSupport = false
+05-26 15:42:26.617 32575 32597 D IdlingRegistry: Registering idling resources: [androidx.compose.ui.test.EspressoLink@e2a470c]
+05-26 15:42:26.619  2228 10918 D tmw_TaskUtil.getTaskOrientation(L:72): getTaskOrientation(), orientation:-2, taskId:16378
+05-26 15:42:26.620 32648 32648 D BLASTBufferQueue: [VRI[InstrumentationActivityInvoker$EmptyActivity]#11](f:0,a:1) destructor()
+05-26 15:42:26.620 32648 32648 D BufferQueueConsumer: [VRI[InstrumentationActivityInvoker$EmptyActivity]#11(BLAST Consumer)11](id:7f880000000b,api:0,p:-1,c:32648) disconnect
+05-26 15:42:26.622  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.623  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.transsion.hilauncher
+05-26 15:42:26.624   745 12295 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.624 32575 32597 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-26 15:42:26.624  1478  1815 I GED     : ged_boost_gpu_freq, level 100, eOrigin 2, final_idx 31, oppidx_max 31, oppidx_min 0
+05-26 15:42:26.627  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation111: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:26.627   755   755 I BufferQueueProducer: [NavigationBar0#2950](this:0xb400007ca80e58d8,id:-1,api:0,p:-1,c:755) queueBuffer: fps=0.52 dur=1933.76 max=1933.76 min=1933.76
+05-26 15:42:26.627  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation222: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:26.629  2228  2302 I MultiWindowManager: manager notifyInputMethodShow: false
+05-26 15:42:26.629  2228  2302 I tmw_    : notifyInputMethodShow: false ignoreSame: true mFocusOnMultiDisplay: false
+05-26 15:42:26.629  3903 30831 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.629  3903 30831 D Game_Utils: getTopPackageNameNew pkm = com.transsion.hilauncher
+05-26 15:42:26.630  1478  1519 I PowerHalWrapper: amsBoostNotify pid:32648,activity:androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, package:com.easyui.launcher.debug.test, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:26.630  1478  1519 I PowerHalWrapper: state: 0
+05-26 15:42:26.631  1478  1519 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity pid=32648 state:0
+05-26 15:42:26.631  1478  1519 I game_scn: collectForegroundAppList packName=com.easyui.launcher.debug.test, actName=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, pid=32648, uid=10493, state:PAUSED
+05-26 15:42:26.631  1478  1519 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 2148, packname: com.transsion.hilauncher, actname: com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.631  1478  1519 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:26.632   738   818 I libPowerHal: [perfNotifyAppState] pack:com.easyui.launcher.debug.test, act:androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, state:0, pid:32648, uid:10493, fps:-1
+05-26 15:42:26.634  2228  2302 I MultiWindowManager: manager notifyInputMethodShow: false
+05-26 15:42:26.635  2228  2302 I tmw_    : notifyInputMethodShow: false ignoreSame: true mFocusOnMultiDisplay: false
+05-26 15:42:26.642  1911  2005 D View    : [Warning] assignParent to null: this = android.widget.FrameLayout{daebc41 G.E...... ......ID 0,0-1080,2460}
+05-26 15:42:26.644  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.644  3903  3903 D Game_Utils: getTopClassNameNew className = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.645  3903  3903 I SmartPanel_OperateState: clear, goto SlideState
+05-26 15:42:26.645  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:26.645  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:26.645  3903  3903 D SmartPanelService: MSG_ACTIVITY_CHECK
+05-26 15:42:26.645  3903  3903 D SmartPanelService: MSG_TASK_FOCUS
+05-26 15:42:26.648 32648 32648 D ActivityThread: mToDestroying.remove:ActivityRecord{4c8455b token=android.os.BinderProxy@46a3829 {com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity}}
+05-26 15:42:26.649  1478  2292 I mtkpower_client: perf_lock_rel, hdl:21385, tid:2292
+05-26 15:42:26.649  1478  2292 I mtkpower_client: perf_cus_lock_hint hint:54, dur:150
+05-26 15:42:26.650  1911  2005 D BLASTBufferQueue: [VRI[test]#1034](f:0,a:1) destructor()
+05-26 15:42:26.650  1911  2005 D BufferQueueConsumer: [VRI[test]#1034(BLAST Consumer)1034](id:77700000418,api:0,p:-1,c:1911) disconnect
+05-26 15:42:26.654  2148  2157 I sion.hilauncher: NativeAlloc concurrent copying GC freed 4775KB AllocSpace bytes, 20(800KB) LOS objects, 49% free, 15MB/31MB, paused 161us,167us total 108.197ms
+05-26 15:42:26.654  1478  2292 I mtkpower_client: perf_cus_lock_hint, ret_hdl:21391
+05-26 15:42:26.657  3903  3903 V SmartPanel_SmartPanelService: recentPkgList: [com.easyui.launcher.debug, com.easyui.launcher.debug.test, com.android.settings, com.transsion.phonemaster, com.google.android.googlequicksearchbox, com.openai.chatgpt, com.transsion.resolver, com.easyui.guardianlauncher, com.sh.smart.caller, com.easyui.launcher, com.transsion.smartmessage, com.vexel.offlinearcade, com.whatsapp]
+05-26 15:42:26.658   745 12295 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.659  1478  2292 D DynamicFrameRateController: isAllowedSetFPS -> mTranDfrcConfigHandler null, isDfrcSupport = false
+05-26 15:42:26.661   755   755 I BufferQueueDebug: [Splash Screen com.easyui.launcher.debug.test#29107](this:0xb400007ca80a6e78,id:-1,api:0,p:-1,c:755) onDestructor()
+05-26 15:42:26.663  1478  2292 I mtkpower_client: perf_lock_rel, hdl:21391, tid:2292
+05-26 15:42:26.664   745 12295 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.664   738   777 I mtkpower@impl: [setMode] type:5, enabled:1
+05-26 15:42:26.664   738   818 I libPowerHal: [PD] MTKPOWER_HINT_START_ACTIVITY_INNER update cmd:1410000 param:0
+05-26 15:42:26.667  1478  2292 I PowerHalWrapper: <amsBoostResume> last:com.transsion.hilauncher, next:com.easyui.launcher.debug
+05-26 15:42:26.670  3903  1272 I SmartPanel_SmartPanelService: activityCheck pkgName: com.easyui.launcher.debug, className: androidx.activity.ComponentActivity isResume=false isInshow =true isDrawn = false
+05-26 15:42:26.672  3903  3903 I SmartPanel_SmartPanelService: onTaskFocusChanged isSplitScreen: false
+05-26 15:42:26.674  2148  2148 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@7460e8a instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.674  2148  2148 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@7460e8a instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.675  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.677  2148  2148 D SharedPreferencesPolicy: checkFinishers msg.what :159
+05-26 15:42:26.678  2148  2148 D SharedPreferencesPolicy: checkFinishers msg.what :159
+05-26 15:42:26.678  3903  1272 D SmartPanelService: activityCheck isContain false  isInshow true  mSmartPanelGuesture false mIsGuestureCourse false  mIsGuide false  mNotShowInGuestureCourse false
+05-26 15:42:26.679  1478  2292 I PowerHalWrapper: <amsBoostResume> last:com.transsion.hilauncher, next:com.easyui.launcher.debug
+05-26 15:42:26.683   745 12295 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.684  1478  2292 I PowerHalWrapper: amsBoostNotify pid:32575,activity:androidx.activity.ComponentActivity, package:com.easyui.launcher.debug, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:26.684  1478  2292 I PowerHalWrapper: state: 1
+05-26 15:42:26.684  1478  2292 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.easyui.launcher.debug/androidx.activity.ComponentActivity pid=32575 state:1
+05-26 15:42:26.684  1478  2292 I game_scn: collectForegroundAppList packName=com.easyui.launcher.debug, actName=androidx.activity.ComponentActivity, pid=32575, uid=10492, state:RESUMED
+05-26 15:42:26.684  1478  2292 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 2148, packname: com.transsion.hilauncher, actname: com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.684  1478  2292 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32575, packname: com.easyui.launcher.debug, actname: androidx.activity.ComponentActivity
+05-26 15:42:26.684  1478  2292 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:26.686  3903  1272 I SmartPanel_SmartPanelService: activityCheck pkgName: com.easyui.launcher.debug, className: androidx.activity.ComponentActivity isResume=false isInshow =true isDrawn = false
+05-26 15:42:26.686 32575   916 D libMEOW : meow new tls: 0xb400007c0a7d41a0
+05-26 15:42:26.686 32575   916 D libMEOW : applied 1 plugins for [com.easyui.launcher.debug]:
+05-26 15:42:26.686 32575   916 D libMEOW :   plugin 1: [libMEOW_gift.so]: 0xb400007bca644010
+05-26 15:42:26.686 32575   916 D libMEOW : rebuild call chain: 0xb400007c0a8041d0
+05-26 15:42:26.686 32575   916 D libMEOW : meow delete tls: 0xb400007c0a7d41a0
+05-26 15:42:26.687   960  1062 D AAL     : 05-26 03:42:26.620 BL= 747,ESS= 256, 05-26 03:42:26.637 BL= 754,ESS= 256, 05-26 03:42:26.654 BL= 757,ESS= 256, 05-26 03:42:26.670 BL= 764,ESS= 256, 05-26 03:42:26.687 BL= 767,ESS= 256,
+05-26 15:42:26.687   738   818 I libPowerHal: [perfNotifyAppState] pack:com.easyui.launcher.debug, act:androidx.activity.ComponentActivity, state:1, pid:32575, uid:10492, fps:-1
+05-26 15:42:26.687   738   818 I libPowerHal: [perfNotifyAppState] foreground:com.easyui.launcher.debug, pid:32575, uid:10492
+05-26 15:42:26.688   738   818 I UxUtility: notifyForegroundApp pack:com.easyui.launcher.debug, uid:10492
+05-26 15:42:26.688   738   818 I TouchUtility: notifyAppState error = NULL
+05-26 15:42:26.688   738   776 I mtkpower@impl: [notifyAppState] pc:0, com.transsion.hilauncher => com.easyui.launcher.debug
+05-26 15:42:26.690  1478  2292 I PowerHalWrapper: amsBoostNotify pid:2148,activity:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, package:com.transsion.hilauncher, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:26.690  1478  2292 I PowerHalWrapper: state: 0
+05-26 15:42:26.690  1478  2292 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.transsion.hilauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher pid=2148 state:0
+05-26 15:42:26.690  1478  2292 I game_scn: collectForegroundAppList packName=com.transsion.hilauncher, actName=com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, pid=2148, uid=10181, state:PAUSED
+05-26 15:42:26.690  1478  2292 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32575, packname: com.easyui.launcher.debug, actname: androidx.activity.ComponentActivity
+05-26 15:42:26.691  1478  2292 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:26.691   738   818 I libPowerHal: [perfNotifyAppState] pack:com.transsion.hilauncher, act:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, state:0, pid:2148, uid:10181, fps:-1
+05-26 15:42:26.696  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.699  1911  2005 D InputTransport: Destroy ARC handle: 0xb400007a2a8560d0
+05-26 15:42:26.700  3903  1272 D SmartPanelService: activityCheck isContain false  isInshow true  mSmartPanelGuesture false mIsGuestureCourse false  mIsGuide false  mNotShowInGuestureCourse false
+05-26 15:42:26.700  3903  1272 I SmartPanel_SmartPanelService: activityCheck pkgName: com.easyui.launcher.debug, className: androidx.activity.ComponentActivity isResume=true isInshow =true isDrawn = false
+05-26 15:42:26.703  1478  3778 I ActivityManager: isUserAMonkey mUserIsMonkey = false
+05-26 15:42:26.704  1478  1547 I libprocessgroup: Successfully killed process cgroup uid 10172 pid 29596 in 7ms
+05-26 15:42:26.705  1478  3778 I ActivityTaskManager: isControllerAMonkey mController = null,mControllerIsAMonkey = true
+05-26 15:42:26.705  1478  1550 W libprocessgroup: Failed to open /dev/blkio//cgroup.procs: No such file or directory
+05-26 15:42:26.706   745 12295 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.707 32648 32648 D View    : [Warning] assignParent to null: this = DecorView@1b9a6e0[InstrumentationActivityInvoker$EmptyActivity]
+05-26 15:42:26.707   755   826 D SurfaceFlinger: [SF client] NEW(0xb400007bb7edaa50) for (1911:com.android.systemui)
+05-26 15:42:26.707  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.707  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.transsion.hilauncher
+05-26 15:42:26.708  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.710  1478  3778 W InputManager-JNI: Input channel object '725ec7e com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity (client)' was disposed without first being removed with the input manager!
+05-26 15:42:26.710  3903  3903 D SmartPanelService: handlerActivityStart isResume = true  pkgName = com.transsion.hilauncher
+05-26 15:42:26.711  3661 21208 D TPMS    : getTopPackageName pkgName: com.transsion.hilauncher
+05-26 15:42:26.713  1911  2005 D VRI[debug]: hardware acceleration = true, forceHwAccelerated = false
+05-26 15:42:26.716 32575 32575 D TranAppturboServiceImpl: attach
+05-26 15:42:26.716  3903 30831 D SmartPanelService: onTaskCreated mCreateTaskId = 16379
+05-26 15:42:26.718 32575 32575 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@47a9e10 in: PRE_ON_CREATE
+05-26 15:42:26.718 32575 32575 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+05-26 15:42:26.719  1478  1550 W libprocessgroup: Failed to open /dev/blkio//cgroup.procs: No such file or directory
+05-26 15:42:26.722  3903  3903 D SmartPanelService: handlerVideoStart isResume = true  VIDEO_PACKAGE =   pkgName = com.transsion.hilauncher
+05-26 15:42:26.722  3903  3903 W SmartPanel_OperateState: show
+05-26 15:42:26.722  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:26.722  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:26.722 32648 32648 D InputTransport: Destroy ARC handle: 0xb400007a2a6978e0
+05-26 15:42:26.723 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.723 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.723 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.723 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.723  4290  4828 I SimpleEventAdapt: onActivityEvent get com.transsion.hilauncher, com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher,false
+05-26 15:42:26.723  4290  4828 I SimpleEventAdapt: notifyEvent2  activity_event
+05-26 15:42:26.723  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:26.724 32575 32575 I WhiteNavigationLice: Modify naviBarColor to 0xFFF0F0F0, and windowBackgroundColor is -1   /windowIsTranslucent:false
+05-26 15:42:26.724 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.724 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.724  4290 32304 I CacheManager:  save new data to cache activity_event
+05-26 15:42:26.724  4290 32304 I bsc     : notifyDataChange in activity_event, 1
+05-26 15:42:26.724  1911  2005 D InputTransport: Create ARC handle: 0xb400007a2a7dd1d0
+05-26 15:42:26.724  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:26.725  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:activity_event
+05-26 15:42:26.725  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792146724,"data":"{\"className\":\"com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher\",\"isResumed\":false,\"packageName\":\"com.transsion.hilauncher\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.725  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:26.725  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:26.726   745 12295 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.726  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792146724,"data":"{\"className\":\"com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher\",\"isResumed\":false,\"packageName\":\"com.transsion.hilauncher\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.726  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:26.727  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote activity_event
+05-26 15:42:26.727 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.727 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.727   755   755 I BufferQueueDebug: [com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity#29111](this:0xb400007ca81b56e8,id:-1,api:0,p:-1,c:755) onDestructor()
+05-26 15:42:26.728  3903  1272 D SmartPanelService: activityCheck isContain false  isInshow true  mSmartPanelGuesture false mIsGuestureCourse false  mIsGuide false  mNotShowInGuestureCourse false
+05-26 15:42:26.728  3903  1272 D SmartPanelService: processName = com.transsion.notebookpackages = [com.transsion.notebook]
+05-26 15:42:26.730 32575 32575 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@47a9e10 in: CREATED
+05-26 15:42:26.730 32575 32575 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=androidx.activity.ComponentActivity@47a9e10
+05-26 15:42:26.730 32575 32575 D ActivityThread: ++ activityComponent:com.easyui.launcher.debug/androidx.activity.ComponentActivity counts:1 ALEAK_CLEAR_SUPPORT:true
+05-26 15:42:26.731  1478  6455 D DynamicFrameRateController: isAllowedSetFPS -> mTranDfrcConfigHandler null, isDfrcSupport = false
+05-26 15:42:26.731 32575 32575 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@47a9e10 in: STARTED
+05-26 15:42:26.732 32575 32575 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=androidx.activity.ComponentActivity@47a9e10
+05-26 15:42:26.734 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.735 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.735 32575 32575 D TranAppturboServiceImpl: onResumeHork
+05-26 15:42:26.735  3903  3903 D Game_Utils: getTopPackageNameNew isFocused false
+05-26 15:42:26.735 32575 32575 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@47a9e10 in: RESUMED
+05-26 15:42:26.736 32575 32575 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=androidx.activity.ComponentActivity@47a9e10
+05-26 15:42:26.738  3903  1272 D Game_Utils: getTopPackageNameNew isFocused false
+05-26 15:42:26.739   755   826 D SurfaceFlinger: [SF client] NEW(0xb400007bb7ef3330) for (32575:com.easyui.launcher.debug)
+05-26 15:42:26.740  3903 23703 I SmartPanel_SmartPanelService: onTaskFocusChanged taskId: 6  focused: false
+05-26 15:42:26.740  3903 23703 I SmartPanel_SmartPanelService: onTaskFocusChanged taskId: 16379  focused: true
+05-26 15:42:26.741  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.741  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: onActivityEvent get com.easyui.launcher.debug, androidx.activity.ComponentActivity,true
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: notifyEvent2  activity_event
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: onAppForegroundEvent get com.transsion.hilauncher, false
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: notifyEvent2  app_foreground
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: onAppForegroundEvent get com.easyui.launcher.debug, true
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: notifyEvent2  app_foreground
+05-26 15:42:26.743  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:26.744  4290 32304 I CacheManager:  save new data to cache activity_event
+05-26 15:42:26.744  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.744  4290 32304 I bsc     : notifyDataChange in activity_event, 1
+05-26 15:42:26.744  3903  1272 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug
+05-26 15:42:26.744  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:26.744  4290 32304 I CacheManager:  save new data to cache app_foreground
+05-26 15:42:26.744  4290 32304 I bsc     : notifyDataChange in app_foreground, 1
+05-26 15:42:26.744  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:26.744  4290 32304 I CacheManager:  save new data to cache app_foreground
+05-26 15:42:26.744  4290 32304 I bsc     : notifyDataChange in app_foreground, 1
+05-26 15:42:26.744  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:26.745   745 12295 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.745  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:activity_event
+05-26 15:42:26.746 32575 32575 D VRI[ComponentActivity]: hardware acceleration = true, forceHwAccelerated = false
+05-26 15:42:26.746  4290  4828 I SimpleEventAdapt: onAppStartEvent get com.easyui.launcher.debug.test,start false
+05-26 15:42:26.747  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792146743,"data":"{\"className\":\"androidx.activity.ComponentActivity\",\"isResumed\":true,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.747  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:26.747  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:26.747  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote activity_event
+05-26 15:42:26.747  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:app_foreground
+05-26 15:42:26.748  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792146744,"data":"{\"isForeground\":false,\"packageName\":\"com.transsion.hilauncher\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.748  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:26.748  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:26.748  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote app_foreground
+05-26 15:42:26.748  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:app_foreground
+05-26 15:42:26.748  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792146744,"data":"{\"isForeground\":true,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.748  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:26.748  4290  4290 I Kolun_AI: dj1:onBusEvent AppForegroundEvent   com.transsion.hilauncher, false, dj1
+05-26 15:42:26.748  4290  4290 I Kolun_AI: dj1:checkGameOut  com.transsion.hilauncher,
+05-26 15:42:26.748  4290  4290 I Kolun_AI: AppPredictManager:onBusEvent com.transsion.hilauncher false
+05-26 15:42:26.748  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:26.748  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote app_foreground
+05-26 15:42:26.749  4290  4758 I Kolun_AI: AppPredictManager:onPackageChanged AppForegroundEvent com.transsion.hilauncher false currentTime 2026-05-26 15:42:26
+05-26 15:42:26.751   755   826 I BufferQueueDebug: [Splash Screen com.easyui.launcher.debug#29132](this:0xb400007ca81b56e8,id:-1,api:0,p:-1,c:-1) BufferQueue core=(755:/system/bin/surfaceflinger)
+05-26 15:42:26.752  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792146743,"data":"{\"className\":\"androidx.activity.ComponentActivity\",\"isResumed\":true,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.752  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:26.752 24717  5811 D Kolun.DataCenterImpl:  onPublishDataapp_foreground, {"type":"app_foreground","time":1779792146744,"data":"{\"isForeground\":false,\"packageName\":\"com.transsion.hilauncher\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.752 24717  5811 D Kolun.DataCenterManager:  launcher pkg : com.transsion.hilauncher, pkg : com.transsion.hilauncher, false
+05-26 15:42:26.752 32575 32575 D InputTransport: Create ARC handle: 0xb400007a2a6ab3e0
+05-26 15:42:26.753 24717 24776 D Kolun.RequirementManager:  sendEvent() called with: event = [com.transsion.kolun.assistant.common.components.event.LauncherHomeEvent@c62a360]
+05-26 15:42:26.753 24717 24776 D Kolun.Api:  get ri4 from cache
+05-26 15:42:26.753 24717 24776 D Kolun.RequirementManager:  sendEvent
+05-26 15:42:26.753 24717 24776 I Kolun.EventBusImpl:  dispatchEvent: com.transsion.kolun.assistant.common.components.event.LauncherHomeEvent@c62a360
+05-26 15:42:26.753 24717 24776 D Kolun.Api:  get xc4 from cache
+05-26 15:42:26.753 24717 24776 D Kolun.Api:  get CardInterfaceImpl from cache
+05-26 15:42:26.753  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792146744,"data":"{\"isForeground\":false,\"packageName\":\"com.transsion.hilauncher\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.754  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:26.754 24717  5811 D Kolun.DataCenterImpl:  onPublishDataapp_foreground, {"type":"app_foreground","time":1779792146744,"data":"{\"isForeground\":true,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.755  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792146744,"data":"{\"isForeground\":true,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:26.755  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:26.757  1478  1704 I BaseFilesVerify: Base File verify start
+05-26 15:42:26.757  1478  1704 W BaseFilesVerify: settings_system.xmlis not in fileProtect list,can not protect this file
+05-26 15:42:26.757  1478  3802 D DynamicFrameRateController: isAllowedSetFPS -> mTranDfrcConfigHandler null, isDfrcSupport = false
+05-26 15:42:26.759 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.760 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.760 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.760  1478  3802 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.transsion.notebook/com.transsion.notebook pid=29596 state:3
+05-26 15:42:26.760  1478  3802 I game_scn: collectForegroundAppList packName=com.transsion.notebook, actName=com.transsion.notebook, pid=29596, uid=10172, state:DEAD
+05-26 15:42:26.760  1478  3802 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32575, packname: com.easyui.launcher.debug, actname: androidx.activity.ComponentActivity
+05-26 15:42:26.760   712   712 I Zygote  : Process 29596 exited due to signal 9 (Killed)
+05-26 15:42:26.761 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.761 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.761 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.761   738   818 I libPowerHal: [perfNotifyAppState] pack:com.transsion.notebook, act:com.transsion.notebook, state:3, pid:29596, uid:10172, fps:-1
+05-26 15:42:26.761   738   818 I libPowerHal: [perfNotifyAppState] pack:com.transsion.notebook, pid:29596, STATE_DEAD
+05-26 15:42:26.761   738   818 D RilUtility: notify_rild_crash_pid_set certPid:-1, crash:29596, scn:0x0
+05-26 15:42:26.761  1911  2005 D BufferQueueConsumer: [](id:77700000419,api:0,p:-1,c:1911) connect: controlledByApp=false
+05-26 15:42:26.763  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.763  3903  1272 D Game_Utils: getTopClassNameNew className = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.764   755   825 I BufferQueueDebug: [com.easyui.launcher.debug/androidx.activity.ComponentActivity#29133](this:0xb400007ca80f3ca8,id:-1,api:0,p:-1,c:-1) BufferQueue core=(755:/system/bin/surfaceflinger)
+05-26 15:42:26.767   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.770   960  1062 D AAL     : 05-26 03:42:26.704 BL= 774,ESS= 256, 05-26 03:42:26.721 BL= 777,ESS= 256, 05-26 03:42:26.738 BL= 783,ESS= 256, 05-26 03:42:26.754 BL= 786,ESS= 256, 05-26 03:42:26.770 BL= 793,ESS= 256,
+05-26 15:42:26.774 32575 32575 D BufferQueueConsumer: [](id:7f3f0000000c,api:0,p:-1,c:32575) connect: controlledByApp=false
+05-26 15:42:26.776 32575 32575 I config_debug: updateDecorCaptionStatus: {1.0 ?mcc?mnc [en_US,ur_PK] ldltr sw360dp w360dp h744dp 480dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2460) mAppBounds=Rect(0, 108 - 1080, 2340) mMaxBounds=Rect(0, 0 - 1080, 2460) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mMultiWindowMode=normal mMultiWindowId=0 mWindowResiable=6 mInLargeScreen=-1 mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0 mDisplayUniqueId=0} as.25 s.1 fontWeightAdjustment=0} fromMultiWindow: true
+05-26 15:42:26.777  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.777  3903  3903 D Game_Utils: getTopClassNameNew className = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.777  3903  3903 I SmartPanel_OperateState: clear, goto SlideState
+05-26 15:42:26.777  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:26.777  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:26.778  3903  3903 W SmartPanel_OperateState: show
+05-26 15:42:26.778  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:26.778  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:26.781  1911  2049 D BLASTBufferQueue: [VRI[debug]#1035](f:0,a:1) acquireNextBufferLocked size=1080x2460 mFrameNumber=1 applyTransaction=true mTimestamp=236490442496171(auto) mPendingTransactions.size=0 graphicBufferId=8207682536831 transform=0
+05-26 15:42:26.782  1911  2049 W Parcel  : Expecting binder but got null!
+05-26 15:42:26.786   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.786  3903  3903 D Game_Utils: getTopPackageNameNew isFocused false
+05-26 15:42:26.790  2135  2512 D ApkController: onTaskStackChanged
+05-26 15:42:26.790 32575 32615 D BLASTBufferQueue: [VRI[ComponentActivity]#12](f:0,a:1) acquireNextBufferLocked size=1080x2460 mFrameNumber=1 applyTransaction=true mTimestamp=236490451280248(auto) mPendingTransactions.size=0 graphicBufferId=139908559667248 transform=0
+05-26 15:42:26.792   736   736 D android.hardware.lights-service.mediatek: write 758 to /sys/class/leds/lcd-backlight/brightness, result: 0
+05-26 15:42:26.792 32575 32615 W Parcel  : Expecting binder but got null!
+05-26 15:42:26.793   755   755 D BufferStateLayer: Splash Screen com.easyui.launcher.debug#29132 setBuffer frameId=1, bufferId=8207682536831 fenceId=579, w= 1080, h=2460
+05-26 15:42:26.794   755   755 D BufferStateLayer: com.easyui.launcher.debug/androidx.activity.ComponentActivity#29133 setBuffer frameId=1, bufferId=139908559667248 fenceId=200, w= 1080, h=2460
+05-26 15:42:26.797  1478  1520 I DreamAnimation:  hookAppTransitSuccess called, and doUnlockAnimation=0  mState=7
+05-26 15:42:26.803   960  1062 D AAL     : onBacklightChanged: 903/1023 -> 758/1023(phy:758/4095)
+05-26 15:42:26.803   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.809  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.809  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug
+05-26 15:42:26.814  3903  1272 I SmartPanel_SmartPanelService: onWindowsDrawn pkgName: com.easyui.launcher.debug, className: androidx.activity.ComponentActivity launchState=2 windowsDrawnDelayMs =159
+05-26 15:42:26.817  1478  1516 I ActivityTaskManager: Displayed com.easyui.launcher.debug/androidx.activity.ComponentActivity: +159ms
+05-26 15:42:26.823   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.834   738   777 I mtkpower@impl: [setMode] type:5, enabled:0
+05-26 15:42:26.835 30586 30586 D BLASTBufferQueue: [VRI[ZeroScreen]#12](f:0,a:1) destructor()
+05-26 15:42:26.835 30586 30586 D BufferQueueConsumer: [VRI[ZeroScreen]#12(BLAST Consumer)12](id:777a0000000c,api:0,p:-1,c:30586) disconnect
+05-26 15:42:26.835   738   818 I libPowerHal: [PD] LAUNCH update cmd:1410000 param:0
+05-26 15:42:26.835  1478  2048 I PowerHalWrapper: amsBoostNotify pid:2148,activity:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, package:com.transsion.hilauncher, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:26.835  1478  2048 I PowerHalWrapper: state: 0
+05-26 15:42:26.835   738   818 I libPowerHal: [PD] LAUNCH update cmd:1408400 param:0
+05-26 15:42:26.835  1478  2048 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.transsion.hilauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher pid=2148 state:0
+05-26 15:42:26.835  1478  2048 I game_scn: collectForegroundAppList packName=com.transsion.hilauncher, actName=com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, pid=2148, uid=10181, state:PAUSED
+05-26 15:42:26.835  1478  2048 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32575, packname: com.easyui.launcher.debug, actname: androidx.activity.ComponentActivity
+05-26 15:42:26.835  1478  2048 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:26.836   738   818 I libPowerHal: [perfNotifyAppState] pack:com.transsion.hilauncher, act:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, state:0, pid:2148, uid:10181, fps:-1
+05-26 15:42:26.836  1478  2048 I PowerHalWrapper: amsBoostStop AMS_BOOST_PACK_SWITCH:true, AMS_BOOST_ACT_SWITCH:false, AMS_BOOST_PROCESS_CREATE:false
+05-26 15:42:26.836   738   776 I mtkpower@impl: [mtkPowerHint] hint:22, hold:500, ext:0, ext_hold:0
+05-26 15:42:26.839  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.839  3903  1272 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug
+05-26 15:42:26.842  2135  2597 D ApkController: [handleMessage] --> start 1
+05-26 15:42:26.844   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.845   739   739 D NVRAM   : NVM_GetLIDByName /mnt/vendor/nvdata/APCFG/APRDEB/PRODUCT_PAYTRIGGER
+05-26 15:42:26.845   739   739 D NVRAM   : NVRAM: NVM_GetLIDByName Lid =82
+05-26 15:42:26.846  3903  1272 I SmartPanel_SmartPanelService: ASP pkgName: com.transsion.hilauncher  className = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:26.847  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.847  3903  3903 D Game_Utils: getTopClassNameNew className = androidx.activity.ComponentActivity
+05-26 15:42:26.847  3903  3903 I SmartPanel_OperateState: clear, goto SlideState
+05-26 15:42:26.847  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:26.847  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:26.847  3903  3903 I SmartPanel_SmartPanelService: checkAndHandleAPP curosr: count = 0
+05-26 15:42:26.848   739   739 D NVRAM   : [tran]fail to open: /proc/device-tree/chosen/atag,boot,Permission denied
+05-26 15:42:26.848   739   739 D NVRAM   : fail to open /sys/class/BOOT/BOOT/boot/boot_mode:
+05-26 15:42:26.845   739   739 W nvram@1.1-servi: type=1400 audit(0.0:172299): avc: denied { read } for name="atag,boot" dev="sysfs" ino=73 scontext=u:r:mtk_hal_nvramagent:s0 tcontext=u:object_r:sysfs_boot_info:s0 tclass=file permissive=0
+05-26 15:42:26.848   739   739 D NVRAM   : Tran: Nvdata Resotre successeded! continue ...
+05-26 15:42:26.848   739   739 D NVRAM   : 82 is in new nvram partition!!!
+05-26 15:42:26.848   739   739 D NVRAM   : New NVRAM partition name is /dev/block/by-name/proinfo.
+05-26 15:42:26.849   739   739 D NVRAM   : Read Done!Size is 2048
+05-26 15:42:26.850  3903  3903 I SmartPanel_SmartPanelService: checkVideoApp curosr: count = 0
+05-26 15:42:26.853   739   739 D NVRAM   : 82 is in new nvram partition!!!
+05-26 15:42:26.854   960  1062 D AAL     : 05-26 03:42:26.787 BL= 796,ESS= 256, 05-26 03:42:26.803 BL= 788,ESS= 256, 05-26 03:42:26.820 BL= 776,ESS= 256, 05-26 03:42:26.837 BL= 763,ESS= 256, 05-26 03:42:26.854 BL= 757,ESS= 256,
+05-26 15:42:26.856  3903  3903 W SmartPanel_OperateState: show
+05-26 15:42:26.856  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:26.856  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:26.858  2228 10918 D tmw_TaskUtil.getTaskOrientation(L:72): getTaskOrientation(), orientation:-1, taskId:16379
+05-26 15:42:26.858  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation111: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:26.859  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation222: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:26.859  2148  2148 D BLASTBufferQueue: [VRI[QuickstepLauncher]#463](f:0,a:1) destructor()
+05-26 15:42:26.859  2148  2148 D BufferQueueConsumer: [VRI[QuickstepLauncher]#463(BLAST Consumer)463](id:864000001cf,api:0,p:-1,c:2148) disconnect
+05-26 15:42:26.860  2148  2148 D SharedPreferencesPolicy: checkFinishers msg.what :159
+05-26 15:42:26.863  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.863  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug
+05-26 15:42:26.865  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.865  3903  1272 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug
+05-26 15:42:26.866   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.869   739   739 D NVRAM   : NVM_GetLIDByName /mnt/vendor/nvdata/APCFG/APRDEB/PRODUCT_PAYTRIGGER
+05-26 15:42:26.869   739   739 D NVRAM   : NVRAM: NVM_GetLIDByName Lid =82
+05-26 15:42:26.869   739   739 D NVRAM   : [tran]fail to open: /proc/device-tree/chosen/atag,boot,Permission denied
+05-26 15:42:26.869   739   739 D NVRAM   : fail to open /sys/class/BOOT/BOOT/boot/boot_mode:
+05-26 15:42:26.869   739   739 D NVRAM   : Tran: Nvdata Resotre successeded! continue ...
+05-26 15:42:26.865   739   739 W nvram@1.1-servi: type=1400 audit(0.0:172300): avc: denied { read } for name="atag,boot" dev="sysfs" ino=73 scontext=u:r:mtk_hal_nvramagent:s0 tcontext=u:object_r:sysfs_boot_info:s0 tclass=file permissive=0
+05-26 15:42:26.869   739   739 D NVRAM   : 82 is in new nvram partition!!!
+05-26 15:42:26.869   739   739 D NVRAM   : New NVRAM partition name is /dev/block/by-name/proinfo.
+05-26 15:42:26.870   739   739 D NVRAM   : Read Done!Size is 2048
+05-26 15:42:26.871   739   739 D NVRAM   : 82 is in new nvram partition!!!
+05-26 15:42:26.871  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.871  3903  3903 D Game_Utils: getTopClassNameNew className = androidx.activity.ComponentActivity
+05-26 15:42:26.871  3903  3903 I SmartPanel_OperateState: clear, goto SlideState
+05-26 15:42:26.871  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:26.871  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:26.871  3903  3903 D SmartPanelService: MSG_ACTIVITY_CHECK
+05-26 15:42:26.871  3903  3903 D SmartPanelService: MSG_TASK_FOCUS
+05-26 15:42:26.873  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.873  3903  1272 D Game_Utils: getTopClassNameNew className = androidx.activity.ComponentActivity
+05-26 15:42:26.874  2228 10918 D tmw_TaskUtil.getTaskOrientation(L:72): getTaskOrientation(), orientation:-1, taskId:16379
+05-26 15:42:26.875  3903  3903 V SmartPanel_SmartPanelService: recentPkgList: [com.easyui.launcher.debug, com.easyui.launcher.debug.test, com.android.settings, com.transsion.phonemaster, com.google.android.googlequicksearchbox, com.openai.chatgpt, com.transsion.resolver, com.easyui.guardianlauncher, com.sh.smart.caller, com.easyui.launcher, com.transsion.smartmessage, com.vexel.offlinearcade, com.whatsapp]
+05-26 15:42:26.875  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation111: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:26.876  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation222: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:26.877  3903  3903 I SmartPanel_SmartPanelService: onTaskFocusChanged isSplitScreen: false
+05-26 15:42:26.880  1478  1704 I BaseFilesVerify: Base File verify start
+05-26 15:42:26.881  1478  1704 W BaseXMLFilesVerify: isGrammarAndSemanticsLegal file = /data/system/users/0/settings_global.xml
+05-26 15:42:26.881 18691 18879 E phonemaster_log: onForegroundActivitiesChanged: 10181  false
+05-26 15:42:26.881  3903  1272 D SmartPanelService: handlerVideoStart isResume = false  VIDEO_PACKAGE =   pkgName = com.easyui.launcher.debug
+05-26 15:42:26.881  3903  1272 I SmartPanel_SmartPanelService: itRepeatsQuickly classname androidx.activity.ComponentActivity
+05-26 15:42:26.882  1478  1704 W BaseXMLFilesVerify: format is normal
+05-26 15:42:26.884  1478  1704 W BaseXMLFilesVerify: verifyRuleGrammarFormat verifyRuleresult :true
+05-26 15:42:26.884   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.885  3661 21208 D TPMS    : getTopPackageName pkgName: com.easyui.launcher.debug
+05-26 15:42:26.886  1478  1499 D skia    : SkJpegCodec::onGetPixels +
+05-26 15:42:26.887  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:26.887  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug
+05-26 15:42:26.888  3903  3903 D SmartPanelService: handlerActivityStart isResume = false  pkgName = com.easyui.launcher.debug
+05-26 15:42:26.889  3903  3903 I SmartPanel_SmartPanelService: checkVideoApp curosr: count = 0
+05-26 15:42:26.889  3903  3903 I SmartPanel_SmartPanelService: checkAndHandleAPP curosr: count = 0
+05-26 15:42:26.892  1911  2005 D View    : [Warning] assignParent to null: this = android.widget.FrameLayout{935430f G.E...... ......ID 0,0-1080,2460}
+05-26 15:42:26.894   755   755 I BufferQueueDebug: [com.transsion.hilauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher#29116](this:0xb400007ca80a40e8,id:-1,api:0,p:-1,c:755) onDestructor()
+05-26 15:42:26.895   755   755 I BufferQueueDebug: [ZeroScreen#29115](this:0xb400007ca811e818,id:-1,api:0,p:-1,c:755) onDestructor()
+05-26 15:42:26.899  1478  1499 D skia    : SkJpegCodec::onGetPixels -
+05-26 15:42:26.901  1911  2005 D BLASTBufferQueue: [VRI[debug]#1035](f:0,a:1) destructor()
+05-26 15:42:26.901  1911  2005 D BufferQueueConsumer: [VRI[debug]#1035(BLAST Consumer)1035](id:77700000419,api:0,p:-1,c:1911) disconnect
+05-26 15:42:26.904  1478  3802 W InputManager-JNI: Input channel object '285fbee Splash Screen com.easyui.launcher.debug (client)' was disposed without first being removed with the input manager!
+05-26 15:42:26.904  1478  1800 E OpenGLRenderer: Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+05-26 15:42:26.905  1478  1800 W OpenGLRenderer: Failed to initialize 101010-2 format, error = EGL_SUCCESS
+05-26 15:42:26.905   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.907  1911  2005 D InputTransport: Destroy ARC handle: 0xb400007a2a7dd1d0
+05-26 15:42:26.910  1478  1704 W BaseXMLFilesVerify: isGrammarAndSemanticsLegal file = /data/system/users/0/settings_global.xmlsecnew.bak
+05-26 15:42:26.912  1478  1704 W BaseXMLFilesVerify: format is normal
+05-26 15:42:26.912  1478  1704 W BaseXMLFilesVerify: verifyRuleGrammarFormat verifyRuleresult :true
+05-26 15:42:26.923   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.927   755   755 I BufferQueueDebug: [Splash Screen com.easyui.launcher.debug#29132](this:0xb400007ca81b56e8,id:-1,api:0,p:-1,c:755) onDestructor()
+05-26 15:42:26.937   960  1062 D AAL     : 05-26 03:42:26.870 BL= 746,ESS= 256, 05-26 03:42:26.887 BL= 739,ESS= 256, 05-26 03:42:26.904 BL= 729,ESS= 256, 05-26 03:42:26.920 BL= 722,ESS= 256, 05-26 03:42:26.937 BL= 719,ESS= 256,
+05-26 15:42:26.943   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.964   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.984   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:26.992  1478  1704 I BaseFilesVerify: Base File verify start
+05-26 15:42:26.992  1478  1704 W BaseFilesVerify: settings_system.xmlis not in fileProtect list,can not protect this file
+05-26 15:42:26.997 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.997 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:26.997 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.004   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.024   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.044   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.054   960  1062 D AAL     : 05-26 03:42:26.954 BL= 720,ESS= 256, 05-26 03:42:26.987 BL= 721,ESS= 256, 05-26 03:42:27.021 BL= 722,ESS= 256, 05-26 03:42:27.021 BL= 723,ESS= 256, 05-26 03:42:27.054 BL= 724,ESS= 256,
+05-26 15:42:27.056  2228  2302 I MultiWindowManager: manager notifyInputMethodShow: false
+05-26 15:42:27.056  2228  2302 I tmw_    : notifyInputMethodShow: false ignoreSame: true mFocusOnMultiDisplay: false
+05-26 15:42:27.064   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.084   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.104   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.124   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.137   960  1062 D AAL     : 05-26 03:42:27.070 BL= 725,ESS= 256, 05-26 03:42:27.087 BL= 726,ESS= 256, 05-26 03:42:27.104 BL= 725,ESS= 256, 05-26 03:42:27.120 BL= 724,ESS= 256, 05-26 03:42:27.137 BL= 723,ESS= 256,
+05-26 15:42:27.144   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.166   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.167 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.167 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.167 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.167 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.167 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.168 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.169 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.169 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.171 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.171 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.171 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.172 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.172 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.172 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.184   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.186 32575 32575 W OnBackInvokedCallback: OnBackInvokedCallback is not enabled for the application.
+05-26 15:42:27.186 32575 32575 W OnBackInvokedCallback: Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+05-26 15:42:27.186   755  2020 D SurfaceFlinger: [SF client] NEW(0xb400007bb7ee4450) for (32575:com.easyui.launcher.debug)
+05-26 15:42:27.188 32575 32575 D VRI[ComponentActivity]: hardware acceleration = true, forceHwAccelerated = false
+05-26 15:42:27.189 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.189 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.189 32575 32575 I config_debug: updateDecorCaptionStatus: {1.0 ?mcc?mnc [en_US,ur_PK] ldltr sw360dp w360dp h744dp 480dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2460) mAppBounds=Rect(0, 108 - 1080, 2340) mMaxBounds=Rect(0, 0 - 1080, 2460) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mMultiWindowMode=normal mMultiWindowId=0 mWindowResiable=6 mInLargeScreen=-1 mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0 mDisplayUniqueId=0} as.25 s.1 fontWeightAdjustment=0} fromMultiWindow: false
+05-26 15:42:27.196 32575 32575 D InputTransport: Create ARC handle: 0xb400007a2a6bd830
+05-26 15:42:27.199 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.199 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.199 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.199 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.199 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.199 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.204 32575 32575 W OnBackInvokedCallback: OnBackInvokedCallback is not enabled for the application.
+05-26 15:42:27.204 32575 32575 W OnBackInvokedCallback: Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+05-26 15:42:27.204   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.224   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.241 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.241 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.241 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.244   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.254   960  1062 D AAL     : 05-26 03:42:27.171 BL= 722,ESS= 256, 05-26 03:42:27.187 BL= 721,ESS= 256, 05-26 03:42:27.204 BL= 720,ESS= 256, 05-26 03:42:27.237 BL= 719,ESS= 256, 05-26 03:42:27.254 BL= 718,ESS= 256,
+05-26 15:42:27.255   738   810 I libPerfCtl: xgfGetFPS pid:1911 fps:-1
+05-26 15:42:27.255   738   810 I libPerfCtl: xgfGetFPS pid:2148 fps:-1
+05-26 15:42:27.255   738   810 I libPerfCtl: xgfGetFPS pid:30586 fps:-1
+05-26 15:42:27.255   738   810 I libPerfCtl: xgfGetFPS pid:32575 fps:-1
+05-26 15:42:27.255   738   810 I libPerfCtl: xgfGetFPS pid:32648 fps:-1
+05-26 15:42:27.264   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.265   960  1068 D AALLightSensor: oldLux=326 [SA:363 LA:363] newLux=326 (oriLux: 364)
+05-26 15:42:27.276 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.277 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.277 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.278   755   825 I BufferQueueDebug: [com.easyui.launcher.debug/androidx.activity.ComponentActivity#29145](this:0xb400007ca8115f68,id:-1,api:0,p:-1,c:-1) BufferQueue core=(755:/system/bin/surfaceflinger)
+05-26 15:42:27.282 32575 32575 D BufferQueueConsumer: [](id:7f3f0000000d,api:0,p:-1,c:32575) connect: controlledByApp=false
+05-26 15:42:27.283 32575 32575 I config_debug: updateDecorCaptionStatus: {1.0 ?mcc?mnc [en_US,ur_PK] ldltr sw360dp w360dp h744dp 480dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2460) mAppBounds=Rect(0, 108 - 1080, 2340) mMaxBounds=Rect(0, 0 - 1080, 2460) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mMultiWindowMode=normal mMultiWindowId=0 mWindowResiable=6 mInLargeScreen=-1 mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0 mDisplayUniqueId=0} as.25 s.1 fontWeightAdjustment=0} fromMultiWindow: true
+05-26 15:42:27.286   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.304   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.307 32575 32615 D BLASTBufferQueue: [VRI[ComponentActivity]#13](f:0,a:1) acquireNextBufferLocked size=1080x2460 mFrameNumber=1 applyTransaction=true mTimestamp=236490968494402(auto) mPendingTransactions.size=0 graphicBufferId=139908559667255 transform=0
+05-26 15:42:27.307 32575 32615 W Parcel  : Expecting binder but got null!
+05-26 15:42:27.310   755   755 D BufferStateLayer: com.easyui.launcher.debug/androidx.activity.ComponentActivity#29145 setBuffer frameId=1, bufferId=139908559667255 fenceId=579, w= 1080, h=2460
+05-26 15:42:27.324   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.327  1478  1520 I mtkpower_client: perf_cus_lock_hint hint:50, dur:1000
+05-26 15:42:27.327  1478  1520 I mtkpower_client: perf_cus_lock_hint, ret_hdl:0
+05-26 15:42:27.338   738   818 I mtkpower@impl: [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:21395
+05-26 15:42:27.338   738   818 I libPowerHal: MTKPOWER_HINT_PACK_SWITCH: cpu_ctrl set cpu freq: -1 -1 -1 -1
+05-26 15:42:27.338   738   818 I libPowerHal: [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:1000000, param:-1
+05-26 15:42:27.338   738   818 I libPowerHal: [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:1408300 param:0
+05-26 15:42:27.339   738   818 I libPowerHal: [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:1000000 param:-1
+05-26 15:42:27.344   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.347  2228  2302 I MultiWindowManager: manager notifyInputMethodShow: false
+05-26 15:42:27.348  2228  2302 I tmw_    : notifyInputMethodShow: false ignoreSame: true mFocusOnMultiDisplay: false
+05-26 15:42:27.366   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.371 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.371 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.371 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.372 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.372 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.372 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.372 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.372 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.372 32575 32575 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@8f78035 instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.384   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.387   960  1062 D AAL     : 05-26 03:42:27.270 BL= 717,ESS= 256, 05-26 03:42:27.320 BL= 716,ESS= 256, 05-26 03:42:27.337 BL= 715,ESS= 256, 05-26 03:42:27.370 BL= 714,ESS= 256, 05-26 03:42:27.387 BL= 713,ESS= 256,
+05-26 15:42:27.405   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.424   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.444   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.464   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.484   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.504   960  1062 D AAL     : 05-26 03:42:27.404 BL= 712,ESS= 256, 05-26 03:42:27.437 BL= 711,ESS= 256, 05-26 03:42:27.471 BL= 710,ESS= 256, 05-26 03:42:27.471 BL= 709,ESS= 256, 05-26 03:42:27.504 BL= 708,ESS= 256,
+05-26 15:42:27.506   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.524   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.547   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.564   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.583   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.595   727   727 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:30.499323,dur:1049.20,max:216.04,min:10.08
+05-26 15:42:27.595  1478  1499 I mtkpower_client: perf_lock_rel, hdl:21391, tid:1499
+05-26 15:42:27.595  1478  1499 I mtkpower_client: perf_cus_lock_hint hint:54, dur:150
+05-26 15:42:27.597  1478  1499 I mtkpower_client: perf_cus_lock_hint, ret_hdl:21396
+05-26 15:42:27.597   738   818 I libPowerHal: MTKPOWER_HINT_START_ACTIVITY_INNER: cpu_ctrl set cpu freq: 1800000 -1 2000000 -1
+05-26 15:42:27.602  1478  1499 D DynamicFrameRateController: isAllowedSetFPS -> mTranDfrcConfigHandler null, isDfrcSupport = false
+05-26 15:42:27.603   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.604   960  1062 D AAL     : 05-26 03:42:27.521 BL= 707,ESS= 256, 05-26 03:42:27.537 BL= 706,ESS= 256, 05-26 03:42:27.570 BL= 705,ESS= 256, 05-26 03:42:27.587 BL= 704,ESS= 256, 05-26 03:42:27.604 BL= 703,ESS= 256,
+05-26 15:42:27.606  1478  1499 I mtkpower_client: perf_lock_rel, hdl:21396, tid:1499
+05-26 15:42:27.606   738   777 I mtkpower@impl: [setMode] type:5, enabled:1
+05-26 15:42:27.607   738   818 I libPowerHal: MTKPOWER_HINT_START_ACTIVITY_INNER: cpu_ctrl set cpu freq: -1 -1 -1 -1
+05-26 15:42:27.607   738   818 I libPowerHal: [PD] MTKPOWER_HINT_START_ACTIVITY_INNER update cmd:1410000 param:0
+05-26 15:42:27.608   738   818 I libPowerHal: LAUNCH: cpu_ctrl set cpu freq: 1800000 -1 2000000 -1
+05-26 15:42:27.609  1478  3802 I ActivityManager: isUserAMonkey mUserIsMonkey = false
+05-26 15:42:27.610  1478  1499 I PowerHalWrapper: <amsBoostResume> last:com.easyui.launcher.debug, next:com.easyui.launcher.debug.test
+05-26 15:42:27.614  3903  1272 I SmartPanel_SmartPanelService: activityCheck pkgName: com.easyui.launcher.debug.test, className: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity isResume=false isInshow =true isDrawn = false
+05-26 15:42:27.615  3903 23703 D SmartPanelService: onTaskCreated mCreateTaskId = 16380
+05-26 15:42:27.617  1478  3802 I ActivityTaskManager: isControllerAMonkey mController = null,mControllerIsAMonkey = true
+05-26 15:42:27.619   755  2020 D SurfaceFlinger: [SF client] NEW(0xb400007bb7ef4ad0) for (1911:com.android.systemui)
+05-26 15:42:27.620 32575 32575 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@47a9e10 in: PAUSED
+05-26 15:42:27.621  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.621 32575 32575 V ActivityScenario: Update currentActivityStage to PAUSED, currentActivity=androidx.activity.ComponentActivity@47a9e10
+05-26 15:42:27.621  1478  1550 W libprocessgroup: Failed to open /dev/blkio//cgroup.procs: No such file or directory
+05-26 15:42:27.622  1478  3802 I PowerHalWrapper: <amsBoostResume> last:com.easyui.launcher.debug, next:com.easyui.launcher.debug.test
+05-26 15:42:27.623  3903  1272 D SmartPanelService: activityCheck isContain false  isInshow true  mSmartPanelGuesture false mIsGuestureCourse false  mIsGuide false  mNotShowInGuestureCourse false
+05-26 15:42:27.624  4290  4828 I SimpleEventAdapt: onActivityEvent get com.easyui.launcher.debug, androidx.activity.ComponentActivity,false
+05-26 15:42:27.624  4290  4828 I SimpleEventAdapt: notifyEvent2  activity_event
+05-26 15:42:27.624  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:27.624  4290 32304 I CacheManager:  save new data to cache activity_event
+05-26 15:42:27.624  4290 32304 I bsc     : notifyDataChange in activity_event, 1
+05-26 15:42:27.625   745   745 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.625  3903  3903 W SmartPanel_OperateState: show
+05-26 15:42:27.625  1911  2005 D VRI[test]: hardware acceleration = true, forceHwAccelerated = false
+05-26 15:42:27.625  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:27.625  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:27.625  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:27.626  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:activity_event
+05-26 15:42:27.626  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792147624,"data":"{\"className\":\"androidx.activity.ComponentActivity\",\"isResumed\":false,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.626  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:27.626  1478  3802 I PowerHalWrapper: amsBoostNotify pid:32648,activity:androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, package:com.easyui.launcher.debug.test, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:27.626  1478  3802 I PowerHalWrapper: state: 1
+05-26 15:42:27.626  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:27.626  1478  3802 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity pid=32648 state:1
+05-26 15:42:27.626  1478  3802 I game_scn: collectForegroundAppList packName=com.easyui.launcher.debug.test, actName=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, pid=32648, uid=10493, state:RESUMED
+05-26 15:42:27.626  1478  3802 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32575, packname: com.easyui.launcher.debug, actname: androidx.activity.ComponentActivity
+05-26 15:42:27.626  1478  3802 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32648, packname: com.easyui.launcher.debug.test, actname: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.626  1478  3802 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:27.626  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote activity_event
+05-26 15:42:27.627  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792147624,"data":"{\"className\":\"androidx.activity.ComponentActivity\",\"isResumed\":false,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.627  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:27.631 32648   951 D libMEOW : meow new tls: 0xb400007c0a784150
+05-26 15:42:27.631 32648   951 D libMEOW : applied 1 plugins for [com.easyui.launcher.debug.test]:
+05-26 15:42:27.631 32648   951 D libMEOW :   plugin 1: [libMEOW_gift.so]: 0xb400007bca644010
+05-26 15:42:27.631   738   818 I libPowerHal: [perfNotifyAppState] pack:com.easyui.launcher.debug.test, act:androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, state:1, pid:32648, uid:10493, fps:-1
+05-26 15:42:27.631   738   818 I libPowerHal: [perfNotifyAppState] foreground:com.easyui.launcher.debug.test, pid:32648, uid:10493
+05-26 15:42:27.632 32648   951 D libMEOW : rebuild call chain: 0xb400007c0a774140
+05-26 15:42:27.632 32648   951 D libMEOW : meow delete tls: 0xb400007c0a784150
+05-26 15:42:27.633   738   818 I UxUtility: notifyForegroundApp pack:com.easyui.launcher.debug.test, uid:10493
+05-26 15:42:27.633   738   818 I TouchUtility: notifyAppState error = NULL
+05-26 15:42:27.633  1478  3802 I PowerHalWrapper: amsBoostNotify pid:32575,activity:androidx.activity.ComponentActivity, package:com.easyui.launcher.debug, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:27.633  1478  3802 I PowerHalWrapper: state: 0
+05-26 15:42:27.633  1478  3802 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.easyui.launcher.debug/androidx.activity.ComponentActivity pid=32575 state:0
+05-26 15:42:27.633  1478  3802 I game_scn: collectForegroundAppList packName=com.easyui.launcher.debug, actName=androidx.activity.ComponentActivity, pid=32575, uid=10492, state:PAUSED
+05-26 15:42:27.633  1478  3802 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32648, packname: com.easyui.launcher.debug.test, actname: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.633  1478  3802 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:27.633   738   776 I mtkpower@impl: [notifyAppState] pc:0, com.easyui.launcher.debug => com.easyui.launcher.debug.test
+05-26 15:42:27.634  3903  1272 I SmartPanel_SmartPanelService: activityCheck pkgName: com.easyui.launcher.debug.test, className: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity isResume=false isInshow =true isDrawn = false
+05-26 15:42:27.635   738   818 I libPowerHal: [perfNotifyAppState] pack:com.easyui.launcher.debug, act:androidx.activity.ComponentActivity, state:0, pid:32575, uid:10492, fps:-1
+05-26 15:42:27.635  1478  1520 I mtkpower_client: perf_cus_lock_hint hint:50, dur:1000
+05-26 15:42:27.635  1478  1520 I mtkpower_client: perf_cus_lock_hint, ret_hdl:0
+05-26 15:42:27.640 32648 32648 D TranAppturboServiceImpl: attach
+05-26 15:42:27.642  1478  1550 W libprocessgroup: Failed to open /dev/blkio//cgroup.procs: No such file or directory
+05-26 15:42:27.642  1911  2005 D InputTransport: Create ARC handle: 0xb400007a2a733ee0
+05-26 15:42:27.643  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.645  3903  3903 D Game_Utils: getTopPackageNameNew isFocused false
+05-26 15:42:27.647  3903 30831 I SmartPanel_SmartPanelService: onTaskFocusChanged taskId: 16379  focused: false
+05-26 15:42:27.647  3903 30831 I SmartPanel_SmartPanelService: onTaskFocusChanged taskId: 16380  focused: true
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: onActivityEvent get com.easyui.launcher.debug.test, androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity,true
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: notifyEvent2  activity_event
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: onAppForegroundEvent get com.easyui.launcher.debug, false
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: notifyEvent2  app_foreground
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:27.647  1911  1975 V TranThreePointMenuManager: checkWindowStateDisplayInner params is null
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: onAppForegroundEvent get com.easyui.launcher.debug.test, true
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: notifyEvent2  app_foreground
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: notifyEvent  1
+05-26 15:42:27.647  4290  4828 I SimpleEventAdapt: onAppStartEvent get com.easyui.launcher.debug.test,start true
+05-26 15:42:27.647  4290 32304 I CacheManager:  save new data to cache activity_event
+05-26 15:42:27.647  4290 32304 I bsc     : notifyDataChange in activity_event, 1
+05-26 15:42:27.648  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:27.648   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.648  4290 32304 I CacheManager:  save new data to cache app_foreground
+05-26 15:42:27.648  4290 32304 I bsc     : notifyDataChange in app_foreground, 1
+05-26 15:42:27.648  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:27.648  4290 32304 I CacheManager:  save new data to cache app_foreground
+05-26 15:42:27.648  4290 32304 I bsc     : notifyDataChange in app_foreground, 1
+05-26 15:42:27.648  4290 32304 I DataServiceImplV2: StandardDataService notifyDataChange  in
+05-26 15:42:27.651   755  2840 I BufferQueueDebug: [Splash Screen com.easyui.launcher.debug.test#29151](this:0xb400007ca8173ef8,id:-1,api:0,p:-1,c:-1) BufferQueue core=(755:/system/bin/surfaceflinger)
+05-26 15:42:27.652  3903  1272 D SmartPanelService: activityCheck isContain false  isInshow true  mSmartPanelGuesture false mIsGuestureCourse false  mIsGuide false  mNotShowInGuestureCourse false
+05-26 15:42:27.652  3903  1272 I SmartPanel_SmartPanelService: activityCheck pkgName: com.easyui.launcher.debug.test, className: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity isResume=true isInshow =true isDrawn = false
+05-26 15:42:27.655  1911  2005 D BufferQueueConsumer: [](id:7770000041a,api:0,p:-1,c:1911) connect: controlledByApp=false
+05-26 15:42:27.655  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.655  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug.test
+05-26 15:42:27.657 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.657 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.657 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.658 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.658 32648 32648 I WhiteNavigationLice: Modify naviBarColor to 0xFFF0F0F0, and windowBackgroundColor is -1   /windowIsTranslucent:false
+05-26 15:42:27.658 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.658 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.660  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.661 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.662 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.664  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:activity_event
+05-26 15:42:27.664  3903  1272 D SmartPanelService: activityCheck isContain false  isInshow true  mSmartPanelGuesture false mIsGuestureCourse false  mIsGuide false  mNotShowInGuestureCourse false
+05-26 15:42:27.665  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792147647,"data":"{\"className\":\"androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity\",\"isResumed\":true,\"packageName\":\"com.easyui.launcher.debug.test\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.665  3903  1272 D SmartPanelService: processName = com.talpa.hibrowserpackages = [com.talpa.hibrowser]
+05-26 15:42:27.665  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:27.665  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:27.665  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote activity_event
+05-26 15:42:27.665  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:app_foreground
+05-26 15:42:27.665  1911  2049 D BLASTBufferQueue: [VRI[test]#1036](f:0,a:1) acquireNextBufferLocked size=1080x2460 mFrameNumber=1 applyTransaction=true mTimestamp=236491327122402(auto) mPendingTransactions.size=0 graphicBufferId=8207682536832 transform=0
+05-26 15:42:27.665  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792147648,"data":"{\"isForeground\":false,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.665  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:27.666  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:27.666  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote app_foreground
+05-26 15:42:27.666  4290 31835 I DataServiceImplV2: StandardDataService notifyDataChange  curServiceName StandardDataService type:app_foreground
+05-26 15:42:27.666  4290 31835 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792147648,"data":"{\"isForeground\":true,\"packageName\":\"com.easyui.launcher.debug.test\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.666  4290 31835 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:27.666  4290 31835 W ApiInvoke: SubscribeBusServerImpl1.2.158: onPublishData, GLOBAL_SUBSCRIBE size 3
+05-26 15:42:27.666  4290 31835 W ApiInvoke: ApiRequest1.2.158: do publishData to remote app_foreground
+05-26 15:42:27.666 32648 32648 D ActivityThread: ++ activityComponent:com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity counts:1 ALEAK_CLEAR_SUPPORT:true
+05-26 15:42:27.666  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"activity_event","time":1779792147647,"data":"{\"className\":\"androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity\",\"isResumed\":true,\"packageName\":\"com.easyui.launcher.debug.test\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.666  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() activity_event
+05-26 15:42:27.666  4290  4290 I Kolun_AI: dj1:onBusEvent AppForegroundEvent   com.easyui.launcher.debug, false, dj1
+05-26 15:42:27.666   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.666  4290  4290 I Kolun_AI: dj1:checkGameOut  com.easyui.launcher.debug,
+05-26 15:42:27.666  4290  4290 I Kolun_AI: AppPredictManager:onBusEvent com.easyui.launcher.debug false
+05-26 15:42:27.667  1911  2049 W Parcel  : Expecting binder but got null!
+05-26 15:42:27.667  4290  4758 I Kolun_AI: AppPredictManager:onPackageChanged AppForegroundEvent com.easyui.launcher.debug false currentTime 2026-05-26 15:42:27
+05-26 15:42:27.667 24717  5811 D Kolun.DataCenterImpl:  onPublishDataapp_foreground, {"type":"app_foreground","time":1779792147648,"data":"{\"isForeground\":false,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.669  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792147648,"data":"{\"isForeground\":false,\"packageName\":\"com.easyui.launcher.debug\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.669  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:27.670  1478  1520 I DreamAnimation:  hookAppTransitSuccess called, and doUnlockAnimation=0  mState=7
+05-26 15:42:27.670  1478  1547 I libprocessgroup: Successfully killed process cgroup uid 10143 pid 31158 in 16ms
+05-26 15:42:27.671 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.671 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.671 32648 32648 D TranAppturboServiceImpl: onResumeHork
+05-26 15:42:27.674 24717  5811 D Kolun.DataCenterImpl:  onPublishDataapp_foreground, {"type":"app_foreground","time":1779792147648,"data":"{\"isForeground\":true,\"packageName\":\"com.easyui.launcher.debug.test\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.676   755   755 I SurfaceFlinger: operator()(), mtkRenderCntDebug 1712, screenshot (com.easyui.launcher.debug/androidx.activity.ComponentActivity#29133)
+05-26 15:42:27.676   755   755 I SurfaceFlinger: operator()(), mtkRenderCntDebug 1712, screenshot (com.easyui.launcher.debug/androidx.activity.ComponentActivity#29145)
+05-26 15:42:27.678  4290  4471 I Kolun_AI: SystemEventSubscribe: onPublishData {"type":"app_foreground","time":1779792147648,"data":"{\"isForeground\":true,\"packageName\":\"com.easyui.launcher.debug.test\"}","provider":"dc","dc_version":2023081003,"data_version":1,"user_id":0}
+05-26 15:42:27.678  4290  4471 I Kolun_AI: SystemEventSubscribe: publisher.getMatcher() app_foreground
+05-26 15:42:27.679   755   825 D SurfaceFlinger: [SF client] NEW(0xb400007bb7ef0af0) for (32648:com.easyui.launcher.debug.test)
+05-26 15:42:27.682   755   755 D BufferStateLayer: Splash Screen com.easyui.launcher.debug.test#29151 setBuffer frameId=1, bufferId=8207682536832 fenceId=634, w= 1080, h=2460
+05-26 15:42:27.684 32648 32648 D VRI[InstrumentationActivityInvoker$EmptyActivity]: hardware acceleration = true, forceHwAccelerated = false
+05-26 15:42:27.685   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.697 32648 32648 D InputTransport: Create ARC handle: 0xb400007a2a698030
+05-26 15:42:27.703 32575 32575 D BLASTBufferQueue: [VRI[ComponentActivity]#13](f:0,a:1) destructor()
+05-26 15:42:27.703 32575 32575 D BufferQueueConsumer: [VRI[ComponentActivity]#13(BLAST Consumer)13](id:7f3f0000000d,api:0,p:-1,c:32575) disconnect
+05-26 15:42:27.701   739   739 W nvram@1.1-servi: type=1400 audit(0.0:172301): avc: denied { read } for name="atag,boot" dev="sysfs" ino=73 scontext=u:r:mtk_hal_nvramagent:s0 tcontext=u:object_r:sysfs_boot_info:s0 tclass=file permissive=0
+05-26 15:42:27.705  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.activity.ComponentActivity
+05-26 15:42:27.705   739   739 D NVRAM   : NVM_GetLIDByName /mnt/vendor/nvdata/APCFG/APRDEB/PRODUCT_PAYTRIGGER
+05-26 15:42:27.705  3903  3903 D Game_Utils: getTopClassNameNew className = androidx.activity.ComponentActivity
+05-26 15:42:27.705   739   739 D NVRAM   : NVRAM: NVM_GetLIDByName Lid =82
+05-26 15:42:27.705  3903  3903 I SmartPanel_OperateState: clear, goto SlideState
+05-26 15:42:27.705  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:27.705  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:27.705   739   739 D NVRAM   : [tran]fail to open: /proc/device-tree/chosen/atag,boot,Permission denied
+05-26 15:42:27.705  3903  3903 W SmartPanel_OperateState: show
+05-26 15:42:27.705   739   739 D NVRAM   : fail to open /sys/class/BOOT/BOOT/boot/boot_mode:
+05-26 15:42:27.705  3903  3903 D TouchView: gotoSlideState:
+05-26 15:42:27.705  3903  3903 D TouchView: hideOperationView:
+05-26 15:42:27.706 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.707 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.707 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.707   739   739 D NVRAM   : Tran: Nvdata Resotre successeded! continue ...
+05-26 15:42:27.707   739   739 D NVRAM   : 82 is in new nvram partition!!!
+05-26 15:42:27.707   739   739 D NVRAM   : New NVRAM partition name is /dev/block/by-name/proinfo.
+05-26 15:42:27.707 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.707  3903  1272 D Game_Utils: getTopPackageNameNew isFocused false
+05-26 15:42:27.708 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.708  1478  2292 D DynamicFrameRateController: isAllowedSetFPS -> mTranDfrcConfigHandler null, isDfrcSupport = false
+05-26 15:42:27.708 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.708 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.708 32648 32648 D os.SingleLiceFactory: using com.android.internal.IInternalViewLice$DefaultImpl@c836e7b instead of com.transsion.activityembedding.ActivityEmbeddingLiceFactory  from com.android.internal.IInternalViewLice
+05-26 15:42:27.708   739   739 D NVRAM   : Read Done!Size is 2048
+05-26 15:42:27.709   739   739 D NVRAM   : 82 is in new nvram partition!!!
+05-26 15:42:27.709   755  2020 I BufferQueueDebug: [com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity#29156](this:0xb400007ca8187de8,id:-1,api:0,p:-1,c:-1) BufferQueue core=(755:/system/bin/surfaceflinger)
+05-26 15:42:27.711   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.718 32648 32648 D BufferQueueConsumer: [](id:7f880000000c,api:0,p:-1,c:32648) connect: controlledByApp=false
+05-26 15:42:27.718  1478  1815 I GED     : ged_boost_gpu_freq, level 100, eOrigin 2, final_idx 31, oppidx_max 31, oppidx_min 0
+05-26 15:42:27.720 32648 32648 I config_debug: updateDecorCaptionStatus: {1.0 ?mcc?mnc [en_US,ur_PK] ldltr sw360dp w360dp h744dp 480dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2460) mAppBounds=Rect(0, 108 - 1080, 2340) mMaxBounds=Rect(0, 0 - 1080, 2460) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mMultiWindowMode=normal mMultiWindowId=0 mWindowResiable=6 mInLargeScreen=-1 mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0 mDisplayUniqueId=0} as.25 s.1 fontWeightAdjustment=0} fromMultiWindow: true
+05-26 15:42:27.721   960  1062 D AAL     : 05-26 03:42:27.637 BL= 702,ESS= 256, 05-26 03:42:27.654 BL= 701,ESS= 256, 05-26 03:42:27.670 BL= 700,ESS= 256, 05-26 03:42:27.706 BL= 699,ESS= 256, 05-26 03:42:27.720 BL= 698,ESS= 256,
+05-26 15:42:27.724  1478  1519 I PowerHalWrapper: amsBoostNotify pid:32575,activity:androidx.activity.ComponentActivity, package:com.easyui.launcher.debug, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:27.724  1478  1519 I PowerHalWrapper: state: 0
+05-26 15:42:27.725  1478  1519 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.easyui.launcher.debug/androidx.activity.ComponentActivity pid=32575 state:0
+05-26 15:42:27.725  1478  1519 I game_scn: collectForegroundAppList packName=com.easyui.launcher.debug, actName=androidx.activity.ComponentActivity, pid=32575, uid=10492, state:PAUSED
+05-26 15:42:27.725  1478  1519 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32648, packname: com.easyui.launcher.debug.test, actname: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.725  1478  1519 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:27.725   738   818 I libPowerHal: [perfNotifyAppState] pack:com.easyui.launcher.debug, act:androidx.activity.ComponentActivity, state:0, pid:32575, uid:10492, fps:-1
+05-26 15:42:27.725 32575 32575 D BLASTBufferQueue: [VRI[ComponentActivity]#12](f:0,a:1) destructor()
+05-26 15:42:27.725 32575 32575 D BufferQueueConsumer: [VRI[ComponentActivity]#12(BLAST Consumer)12](id:7f3f0000000c,api:0,p:-1,c:32575) disconnect
+05-26 15:42:27.730   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.735  1478  1765 D ConnectivityService: releasing NetworkRequest [ REQUEST id=34740, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10143 RequestorUid: 10143 RequestorPkg: com.talpa.hibrowser UnderlyingNetworks: Null] ] (release request)
+05-26 15:42:27.735  1478  1765 D ConnectivityService: releasing NetworkRequest [ REQUEST id=34746, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10143 RequestorUid: 10143 RequestorPkg: com.talpa.hibrowser UnderlyingNetworks: Null] ] (release request)
+05-26 15:42:27.736  1478  1765 D ConnectivityService: releasing NetworkRequest [ REQUEST id=34737, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10143 RequestorUid: 10143 RequestorPkg: com.talpa.hibrowser UnderlyingNetworks: Null] ] (release request)
+05-26 15:42:27.737  1478  1765 D ConnectivityService: releasing NetworkRequest [ REQUEST id=34742, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10143 RequestorUid: 10143 RequestorPkg: com.talpa.hibrowser UnderlyingNetworks: Null] ] (release request)
+05-26 15:42:27.737  1478  1765 D ConnectivityService: releasing NetworkRequest [ REQUEST id=34744, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10143 RequestorUid: 10143 RequestorPkg: com.talpa.hibrowser UnderlyingNetworks: Null] ] (release request)
+05-26 15:42:27.739 32575 32575 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@47a9e10 in: STOPPED
+05-26 15:42:27.739 32575 32575 V ActivityScenario: Update currentActivityStage to STOPPED, currentActivity=androidx.activity.ComponentActivity@47a9e10
+05-26 15:42:27.740  1478  1765 D ConnectivityService: releasing NetworkRequest [ REQUEST id=34749, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10143 RequestorUid: 10143 RequestorPkg: com.talpa.hibrowser UnderlyingNetworks: Null] ] (release request)
+05-26 15:42:27.740 32575 32575 D ActivityThread: mToDestroying.remove:ActivityRecord{e044db1 token=android.os.BinderProxy@7f1335b {com.easyui.launcher.debug/androidx.activity.ComponentActivity}}
+05-26 15:42:27.742   712   712 I Zygote  : Process 31158 exited due to signal 9 (Killed)
+05-26 15:42:27.741   897  3303 E CameraService: notifyMonitoredUids: Failed to trigger permission callback: -129
+05-26 15:42:27.744 32648 32665 D BLASTBufferQueue: [VRI[InstrumentationActivityInvoker$EmptyActivity]#12](f:0,a:1) acquireNextBufferLocked size=1080x2460 mFrameNumber=1 applyTransaction=true mTimestamp=236491404997787(auto) mPendingTransactions.size=0 graphicBufferId=140222092279856 transform=0
+05-26 15:42:27.744   755   755 D BufferStateLayer: com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity#29156 setBuffer frameId=1, bufferId=140222092279856 fenceId=557, w= 1080, h=2460
+05-26 15:42:27.745  3661 21208 D TPMS    : getTopPackageName pkgName: com.easyui.launcher.debug.test
+05-26 15:42:27.747 32648 32665 W Parcel  : Expecting binder but got null!
+05-26 15:42:27.749   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.749  3903  3903 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.750  3903  3903 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug.test
+05-26 15:42:27.755   755   755 I SurfaceFlinger: operator()(), mtkRenderCntDebug 1713, screenshot (Splash Screen com.easyui.launcher.debug.test#29151)
+05-26 15:42:27.756  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.756  3903  1272 D Game_Utils: getTopPackageNameNew pkm = com.easyui.launcher.debug.test
+05-26 15:42:27.764   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.766  2228 10918 D tmw_TaskUtil.getTaskOrientation(L:72): getTaskOrientation(), orientation:-2, taskId:16380
+05-26 15:42:27.768  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation111: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:27.768  1478  2286 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.talpa.hibrowser/com.talpa.hibrowser pid=31158 state:3
+05-26 15:42:27.768  1478  2286 I game_scn: collectForegroundAppList packName=com.talpa.hibrowser, actName=com.talpa.hibrowser, pid=31158, uid=10143, state:DEAD
+05-26 15:42:27.768  1478  2286 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32648, packname: com.easyui.launcher.debug.test, actname: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.768  2228 10918 I tmw_    : calculateMultiWindowScaleAndLocation222: {100=0.759, 101=130.0, 102=465.0}
+05-26 15:42:27.768   738   818 I libPowerHal: [perfNotifyAppState] pack:com.talpa.hibrowser, act:com.talpa.hibrowser, state:3, pid:31158, uid:10143, fps:-1
+05-26 15:42:27.768   738   818 I libPowerHal: [perfNotifyAppState] pack:com.talpa.hibrowser, pid:31158, STATE_DEAD
+05-26 15:42:27.768   738   818 D RilUtility: notify_rild_crash_pid_set certPid:-1, crash:31158, scn:0x0
+05-26 15:42:27.768  1478  1520 I mtkpower_client: perf_cus_lock_hint hint:50, dur:1000
+05-26 15:42:27.769  1478  1520 I mtkpower_client: perf_cus_lock_hint, ret_hdl:0
+05-26 15:42:27.772  1478  3079 I PowerHalWrapper: <amsBoostResume> last:com.easyui.launcher.debug.test, next:com.transsion.hilauncher
+05-26 15:42:27.773  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:27.774  1478  3079 I PowerHalWrapper: amsBoostNotify pid:2148,activity:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, package:com.transsion.hilauncher, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:27.774  1478  3079 I PowerHalWrapper: state: 1
+05-26 15:42:27.774  1478  3079 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.transsion.hilauncher/com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher pid=2148 state:1
+05-26 15:42:27.774  1478  3079 I game_scn: collectForegroundAppList packName=com.transsion.hilauncher, actName=com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, pid=2148, uid=10181, state:RESUMED
+05-26 15:42:27.774  1478  3079 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 32648, packname: com.easyui.launcher.debug.test, actname: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity
+05-26 15:42:27.774  1478  3079 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 2148, packname: com.transsion.hilauncher, actname: com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:27.774  1478  3079 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:27.774  3903  1272 D Game_Utils: getTopClassNameNew className = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:27.774  2148  2148 D SharedPreferencesPolicy: checkFinishers msg.what :159
+05-26 15:42:27.775   738   818 I libPowerHal: [perfNotifyAppState] pack:com.transsion.hilauncher, act:com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher, state:1, pid:2148, uid:10181, fps:-1
+05-26 15:42:27.775   738   818 I libPowerHal: [perfNotifyAppState] foreground:com.transsion.hilauncher, pid:2148, uid:10181
+05-26 15:42:27.776   738   818 I UxUtility: notifyForegroundApp pack:com.transsion.hilauncher, uid:10181
+05-26 15:42:27.776   738   818 I TouchUtility: notifyAppState error = NULL
+05-26 15:42:27.776   738   776 I mtkpower@impl: [notifyAppState] pc:0, com.easyui.launcher.debug.test => com.transsion.hilauncher
+05-26 15:42:27.776  3903  1272 I SmartPanel_SmartPanelService: activityCheck pkgName: com.transsion.hilauncher, className: com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher isResume=true isInshow =true isDrawn = false
+05-26 15:42:27.781  2148  2148 D SharedPreferencesPolicy: checkFinishers msg.what :159
+05-26 15:42:27.783  1478  3079 I PowerHalWrapper: amsBoostNotify pid:32648,activity:androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, package:com.easyui.launcher.debug.test, mProcessCreatePackcom.easyui.launcher.debug.test
+05-26 15:42:27.783  1478  3079 I PowerHalWrapper: state: 0
+05-26 15:42:27.784  1478  3079 I mtkpower_client: [Legacy][PowerHal_Wrap_notifyAppState] com.easyui.launcher.debug.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity pid=32648 state:0
+05-26 15:42:27.784  1478  3079 I game_scn: collectForegroundAppList packName=com.easyui.launcher.debug.test, actName=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, pid=32648, uid=10493, state:PAUSED
+05-26 15:42:27.784  1478  3079 I game_scn: powerNotifyForegroundApp multi_resumed_app_info: pid: 2148, packname: com.transsion.hilauncher, actname: com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:27.784  1478  3079 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+05-26 15:42:27.784   738   818 I libPowerHal: [perfNotifyAppState] pack:com.easyui.launcher.debug.test, act:androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity, state:0, pid:32648, uid:10493, fps:-1
+05-26 15:42:27.785   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.786  2148  2315 D BinderDataHelper: updateNotificationListenerEnable(), isEnable=true
+05-26 15:42:27.787 32575 32575 D View    : [Warning] assignParent to null: this = DecorView@215d5a7[ComponentActivity]
+05-26 15:42:27.788  1478  3802 W InputManager-JNI: Input channel object '54ec12d com.easyui.launcher.debug/androidx.activity.ComponentActivity (client)' was disposed without first being removed with the input manager!
+05-26 15:42:27.790  3903  1272 D Game_Utils: isTheMainScreen, displayId: 0  classname = com.android.quickstep.src.com.android.launcher3.uioverrides.QuickstepLauncher
+05-26 15:42:27.794 32575 32575 D InputTransport: Destroy ARC handle: 0xb400007a2a6bd830
+05-26 15:42:27.794   755  2020 I BufferQueueDebug: [ZeroScreen#29161](this:0xb400007ca81b56e8,id:-1,api:0,p:-1,c:-1) BufferQueue core=(755:/system/bin/surfaceflinger)
+05-26 15:42:27.795   755   755 I BufferQueueDebug: [com.easyui.launcher.debug/androidx.activity.ComponentActivity#29145](this:0xb400007ca8115f68,id:-1,api:0,p:-1,c:755) onDestructor()
+05-26 15:42:27.801 30586 30586 D BufferQueueConsumer: [](id:777a0000000d,api:0,p:-1,c:30586) connect: controlledByApp=false
+05-26 15:42:27.801 32575 32575 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@47a9e10 in: DESTROYED
+05-26 15:42:27.801 32575 32575 V ActivityScenario: Update currentActivityStage to DESTROYED, currentActivity=null
+05-26 15:42:27.805   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.808 32575 32575 D View    : [Warning] assignParent to null: this = DecorView@d2e3b6c[ComponentActivity]
+05-26 15:42:27.814  1478  3079 W InputManager-JNI: Input channel object 'e3f78a1 com.easyui.launcher.debug/androidx.activity.ComponentActivity (client)' was disposed without first being removed with the input manager!
+05-26 15:42:27.819 30586 30635 D BLASTBufferQueue: [VRI[ZeroScreen]#13](f:0,a:1) acquireNextBufferLocked size=1272x2652 mFrameNumber=1 applyTransaction=true mTimestamp=236491480993095(auto) mPendingTransactions.size=0 graphicBufferId=131365869715508 transform=0
+05-26 15:42:27.821 32575 32575 D InputTransport: Destroy ARC handle: 0xb400007a2a6ab3e0
+05-26 15:42:27.821   960  1062 D AAL     : 05-26 03:42:27.737 BL= 699,ESS= 256, 05-26 03:42:27.754 BL= 700,ESS= 256, 05-26 03:42:27.787 BL= 701,ESS= 256, 05-26 03:42:27.804 BL= 702,ESS= 256, 05-26 03:42:27.821 BL= 703,ESS= 256,
+05-26 15:42:27.823  1478  1704 I BaseFilesVerify: Base File verify start
+05-26 15:42:27.824  1478  1704 W BaseXMLFilesVerify: isGrammarAndSemanticsLegal file = /data/system/users/0/settings_global.xml
+05-26 15:42:27.824   745 27228 D TimeCheck: isMT6580Project boolVal = 0
+05-26 15:42:27.827  1478  1704 W BaseXMLFilesVerify: format is normal
+05-26 15:42:27.827  1478  1704 W BaseXMLFilesVerify: verifyRuleGrammarFormat verifyRuleresult :true
+05-26 15:42:27.827   755   755 D BufferStateLayer: ZeroScreen#29161 setBuffer frameId=1, bufferId=131365869715508 fenceId=581, w= 1272, h=2652
+05-26 15:42:27.828   755   755 I BufferQueueDebug: [com.easyui.launcher.debug/androidx.activity.ComponentActivity#29133](this:0xb400007ca80f3ca8,id:-1,api:0,p:-1,c:755) onDestructor()
+05-26 15:42:27.832  1478  1500 D DynamicFrameRateController: isAllowedSetFPS -> mTranDfrcConfigHandler null, isDfrcSupport = false
+05-26 15:42:27.839 32575 32597 D IdlingRegistry: Unregistering idling resources: [androidx.compose.ui.test.EspressoLink@e2a470c]
+05-26 15:42:27.840 32575 32597 I TestRunner: finished: allowedAppsScreenPlacesIntoSelectedSlot(com.easyui.launcher.caregiver.CaregiverQolSmokeTest)

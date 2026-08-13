@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml:2:13-83
+INJECTED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml:2:13-83
+	package
+		INJECTED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml
+	xmlns:android
+		ADDED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml:2:23-81
+uses-sdk
+INJECTED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml reason: use-sdk injection requested
+INJECTED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml
+INJECTED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml
+	android:targetSdkVersion
+		INJECTED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml
+	android:minSdkVersion
+		INJECTED from /home/munaim/Documents/github/easyui/core/testing/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15239850337661634532.xml

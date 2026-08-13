@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.easyui.core.domain.rules.GuardianRulesTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-05-26T08:00:58" hostname="munaim" time="0.04">
+  <properties/>
+  <testcase name="recovery guidance for not default launcher" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.01"/>
+  <testcase name="setup incomplete warning" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.001"/>
+  <testcase name="emergency contact missing critical" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.001"/>
+  <testcase name="priority emergency contact over internet" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.0"/>
+  <testcase name="prompt alert on no internet" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.001"/>
+  <testcase name="prompt alert on critical battery" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.007"/>
+  <testcase name="low battery warning" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.001"/>
+  <testcase name="recovery guidance for no internet" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.0"/>
+  <testcase name="critical battery priority" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.001"/>
+  <testcase name="ready state when all good" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.0"/>
+  <testcase name="recovery guidance for critical battery is none" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.0"/>
+  <testcase name="do not prompt alert on low battery" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.001"/>
+  <testcase name="no internet warning" classname="com.easyui.core.domain.rules.GuardianRulesTest" time="0.014"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,5 +1,0 @@
---------- beginning of main
-05-24 22:36:56.909 31676 31681 E ion     : ioctl c0044901 failed with code -1: Invalid argument
-05-24 22:37:07.060 31833 31834 E ion     : ioctl c0044901 failed with code -1: Invalid argument
-05-24 22:37:08.054 31837 31850 E GmsClient: unable to connect to service: com.google.android.gms.gservices.START on com.google.android.gms
-05-24 22:37:13.677 31867 31868 E ion     : ioctl c0044901 failed with code -1: Invalid argument

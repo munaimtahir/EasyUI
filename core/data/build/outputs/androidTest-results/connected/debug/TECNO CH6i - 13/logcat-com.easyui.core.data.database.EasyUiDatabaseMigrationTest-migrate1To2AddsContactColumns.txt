@@ -1,0 +1,37 @@
+05-26 13:23:15.150 18771 18786 I TestRunner: started: migrate1To2AddsContactColumns(com.easyui.core.data.database.EasyUiDatabaseMigrationTest)
+05-26 13:23:15.151  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.156  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.167  3903 18309 I TranNonAdaptiveIconExtImpl: custom icon for ApplicationInfo{f720d21 com.rushpro.clonemaster}
+05-26 13:23:15.168   720 24192 W AudioALSACaptureDataProviderNormal: readThread, latency_in_s,0.000001,0.039811,0.000068, totalTime 0.039880 > logTimeout 0.022000 TIMEOUT!!
+05-26 13:23:15.169   745  7576 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.170   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.171  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.176  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.189   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.192  3903 18309 I TranNonAdaptiveIconExtImpl: custom icon for ApplicationInfo{6587093 com.silkbank.silkbankretail}
+05-26 13:23:15.196   738   810 I libPerfCtl: xgfGetFPS pid:2148 fps:-1
+05-26 13:23:15.196  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.201  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.227   720 24192 W AudioALSACaptureDataProviderNormal: readThread, latency_in_s,0.000002,0.039746,0.000057, totalTime 0.039804 > logTimeout 0.022000 TIMEOUT!!
+05-26 13:23:15.229   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.230   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.235   755   755 I BufferQueueProducer: [StatusBar#88](this:0xb400007ca8098aa8,id:-1,api:0,p:-1,c:755) queueBuffer: fps=0.20 dur=5004.08 max=5004.08 min=5004.08
+05-26 13:23:15.237   727   727 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:0.512073,dur:3905.69,max:3805.42,min:100.28
+05-26 13:23:15.243  3903 18309 I TranNonAdaptiveIconExtImpl: custom icon for ApplicationInfo{1d70f30 com.zhongxun.gps365}
+05-26 13:23:15.247  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.249   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.252  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.259  3903 18309 I TranNonAdaptiveIconExtImpl: custom icon for ApplicationInfo{68541de com.zong.customercare}
+05-26 13:23:15.263  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.269   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.271  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.289   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.309   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.330   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.349  3903 18309 I TranNonAdaptiveIconExtImpl: custom icon for ApplicationInfo{13166 it.medieval.blueftp}
+05-26 13:23:15.355  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.362  3903 18309 I TranIconHelper: Destory assetMAnager
+05-26 13:23:15.367   720 24192 W AudioALSACaptureDataProviderNormal: readThread, latency_in_s,0.000001,0.039427,0.000066, totalTime 0.039494 > logTimeout 0.022000 TIMEOUT!!
+05-26 13:23:15.369   745 12297 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.370   745  7576 D TimeCheck: isMT6580Project boolVal = 0
+05-26 13:23:15.382 18771 18786 I TestRunner: finished: migrate1To2AddsContactColumns(com.easyui.core.data.database.EasyUiDatabaseMigrationTest)

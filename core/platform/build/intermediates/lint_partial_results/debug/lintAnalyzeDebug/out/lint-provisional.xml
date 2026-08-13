@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="conditional_incidents">
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidCameraActionHandler.kt"
+            line="15"
+            column="58"
+            startOffset="492"
+            endLine="15"
+            endColumn="73"
+            endOffset="507"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="BatteryLife"
+        severity="warning"
+        message="Use of `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` violates the Play Store Content Policy regarding acceptable use cases, as described in https://developer.android.com/training/monitoring-device-state/doze-standby.html">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidDeviceStatusRepository.kt"
+            line="106"
+            column="38"
+            startOffset="3960"
+            endLine="106"
+            endColumn="81"
+            endOffset="4003"/>
+        <map>
+            <condition targetGE="23"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidDeviceStatusRepository.kt"
+            line="122"
+            column="24"
+            startOffset="5078"
+            endLine="122"
+            endColumn="39"
+            endOffset="5093"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidDeviceStatusRepository.kt"
+            line="124"
+            column="55"
+            startOffset="5235"
+            endLine="124"
+            endColumn="70"
+            endOffset="5250"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/actions/AndroidEmergencyActionHandler.kt"
+            line="21"
+            column="37"
+            startOffset="752"
+            endLine="21"
+            endColumn="52"
+            endOffset="767"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/apps/AndroidAppCatalogRepository.kt"
+            line="54"
+            column="31"
+            startOffset="1894"
+            endLine="54"
+            endColumn="52"
+            endOffset="1915"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt"
+            line="26"
+            column="39"
+            startOffset="974"
+            endLine="26"
+            endColumn="54"
+            endOffset="989"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt"
+            line="67"
+            column="26"
+            startOffset="3177"
+            endLine="67"
+            endColumn="41"
+            endOffset="3192"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt"
+            line="68"
+            column="34"
+            startOffset="3274"
+            endLine="68"
+            endColumn="49"
+            endOffset="3289"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/launcher/AndroidDefaultLauncherManager.kt"
+            line="69"
+            column="42"
+            startOffset="3386"
+            endLine="69"
+            endColumn="57"
+            endOffset="3401"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/util/IntentHardener.kt"
+            line="26"
+            column="31"
+            startOffset="803"
+            endLine="26"
+            endColumn="46"
+            endOffset="818"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="As of Android 11, this method no longer returns information about all apps; see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:core:platform*debug*MAIN*sourceProvider*0*javaDir*0}/com/easyui/core/platform/util/IntentHardener.kt"
+            line="59"
+            column="23"
+            startOffset="1871"
+            endLine="59"
+            endColumn="47"
+            endOffset="1895"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="true"/>
+        </map>
+    </incident>
+
+</incidents>

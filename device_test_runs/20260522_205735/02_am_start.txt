@@ -1,0 +1,1 @@
+Starting: Intent { cmp=com.easyui.launcher.debug/com.easyui.launcher.MainActivity }

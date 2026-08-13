@@ -1,0 +1,10 @@
+--------- beginning of main
+05-23 01:58:19.454 13101 13101 E VivoConfigStore: key:vivo.software.multilandscape isCached is false and normal value is false
+05-23 01:58:19.456 13101 13101 E VivoConfigStore: key:vivo.software.splitrecents isCached is false and normal value is false
+05-23 01:58:19.459 13101 13101 E VivoConfigStore: key:vivo.software.splitratio isCached is false and normal value is false
+05-23 01:58:19.461 13101 13101 E VivoConfigStore: key:vivo.software.multiwindowresidentbar isCached is false and normal value is false
+05-23 01:58:19.463 13101 13101 E VivoConfigStore: key:vivo.software.hovermode isCached is false and normal value is false
+05-23 01:58:21.405 13101 13101 E VivoConfigStore: key:vivo.software.multiwindow isCached is false and normal value is true
+05-23 01:58:21.407 13101 13101 E VivoConfigStore: key:vivo.software.freeform isCached is false and normal value is true
+05-23 01:58:21.477 13101 13101 E VivoConfigStore: key:vivo.software.nightmode isCached is false and normal value is true
+05-23 01:58:21.481 13147 13167 E ion     : ioctl c0044901 failed with code -1: Invalid argument
