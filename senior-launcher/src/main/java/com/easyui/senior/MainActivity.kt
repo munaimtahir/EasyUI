@@ -17,6 +17,8 @@ import android.view.View
 import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -120,6 +122,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         updateLaunchOrigin(intent)
+        
+        lifecycleScope.launch {
+            com.easyui.senior.network.PairingManager(this@MainActivity).restoreSession()
+            com.easyui.senior.network.StatusReportWorker.schedule(this@MainActivity)
+        }
+
         setContent { AppEntry(launchOriginFlow) }
     }
 
@@ -162,6 +170,7 @@ private sealed interface Screen {
     data object Notifications : Screen
     data object Reminders : Screen
     data object TrustCenter : Screen
+    data object CheckIn : Screen
 }
 
 private enum class OnboardingStep {
@@ -300,6 +309,7 @@ private fun AppRoot(
                 screen = Screen.CaregiverVerification(targetScreen = Screen.CaregiverSettings)
             },
             onOpenTrustCenter = { lastError = null; screen = Screen.TrustCenter },
+            onOpenCheckIn = { lastError = null; screen = Screen.CheckIn },
         )
 
         Screen.AllApps -> AllAppsScreen(
@@ -423,7 +433,14 @@ private fun AppRoot(
 
         Screen.Emergency -> com.easyui.senior.ui.EmergencyScreen(
             onBack = { screen = Screen.Home },
-            onSosTriggered = { /* TODO Phase R: Trigger caregiver alert via backend */ }
+            onSosTriggered = {
+                scope.launch {
+                    val pState = com.easyui.senior.network.PairingManager(context).getState()
+                    if (pState.isPaired && pState.permissions.contains(com.easyui.senior.network.PairingManager.PERMISSION_ALERTS)) {
+                        com.easyui.senior.network.BackendClient.postAlert("SOS", "User triggered manual SOS button")
+                    }
+                }
+            }
         )
 
         Screen.Notifications -> com.easyui.senior.ui.NotificationScreen(
@@ -438,6 +455,10 @@ private fun AppRoot(
             caregiverRepo = com.easyui.senior.storage.CaregiverRepository(context),
             onBack = { screen = Screen.Home },
             onRevoke = { screen = Screen.Home }
+        )
+
+        Screen.CheckIn -> com.easyui.senior.ui.CheckInScreen(
+            onBack = { screen = Screen.Home }
         )
     }
 }
@@ -680,6 +701,7 @@ private fun HomeScreen(
     onOpenReminders: () -> Unit,
     onOpenCaregiverSettings: () -> Unit,
     onOpenTrustCenter: () -> Unit,
+    onOpenCheckIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -905,6 +927,12 @@ private fun HomeScreen(
                 onClick = onOpenTrustCenter,
             ) {
                 Text(text = "Privacy")
+            }
+            OutlinedButton(
+                modifier = Modifier.weight(1f).testTag("home_checkin_button"),
+                onClick = onOpenCheckIn,
+            ) {
+                Text(text = "Check-In")
             }
         }
     }

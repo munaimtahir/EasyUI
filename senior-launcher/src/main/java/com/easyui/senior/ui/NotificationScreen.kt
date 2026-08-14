@@ -66,15 +66,12 @@ fun NotificationScreen(
         ) {
             Text("Notifications", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.weight(1f))
-            Text(
-                modifier = Modifier
-                    .clickable(onClick = onBack)
-                    .padding(8.dp)
-                    .testTag("notification_back"),
-                text = "Back",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier.testTag("notification_back")
+            ) {
+                Text("Back")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -159,4 +159,26 @@ class ProductScreenSmokeTest {
         compose.onNodeWithTag("caregiver_settings_back").performClick()
         assert(backCalled)
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // CheckInScreen
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @Test
+    fun checkInScreen_rendersScreen() {
+        compose.setContent {
+            CheckInScreen(onBack = {})
+        }
+        compose.onNodeWithTag("checkin_screen").assertExists()
+    }
+
+    @Test
+    fun checkInScreen_backButtonInvokesCallback() {
+        var backCalled = false
+        compose.setContent {
+            CheckInScreen(onBack = { backCalled = true })
+        }
+        compose.onNodeWithTag("checkin_back").performClick()
+        assert(backCalled)
+    }
 }

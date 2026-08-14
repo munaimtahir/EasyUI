@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Configuration for Senior Launcher.
+
+    SECURITY NOTE:
+    - cleartext traffic is ONLY allowed to 10.0.2.2 (emulator loopback to host machine)
+      and localhost (for local dev/testing).
+    - All other traffic requires TLS.
+    - Production: remove the domain-config block and use a real HTTPS backend URL.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Emulator loopback to host machine (development only) -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- Local device testing via localhost -->
+        <domain includeSubdomains="false">localhost</domain>
+        <!-- Local network testing: 10.0.0.0/8 common for home Wi-Fi -->
+        <domain includeSubdomains="false">10.0.0.2</domain>
+    </domain-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -78,15 +78,12 @@ fun RemindersScreen(
         ) {
             Text("Local Reminders", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.weight(1f))
-            Text(
-                modifier = Modifier
-                    .clickable(onClick = onBack)
-                    .padding(8.dp)
-                    .testTag("reminders_back"),
-                text = "Back",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier.testTag("reminders_back")
+            ) {
+                Text("Back")
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
