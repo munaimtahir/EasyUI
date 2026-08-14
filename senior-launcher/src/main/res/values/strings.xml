@@ -1,0 +1,127 @@
+<resources>
+    <string name="app_name">Core Launcher</string>
+    <string name="home_title">Core Launcher</string>
+    <string name="home_subtitle">Baseline skeleton (v0.1)</string>
+    <string name="open_all_apps">All apps</string>
+    <string name="all_apps_title">All apps</string>
+    <string name="back">Back</string>
+    <string name="loading_apps">Loading apps...</string>
+    <string name="no_apps_found">No apps found.</string>
+    <string name="previous_page">Previous</string>
+    <string name="next_page">Next</string>
+    <string name="page_indicator">Page %1$d of %2$d</string>
+    <string name="refresh">Refresh</string>
+    <string name="customize_home">Customize home</string>
+    <string name="theme_settings">Theme</string>
+    <string name="status_debug">Status</string>
+    <string name="reset_options">Reset</string>
+    <string name="launcher_setup">Launcher setup</string>
+    <string name="empty_slot">Empty</string>
+    <string name="unavailable_app">Unavailable</string>
+    <string name="selected">Selected</string>
+    <string name="moving">Moving</string>
+    <string name="remove">Remove</string>
+    <string name="move">Move</string>
+    <string name="reset_home">Reset home</string>
+    <string name="tap_app_to_assign">Tap an app to assign it to the selected slot.</string>
+    <string name="reset_home_confirm">This will clear all home slots.</string>
+    <string name="reset">Reset</string>
+    <string name="cancel">Cancel</string>
+    <string name="page_short">Page %1$d</string>
+    <string name="page_increase">Add page</string>
+    <string name="page_decrease">Remove page</string>
+    <string name="next">Next</string>
+
+    <string name="theme_default">Default</string>
+    <string name="theme_large_text">Large Text</string>
+
+    <string name="status_app_version">App version</string>
+    <string name="status_launcher_state">Launcher status</string>
+    <string name="status_detected_app_count">Detected apps</string>
+    <string name="status_selected_theme">Selected theme</string>
+    <string name="status_selected_home_slots_count">Home slots filled</string>
+    <string name="launcher_state_unknown">Launcher status could not be confirmed on this device.</string>
+    <string name="launcher_state_is_default">Core is set as the default Home app on this device.</string>
+    <string name="launcher_state_default_other">Default Home app: %1$s</string>
+
+    <string name="theme_section_palette">Theme</string>
+    <string name="theme_section_text">Text size</string>
+    <string name="theme_section_icons">Icon size</string>
+    <string name="theme_text_jump_label">Jump to text size</string>
+    <string name="theme_palette_system">Senior System default</string>
+    <string name="theme_palette_light">Senior Light</string>
+    <string name="theme_palette_dark">Senior Dark</string>
+    <string name="theme_text_scope_note">Changes Senior Launcher text only. It affects launcher labels, menus, and settings, not system text or other apps.</string>
+    <string name="theme_text_normal">Large (Recommended)</string>
+    <string name="theme_text_normal_desc">Standard easy-to-read text size</string>
+    <string name="theme_text_large">Extra Large</string>
+    <string name="theme_text_large_desc">Larger launcher labels and buttons</string>
+    <string name="theme_text_small">Medium text</string>
+    <string name="theme_text_small_desc">Smaller text for more layout density</string>
+    <string name="theme_text_larger">Maximum Readability</string>
+    <string name="theme_text_larger_desc">Largest text size for reading support</string>
+    <string name="theme_text_scale_small">Scale 0.9x</string>
+    <string name="theme_text_scale_normal">Scale 1.0x</string>
+    <string name="theme_text_scale_large">Scale 1.20x</string>
+    <string name="theme_text_scale_larger">Scale 1.40x</string>
+    <string name="theme_icons_normal">Normal icons</string>
+    <string name="theme_icons_large">Large icons</string>
+    <string name="theme_section_labels">App labels</string>
+    <string name="theme_labels_show">Show labels</string>
+    <string name="theme_labels_hide">Hide labels</string>
+    <string name="grid_size_label">Grid size</string>
+    <string name="grid_2x2">2x2</string>
+    <string name="grid_3x3">3x3</string>
+    <string name="grid_4x4">4x4</string>
+    <string name="theme_preview_title">Preview</string>
+    <string name="theme_preview_scale">Text scale: %1$.2fx</string>
+    <string name="theme_preview_row_primary">Example item</string>
+    <string name="theme_preview_row_secondary">Secondary text</string>
+
+    <string name="reset_home_only">Reset home apps only</string>
+    <string name="reset_all_settings">Reset all baseline settings</string>
+    <string name="reset_confirm_title">Confirm reset</string>
+    <string name="reset_home_only_confirm">This will clear all home slots but keep your theme.</string>
+    <string name="reset_all_settings_confirm">This will clear all home slots and reset the theme to Default.</string>
+
+    <string name="onboarding_title">Set up Core Launcher</string>
+    <string name="onboarding_step_launcher_title">Step 1: Default launcher</string>
+    <string name="onboarding_step_launcher_body">Choose Core as your default Home app.</string>
+    <string name="onboarding_step_appearance_title">Step 2: Theme and text</string>
+    <string name="onboarding_step_appearance_body">Pick the palette and launcher text size.</string>
+    <string name="onboarding_step_layout_title">Step 3: Pages and placement</string>
+    <string name="onboarding_step_layout_body">Choose how many home pages you want and open the app placement editor.</string>
+    <string name="onboarding_current_launcher">Current default Home app</string>
+    <string name="onboarding_choose_default_launcher">Choose default Home app</string>
+    <string name="onboarding_page_count_label">Home page count</string>
+    <string name="onboarding_page_count_value">%1$d pages</string>
+    <string name="onboarding_open_placement_editor">Open app placement editor</string>
+    <string name="onboarding_finish">Finish setup</string>
+    <string name="theme_section_accent">Accent color</string>
+    <string name="theme_accent_default">Default</string>
+    <string name="theme_accent_blue">Blue</string>
+    <string name="theme_accent_green">Green</string>
+    <string name="theme_accent_purple">Purple</string>
+    <string name="theme_accent_orange">Orange</string>
+    <string name="theme_accent_red">Red</string>
+    
+    <string name="theme_section_shape">Tile shape</string>
+    <string name="theme_shape_soft">Soft rounded</string>
+    <string name="theme_shape_extra">Extra rounded</string>
+    <string name="theme_shape_square">Square</string>
+
+    <string name="theme_section_background">Background</string>
+    <string name="theme_bg_default">Default</string>
+    <string name="theme_bg_dark">Solid Dark</string>
+    <string name="theme_bg_light">Solid Light</string>
+    <string name="theme_bg_black">Pitch Black</string>
+    
+    <string name="theme_section_motion">Motion</string>
+    <string name="theme_motion_normal">Normal motion</string>
+    <string name="theme_motion_reduced">Reduced motion</string>
+
+    <string name="theme_palette_high_contrast">High Contrast</string>
+    <string name="appearance">Appearance</string>
+    <string name="quick_access">Quick Access</string>
+    <string name="quick_access_panel">Quick Access Panel</string>
+</resources>

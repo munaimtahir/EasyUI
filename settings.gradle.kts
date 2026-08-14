@@ -17,3 +17,7 @@ dependencyResolutionManagement {
 rootProject.name = "core"
 
 include(":app")
+include(":senior-launcher")
+include(":caregiver-companion")
+include(":backend")
+

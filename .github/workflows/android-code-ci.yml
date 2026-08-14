@@ -52,4 +52,4 @@ jobs:
         with:
           name: reports
           path: |
-            app/build/reports/
+            **/build/reports/
