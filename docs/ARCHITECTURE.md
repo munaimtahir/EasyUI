@@ -4,9 +4,9 @@
 
 Initial architecture guidance for a brand-new project.
 
-## Current implementation status — 2026-08-09
+## Current implementation status — 2026-08-17
 
-The implementation follows the documented boundaries: a single Compose launcher shell, PackageManager-derived app discovery, `HomeLayout`/`HomeTileContent` as the canonical home model, DataStore-backed local persistence, and repository-owned theme/settings state. The current verification report records the repaired model regression and runtime evidence.
+The `app` module follows the documented launcher architecture: a Compose launcher shell, PackageManager-derived app discovery, `HomeLayout`/`HomeTileContent` as the canonical home model, DataStore-backed local persistence, and repository-owned theme/settings state. The repository also contains later `senior-launcher`, `caregiver-companion`, and `backend` modules; these are outside the `core v0.1` architecture until a separate product stage is approved. See `docs/VERIFICATION/core-current-status-2026-08-17.md`.
 
 ## Architecture goals
 

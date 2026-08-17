@@ -4,9 +4,9 @@
 
 Work is complete only when it is implemented, verified, documented, and handed off.
 
-## Current baseline audit status — 2026-08-09
+## Current baseline audit status — 2026-08-17
 
-The current baseline report is authoritative for the final verdict. A GO requires the repository wrapper, clean build, unit tests, lint, available instrumentation tests, clean install/launch, HOME verification, runtime feature smoke coverage, and current documentation to pass together.
+The current status report is authoritative for the planning and release decision: `docs/VERIFICATION/core-current-status-2026-08-17.md`. The historical 2026-08-09 report must not override later scope changes. A v0.1 GO additionally requires one authoritative launcher-only scope with no caregiver/product-variant/backend additions in the baseline build.
 
 ## Required checklist
 

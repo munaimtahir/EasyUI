@@ -52,11 +52,11 @@ The first goal is to create a reliable launcher baseline that can:
 - support basic theme persistence
 - pass automated build, lint, unit, and emulator checks
 
-## Current baseline status — 2026-08-09
+## Current baseline status — 2026-08-17
 
-The current launcher baseline includes the original foundation plus verified launcher-level customization: multiple home pages and 2x2/3x3/4x4 grids, grid migration/packing, app-drawer search and Grid/List modes, favorites, appearance controls, Quick Access, a launcher information strip, contacts/dial/SMS shortcuts, built-in Clock/Date/Note tiles, notifications test flow, and flashlight handling.
+The launcher and the current additional modules build and launch on the available Android 15 emulator. The current repository is not a clean v0.1 baseline: recent commits also retain senior product, caregiver companion, backend, pairing, PIN, and remote-sync functionality that is outside the locked v0.1 scope.
 
-The final baseline completion audit is recorded in [`docs/VERIFICATION/core-v0.1-baseline-report.md`](docs/VERIFICATION/core-v0.1-baseline-report.md). Product-variant, cloud, monetization, kiosk/device-owner, and Android system-UI replacement behavior remain out of scope.
+The authoritative current status and finalized planning decisions are recorded in [`docs/VERIFICATION/core-current-status-2026-08-17.md`](docs/VERIFICATION/core-current-status-2026-08-17.md). The [`docs/VERIFICATION/core-v0.1-baseline-report.md`](docs/VERIFICATION/core-v0.1-baseline-report.md) is historical evidence for the earlier baseline tree, not the current release verdict.
 
 ## What this project is not
 

@@ -6,9 +6,11 @@
 
 The baseline is not complete until it can be verified repeatedly.
 
-## Current verification status — 2026-08-09
+## Current verification status — 2026-08-17
 
-The final audit passed the repository wrapper, clean build, debug unit tests, lint, and `connectedDebugAndroidTest` on the Android 15 `Android_15_Test` AVD. Runtime screenshots, activity state, HOME resolution, and logcat evidence are stored under `docs/VERIFICATION/artifacts/2026-08-09/`.
+The current tree passes `./gradlew clean assembleDebug testDebugUnitTest lintDebug` and the available Android 15 ADB smoke workflow. Core HOME/app-drawer flows and the added module launch flows were exercised. Current status, limitations, and the release decision are in `docs/VERIFICATION/core-current-status-2026-08-17.md`.
+
+The `connectedDebugAndroidTest` and runtime evidence under `docs/VERIFICATION/artifacts/2026-08-09/` belong to the earlier baseline tree and remain historical until rerun against the final chosen scope.
 
 ## Required verification layers
 

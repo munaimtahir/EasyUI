@@ -12,9 +12,9 @@ Create a stable Android launcher baseline.
 
 The baseline should be intentionally small.
 
-## Current implementation status — 2026-08-09
+## Current implementation status — 2026-08-17
 
-The original v0.1 foundation is implemented and has been extended with documented launcher-level customization. Current verification status and evidence are maintained in `docs/VERIFICATION/core-v0.1-baseline-report.md`; this document remains the scope contract and does not authorize product variants or Android system-UI replacement.
+The launcher foundation and launcher-level customization pass the current build and emulator smoke checks, but the repository also contains post-baseline senior/caregiver/backend modules. Those modules are outside this scope contract. Current verification and the finalized planning decision are maintained in `docs/VERIFICATION/core-current-status-2026-08-17.md`; the dated v0.1 report is historical evidence for the earlier tree.
 
 ## In scope
 

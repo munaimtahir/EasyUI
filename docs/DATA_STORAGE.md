@@ -14,9 +14,9 @@ Recommended:
 Jetpack DataStore Preferences
 ```
 
-## Current stored launcher state — 2026-08-09
+## Current stored launcher state — 2026-08-17
 
-In addition to the original baseline values, the current launcher persists only local launcher preferences such as home page/grid settings, typed home tile content, appearance options, app-drawer mode/favorites, and onboarding completion. No account, cloud, monetization, analytics, or product-variant state is present.
+The approved `app` baseline persists local launcher preferences such as home page/grid settings, typed home tile content, appearance options, app-drawer mode/favorites, and onboarding completion. Later senior/caregiver modules do contain pairing, PIN, and remote state; that state is outside `core v0.1` and is one reason the current mixed repository is not release-ready. See `docs/VERIFICATION/core-current-status-2026-08-17.md`.
 
 ## Allowed baseline data
 

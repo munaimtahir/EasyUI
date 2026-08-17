@@ -4,7 +4,9 @@
 
 `core` is a brand-new Android launcher foundation project.
 
-As of 2026-08-09, the foundation also contains the verified launcher-level MVP customization documented in `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`; this does not make `core` a product variant or managed-device system.
+As of 2026-08-17, the launcher foundation has verified runtime coverage on an Android 15 emulator, but the repository also contains later senior/caregiver/backend modules. Those modules are not accepted as part of `core v0.1` until the planning owner explicitly chooses a separate product stage.
+
+The authoritative current status is `docs/VERIFICATION/core-current-status-2026-08-17.md`.
 
 It will provide the shared foundation for a future family of simplified launcher products.
 

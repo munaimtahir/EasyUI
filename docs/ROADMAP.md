@@ -1,8 +1,8 @@
 # Roadmap
 
-## Current status — 2026-08-09
+## Current status — 2026-08-17
 
-`core v0.1` has completed the launcher foundation and the planned launcher-level MVP customization/runtime patch. The final audit repaired the Gradle wrapper, migrated stale tests, fixed the spec-dependent default home layout, repaired connected UI smoke tests, exposed Reset, and verified build/unit/lint/instrumentation/runtime evidence. See `docs/VERIFICATION/core-v0.1-baseline-report.md` for command-level evidence.
+The launcher foundation and planned launcher-level customization build and pass the current ADB smoke workflow. The repository is currently **NO-GO for v0.1 release** because later senior/caregiver/backend modules remain mixed into the baseline tree. See `docs/VERIFICATION/core-current-status-2026-08-17.md` for the finalized planning decision.
 
 Completed current launcher-level scope includes:
 
@@ -13,7 +13,7 @@ Completed current launcher-level scope includes:
 - contacts/dial/SMS shortcuts, built-in Clock/Date/Note tiles, and flashlight handling
 - visible reset flow and connected Compose smoke coverage
 
-Future product variants and managed-device work remain deferred until a separate product scope is approved.
+Future product variants and managed-device work remain deferred until a separate product scope is approved. The existing caregiver suite must be isolated or formally moved to that separate stage before further feature work.
 
 ## Stage 0 — Documentation Foundation
 

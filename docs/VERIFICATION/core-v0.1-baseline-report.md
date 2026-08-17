@@ -1,5 +1,7 @@
 # Core Launcher Foundation — v0.1 Final Baseline Verification Report
 
+> **Historical report notice — 2026-08-17:** This report records the earlier launcher-only baseline and its 2026-08-09 GO gate. It is not the current repository release verdict. See [`core-current-status-2026-08-17.md`](core-current-status-2026-08-17.md) for the current tree, emulator validation, scope decision, and final planning status.
+
 Date: 2026-08-09
 Project: `core` / Core Launcher Foundation
 Final verdict: **GO**

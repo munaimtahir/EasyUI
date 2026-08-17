@@ -4,9 +4,9 @@
 
 This file protects the project from scope creep and unrealistic product claims.
 
-## Current status — 2026-08-09
+## Current status — 2026-08-17
 
-The launcher-level customization currently implemented in `core` does not change these guardrails. The final baseline report verifies the launcher surface only; Android system UI, cloud, monetization, product variants, and kiosk/device-owner behavior remain excluded.
+The launcher-level customization currently implemented in `core` does not change these guardrails. The current repository also contains later caregiver/backend/product-variant code, but that code is not approved for `core v0.1`. Android system UI, cloud/remote sync, monetization, product variants, and kiosk/device-owner behavior remain excluded from the baseline. See `docs/VERIFICATION/core-current-status-2026-08-17.md`.
 
 ## Product truth
 
