@@ -78,8 +78,16 @@ class PairingManager(private val context: Context) {
         }
     }
 
-    /** Revoke pairing — clears all pairing data locally */
+    /** Revoke pairing — clears all pairing data locally and remote */
     suspend fun revokePairing() = withContext(Dispatchers.IO) {
+        val token = getState().deviceToken
+        if (token != null) {
+            try {
+                BackendClient.revokePairing()
+            } catch (e: Exception) {
+                // Ignore network error to guarantee local cleanup works offline-first
+            }
+        }
         BackendClient.deviceToken = null
         context.coreDataStore.edit { prefs ->
             prefs.remove(KEY_DEVICE_TOKEN)
@@ -87,6 +95,19 @@ class PairingManager(private val context: Context) {
             prefs.remove(KEY_PAIRING_CODE_EXPIRES)
             prefs.remove(KEY_PERMISSIONS)
         }
+    }
+
+    /** Clear remote device records and local pairing settings */
+    suspend fun deleteDeviceData() = withContext(Dispatchers.IO) {
+        val token = getState().deviceToken
+        if (token != null) {
+            try {
+                BackendClient.deleteDeviceData()
+            } catch (e: Exception) {
+                // Ignore network error to guarantee local cleanup works offline-first
+            }
+        }
+        revokePairing()
     }
 
     /** Check if a specific permission is granted */

@@ -145,4 +145,246 @@ class BackendTest {
         }
         assertEquals(HttpStatusCode.Forbidden, getResponse.status)
     }
+
+    @Test
+    fun testGetStatusWithInvalidToken() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        val response = client.get("/status/dev-senior-001") {
+            header(HttpHeaders.Authorization, "Bearer invalid-token-xyz")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+    }
+
+    @Test
+    fun testPairingCodeReuseFails() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        val token = InMemoryStore.initiatePairing("test-senior-1")
+
+        // First complete pairing succeeds
+        val res1 = client.post("/pair") {
+            contentType(ContentType.Application.Json)
+            setBody(PairRequest(token.code, "caregiver-1"))
+        }
+        assertEquals(HttpStatusCode.OK, res1.status)
+
+        // Second complete pairing with same code fails
+        val res2 = client.post("/pair") {
+            contentType(ContentType.Application.Json)
+            setBody(PairRequest(token.code, "caregiver-2"))
+        }
+        assertEquals(HttpStatusCode.Unauthorized, res2.status)
+    }
+
+    @Test
+    fun testPairingCodeExpiryFails() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        val token = InMemoryStore.initiatePairing("test-senior-1")
+        
+        // Fast-forward expiry
+        val expiredToken = token.copy(expiresAt = System.currentTimeMillis() - 1000)
+        InMemoryStore.pendingPairings[token.code] = expiredToken
+
+        val response = client.post("/pair") {
+            contentType(ContentType.Application.Json)
+            setBody(PairRequest(token.code, "caregiver-1"))
+        }
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+    }
+
+    @Test
+    fun testPermissionsEnforcedForCaregiver() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        // Setup caregiver relationship but with EMPTY permissions
+        InMemoryStore.deviceTokens["custom-senior-token"] = "senior-1"
+        InMemoryStore.caregiverTokens["custom-caregiver-token"] = "caregiver-1"
+        InMemoryStore.caregiverToSenior["caregiver-1"] = "senior-1"
+        InMemoryStore.permissions["senior-1"] = emptyList() // No permissions!
+
+        // 1. Get status fails
+        val statusRes = client.get("/status/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.Forbidden, statusRes.status)
+
+        // 2. Get checkin fails
+        val checkinRes = client.get("/checkin/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.Forbidden, checkinRes.status)
+
+        // 3. Get alerts fails
+        val alertsRes = client.get("/alerts/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.Forbidden, alertsRes.status)
+
+        // 4. Post config fails
+        val configRes = client.post("/config/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+            contentType(ContentType.Application.Json)
+            setBody(ConfigPayload(emptyList()))
+        }
+        assertEquals(HttpStatusCode.Forbidden, configRes.status)
+     }
+
+    @Test
+    fun testSeniorRevocation() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        // Setup caregiver relationship
+        InMemoryStore.deviceTokens["custom-senior-token"] = "senior-1"
+        InMemoryStore.caregiverTokens["custom-caregiver-token"] = "caregiver-1"
+        InMemoryStore.caregiverToSenior["caregiver-1"] = "senior-1"
+        InMemoryStore.permissions["senior-1"] = listOf("battery")
+        InMemoryStore.deviceStatus["senior-1"] = StatusPayload(95, false, "1.0", 0L)
+
+        // Caregiver fetches status successfully
+        val statusResBefore = client.get("/status/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.OK, statusResBefore.status)
+
+        // Senior revokes caregiver
+        val revokeRes = client.post("/revoke") {
+            header(HttpHeaders.Authorization, "Bearer custom-senior-token")
+        }
+        assertEquals(HttpStatusCode.OK, revokeRes.status)
+
+        // Caregiver is now rejected
+        val statusResAfter = client.get("/status/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, statusResAfter.status)
+    }
+
+    @Test
+    fun testCaregiverRevocation() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        // Setup caregiver relationship
+        InMemoryStore.deviceTokens["custom-senior-token"] = "senior-1"
+        InMemoryStore.caregiverTokens["custom-caregiver-token"] = "caregiver-1"
+        InMemoryStore.caregiverToSenior["caregiver-1"] = "senior-1"
+
+        // Caregiver revokes self
+        val revokeRes = client.post("/revoke") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.OK, revokeRes.status)
+
+        // Caregiver is now rejected on protected requests
+        val checkinRes = client.get("/checkin/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, checkinRes.status)
+    }
+
+    @Test
+    fun testDeleteCaregiverAccount() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        // Setup caregiver relationship
+        InMemoryStore.deviceTokens["custom-senior-token"] = "senior-1"
+        InMemoryStore.caregiverTokens["custom-caregiver-token"] = "caregiver-1"
+        InMemoryStore.caregiverToSenior["caregiver-1"] = "senior-1"
+
+        // Caregiver deletes account
+        val deleteRes = client.post("/delete-account") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.OK, deleteRes.status)
+
+        // Caregiver token is destroyed and link is broken
+        val statusRes = client.get("/status/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, statusRes.status)
+    }
+
+    @Test
+    fun testDeleteSeniorDevice() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        // Setup caregiver relationship + status
+        InMemoryStore.deviceTokens["custom-senior-token"] = "senior-1"
+        InMemoryStore.caregiverTokens["custom-caregiver-token"] = "caregiver-1"
+        InMemoryStore.caregiverToSenior["caregiver-1"] = "senior-1"
+        InMemoryStore.permissions["senior-1"] = listOf("battery")
+        InMemoryStore.deviceStatus["senior-1"] = StatusPayload(95, false, "1.0", 0L)
+
+        // Senior deletes device data
+        val deleteRes = client.post("/delete-device") {
+            header(HttpHeaders.Authorization, "Bearer custom-senior-token")
+        }
+        assertEquals(HttpStatusCode.OK, deleteRes.status)
+
+        // Senior token is destroyed
+        val statusResSenior = client.get("/status/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-senior-token")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, statusResSenior.status)
+
+        // Caregiver is revoked and token destroyed
+        val statusResCaregiver = client.get("/status/senior-1") {
+            header(HttpHeaders.Authorization, "Bearer custom-caregiver-token")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, statusResCaregiver.status)
+    }
 }

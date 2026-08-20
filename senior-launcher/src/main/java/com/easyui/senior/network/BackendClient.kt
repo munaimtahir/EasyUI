@@ -21,7 +21,7 @@ object BackendClient {
 
     // Dev URL: 10.0.2.2 is the host machine from Android Emulator
     // For real device testing on the same LAN, replace with host IP
-    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8080"
+    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8088"
     private const val TIMEOUT_MS = 8_000
 
     private val json = Json {
@@ -86,6 +86,16 @@ object BackendClient {
     /** Called by senior launcher to fetch pending caregiver-pushed config */
     suspend fun fetchConfig(): ConfigPayloadDto? {
         return getJson("/config", deviceToken, ConfigPayloadDto::class.java)
+    }
+
+    suspend fun revokePairing(): Boolean {
+        val token = deviceToken ?: return false
+        return postRaw("/revoke", "", token) == true
+    }
+
+    suspend fun deleteDeviceData(): Boolean {
+        val token = deviceToken ?: return false
+        return postRaw("/delete-device", "", token) == true
     }
 
     // ─── Internal Helpers ───────────────────────────────────────────────────

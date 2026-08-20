@@ -9,7 +9,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object CompanionBackendClient {
-    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8080"
+    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8088"
     private const val TIMEOUT_MS = 8_000
 
     private val json = Json {
@@ -46,6 +46,11 @@ object CompanionBackendClient {
         val payload = ConfigPayloadDto(reminders)
         val body = json.encodeToString(payload)
         return postRaw("/config/$seniorDeviceId", body, deviceToken) == true
+    }
+
+    suspend fun deleteAccount(): Boolean {
+        val token = deviceToken ?: return false
+        return postRaw("/delete-account", "", token) == true
     }
 
     private fun <T> postJson(path: String, body: String, token: String?, clazz: Class<T>): T? {

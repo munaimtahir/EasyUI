@@ -1,103 +1,53 @@
-# TASKS
+# TASKS — EasyUI
 
-## Current completion status — 2026-08-09
+This task list tracks the integration, verification, and hardening stages of the **EasyUI Senior & Caregiver Product Suite**. EasyUI is built on top of the frozen **Core Launcher** foundation, which is a separate repository. EasyUI is an intentional product derivative of Core. Therefore, Core's original product-variant prohibitions do not govern EasyUI.
 
-Stages 1–7 and the launcher-level customization work are implemented. The final baseline audit, including wrapper restoration, repaired tests, clean build/lint, connected instrumentation, runtime smoke evidence, and documentation reconciliation, is recorded in `docs/VERIFICATION/core-v0.1-baseline-report.md`. Future product-variant work remains separate.
+## Stage 1 — Documentation Normalization
 
-## Stage 0 — Documentation Foundation
+- [x] Identify all active documentation files containing legacy Core v0.1 variant restrictions.
+- [x] Update `README.md` to define the EasyUI repository, modules, and relationship with Core.
+- [x] Update `docs/PROJECT_CONTEXT.md` to detail the purpose and modules of EasyUI.
+- [x] Update `docs/ROADMAP.md` to layout the active integration and verification roadmap.
+- [x] Update `docs/BASELINE_SCOPE.md` to define EasyUI's in-scope caregiver and launcher features.
+- [x] Update `docs/PRODUCT_GUARDRAILS.md` to protect senior consent, offline-first execution, and system limits.
+- [x] Update `docs/ARCHITECTURE.md` to outline the modular design and state management rules.
+- [x] Update `TASKS.md` to map current and future integration tasks.
+- [x] Update `docs/TESTING/TESTING_STRATEGY.md` to outline verification layers and multi-module checks.
+- [x] Update `docs/VERIFICATION/core-current-status-2026-08-17.md` (reconcile current status as EasyUI verification status).
 
-- [ ] Create repository named `core`
-- [ ] Add documentation pack
-- [ ] Review `README.md`
-- [ ] Review `docs/PROJECT_CONTEXT.md`
-- [ ] Review `docs/GREENFIELD_POLICY.md`
-- [ ] Review `docs/BASELINE_SCOPE.md`
-- [ ] Review `docs/PRODUCT_GUARDRAILS.md`
-- [ ] Review `AGENTS.md`
-- [ ] Review `GEMINI.md`
-- [ ] Review `.github/copilot-instructions.md`
-- [ ] Commit documentation as first commit
+## Stage 2 — Feature Inventory Audit
 
-## Stage 1 — Android Project Skeleton
+- [x] Audit the `backend` code for authentication, routing, and database capabilities.
+- [x] Audit the `caregiver-companion` code for pairing inputs, tab navigation, and configuration suggest paths.
+- [x] Audit the `senior-launcher` code for caregiver settings, security PINs, status workers, and emergency triggers.
+- [x] Classify each capability (e.g. `VERIFIED`, `IMPLEMENTED_NOT_VERIFIED`, `PARTIAL`, `STUB`, `MISSING`).
+- [x] Document the feature inventory results in an audit artifact.
 
-- [ ] Create clean Android project
-- [ ] Confirm greenfield structure
-- [ ] Configure launcher intent
-- [ ] Add minimal home screen
-- [ ] Run build
-- [ ] Add initial CI workflow
-- [ ] Update `copilot_session.md`
+## Stage 3 — End-to-End Integration Verification
 
-## Stage 2 — App Discovery
+- [ ] Verify Ktor backend bearer token validation checks.
+- [ ] Test code pairing lifecycle: code generation on senior launcher → entry on companion → backend validation and token exchange.
+- [ ] Test status worker battery reporting and companion status updates.
+- [ ] Test voluntary check-in reporting from senior launcher and receipt on companion dashboard.
+- [ ] Test manual SOS hold triggering dialer activity and posting emergency alert to companion log.
+- [ ] Verify suggested reminders push from companion and successful pull/merge on senior launcher.
+- [ ] Run a test on paired permission revocations (e.g., revoking battery access disables status reporting).
 
-- [ ] Implement installed app discovery
-- [ ] Load app labels
-- [ ] Load app icons
-- [ ] Add fallback icon behavior
-- [ ] Exclude self where appropriate
-- [ ] Add tests
-- [ ] Verify build/test/lint
+## Stage 4 — Offline & Reconnect Hardening
 
-## Stage 3 — App List
+- [ ] Test senior launcher functionality when network connectivity is lost.
+- [ ] Verify that failed background status updates retry gracefully using WorkManager backoff constraints.
+- [ ] Ensure that UI operations (Check-In, SOS triggering) don't crash when offline; display clear feedback.
+- [ ] Test pairing revocation local data clearing.
 
-- [ ] Build simple alphabetical app list
-- [ ] Show icons and labels
-- [ ] Launch apps on tap
-- [ ] Handle launch failures safely
-- [ ] Add tests where practical
+## Stage 5 — Accessibility Audit
 
-## Stage 4 — Fixed Home Grid
+- [ ] Audit display scaling and font scaling support across the senior launcher onboarding and home screens.
+- [ ] Confirm TalkBack content descriptions exist for all custom visual tiles and icons.
+- [ ] Validate touch target sizes (minimum 48dp) and contrast ratios.
 
-- [ ] Define fixed home grid
-- [ ] Allow selecting home apps
-- [ ] Persist selected home apps
-- [ ] Show icons and labels on home
-- [ ] Launch apps from home
-- [ ] Reset to safe defaults
-- [ ] Verify restart persistence
+## Stage 6 — Release Build Verification
 
-## Stage 5 — Theme Persistence
-
-- [ ] Add minimal theme list
-- [ ] Persist selected theme
-- [ ] Verify no flicker/revert behavior
-- [ ] Add tests for theme state
-
-## Stage 6 — CI and Emulator Runtime
-
-- [ ] Add Android Code CI
-- [ ] Add Android Runtime Emulator CI
-- [ ] Capture screenshot artifact
-- [ ] Capture logcat artifact
-- [ ] Iterate until green
-- [ ] Produce final baseline verification report
-
-## Stage 7 — Baseline Verdict
-
-- [ ] Run complete test suite
-- [ ] Run emulator workflow
-- [ ] Run manual smoke test if available
-- [ ] Write final report
-- [ ] Mark baseline GO / Conditional GO / NO-GO
-
-## Stage 8 — Post-Baseline Launcher Customization Planning
-
-- [ ] Review `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`
-- [ ] Confirm baseline GO verdict exists
-- [ ] Select first post-baseline customization group
-- [ ] Decide whether to start with grid/page options, top bar, quick access panel, or search
-- [ ] Confirm selected features are launcher-level only
-- [ ] Confirm no system UI replacement behavior is included
-- [ ] Confirm no caregiver/parent/child/school/office variant logic is mixed into generic core
-- [ ] Create implementation sprint prompt
-- [ ] Update `copilot_session.md`
-
-## Stage 9 — Product Variant Planning
-
-- [ ] Select first product variant
-- [ ] Create separate product scope
-- [ ] Define variant-specific features
-- [ ] Confirm baseline remains reusable
-- [ ] Confirm variant does not pollute core foundation
-- [ ] Define tests for variant behavior
-- [ ] Create implementation sprint prompt
+- [ ] Run release build tasks: `./gradlew assembleRelease` (or module-specific release tasks).
+- [ ] Configure secure release signing templates.
+- [ ] Finalize Google Play metadata guidelines.

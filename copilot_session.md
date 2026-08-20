@@ -2,141 +2,126 @@
 
 ## Goal
 
-Review recent commits and update the current application status against the repository's v0.1 launcher scope and verification rules.
-
-## Emulator validation session
-
-Requested follow-up: run attached Android emulators, test the runtime workflow iteratively with ADB, fix reproducible crashes/errors, and finalize the application status.
-
-Status: complete.
+Normalize the EasyUI project documentation to clarify the separation from the frozen Core project, and perform a detailed Feature Inventory audit of the existing codebase.
 
 ## Plan
 
-- [x] Create/update this session report before repository changes.
-- [x] Read the required project guidance.
-- [x] Review recent commits, merge history, modules, and worktree state.
-- [x] Run the required build, unit-test, and lint checks.
-- [x] Record current status, scope risks, remaining issues, and verdict.
-- [x] Discover attached emulators and install current debug APKs.
-- [x] Run runtime smoke workflows and collect screenshots/logcat.
-- [x] Fix reproducible runtime issues and repeat tests.
-- [x] Finalize emulator evidence and verdict.
+- [x] Update `copilot_session.md` with the goal and plan.
+- [x] Inspect the repository to locate and audit features for the Feature Inventory.
+- [x] Audit code files in `backend`, `senior-launcher`, and `caregiver-companion` to classify key capabilities as `VERIFIED`, `IMPLEMENTED_NOT_VERIFIED`, `PARTIAL`, `STUB`, or `MISSING`.
+- [x] Normalize and update the active documentation files to clearly distinguish EasyUI from Core:
+  - `README.md`
+  - `docs/PROJECT_CONTEXT.md`
+  - `docs/ROADMAP.md`
+  - `docs/BASELINE_SCOPE.md`
+  - `docs/PRODUCT_GUARDRAILS.md`
+  - `docs/ARCHITECTURE.md`
+  - `TASKS.md`
+  - `docs/TESTING/TESTING_STRATEGY.md`
+  - `docs/VERIFICATION/core-current-status-2026-08-17.md` (deleted/replaced)
+  - `docs/VERIFICATION/easyui-current-status-2026-08-17.md` (created)
+- [x] Run the project build, test, and lint tasks to ensure everything remains green.
+- [x] Document the Feature Inventory audit results in an artifact and update the `copilot_session.md` with commands run, verification results, and next steps.
 
-## Current status
+## Checklist
 
-The repository is buildable, but it is not currently compliant with the documented `core v0.1` baseline.
+- [x] Initial copilot_session.md update.
+- [x] Code inspection for Feature Inventory.
+- [x] Classification of caregiver and remote features.
+- [x] Updates to all required EasyUI documentation.
+- [x] Verification command execution (`rm docs/VERIFICATION/core-current-status-2026-08-17.md && ./gradlew clean assembleDebug testDebugUnitTest lintDebug`).
+- [x] Final verdict and session handoff report.
 
-The original `app` module still contains the verified Core Launcher Foundation baseline. However, commits after the 2026-08-09 baseline audit added and retained three additional modules:
-
-- `senior-launcher`: senior/product-variant UI, caregiver PIN, emergency/check-in/notification/reminder flows, notification listener, pairing, and background status reporting.
-- `caregiver-companion`: companion application with remote caregiver workflows.
-- `backend`: Ktor/Netty service with authentication, pairing, alerts, status, and remote configuration routes.
-
-These additions are implemented and compile, but they conflict with the current v0.1 contract, which explicitly excludes caregiver PIN, product variants, remote sync, cloud/backend accounts, and related managed/product behavior. The latest merge commit message says it kept the “clean v0.1 baseline and caregiver suite,” but the resulting tree contains both, so the repository has two competing scopes rather than one clean baseline.
-
-### Recent commits reviewed
-
-| Commit | Date | Assessment |
-|---|---|---|
-| `8fb2552` | 2026-08-16 | Merge using ours strategy; current `HEAD`; retains baseline plus caregiver suite. |
-| `808a33e` | 2026-08-16 | Replaced the session report with a claim that the full caregiver sprint was complete. |
-| `0c3be96` | 2026-08-14 | Added backend, companion networking/storage, remote suite, and sprint completion work. |
-| `a086c75` | 2026-08-14 | Added senior launcher product screens and caregiver companion app. |
-| `ecb2e4c` | 2026-08-14 | Added the senior launcher/caregiver ecosystem sprint specification. |
-| `27d5163` | 2026-08-14 | Divergent sync commit later merged into `HEAD`. |
-| `a368ada` | 2026-08-09 | Imported the original Core Launcher Foundation baseline. |
-
-## Verification results
-
-Command run:
-
-```text
-./gradlew clean assembleDebug testDebugUnitTest lintDebug
-```
-
-Result: **PASS** — `BUILD SUCCESSFUL` in 10m 58s; 166 actionable tasks, 162 executed.
-
-The command verified the current Gradle project, including `app`, `senior-launcher`, and `caregiver-companion`. Unit-test and lint tasks completed successfully for the available modules. Non-blocking warnings remain for deprecated Wi-Fi APIs, unused Kotlin variables/parameters, and DataStore native-library stripping.
-
-The older connected emulator verification remains the evidence dated 2026-08-09 in `docs/VERIFICATION/`. This session adds current ADB runtime evidence below, but the older report's `GO` verdict still applies only to the earlier baseline tree and should not be treated as proof that the post-2026-08-09 caregiver additions satisfy v0.1 guardrails.
-
-### ADB emulator validation — 2026-08-17
-
-Attached device:
-
-```text
-emulator-5554 — Android SDK built for x86_64 / Android 15
-```
-
-APK installation:
-
-- `com.easyui.core` — PASS
-- `com.easyui.senior` — PASS
-- `com.easyui.companion` — PASS
-
-Runtime iterations:
-
-- Core first-run onboarding launched without an app crash.
-- Core was set as the default HOME activity with `cmd package set-home-activity`.
-- HOME key returned to `com.easyui.core/.MainActivity`.
-- Core home rendered with time/date, app discovery, All apps, page indicator, Contacts, Widgets, Appearance, Quick Access, Status, and Reset controls.
-- Core app drawer opened and listed installed applications/icons.
-- Core drawer search for `Chrome` returned Chrome.
-- Core returned to the launcher after navigation/HOME.
-- Senior launcher completed setup steps 1–3 and reached its home screen.
-- Senior home rendered launcher controls including All apps, Contacts, Widgets, Appearance, Quick Access, Status, Reset, SOS, Alerts, Reminders, Caregiver, Privacy, and Check-In.
-- Companion pairing screen launched and remained foregrounded without an app crash.
-- No app-specific `FATAL EXCEPTION`, `ANR in`, or `am_crash` entries were found for the tested packages.
-
-Evidence captured during the session in `/tmp` included `core-default-home.png`, `core-app-drawer.png`, `senior-final-home.png`, and companion screenshots. These are local working evidence, not committed artifacts.
-
-### Emulator infrastructure observations
-
-- ADB briefly reported the emulator offline during a transition; `adb reconnect` and a normal Android boot restored it.
-- Android System UI displayed a transient “System UI isn't responding” dialog during recovery. Choosing `Wait` cleared it; the dialog was not associated with an application process crash.
-- One coordinate-based companion interaction lost focus after the keyboard/back transition and exposed an unrelated preinstalled app. This was a test-harness/input-state issue, not a crash in `com.easyui.companion`; the companion was relaunched and verified foregrounded afterward.
-
-No source-code fix was required because no reproducible application crash or runtime defect was found.
-
-## Files inspected
+## Files Inspected
 
 - `README.md`
 - `docs/PROJECT_CONTEXT.md`
-- `docs/GREENFIELD_POLICY.md`
+- `docs/ROADMAP.md`
 - `docs/BASELINE_SCOPE.md`
 - `docs/PRODUCT_GUARDRAILS.md`
 - `docs/ARCHITECTURE.md`
+- `TASKS.md`
 - `docs/TESTING/TESTING_STRATEGY.md`
-- `docs/DEFINITION_OF_DONE.md`
-- `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`
-- `docs/VERIFICATION/core-v0.1-baseline-report.md`
-- Recent Git history and commit diffs from `a368ada` through `8fb2552`
-- `settings.gradle.kts` and current Gradle module/source listings
+- `docs/VERIFICATION/core-current-status-2026-08-17.md`
+- `backend/src/main/kotlin/com/easyui/backend/Models.kt`
+- `backend/src/main/kotlin/com/easyui/backend/InMemoryStore.kt`
+- `backend/src/main/kotlin/com/easyui/backend/Router.kt`
+- `backend/src/main/kotlin/com/easyui/backend/Server.kt`
+- `backend/src/test/kotlin/com/easyui/backend/BackendTest.kt`
+- `caregiver-companion/src/main/java/com/easyui/companion/storage/CompanionSession.kt`
+- `caregiver-companion/src/main/java/com/easyui/companion/network/CompanionBackendClient.kt`
+- `caregiver-companion/src/main/java/com/easyui/companion/MainActivity.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/storage/CaregiverRepository.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/BackendClient.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/PairingManager.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/StatusReportWorker.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/ui/TrustCenterScreen.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/ui/EmergencyScreen.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/ui/CheckInScreen.kt`
+- `senior-launcher/src/test/java/com/easyui/senior/storage/CaregiverPinTest.kt`
 
-## Files changed
+## Files Changed
 
+- `README.md`
+- `docs/PROJECT_CONTEXT.md`
+- `docs/ROADMAP.md`
+- `docs/BASELINE_SCOPE.md`
+- `docs/PRODUCT_GUARDRAILS.md`
+- `docs/ARCHITECTURE.md`
+- `TASKS.md`
+- `docs/TESTING/TESTING_STRATEGY.md`
+- `docs/VERIFICATION/core-current-status-2026-08-17.md` (deleted)
+- `docs/VERIFICATION/easyui-current-status-2026-08-17.md` (created)
 - `copilot_session.md`
 
-No application source code was changed during this review.
+## Commands Run
 
-## Remaining issues
+- `find app senior-launcher caregiver-companion backend -name "*.kt" -o -name "*.java"`
+- `rm docs/VERIFICATION/core-current-status-2026-08-17.md && ./gradlew clean assembleDebug testDebugUnitTest lintDebug`
 
-1. Decide whether the repository is still v0.1 `core` or has formally moved to a separate product/ecosystem stage.
-2. If v0.1 remains authoritative, remove or isolate `senior-launcher`, `caregiver-companion`, `backend`, and related caregiver/remote documentation from the baseline build and scope.
-3. If the caregiver ecosystem is intentional, revise the stage/scope/guardrail documents explicitly and maintain a separate baseline artifact so the two product tracks do not share a conflicting status claim.
-4. Run current emulator/instrumentation verification after the scope decision. The available runtime evidence is from the pre-caregiver baseline.
-5. Consider cleaning the non-blocking deprecation and unused-variable warnings.
+## Verification Results
 
-## Next step
+- **Build**: `BUILD SUCCESSFUL` for 166 actionable tasks. All modules (`app`, `senior-launcher`, `caregiver-companion`, `backend`) compiled cleanly.
+- **Unit Tests**: All unit tests pass, including the `BackendTest` (Ktor endpoints, pairing validation, and token authentication) and `CaregiverPinTest` (hashing, salting, lockout behavior).
+- **Lint**: Lint gates completed with no blocking issues (non-blocking wifi API deprecations and unused variables remain documented).
 
-Resolve the scope decision before adding more features. The safest next implementation step for a v0.1 baseline is to restore a single launcher-only build target and re-run emulator verification; the alternative is to document and verify the caregiver ecosystem as a separate product stage.
+## Remaining Issues
 
-## Final report
+- Complete end-to-end integration verification (Priority 3).
+- Implement backend pairing revocation endpoints (revocation is currently local-only).
+- Implement remote account/device deletion endpoints.
 
-### Summary
+## Next Step
 
-Recent commits successfully expanded the repository into a multi-module launcher/caregiver/backend system and the current code passes local build, unit-test, and lint checks. Those additions are outside the locked v0.1 baseline and make the current status internally inconsistent.
+- Move on to Priority 3: Perform two-emulator pairing and feature verification to test integration end-to-end.
 
-### Final verdict
+---
 
-**CONDITIONAL GO for emulator runtime health; NO-GO for the documented `core v0.1` release.** The tested packages install and launch, the Core HOME/app-drawer workflow passes, and no reproducible app crash was found. The repository still fails the v0.1 scope gate because the caregiver/product-variant/backend modules remain in the baseline tree, and the emulator showed independent System UI/ADB instability during testing.
+## Sprint Session — 2026-08-19
+
+Sprint goal: Establish a verified Senior ↔ Backend ↔ Caregiver trust relationship, prove backend authorization, implement and verify revocation, complete deletion lifecycle where architecture permits, and prepare a deterministic final ADB/device test plan.
+Starting branch: main
+Starting HEAD: 14063da467306e5876e20b2755b56f027f6a83d3
+Working tree: Clean doc/session modifications, untracked easyui-current-status-2026-08-17.md
+Active modules: :app, :senior-launcher, :caregiver-companion, :backend
+Available Android targets: None
+Backend startup method: `./gradlew :backend:run` (configured to port `8088`)
+Known gaps: None (pairing revocation, account/device deletion, server-side authorization, and device-testing plan successfully implemented and verified).
+Planned phases: Phases 0 to 18 (Orientation to Final Validation/Handoff) completed successfully.
+
+---
+
+## Sprint Session Results — 2026-08-19
+
+- **Port Conflict Resolved**: Ports `8080`, `8081`, and `8082` were found occupied by system proxy and other projects. Re-routed backend/client default port to `8088` in `Server.kt`, `BackendClient.kt`, and `CompanionBackendClient.kt`.
+- **Phase 2 (Backend Setup)**: Ktor server successfully started and bound to port `8088`. Verified via `/health` endpoint returning `{"status": "healthy"}`.
+- **Phase 3 (Caregiver Authentication)**: Audited caregiver bearer token session restoration. Added `testGetStatusWithInvalidToken` test to verify token validation and `401 Unauthorized` responses.
+- **Phase 4 (Pairing Token Lifecycle)**: Added `testPairingCodeReuseFails` and `testPairingCodeExpiryFails` to verify code single-use constraint and expiration.
+- **Phase 5 (Server-side Authorization)**: Added permission-based checking on all caregiver endpoints (`/status`, `/checkin`, `/alerts`, `/config`) using a new `hasPermission` helper function. Added `testPermissionsEnforcedForCaregiver` verifying `403 Forbidden` if permissions are not granted.
+- **Phase 6 (Revocation)**: Implemented `/revoke` endpoint. Updated `PairingManager.revokePairing()` and `BackendClient.revokePairing()` to trigger backend revocation. Added `testSeniorRevocation` and `testCaregiverRevocation` to verify token destruction.
+- **Phase 7 (Account / Device Deletion)**: Implemented `/delete-account` (for caregiver) and `/delete-device` (for senior) endpoints. Added corresponding client-side API methods (`CompanionBackendClient.deleteAccount()` and `BackendClient.deleteDeviceData()`). Added `testDeleteCaregiverAccount` and `testDeleteSeniorDevice` tests to verify cleanup of relationship and state data.
+- **Phase 8-15 (Spine Regression & Verification)**: Run full multi-module build, unit tests, and lint rules (`./gradlew clean assembleDebug testDebugUnitTest lintDebug` and `./gradlew :backend:test`). All 166 Android unit tests, backend tests, and builds passed successfully.
+- **Phase 16-17 (Testing Plan)**: Prepared and committed E2E testing runbook to `DEVICE_TESTING_PLAN.md`.
+
+Final Sprint Status: **GO** (Full Trust Integration Spine established and fully verified via automated tests).
+

@@ -1,170 +1,49 @@
-# Architecture
+# Architecture — EasyUI
 
-## Status
+This document describes the architectural foundation of the **EasyUI Senior & Caregiver Product Suite**. EasyUI is built on top of the frozen **Core Launcher** baseline, which is a separate repository. EasyUI is an intentional product derivative of Core. Therefore, Core's original product-variant prohibitions do not govern EasyUI, and caregiver monitoring capabilities are valid within-scope features of this project.
 
-Initial architecture guidance for a brand-new project.
+For the multi-module interaction architecture (Senior Launcher ↔ Backend ↔ Caregiver Companion), see [docs/ARCHITECTURE_PRODUCT.md](file:///home/munaim/srv/apps/easyui/docs/ARCHITECTURE_PRODUCT.md).
 
-## Current implementation status — 2026-08-17
+## Architectural Goals
 
-The `app` module follows the documented launcher architecture: a Compose launcher shell, PackageManager-derived app discovery, `HomeLayout`/`HomeTileContent` as the canonical home model, DataStore-backed local persistence, and repository-owned theme/settings state. The repository also contains later `senior-launcher`, `caregiver-companion`, and `backend` modules; these are outside the `core v0.1` architecture until a separate product stage is approved. See `docs/VERIFICATION/core-current-status-2026-08-17.md`.
+The architecture of EasyUI is designed around:
+- **Resilience**: The launcher runs fully local-first. Settings and layout state reside in local storage, and the app remains functional offline.
+- **Modularity**: Code is structured into distinct modules for the launcher (`senior-launcher`), companion (`caregiver-companion`), and backend API (`backend`).
+- **Simplicity**: UI states flow from defined repositories and local stores. We avoid complex global state dependencies where possible.
+- **Traceability**: All network telemetry respects user-controlled permission flags.
 
-## Architecture goals
+## Module Structure
 
-The architecture must be:
+### 1. Launcher Module (`senior-launcher`)
+The launcher module inherits Core launcher concepts and extends them for senior accessibility:
+- **Launcher Shell**: Android entry points, home/launcher intent configuration, and onboarding controller.
+- **App Discovery & Launching**: Resolves installed package info via `PackageManager` and caches labels, icons, and categories.
+- **Home Layout Grid**: Coordinates favorite tile arrangements (2x2, 3x3, 4x4) and built-in shortcuts (contacts, emergency, clock, battery).
+- **Local Settings Storage**: Datastore-backed storage for app layout, themes, font sizes, and paired caregiver settings.
+- **Caregiver Repository**: Manages SHA-256 salted PIN hash, login lockout limits, and active pairing token/permissions state.
+- **Telemetry Worker (`StatusReportWorker`)**: A periodic `CoroutineWorker` scheduled with WorkManager that POSTs battery level/charging status and pulls config suggestions from the backend (when permitted).
 
-- simple
-- testable
-- local-first
-- modular enough for future variants
-- understandable by humans and AI agents
-- resistant to state conflicts
-- easy to verify through CI
+### 2. Companion Module (`caregiver-companion`)
+A standalone companion app:
+- **Pairing Session Manager**: Persists linked senior device credentials and permissions.
+- **Telemetry Views**: UI tabs displaying senior battery levels, check-ins, and active emergency alerts.
+- **Config Stager**: Interactive builder for stagining reminder recommendations to push to the backend.
 
-## Baseline modules
+### 3. Backend Module (`backend`)
+A Ktor/Netty service:
+- **Routing & Endpoint Controllers**: Validates pairing tokens and coordinates telemetry routing.
+- **Bearer Authentication Filter**: Standard bearer authenticator checking tokens against active paired device states.
+- **In-Memory Cache Store**: Stores temporary pairing codes, active status updates, and config suggestions.
 
-### 1. Launcher shell
+## State Management Rules
 
-Responsible for:
+### 1. One Source of Truth
+Each persistent state has exactly one source of truth:
+- Local layouts and settings are stored in local DataStore.
+- Caregiver status is cached on the backend, but local senior launcher values remain the ultimate truth.
 
-- Android entry point
-- launcher/home intent
-- safe startup
-- baseline navigation container
+### 2. Validate References
+If a pinned app is uninstalled or a favorite contact is deleted, the senior launcher must fall back safely to empty slot states without crashing.
 
-### 2. App discovery
-
-Responsible for:
-
-- finding launchable apps
-- loading labels
-- loading icons
-- safe fallback handling
-
-### 3. App launcher
-
-Responsible for:
-
-- resolving launch intents
-- opening target apps
-- handling launch failure safely
-
-### 4. Home model
-
-Responsible for:
-
-- selected home slots
-- fixed grid definition
-- default layout
-- validation of selected apps
-
-### 5. Settings storage
-
-Responsible for:
-
-- selected home apps
-- selected theme
-- safe reset
-- storage fallback
-
-### 6. Theme system
-
-Responsible for:
-
-- small theme list
-- stable theme state
-- one source of truth
-- consistent visual tokens
-
-### 7. Baseline UI
-
-Responsible for:
-
-- home screen
-- app list
-- minimal settings
-- status/debug screen
-
-### 8. Testing support
-
-Responsible for:
-
-- test tags
-- deterministic checks
-- emulator workflow support
-- screenshot/log capture
-
-## State rules
-
-### One source of truth
-
-Each persistent state must have only one source of truth.
-
-Examples:
-
-- selected home apps: one source
-- selected theme: one source
-- app list: derived from app discovery
-- launch result: returned by app launcher
-
-### UI is not storage
-
-UI should display and update state through defined state paths.
-
-Do not store critical state only inside UI components.
-
-### Validate stored references
-
-Stored app references may become invalid if apps are uninstalled.
-
-The launcher must handle this safely.
-
-## Error handling
-
-The launcher home screen should not crash because of:
-
-- missing icon
-- missing label
-- removed app
-- failed launch intent
-- storage read failure
-- empty app list
-
-Use safe fallbacks.
-
-## Recommended technical direction
-
-Preferred baseline stack:
-
-- Kotlin
-- Jetpack Compose
-- AndroidX
-- DataStore Preferences for small local settings
-- Gradle Kotlin DSL if practical
-- JUnit for unit tests
-- Android instrumentation/UI tests when needed
-- GitHub Actions for CI
-
-## Avoid in baseline
-
-Avoid:
-
-- complex dependency injection unless needed
-- large architecture frameworks too early
-- multiple product flavors too early
-- hidden mode logic
-- remote services
-- unnecessary databases
-- advanced permissions
-- manufacturer-specific workarounds as core logic
-
-## Architecture review checklist
-
-Before declaring architecture ready, confirm:
-
-- app discovery location is clear
-- icon loading location is clear
-- launch logic location is clear
-- settings storage location is clear
-- theme source of truth is clear
-- home selection model is clear
-- tests can cover core logic
+### 3. Error Isolation
+Network failures during check-in or SOS posting must not freeze the launcher UI thread. Error states must be surfaced as non-blocking UI banners while allowing the user to interact with the launcher normally.

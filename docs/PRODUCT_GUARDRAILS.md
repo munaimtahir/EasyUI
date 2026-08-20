@@ -1,126 +1,37 @@
-# Product Guardrails
+# Product Guardrails — EasyUI
 
-## Purpose
-
-This file protects the project from scope creep and unrealistic product claims.
-
-## Current status — 2026-08-17
-
-The launcher-level customization currently implemented in `core` does not change these guardrails. The current repository also contains later caregiver/backend/product-variant code, but that code is not approved for `core v0.1`. Android system UI, cloud/remote sync, monetization, product variants, and kiosk/device-owner behavior remain excluded from the baseline. See `docs/VERIFICATION/core-current-status-2026-08-17.md`.
-
-## Product truth
-
-`core` simplifies the Android home experience.
-
-It does not fully control Android system behavior across all consumer devices.
+This document protects the **EasyUI Senior & Caregiver Product Suite** from scope creep, security oversights, and unrealistic system claims. EasyUI is built on top of the frozen **Core Launcher** foundation, which is a separate repository. EasyUI is an intentional product derivative of Core. Therefore, Core's original product-variant prohibitions do not govern EasyUI, and caregiver monitoring capabilities are valid within-scope features of this project.
 
 ## Guardrail 1 — No full-lockdown promise
-
-Do not claim that the app can fully block Android settings, system UI, notification shade, OEM menus, or all non-launcher behavior on normal consumer devices.
+Do not claim that EasyUI can fully block Android Settings, system UI, notification shade, OEM pull-downs, or all non-launcher behavior on normal consumer devices. It is a home launcher replacement, not an MDM lockdown tool.
 
 ## Guardrail 2 — No enterprise MDM positioning
+Do not describe the product as mobile device management (MDM), enterprise lockdown, kiosk mode, or complete parent/guardian device control.
 
-Do not describe the baseline as:
+## Guardrail 3 — Local-first resilience (Offline-first)
+The senior launcher must remain fully usable and resilient when offline. Network/backend availability is an enhancement, not a dependency for core operations. The senior launcher must not crash or hang if the network is absent or the backend is offline. Local emergency dialing and local reminder alerts must work reliably under any network state.
 
-- mobile device management
-- enterprise lockdown
-- kiosk enforcement
-- complete parental control
-- complete device control
+## Guardrail 4 — Explicit Senior Consent
+No caregiver pairing can occur without explicit, voluntary consent on the senior device launcher. The senior must initiate pairing in the Privacy & Trust section to generate and display a short-lived pairing code. The senior must also have the ability to disconnect and revoke the pairing locally at any time.
 
-## Guardrail 3 — No cloud dependency in baseline
+## Guardrail 5 — Permission-respecting Telemetry
+The caregiver can only access telemetry (battery status, alerts, check-ins, configurations) for which the senior has granted permission. The backend and the client applications must respect these permission boundaries.
 
-The baseline must work without:
+## Guardrail 6 — No monetization
+The project must not include ads, subscriptions, premium tiers, or in-app payment logic.
 
-- account
-- login
-- backend
-- cloud sync
-- web dashboard
-- remote caregiver panel
+## Guardrail 7 — No hidden workflows before visible workflows
+Do not implement hidden caregiver settings entries, remote commands, or secret layouts. Control paths must be visible, transparent, and easy to manage via the local settings UI.
 
-## Guardrail 4 — No monetization in baseline
+## Guardrail 8 — Customization boundaries
+Allowed launcher-level customizations include:
+- Home screen layout selection (grid sizes, page management, label toggles).
+- App drawer customizations (favorites, search, layout modes).
+- App styling (font scaling, icon size, high-contrast themes).
+- Pinned tiles (contacts, built-in widgets, clock/date, battery).
 
-The baseline must not include:
-
-- ads
-- subscriptions
-- premium unlock
-- payment logic
-- licensing checks
-
-## Guardrail 5 — No product variants before baseline
-
-Do not add senior, caregiver, parent, child, school, office, or home variant logic in v0.1.
-
-## Guardrail 6 — No hidden workflows before visible workflows
-
-Hidden entry methods, protected settings, or restricted modes should not exist before the basic launcher is stable.
-
-## Guardrail 7 — No OEM-specific core hacks
-
-OEM-specific behavior may vary.
-
-Do not build the foundation around manufacturer-specific assumptions.
-
-## Guardrail 8 — No complex customization before stability
-
-Avoid:
-
-- many themes
-- complex grids
-- widgets
-- gestures
-- advanced sorting
-- multiple modes
-- dynamic layouts
-
-## Feature admission rule
-
-A feature can enter the project only if:
-
-- it fits the current stage
-- it does not make the baseline harder to stabilize
-- it can be tested
-- it is documented
-- it does not violate the greenfield policy
-
-## Guardrail 9 — Launcher customization boundary
-
-Allowed launcher customization includes:
-
-- home screen layout
-- app list
-- app icons and labels
-- home grid
-- pages
-- launcher themes
-- launcher quick access panel
-- custom top launcher information area
-- search
-- widgets
-- contacts and shortcuts
-- accessibility presets
-- product-specific modes after baseline stability
-
-Not allowed as normal launcher promises:
-
-- replacing the real Android status bar
-- replacing the notification shade
-- replacing Quick Settings
-- blocking notification pull-down
-- directly controlling restricted Wi-Fi/mobile-data toggles
-- fully locking down a consumer device
-- claiming enterprise MDM/device-owner behavior
-
-A custom top bar inside the launcher is allowed.
-
-A replacement for the real Android status bar is not allowed.
-
-A launcher quick access panel is allowed.
-
-A replacement for Android Quick Settings is not allowed.
-
-## Final principle
-
-If a feature makes the baseline less predictable, delay it.
+Not allowed:
+- Replacing the real Android status bar.
+- Replacing the OEM notification shade or Quick Settings.
+- Blocking notification pull-downs or OEM control centers.
+- Directly changing restricted system-level hardware settings (e.g. toggling mobile data or Wi-Fi state directly without going through system dialogs).

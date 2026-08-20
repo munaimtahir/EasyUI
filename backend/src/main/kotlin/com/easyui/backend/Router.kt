@@ -11,6 +11,10 @@ import java.util.UUID
 fun Application.configureRouting() {
     routing {
         // Public routes
+        get("/health") {
+            call.respond(mapOf("status" to "healthy"))
+        }
+
         post("/initiate-pairing") {
             val req = call.receive<Map<String, String>>()
             val seniorDeviceId = req["seniorDeviceId"] ?: return@post call.respond(HttpStatusCode.BadRequest, ErrorResponse("Missing seniorDeviceId"))
@@ -53,8 +57,7 @@ fun Application.configureRouting() {
                 }
 
                 // Check permissions
-                val allowedPerms = InMemoryStore.permissions[seniorDeviceId] ?: emptyList()
-                if (!allowedPerms.contains("battery")) {
+                if (!hasPermission(requesterToken, seniorDeviceId, "battery")) {
                     return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Battery permission not granted by senior"))
                 }
 
@@ -90,6 +93,10 @@ fun Application.configureRouting() {
                 val authorized = isAuthorizedForSenior(requesterToken, seniorDeviceId)
                 if (!authorized) {
                     return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Not authorized"))
+                }
+
+                if (!hasPermission(requesterToken, seniorDeviceId, "checkin")) {
+                    return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Checkin permission not granted by senior"))
                 }
 
                 val checkIn = InMemoryStore.checkIns[seniorDeviceId]
@@ -128,6 +135,10 @@ fun Application.configureRouting() {
                     return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Not authorized"))
                 }
 
+                if (!hasPermission(requesterToken, seniorDeviceId, "alerts")) {
+                    return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Alerts permission not granted by senior"))
+                }
+
                 val list = InMemoryStore.alerts[seniorDeviceId] ?: emptyList<StoredAlert>()
                 call.respond(AlertListResponse(alerts = list))
             }
@@ -140,6 +151,10 @@ fun Application.configureRouting() {
                 val authorized = isAuthorizedForSenior(requesterToken, seniorDeviceId)
                 if (!authorized) {
                     return@post call.respond(HttpStatusCode.Forbidden, ErrorResponse("Not authorized"))
+                }
+
+                if (!hasPermission(requesterToken, seniorDeviceId, "config")) {
+                    return@post call.respond(HttpStatusCode.Forbidden, ErrorResponse("Config permission not granted by senior"))
                 }
 
                 val payload = call.receive<ConfigPayload>()
@@ -156,6 +171,72 @@ fun Application.configureRouting() {
                 val config = InMemoryStore.configs.remove(seniorDeviceId) ?: ConfigPayload(emptyList())
                 call.respond(config)
             }
+
+            post("/revoke") {
+                val principal = call.principal<UserIdPrincipal>()!!
+                val requesterToken = principal.name
+
+                val seniorDeviceId = InMemoryStore.deviceTokens[requesterToken]
+                if (seniorDeviceId != null) {
+                    // Senior is revoking
+                    val linkedCaregiverIds = InMemoryStore.caregiverToSenior.filter { it.value == seniorDeviceId }.keys
+                    for (cgId in linkedCaregiverIds) {
+                        InMemoryStore.caregiverToSenior.remove(cgId)
+                        InMemoryStore.caregiverTokens.entries.removeIf { it.value == cgId }
+                    }
+                    InMemoryStore.permissions.remove(seniorDeviceId)
+                    call.respond(HttpStatusCode.OK, mapOf("revoked" to true))
+                } else {
+                    // Caregiver is revoking
+                    val caregiverDeviceId = InMemoryStore.caregiverTokens[requesterToken]
+                    if (caregiverDeviceId != null) {
+                        InMemoryStore.caregiverToSenior.remove(caregiverDeviceId)
+                        InMemoryStore.caregiverTokens.remove(requesterToken)
+                        call.respond(HttpStatusCode.OK, mapOf("revoked" to true))
+                    } else {
+                        call.respond(HttpStatusCode.Forbidden, ErrorResponse("Unknown token type"))
+                    }
+                }
+            }
+
+            post("/delete-account") {
+                val principal = call.principal<UserIdPrincipal>()!!
+                val requesterToken = principal.name
+
+                val caregiverDeviceId = InMemoryStore.caregiverTokens[requesterToken]
+                if (caregiverDeviceId != null) {
+                    InMemoryStore.caregiverToSenior.remove(caregiverDeviceId)
+                    InMemoryStore.caregiverTokens.remove(requesterToken)
+                    call.respond(HttpStatusCode.OK, mapOf("deleted" to true))
+                } else {
+                    call.respond(HttpStatusCode.Forbidden, ErrorResponse("Only caregiver can delete caregiver account"))
+                }
+            }
+
+            post("/delete-device") {
+                val principal = call.principal<UserIdPrincipal>()!!
+                val requesterToken = principal.name
+
+                val seniorDeviceId = InMemoryStore.deviceTokens[requesterToken]
+                if (seniorDeviceId != null) {
+                    InMemoryStore.deviceTokens.remove(requesterToken)
+                    InMemoryStore.deviceStatus.remove(seniorDeviceId)
+                    InMemoryStore.deviceStatusTimestamp.remove(seniorDeviceId)
+                    InMemoryStore.checkIns.remove(seniorDeviceId)
+                    InMemoryStore.alerts.remove(seniorDeviceId)
+                    InMemoryStore.configs.remove(seniorDeviceId)
+                    InMemoryStore.permissions.remove(seniorDeviceId)
+
+                    val linkedCaregiverIds = InMemoryStore.caregiverToSenior.filter { it.value == seniorDeviceId }.keys
+                    for (cgId in linkedCaregiverIds) {
+                        InMemoryStore.caregiverToSenior.remove(cgId)
+                        InMemoryStore.caregiverTokens.entries.removeIf { it.value == cgId }
+                    }
+                    call.respond(HttpStatusCode.OK, mapOf("deleted" to true))
+                } else {
+                    call.respond(HttpStatusCode.Forbidden, ErrorResponse("Only senior can delete senior device data"))
+                }
+            }
         }
     }
 }
@@ -168,3 +249,12 @@ private fun isAuthorizedForSenior(token: String, seniorDeviceId: String): Boolea
     val linkedSeniorId = InMemoryStore.caregiverToSenior[caregiverId]
     return linkedSeniorId == seniorDeviceId
 }
+
+private fun hasPermission(token: String, seniorDeviceId: String, permission: String): Boolean {
+    val tokenSeniorId = InMemoryStore.deviceTokens[token]
+    if (tokenSeniorId == seniorDeviceId) return true
+
+    val allowedPerms = InMemoryStore.permissions[seniorDeviceId] ?: emptyList()
+    return allowedPerms.contains(permission)
+}
+

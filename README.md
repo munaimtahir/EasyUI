@@ -1,109 +1,58 @@
-# core
+# EasyUI
 
-`core` is a brand-new Android launcher foundation project.
+This repository is **EasyUI**, a multi-module senior/caregiver product. It is built on top of the **Core Launcher** foundation, which is a separate, frozen repository. EasyUI is an intentional product derivative of Core; therefore, Core's original product-variant and caregiver prohibitions do not govern EasyUI. Caregiver functionality, the `senior-launcher` module, the `caregiver-companion` app, and the Netty `backend` service are valid, in-scope features of this project.
 
-It is a clean greenfield project created to build a stable, minimal, tested launcher base before any product-specific launcher variants are developed.
-
-## Internal identity
+## Internal Identity
 
 Repository name:
-
 ```text
-core
+easyui
 ```
 
 Internal project name:
-
 ```text
-Core Launcher Foundation
+EasyUI Senior & Caregiver Product Suite
 ```
 
-Future product family:
-
+Base lineage:
 ```text
-EasyUI Launcher Family
+Core Launcher Foundation (Frozen baseline)
 ```
 
-Possible future products may include:
+## Project Structure
 
-- EasyUI Senior Launcher
-- EasyUI Guardian Launcher
-- EasyUI Parent Launcher
-- EasyUI School UI
-- EasyUI Office UI
-- EasyUI Home UI
+This repository contains the following modules:
 
-## What this project is
+* **`app`**: Core-derived launcher foundation, kept as baseline/reference functionality.
+* **`senior-launcher`**: A simplified, accessible Android launcher featuring senior-friendly layouts, dialing/contacts shortcuts, widgets, notifications pane, and caregiver security capabilities (pairing, status reporting, check-in, SOS alerts).
+* **`caregiver-companion`**: A standalone companion Android app for caregivers to monitor senior device battery, receive voluntary check-ins, receive emergency alerts, and suggest reminders.
+* **`backend`**: A Ktor/Netty service routing authentication, secure pairing, alerts, status, and configuration updates.
 
-`core` is the technical foundation for a future family of simplified Android launcher products.
+## Current Project Status — 2026-08-17
 
-The first goal is not to create a feature-rich launcher.
+EasyUI is in a **Conditional GO (development/verification stage)**. The launcher foundation and caregiver ecosystem features are substantially implemented. Automated builds, unit tests, and lint pass successfully. End-to-end integration and emulator verification are actively underway.
 
-The first goal is to create a reliable launcher baseline that can:
+* For the latest reviewed status and planning decisions, see [docs/VERIFICATION/easyui-current-status-2026-08-17.md](file:///home/munaim/srv/apps/easyui/docs/VERIFICATION/easyui-current-status-2026-08-17.md).
+* For the historical Core v0.1 baseline report, see [docs/VERIFICATION/core-v0.1-baseline-report.md](file:///home/munaim/srv/apps/easyui/docs/VERIFICATION/core-v0.1-baseline-report.md).
 
-- act as an Android home launcher
-- display a stable home screen
-- discover installed apps
-- show real app labels and icons
-- launch apps reliably
-- provide a simple app list
-- provide a fixed home grid
-- persist basic local settings
-- support basic theme persistence
-- pass automated build, lint, unit, and emulator checks
+## Greenfield Policy
 
-## Current baseline status — 2026-08-17
+EasyUI is built upon clean greenfield principles. While we inherit the Core baseline launcher module, we do not copy or import legacy workflows, state systems, or UI flows from external legacy projects.
 
-The launcher and the current additional modules build and launch on the available Android 15 emulator. The current repository is not a clean v0.1 baseline: recent commits also retain senior product, caregiver companion, backend, pairing, PIN, and remote-sync functionality that is outside the locked v0.1 scope.
-
-The authoritative current status and finalized planning decisions are recorded in [`docs/VERIFICATION/core-current-status-2026-08-17.md`](docs/VERIFICATION/core-current-status-2026-08-17.md). The [`docs/VERIFICATION/core-v0.1-baseline-report.md`](docs/VERIFICATION/core-v0.1-baseline-report.md) is historical evidence for the earlier baseline tree, not the current release verdict.
-
-## What this project is not
-
-`core` is not yet:
-
-- a senior launcher
-- a caregiver launcher
-- a parent-control launcher
-- a child-safe launcher
-- a school launcher
-- an office launcher
-- a kiosk product
-- an enterprise device-management system
-- a cloud-managed product
-- a monetized product build
-
-## Greenfield policy
-
-This is a brand-new project.
-
-Do not reuse legacy code, architecture, workflows, state systems, UI flows, or implementation structures from any existing launcher or app project.
-
-This project should make its own technical decisions based on its current baseline scope.
-
-## Development principle
-
-Build the smallest reliable launcher first.
-
-Product variants and advanced features come later only after the baseline is stable and verified.
-
-## Documentation map
+## Documentation Map
 
 Important files:
 
-- `docs/PROJECT_CONTEXT.md`
-- `docs/GREENFIELD_POLICY.md`
-- `docs/BASELINE_SCOPE.md`
-- `docs/PRODUCT_GUARDRAILS.md`
-- `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`
-- `docs/ROADMAP.md`
-- `docs/ARCHITECTURE.md`
-- `docs/DATA_STORAGE.md`
-- `docs/UI_BASELINE.md`
-- `docs/TESTING/TESTING_STRATEGY.md`
-- `docs/DEFINITION_OF_DONE.md`
-- `AGENTS.md`
-- `GEMINI.md`
-- `.github/copilot-instructions.md`
-- `copilot_session.md`
-- `TASKS.md`
+* [AGENTS.md](file:///home/munaim/srv/apps/easyui/AGENTS.md)
+* [GEMINI.md](file:///home/munaim/srv/apps/easyui/GEMINI.md)
+* [TASKS.md](file:///home/munaim/srv/apps/easyui/TASKS.md)
+* [copilot_session.md](file:///home/munaim/srv/apps/easyui/copilot_session.md)
+* [docs/PROJECT_CONTEXT.md](file:///home/munaim/srv/apps/easyui/docs/PROJECT_CONTEXT.md)
+* [docs/GREENFIELD_POLICY.md](file:///home/munaim/srv/apps/easyui/docs/GREENFIELD_POLICY.md)
+* [docs/BASELINE_SCOPE.md](file:///home/munaim/srv/apps/easyui/docs/docs/BASELINE_SCOPE.md)
+* [docs/PRODUCT_GUARDRAILS.md](file:///home/munaim/srv/apps/easyui/docs/PRODUCT_GUARDRAILS.md)
+* [docs/ARCHITECTURE.md](file:///home/munaim/srv/apps/easyui/docs/ARCHITECTURE.md)
+* [docs/ARCHITECTURE_PRODUCT.md](file:///home/munaim/srv/apps/easyui/docs/ARCHITECTURE_PRODUCT.md)
+* [docs/ROADMAP.md](file:///home/munaim/srv/apps/easyui/docs/ROADMAP.md)
+* [docs/TESTING/TESTING_STRATEGY.md](file:///home/munaim/srv/apps/easyui/docs/TESTING/TESTING_STRATEGY.md)
+* [docs/DEFINITION_OF_DONE.md](file:///home/munaim/srv/apps/easyui/docs/DEFINITION_OF_DONE.md)

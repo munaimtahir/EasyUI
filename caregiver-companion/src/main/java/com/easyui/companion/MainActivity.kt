@@ -540,6 +540,11 @@ fun SettingsTab(sessionManager: CompanionSession, onDisconnect: () -> Unit) {
         Button(
             onClick = {
                 scope.launch {
+                    try {
+                        CompanionBackendClient.deleteAccount()
+                    } catch (e: Exception) {
+                        // Ignore offline errors so local state can still be cleared
+                    }
                     sessionManager.clearSession()
                     onDisconnect()
                 }

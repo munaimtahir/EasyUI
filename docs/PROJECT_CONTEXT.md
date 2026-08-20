@@ -1,123 +1,33 @@
-# Project Context — core
+# Project Context — EasyUI
 
-## Summary
-
-`core` is a brand-new Android launcher foundation project.
-
-As of 2026-08-17, the launcher foundation has verified runtime coverage on an Android 15 emulator, but the repository also contains later senior/caregiver/backend modules. Those modules are not accepted as part of `core v0.1` until the planning owner explicitly chooses a separate product stage.
-
-The authoritative current status is `docs/VERIFICATION/core-current-status-2026-08-17.md`.
-
-It will provide the shared foundation for a future family of simplified launcher products.
+This repository is **EasyUI**, a multi-module senior/caregiver product. It is built on top of the **Core Launcher** foundation, which is a separate, frozen repository. EasyUI is an intentional product derivative of Core. Core's original product-variant and caregiver prohibitions do not govern EasyUI; therefore, caregiver functionality, backend integration, the Senior Launcher, and the Caregiver Companion app are fully valid, in-scope capabilities of EasyUI.
 
 ## Purpose
 
-The purpose of `core` is to create a stable Android launcher baseline before building specialized launcher experiences.
+The purpose of EasyUI is to build a complete, stable senior-friendly launcher ecosystem with secure caregiver companion remote capabilities and a supporting backend server. EasyUI leverages the robust, tested local-first launcher baseline from Core and extends it with pairing, status reporting, emergency alerts, check-ins, and suggested reminders.
 
-The foundation must be simple, reliable, local-first, and easy to test.
+## Modules Overview
 
-## Core concept
+1. **`app`**: Reference launcher foundation derived from the Core baseline.
+2. **`senior-launcher`**: Accessible senior-friendly smartphone launcher with simplified UI, emergency SOS triggers, check-in flows, local/remote reminders, and local configuration suggestion support.
+3. **`caregiver-companion`**: Caregiver-facing application for pairing with a senior device, monitoring status, alerts, check-ins, and submitting reminder suggestions.
+4. **`backend`**: Remote gateway orchestration service managing Ktor bearer authentication, secure pairing logic, and caching telemetry (status, check-ins, alerts, configuration).
 
-A launcher is the user's home surface on Android.
+## Product Philosophy
 
-For this project, the baseline launcher should do the basics extremely well:
+- **Stability First**: EasyUI must remain reliable and functional local-first. Network/backend availability is an enhancement, not a critical runtime dependency for the senior device launcher.
+- **Explicit Consent**: Caregiver pairing requires explicit consent on the senior device launcher (via a short-lived pairing code displayed in the Privacy & Trust section).
+- **User Privacy**: No private user contents (SMS, calls, logs, location) are sent to the backend. Sharing is strictly limited to battery status, voluntary check-ins, manual SOS alerts, and caregiver config suggestions.
+- **Granular Permissions**: Permissions (battery status, alerts, config suggestions, check-ins) are controlled on the senior device launcher. If a permission is revoked, the corresponding data flow is halted.
 
-- open reliably
-- show a stable home screen
-- detect installed apps
-- show real app icons and labels
-- launch apps
-- remember selected home apps
-- remember basic visual preferences
-- recover safely from missing apps or storage issues
+## Launcher Customization Boundaries
 
-## Future product direction
+While EasyUI supports advanced launcher-level customization (layout grid selection, pages, widgets, contacts, themes), it operates within Android platform rules:
+- EasyUI does **not** replace the real Android status bar.
+- EasyUI does **not** replace the notification shade or Quick Settings.
+- EasyUI does **not** perform full device lock down or act as a device owner/MDM kiosk unless explicitly developed under managed configurations.
+- A custom top bar inside the senior launcher is allowed, but it only displays launcher-level status.
 
-The foundation may later support multiple products, such as:
+## Greenfield Policy
 
-- senior-friendly launcher
-- caregiver-assisted launcher
-- parent-supervised launcher
-- child-safe launcher
-- school-focused launcher
-- office/productivity launcher
-- simplified home-device launcher
-
-These are future layers.
-
-They are not part of the first baseline.
-
-## Project philosophy
-
-- Stability before customization.
-- Simplicity before power.
-- Local-first before cloud.
-- Visible workflows before hidden workflows.
-- Testable behavior before advanced behavior.
-- Small scope before product expansion.
-- Clear boundaries before marketing claims.
-
-## Core product truth
-
-`core` simplifies the Android home experience.
-
-It does not claim to fully control Android system behavior across all consumer devices.
-
-## Launcher customization truth
-
-`core` may eventually support a wide range of launcher-level customizations, including:
-
-- home screen layout options
-- page count options
-- grid size options
-- icon and label sizing
-- app list customization
-- launcher themes
-- launcher quick access panel
-- custom top launcher information bar
-- search
-- widgets
-- contact shortcuts
-- accessibility presets
-- product-specific modes after baseline stability
-
-However, these are launcher-level features.
-
-`core` does not replace Android system UI.
-
-It must not claim to redesign, replace, block, or fully control:
-
-- real Android status bar
-- real notification shade
-- Android Quick Settings panel
-- OEM control center
-- system settings
-- mobile data controls
-- full device lockdown behavior
-
-Advanced managed-device or kiosk behavior may be explored later only as a separate track.
-
-## Greenfield status
-
-`core` is a complete greenfield project.
-
-It should not reuse existing codebases, legacy architecture, old workflows, old state systems, or copied UI flows.
-
-All architecture and implementation should be designed specifically for this project and its baseline scope.
-
-## First success condition
-
-The first success condition is a stable launcher baseline that passes:
-
-- build verification
-- unit tests
-- lint
-- emulator install/launch testing
-- basic manual smoke testing when available
-- documentation review
-
-## First non-goal
-
-The first non-goal is feature richness.
-
-This project must not add advanced product features before the launcher foundation is stable.
+EasyUI adheres to the Greenfield Policy. Although it derives from Core Launcher v0.1, we build features specifically for this ecosystem and do not import legacy state systems, workflows, or code from unrelated legacy codebases.

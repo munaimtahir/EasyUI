@@ -1,244 +1,65 @@
-# Roadmap
-
-## Current status — 2026-08-17
-
-The launcher foundation and planned launcher-level customization build and pass the current ADB smoke workflow. The repository is currently **NO-GO for v0.1 release** because later senior/caregiver/backend modules remain mixed into the baseline tree. See `docs/VERIFICATION/core-current-status-2026-08-17.md` for the finalized planning decision.
-
-Completed current launcher-level scope includes:
-
-- launcher HOME role, stable home surface, app discovery/icons/launching
-- persistent pages and 2x2/3x3/4x4 grids with migration/packing
-- app drawer search, Grid/List modes, and favorites
-- themes/appearance, top information strip, Quick Access, notifications test flow
-- contacts/dial/SMS shortcuts, built-in Clock/Date/Note tiles, and flashlight handling
-- visible reset flow and connected Compose smoke coverage
-
-Future product variants and managed-device work remain deferred until a separate product scope is approved. The existing caregiver suite must be isolated or formally moved to that separate stage before further feature work.
-
-## Stage 0 — Documentation Foundation
-
-Goal:
-
-Create the project identity, scope, guardrails, AI-agent rules, testing strategy, and decision records.
-
-Outputs:
-
-- README
-- project context
-- greenfield policy
-- baseline scope
-- product guardrails
-- architecture plan
-- storage plan
-- UI baseline
-- testing strategy
-- definition of done
-- AI-agent instructions
-- Copilot instructions
-- Gemini instructions
-- decision records
-
-Exit criteria:
-
-- documentation committed
-- scope clearly locked
-- AI-agent instructions available
-
-## Stage 1 — Android Launcher Skeleton
-
-Goal:
-
-Create a clean Android project that can become a launcher.
-
-Includes:
-
-- Android project setup
-- launcher intent configuration
-- minimal home activity/screen
-- basic build
-- initial CI build
-
-Exit criteria:
-
-- app builds
-- app launches
-- launcher intent present
-- build workflow passes
-
-## Stage 2 — App Discovery and App List
-
-Goal:
-
-Detect installed apps and show a simple list.
-
-Includes:
-
-- installed app scanner
-- app labels
-- app icons
-- alphabetical list
-- tap to launch
-
-Exit criteria:
-
-- apps display
-- icons display
-- apps launch
-- tests pass
-
-## Stage 3 — Fixed Home Grid
-
-Goal:
-
-Create a stable home grid for selected apps/actions.
-
-Includes:
-
-- fixed grid
-- selected home apps
-- local persistence
-- fallback handling
-- app launch from home
-
-Exit criteria:
-
-- selected apps persist
-- home grid stable
-- no broken placeholders
-- app launch works
-
-## Stage 4 — Minimal Settings
-
-Goal:
-
-Add only the settings required for the baseline.
-
-Includes:
-
-- choose home apps
-- choose basic theme
-- reset home apps
-- status/debug information
-
-Exit criteria:
-
-- settings persist
-- reset works
-- theme persists
-- no state conflict
-
-## Stage 5 — CI and Emulator Verification
-
-Goal:
-
-Verify baseline behavior through automation.
-
-Includes:
-
-- build workflow
-- unit test workflow
-- lint workflow
-- emulator install/launch workflow
-- screenshot/log artifacts
-- final verification report
-
-Exit criteria:
-
-- all required workflows pass
-- artifacts available
-- baseline verdict documented
-
-## Stage 5B — Launcher Customization Planning
-
-Goal:
-
-Convert the allowed customization catalogue into staged implementation groups after the baseline is stable.
-
-Includes:
-
-- home page customization plan
-- grid size options plan
-- icon/text size options plan
-- launcher quick access panel plan
-- custom top launcher information bar plan
-- search plan
-- widgets plan
-- accessibility customization plan
-- contacts/phone shortcut plan
-- product variant split
-
-Exit criteria:
-
-- customization scope reviewed
-- features assigned to baseline/post-baseline/product-variant/advanced tracks
-- no Android system UI replacement claims
-- no kiosk/MDM behavior added to normal launcher scope
-
-## Stage 5C — MVP Customization and Runtime Patch
-
-Goal:
-
-Complete the implementation of groups A-H from the customization scope and stabilize runtime behavior.
-
-Includes:
-
-- Group A: Home screen customization (grid fix, page count, label toggle)
-- Group B: App drawer customization (search, layout modes, favorites)
-- Group C: Theme and appearance (expanded palettes, accents, shapes, motion)
-- Group D: Quick access panel (system shortcuts, app intents)
-- Group E: Top bar improvements (battery, network)
-- Group F: Notifications (launcher shortcut, test notification)
-- Group G: Dialer and contacts (phone shortcuts, favorite contact tiles)
-- Group H: Widgets (built-in local widgets)
-- Flashlight shortcut
-
-Exit criteria:
-
-- all features implemented and documented
-- grid size bug fixed with Option A migration
-- build/test/lint pass
-- final baseline verification report created
-
-## Stage 6 — First Product Variant Planning
-
-Start only after:
-
-- baseline GO
-- customization scope review
-- post-baseline launcher customization priorities are clear
-
-Possible first variant:
-
-- senior-friendly launcher
-
-This stage should create a separate product scope before implementation.
-
-## Stage 7 — Caregiver/Safety Layer Planning
-
-Start only after the first product variant is stable.
-
-Possible features:
-
-- caregiver settings
-- PIN-protected edit mode
-- layout lock
-- app visibility controls
-- reset tools
-
-## Stage 8 — Product Family Expansion
-
-Start only after foundation and first variant are stable.
-
-Possible directions:
-
-- parent launcher
-- child-safe launcher
-- school launcher
-- office launcher
-- home launcher
-
-## Roadmap rule
-
-Do not skip stages.
-
-Each stage should end with a GO, Conditional GO, or NO-GO verdict.
+# Roadmap — EasyUI
+
+This document outlines the development phases of the **EasyUI Senior & Caregiver Product Suite**, built upon the frozen **Core Launcher** baseline. EasyUI is an intentional product derivative of Core. Core's original product-variant prohibitions do not govern EasyUI; caregiver and remote monitoring capabilities are valid within-scope features of this project.
+
+## Current Stage Status — 2026-08-17
+
+EasyUI is currently in the **Integration and Verification stage** (Conditional GO). 
+
+### What is Completed:
+- **Core Launcher baseline (`app` module)**: behves as default Android launcher, stable home screen, package-manager app discovery, app launcher, appearance options.
+- **Senior Launcher (`senior-launcher` module)**: custom onboarding, large-touch home, pairing code display, caregiver PIN locks, emergency/SOS hold screen, voluntary check-in screen, notifications shade, custom local widgets, and background status reporting.
+- **Caregiver Companion (`caregiver-companion` module)**: companion Android app with secure pairing input, seniors overview tab, check-in log, emergency alert view, settings pane, and suggestions staging.
+- **Backend Orchestrator (`backend` module)**: Ktor bearer token auth, pairing endpoints, Status/Check-In/SOS Alert cache, and configuration suggestion queue.
+
+### Active Focus:
+- Documentation normalization (Priority 1)
+- Feature inventory verification audit (Priority 2)
+- End-to-end integration testing (pairing, authentication, telemetry, SOS alerts, and reminder suggestions sync)
+
+---
+
+## Phase 1 — Core Base Foundation (Completed)
+- Stable Android launcher skeleton.
+- Package discovery, real app list, and app launching.
+- Persisted home layout grid selections and basic appearance settings.
+- Build/lint/unit test gate setup.
+
+## Phase 2 — Senior & Caregiver Implementation (Completed)
+- Created `senior-launcher` module with accessible fonts/touch targets.
+- Created `caregiver-companion` module with pairing and status widgets.
+- Created Ktor Netty `backend` service with pairing and data endpoints.
+- Implemented caregiver security PIN (SHA-256 with salt) and lockout behavior.
+
+## Phase 3 — End-to-End Integration Verification (Active)
+- **Objective**: Prove the complete workflow between the Senior Launcher, Caregiver Companion, and Backend service.
+- **Key tasks**:
+  1. Verify token authorization lifecycle.
+  2. Test short-lived pairing code generation, entry, and device link establishment.
+  3. Validate battery/charging status reporting and display.
+  4. Verify voluntary check-in reporting and caregiver notification.
+  5. Validate manual SOS button press triggering dialing and posting alert to backend.
+  6. Verify suggestions push and pull (specifically remote reminders).
+
+## Phase 4 — Offline, Failure & Security Hardening (Planned)
+- **Objective**: Ensure the senior launcher remains fully functional offline and handles faults gracefully.
+- **Key tasks**:
+  - Test network connectivity drops and recovery transitions.
+  - Audit database and preference storage file security.
+  - Review token lifetime, secure transport (HTTPS/TLS in production), and brute-force lockout constraints.
+  - Review and fix non-blocking lint warnings.
+
+## Phase 5 — Accessibility & UI Polishing (Planned)
+- **Objective**: Perform a dedicated senior accessibility audit.
+- **Key tasks**:
+  - Verify display scaling and font scaling support in the senior launcher.
+  - Confirm Touch Target sizes (minimum 48dp) and contrast ratios.
+  - Run TalkBack accessibility scans.
+  - Refine error messages and user action feedback.
+
+## Phase 6 — Release Preparation (Planned)
+- **Objective**: Set up signing keys, production endpoints, and verify release builds.
+- **Key tasks**:
+  - Configure secure signing parameters.
+  - Run `assembleRelease` builds.
+  - Collect final verification assets and draft Google Play metadata.

@@ -1,159 +1,60 @@
-# Testing Strategy
+# Testing Strategy — EasyUI
 
-## Purpose
+This document outlines the testing strategy for **EasyUI**, ensuring that the senior launcher, caregiver companion, and supporting backend remain stable, secure, and resilient. EasyUI is built on top of the frozen **Core Launcher** foundation, which is a separate repository. EasyUI is an intentional product derivative of Core. Therefore, Core's original product-variant prohibitions do not govern EasyUI.
 
-`core` must be tested from the beginning.
+## Testing Philosophy
+- **Resilience First**: The senior launcher must be tested for offline robustness. Connectivity drops, server outages, and slow latency must never degrade launcher HOME stability.
+- **Integration Coverage**: Telemetry and control loops (Pairing, Status reporting, SOS Alerts, and Reminder synchronization) must be validated end-to-end.
+- **Accessibility Verification**: Accessibility is a core feature of the senior launcher. Visual scaling, touch targets, and screen reader labels must be audited.
 
-The baseline is not complete until it can be verified repeatedly.
+---
 
-## Current verification status — 2026-08-17
+## Required Verification Layers
 
-The current tree passes `./gradlew clean assembleDebug testDebugUnitTest lintDebug` and the available Android 15 ADB smoke workflow. Core HOME/app-drawer flows and the added module launch flows were exercised. Current status, limitations, and the release decision are in `docs/VERIFICATION/core-current-status-2026-08-17.md`.
-
-The `connectedDebugAndroidTest` and runtime evidence under `docs/VERIFICATION/artifacts/2026-08-09/` belong to the earlier baseline tree and remain historical until rerun against the final chosen scope.
-
-## Required verification layers
-
-### 1. Build
-
-Command:
-
+### 1. Build Verification
+Ensure all modules compile and package correctly:
 ```bash
 ./gradlew clean assembleDebug
 ```
-
-Required result:
-
-```text
-PASS
+And verify release packaging:
+```bash
+./gradlew assembleRelease
 ```
 
-### 2. Unit tests
-
-Command:
-
+### 2. Unit Testing
+Run local unit tests for all modules to verify storage, network clients, state transitions, hashing, and encryption logic:
 ```bash
 ./gradlew testDebugUnitTest
 ```
+- **Senior Launcher**: Layout grid packing, theme settings, SHA-256 caregiver PIN hashing, local reminder scheduling, and pairing managers.
+- **Companion**: Local session storage, suggestion staging, and UI state mappings.
+- **Backend**: Token authentication filters, secure route authorizations, pairing code validation, and state stores (exercised in `BackendTest`).
 
-Required result:
-
-```text
-PASS
-```
-
-### 3. Lint
-
-Command:
-
+### 3. Static Analysis & Linting
+Validate codebase syntax and guidelines:
 ```bash
 ./gradlew lintDebug
 ```
 
-Required result:
+### 4. Emulator & Instrumentation Testing
+Verify UI interactions using simulated targets:
+- **Onboarding workflow**: Verify steps completion.
+- **Default Launcher setup**: Verify package set-home and HOME button routing.
+- **Pairing screen**: Enter code and verify pairing completion.
+- **Emergency screen**: Long-press SOS button and verify dialer launch.
+- **Check-In screen**: Tap "I'm OK" and verify state transition.
 
-```text
-PASS
-```
+### 5. Offline & Recovery Tests
+Perform manual or automated failure injections:
+- **Offline operation**: Install and launch senior launcher without internet. Verify normal HOME operation, app drawer searching, and local dialing.
+- **Server unavailable**: Attempt Check-In / SOS trigger when backend is unreachable. Verify UI displays friendly errors without crashes.
+- **Reconnection**: Restore connectivity and verify that `StatusReportWorker` successfully posts queued state.
 
-### 4. Emulator runtime
+---
 
-Required workflow:
-
-- boot emulator
-- install APK
-- launch app
-- verify app opens
-- capture screenshot
-- collect logcat
-- upload artifacts
-
-### 5. Manual smoke test
-
-Required before baseline GO if a device is available:
-
-- install app
-- set as default launcher
-- press Home
-- open app list
-- launch apps
-- choose home apps
-- restart app
-- verify persistence
-- change theme
-- verify persistence
-- reset settings
-
-## Testing priorities
-
-Test these early:
-
-- app scanner does not crash
-- icons have fallback
-- labels have fallback
-- launch failures are safe
-- selected apps persist
-- removed apps are handled
-- theme does not revert
-- reset produces safe defaults
-
-## GitHub Actions workflows
-
-Recommended workflows:
-
-### Android Code CI
-
-Runs:
-
-- build
-- unit tests
-- lint
-
-### Android Runtime Emulator CI
-
-Runs:
-
-- emulator boot
-- APK install
-- launch
-- screenshot
-- logcat
-- artifact upload
-
-Expected location:
-
-- `.github/workflows/android-runtime-emulator-ci.yml`
-
-## Artifact policy
-
-Where practical, upload:
-
-- build reports
-- test reports
-- lint reports
-- screenshots
-- logcat
-- verification summary
-
-## Failure policy
-
-If a check fails:
-
-- do not hide the failure
-- do not delete the check
-- do not mark the sprint complete
-- diagnose the cause
-- fix implementation or test
-- rerun verification
-- document the remaining blocker if unresolved
-
-## Baseline GO criteria
-
-Baseline testing reaches GO only when:
-
-- build passes
-- unit tests pass
-- lint passes
-- emulator runtime passes
-- core manual smoke test passes or has a documented reason if not run
-- final verification report exists
+## Accessibility Audit Priorities
+Run dedicated accessibility checks:
+- **Font Scaling**: Verify that layout text does not truncate or overflow at maximum system font size.
+- **Touch Target Sizes**: Ensure interactive buttons, list entries, and tiles have a minimum size of 48dp x 48dp.
+- **TalkBack Scan**: Check that all custom image tiles and buttons have clear, descriptive content labels.
+- **Contrast Ratios**: Check readability of texts and icons against container backgrounds (especially on emergency screens).
