@@ -480,3 +480,44 @@ Pull latest updates from remote repository, verify the new E2E tests and code ch
 ### Final Verdict
 - **GO**
 
+---
+
+## Release Keystore Setup & Signed Release Generation Session — 2026-08-22
+
+### Goal
+Set up a production-ready 2048-bit RSA release keystore, configure release signing across all Android modules (`senior-launcher`, `caregiver-companion`, `app`), build signed release APKs and App Bundles (AAB), and verify APK signing signatures (Scheme v2) and live on-device installation.
+
+### Plan
+- [x] Create RSA 2048-bit keystore at `keystore/easyui-release.jks` with 25-year validity.
+- [x] Configure `.gitignore` to protect keystores (`*.jks`, `*.keystore`, `release-keystore.properties`).
+- [x] Add release signing config to `app/build.gradle.kts`.
+- [x] Build signed release APKs and App Bundles via `./gradlew assembleRelease bundleRelease`.
+- [x] Verify APK signing signatures with `apksigner verify --verbose` (APK Signature Scheme v2 verified: true).
+- [x] Verify App Bundle signing with `jarsigner -verify`.
+- [x] Verify on-device installation and launch of signed release APKs on Android 16 (`emulator-5556`).
+
+### Commands Run
+- `keytool -genkeypair -v -keystore keystore/easyui-release.jks -alias easyui-release-key ...`
+- `./gradlew assembleRelease bundleRelease`
+- `apksigner verify --verbose senior-launcher/build/outputs/apk/release/senior-launcher-release.apk`
+- `apksigner verify --verbose caregiver-companion/build/outputs/apk/release/caregiver-companion-release.apk`
+- `apksigner verify --verbose app/build/outputs/apk/release/app-release.apk`
+- `adb -s emulator-5556 install senior-launcher/build/outputs/apk/release/senior-launcher-release.apk`
+- `adb -s emulator-5556 install caregiver-companion/build/outputs/apk/release/caregiver-companion-release.apk`
+
+### Verification Results
+- **Keystore**: `keystore/easyui-release.jks` (2048-bit RSA, SHA384withRSA).
+- **Signed APKs**:
+  * `senior-launcher-release.apk` (Scheme v2 verified: true)
+  * `caregiver-companion-release.apk` (Scheme v2 verified: true)
+  * `app-release.apk` (Scheme v2 verified: true)
+- **Signed App Bundles**:
+  * `senior-launcher-release.aab` (Signed & verified)
+  * `caregiver-companion-release.aab` (Signed & verified)
+  * `app-release.aab` (Signed & verified)
+- **Live Device Launch**: Senior Launcher (`PID 10388`) and Caregiver Companion (`PID 10442`) running successfully on Android 16.
+
+### Final Verdict
+- **PRODUCTION GO**
+
+

@@ -20,6 +20,22 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("EASYUI_RELEASE_KEYSTORE_PATH") ?: project.findProperty("EASYUI_RELEASE_KEYSTORE_PATH") as? String
+            val keystorePassword = System.getenv("EASYUI_RELEASE_KEYSTORE_PASSWORD") ?: project.findProperty("EASYUI_RELEASE_KEYSTORE_PASSWORD") as? String
+            val keyAlias = System.getenv("EASYUI_RELEASE_KEY_ALIAS") ?: project.findProperty("EASYUI_RELEASE_KEY_ALIAS") as? String
+            val keyPassword = System.getenv("EASYUI_RELEASE_KEY_PASSWORD") ?: project.findProperty("EASYUI_RELEASE_KEY_PASSWORD") as? String
+
+            if (keystorePath != null && file(keystorePath).exists() && keystorePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = file(keystorePath)
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,6 +43,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            val releaseSigning = signingConfigs.getByName("release")
+            if (releaseSigning.storeFile != null) {
+                signingConfig = releaseSigning
+            }
         }
     }
 
