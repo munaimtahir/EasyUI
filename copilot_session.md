@@ -217,5 +217,112 @@ Execute end-to-end device testing according to `DEVICE_TESTING_PLAN.md` using AD
 ### Final Verdict
 - **GO**
 
+---
+
+## EasyUI v1.0 — Release Candidate, Production Readiness & Validation Session — 2026-08-21
+
+### Starting Baseline
+- **Starting GO Commit**: `f8c39883ee57aee5090a154148d17963c6b087f9`
+- **Branch**: `main`
+- **Working Tree**: Clean
+
+### Goal
+Execute complete productionization of EasyUI v1.0:
+- Phase 0: Freeze baseline & tag.
+- Phase 1: Release configuration audit (`versionCode`, `versionName` 1.0.0, application IDs, R8/ProGuard rules, build variants).
+- Phase 2: Environment separation (DEV, STAGING, PRODUCTION via BuildConfig/environment properties).
+- Phase 3: Backend production readiness (configurable host/port, storage persistence, graceful shutdown, exception handling, health checks).
+- Phase 4: HTTPS / network security production model (separate network configs for dev vs release, no cleartext in prod).
+- Phase 5: Release signing readiness (externalized signing properties / keystore configuration).
+- Phase 6: Security audit (exported components, token storage, PIN security).
+- Phase 7: Privacy & Data Safety reconciliation (data safety table, consent mapping).
+- Phase 8: Android permissions audit (documented rationale for each permission).
+- Phase 9: Release artifact generation (`assembleRelease`, `bundleRelease`).
+- Phase 10: Release artifact inspection (inspect non-debuggable APK/AAB).
+- Phase 11 & 12: Staging deployment & release client configuration.
+- Phase 13 & 14: Real-world / RC test plan & validation on emulator/device.
+- Phase 15: Play Store / Distribution readiness documentation.
+- Phase 16: Pilot test plan (`PILOT_TEST_PLAN.md`).
+- Release notes, `RELEASE_READINESS.md`, and final sprint report.
+
+### Plan
+- [x] Audit and upgrade release configuration for all modules (`versionCode 1`, `versionName "1.0.0"`).
+- [x] Implement environment separation via Gradle BuildConfig across `senior-launcher` and `caregiver-companion`.
+- [x] Harden backend (`Server.kt`, `Router.kt`, `InMemoryStore.kt`) with env var port/host, persistence, and safe logging.
+- [x] Restrict cleartext network security config to debug builds only.
+- [x] Externalize release signing configurations in `build.gradle.kts` and `.gitignore`.
+- [x] Generate release APKs and AABs (`assembleRelease`, `bundleRelease`).
+- [x] Audit permissions, security, privacy, and write `PILOT_TEST_PLAN.md` and `RELEASE_READINESS.md`.
+- [x] Run complete gate tests (unit tests, connected tests, lint, release build, backend tests).
+- [x] Document all results and generate final production report.
+
+### Files Inspected
+- `README.md`
+- `TASKS.md`
+- `DEVICE_TESTING_PLAN.md`
+- `senior-launcher/build.gradle.kts`
+- `caregiver-companion/build.gradle.kts`
+- `app/build.gradle.kts`
+- `backend/build.gradle.kts`
+- `backend/src/main/kotlin/com/easyui/backend/Server.kt`
+- `backend/src/main/kotlin/com/easyui/backend/InMemoryStore.kt`
+- `senior-launcher/src/main/res/values/strings.xml`
+- `caregiver-companion/src/main/res/values/strings.xml`
+- `.gitignore`
+
+### Files Changed
+- `.gitignore` (added exclusions for *.jks, *.keystore, *.signing.properties, secrets)
+- `senior-launcher/build.gradle.kts` (version 1.0.0, signingConfigs, environment BuildConfig fields)
+- `caregiver-companion/build.gradle.kts` (version 1.0.0, signingConfigs, environment BuildConfig fields)
+- `app/build.gradle.kts` (version 1.0.0)
+- `senior-launcher/proguard-rules.pro` (R8 / Kotlinx serialization rules)
+- `caregiver-companion/proguard-rules.pro` (R8 / Kotlinx serialization rules)
+- `senior-launcher/src/main/res/xml/network_security_config.xml` (strict HTTPS in production)
+- `senior-launcher/src/debug/res/xml/network_security_config.xml` (cleartext allowed on localhost/10.0.2.2 for dev)
+- `caregiver-companion/src/main/res/xml/network_security_config.xml` (strict HTTPS in production)
+- `caregiver-companion/src/debug/res/xml/network_security_config.xml` (cleartext allowed on localhost/10.0.2.2 for dev)
+- `senior-launcher/src/main/java/com/easyui/senior/network/BackendClient.kt` (environment-driven base URL)
+- `caregiver-companion/src/main/java/com/easyui/companion/network/CompanionBackendClient.kt` (environment-driven base URL)
+- `backend/src/main/kotlin/com/easyui/backend/Server.kt` (host/port env vars, production error masking, structured logging)
+- `backend/src/main/kotlin/com/easyui/backend/InMemoryStore.kt` (snapshot persistence, environment seed handling)
+- `senior-launcher/src/main/res/values/strings.xml` (app_name updated to Senior Launcher)
+- `DEVICE_TESTING_PLAN.md` (added Section 5: v1.0 Release Candidate / Real-Network Acceptance)
+- `PILOT_TEST_PLAN.md` (created pilot operational protocol)
+- `RELEASE_READINESS.md` (created comprehensive release audit document)
+- `README.md` (updated status and doc map)
+- `TASKS.md` (updated all stage checkboxes)
+- `copilot_session.md`
+
+### Commands Run
+- `git tag -a easyui-v1.0.0-go -m "EasyUI v1.0.0 engineering GO baseline" f8c3988`
+- `./gradlew :backend:test`
+- `./gradlew :backend:run`
+- `curl -i http://localhost:8088/health`
+- `adb devices && adb reverse tcp:8088 tcp:8088`
+- `./gradlew :senior-launcher:connectedDebugAndroidTest :caregiver-companion:connectedDebugAndroidTest :app:connectedDebugAndroidTest`
+- `./gradlew testDebugUnitTest lintDebug :backend:test assembleRelease bundleRelease`
+- `aapt dump badging senior-launcher/build/outputs/apk/release/senior-launcher-release-unsigned.apk`
+- `aapt dump badging caregiver-companion/build/outputs/apk/release/caregiver-companion-release-unsigned.apk`
+
+### Verification Results
+- **Unit Tests (`testDebugUnitTest`)**: PASS across all modules.
+- **Connected On-Device Tests**: 19/19 PASS on `emulator-5554` (Android 15 / API 35).
+- **Backend Tests (`:backend:test`)**: PASS.
+- **Android Lint (`lintDebug`)**: 0 errors.
+- **Release APKs (`assembleRelease`)**: BUILD SUCCESSFUL with R8 minification.
+- **Release Bundles (`bundleRelease`)**: BUILD SUCCESSFUL with release optimization.
+- **Network Security**: Strict HTTPS in production release variants; cleartext strictly limited to debug.
+
+### Remaining Issues
+- None (technical). External items recorded as `DEFERRED_USER_INPUT` (production signing key, production DNS/TLS domain ownership, Play Console developer account credentials).
+
+### Next Step
+- Execute pilot with initial 5–10 participant pairs according to `PILOT_TEST_PLAN.md`.
+
+### Final Verdict
+- **CONDITIONAL PRODUCTION GO**
+
+
+
 
 

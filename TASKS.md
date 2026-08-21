@@ -25,29 +25,30 @@ This task list tracks the integration, verification, and hardening stages of the
 
 ## Stage 3 — End-to-End Integration Verification
 
-- [ ] Verify Ktor backend bearer token validation checks.
-- [ ] Test code pairing lifecycle: code generation on senior launcher → entry on companion → backend validation and token exchange.
-- [ ] Test status worker battery reporting and companion status updates.
-- [ ] Test voluntary check-in reporting from senior launcher and receipt on companion dashboard.
-- [ ] Test manual SOS hold triggering dialer activity and posting emergency alert to companion log.
-- [ ] Verify suggested reminders push from companion and successful pull/merge on senior launcher.
-- [ ] Run a test on paired permission revocations (e.g., revoking battery access disables status reporting).
+- [x] Verify Ktor backend bearer token validation checks.
+- [x] Test code pairing lifecycle: code generation on senior launcher → entry on companion → backend validation and token exchange.
+- [x] Test status worker battery reporting and companion status updates.
+- [x] Test voluntary check-in reporting from senior launcher and receipt on companion dashboard.
+- [x] Test manual SOS hold triggering dialer activity and posting emergency alert to companion log.
+- [x] Verify suggested reminders push from companion and successful pull/merge on senior launcher.
+- [x] Run a test on paired permission revocations (e.g., revoking battery access disables status reporting).
 
 ## Stage 4 — Offline & Reconnect Hardening
 
-- [ ] Test senior launcher functionality when network connectivity is lost.
-- [ ] Verify that failed background status updates retry gracefully using WorkManager backoff constraints.
-- [ ] Ensure that UI operations (Check-In, SOS triggering) don't crash when offline; display clear feedback.
-- [ ] Test pairing revocation local data clearing.
+- [x] Test senior launcher functionality when network connectivity is lost.
+- [x] Verify that failed background status updates retry gracefully using WorkManager backoff constraints.
+- [x] Ensure that UI operations (Check-In, SOS triggering) don't crash when offline; display clear feedback.
+- [x] Test pairing revocation local data clearing.
 
 ## Stage 5 — Accessibility Audit
 
-- [ ] Audit display scaling and font scaling support across the senior launcher onboarding and home screens.
-- [ ] Confirm TalkBack content descriptions exist for all custom visual tiles and icons.
-- [ ] Validate touch target sizes (minimum 48dp) and contrast ratios.
+- [x] Audit display scaling and font scaling support across the senior launcher onboarding and home screens.
+- [x] Confirm TalkBack content descriptions exist for all custom visual tiles and icons.
+- [x] Validate touch target sizes (minimum 48dp) and contrast ratios.
 
-## Stage 6 — Release Build Verification
+## Stage 6 — Release Build & Production Readiness Verification
 
-- [ ] Run release build tasks: `./gradlew assembleRelease` (or module-specific release tasks).
-- [ ] Configure secure release signing templates.
-- [ ] Finalize Google Play metadata guidelines.
+- [x] Run release build tasks: `./gradlew assembleRelease bundleRelease`.
+- [x] Configure secure release signing templates and `.gitignore` exclusions.
+- [x] Finalize Google Play metadata guidelines and Data Safety mapping in `RELEASE_READINESS.md`.
+- [x] Prepare 14-day 10-pair pilot testing protocol in `PILOT_TEST_PLAN.md`.

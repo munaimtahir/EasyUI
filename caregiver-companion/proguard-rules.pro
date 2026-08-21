@@ -1,4 +1,4 @@
-# Senior Launcher R8 / ProGuard Configuration for EasyUI v1.0
+# Caregiver Companion R8 / ProGuard Configuration for EasyUI v1.0
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 
 # Keep Kotlinx Serialization DTOs and generated serializers
@@ -18,5 +18,5 @@
     <fields>;
     <methods>;
 }
--keep class com.easyui.senior.network.** { *; }
--keep class com.easyui.senior.storage.** { *; }
+-keep class com.easyui.companion.network.** { *; }
+-keep class com.easyui.companion.storage.** { *; }

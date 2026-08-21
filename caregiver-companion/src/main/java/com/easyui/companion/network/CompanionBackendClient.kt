@@ -6,12 +6,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.easyui.companion.BuildConfig
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
 object CompanionBackendClient {
-    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8088"
+    private val DEFAULT_BASE_URL = BuildConfig.BACKEND_BASE_URL
     private const val TIMEOUT_MS = 8_000
 
     private val json = Json {

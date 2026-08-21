@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Core Launcher</string>
-    <string name="home_title">Core Launcher</string>
-    <string name="home_subtitle">Baseline skeleton (v0.1)</string>
+    <string name="app_name">Senior Launcher</string>
+    <string name="home_title">Senior Launcher</string>
+    <string name="home_subtitle">EasyUI Launcher</string>
     <string name="open_all_apps">All apps</string>
     <string name="all_apps_title">All apps</string>
     <string name="back">Back</string>

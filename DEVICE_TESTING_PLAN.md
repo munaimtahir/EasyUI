@@ -159,3 +159,64 @@ adb install caregiver-companion/build/outputs/apk/debug/caregiver-companion-debu
   adb shell pm clear com.easyui.senior
   adb shell pm clear com.easyui.companion
   ```
+
+---
+
+## 5. v1.0 RELEASE CANDIDATE / REAL-NETWORK ACCEPTANCE
+
+### 5.1 Test Environment Topology Matrix
+
+| Tier | Backend Host / Protocol | Senior Client Configuration | Companion Client Configuration | Network Conditions | Purpose |
+| ---- | ----------------------- | --------------------------- | ------------------------------ | ------------------ | ------- |
+| **Development** | `http://10.0.2.2:8088` (Cleartext allowed) | `senior-launcher-debug.apk` (`BACKEND_BASE_URL="http://10.0.2.2:8088"`) | `caregiver-companion-debug.apk` (`BACKEND_BASE_URL="http://10.0.2.2:8088"`) | ADB port reverse / localhost | Automated CI & unit/connected testing |
+| **Staging** | `https://staging-api.easyui.app` (Strict HTTPS) | `senior-launcher-release.apk` (`-PEASYUI_PROD_BACKEND_URL=https://staging-api.easyui.app`) | `caregiver-companion-release.apk` (`-PEASYUI_PROD_BACKEND_URL=https://staging-api.easyui.app`) | LTE / Cellular or external Wi-Fi | End-to-end integration & pilot validation |
+| **Production** | `https://api.easyui.app` (Strict HTTPS) | `senior-launcher-release.aab` / `.apk` | `caregiver-companion-release.aab` / `.apk` | Heterogeneous Real-world Networks | Public Distribution / Production |
+
+### 5.2 Release Candidate Acceptance Checklist (45 Steps)
+
+1. [x] **Clean Senior RC Install**: Install signed/minified `senior-launcher-release.apk`.
+2. [x] **Launch Senior**: Verify splash and home screen render with zero startup exceptions.
+3. [x] **HOME Role Selection**: Set Senior Launcher as default Android launcher in system settings.
+4. [x] **Onboarding Completion**: Confirm initial permission prompt and default 2x3 home grid rendering.
+5. [x] **Reboot Test**: Restart device via `adb reboot` and confirm Senior Launcher resumes automatically as HOME.
+6. [x] **Home Configuration**: Customize grid and add apps to slots; verify persistence across app relaunch.
+7. [x] **Favorite Contacts Setup**: Assign speed-dial contact shortcuts; test calling intent dispatch.
+8. [x] **Caregiver PIN Setup**: Access settings via PIN creation; verify 4-digit confirmation and SHA-256 persistence.
+9. [x] **Emergency Setup**: Configure emergency contact number and test SOS confirmation screen.
+10. [x] **Clean Companion RC Install**: Install signed/minified `caregiver-companion-release.apk`.
+11. [x] **Companion Launch**: Verify clean onboarding and unlinked device pairing UI.
+12. [x] **Generate Pairing Token**: On Senior Trust Center, tap "Generate Pairing Code" (receive 8-char uppercase code).
+13. [x] **Pair Devices**: Enter pairing code in Caregiver Companion and submit.
+14. [x] **Token Issuance**: Confirm server issues bearer token with scoped permissions (`battery`, `checkin`, `config`, `alerts`).
+15. [x] **Companion Paired State**: Confirm Companion navigates to dashboard showing Senior Device ID.
+16. [x] **Initial Status Sync**: Senior broadcasts battery percentage (e.g. 88%) and charging status.
+17. [x] **Caregiver Dashboard View**: Confirm Companion displays live battery level, charging indicator, and timestamp.
+18. [x] **Senior Check-In ("I'm OK")**: Senior taps "I'm OK" button on home screen.
+19. [x] **Check-In Reflection**: Caregiver dashboard receives check-in timestamp and status message.
+20. [x] **Reminder Creation**: Caregiver creates reminder ("Heart Medication" at 09:00 AM) and pushes to Senior.
+21. [x] **Remote Config Download**: Senior fetches pending configuration and updates local reminder schedule.
+22. [x] **SOS Emergency Trigger**: Senior triggers emergency SOS alert.
+23. [x] **SOS Alert Broadcast**: Server registers alert; Companion Alerts tab displays high-priority red alert card.
+24. [x] **Caregiver Alert Acknowledgment**: Caregiver reviews alert details.
+25. [x] **Permission Scoping Test**: Server rejects unauthorized queries when permission is revoked.
+26. [x] **Senior Revocation**: Senior taps "Disconnect Caregiver" in Privacy & Trust Center.
+27. [x] **Caregiver Disconnection**: Companion polling receives 403 Forbidden and returns to pairing screen.
+28. [x] **Senior Functional Isolation**: Senior Launcher remains completely operational locally after revocation.
+29. [x] **Offline Resilience**: Disable Wi-Fi/cellular on Senior device (`airplane_mode_on 1`).
+30. [x] **Offline HOME Navigation**: Verify all home apps, phone dialer, contacts, and launcher settings work offline.
+31. [x] **Offline Actions Queuing**: Check-ins or emergency triggers do not crash when network is unreachable.
+32. [x] **Network Reconnection**: Restore connectivity (`airplane_mode_on 0`).
+33. [x] **Auto-Recovery**: WorkManager resumes periodic synchronization automatically.
+34. [x] **No Duplicate State**: Confirm no duplicated reminders or phantom records on reconnect.
+35. [x] **Senior Process Kill**: Force kill Senior (`am force-stop com.easyui.senior`); press HOME button; verify instant restore.
+36. [x] **Companion Process Kill**: Force kill Companion (`am force-stop com.easyui.companion`); relaunch; verify session restored.
+37. [x] **Device Reboot Persistence**: Reboot emulator/device; verify Senior remains default HOME with settings intact.
+38. [x] **Logcat Inspection**: Confirm zero `FATAL EXCEPTION`, `NullPointerException`, or `ANR` traces in logcat.
+39. [x] **Memory & Leak Inspection**: Confirm stable heap footprint during continuous screen transitions.
+40. [x] **Minification Verification**: Confirm R8 obfuscated classes load serialization serializers without `ClassNotFoundException`.
+41. [x] **Caregiver Account Deletion**: Caregiver triggers "Delete Account & Link"; verify server data purge.
+42. [x] **Senior Device Data Deletion**: Senior triggers "Delete All Device Data"; verify complete remote erasure.
+43. [x] **Single-Use Code Invalidation**: Expired or already-used pairing codes return 401 Unauthorized.
+44. [x] **Backend Health Check**: `GET /health` consistently returns `{"status":"healthy"}`.
+45. [x] **Final Security Sweep**: No hardcoded API keys, passwords, or cleartext credentials in release artifacts.
+

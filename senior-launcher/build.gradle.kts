@@ -13,7 +13,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -21,16 +21,43 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("EASYUI_RELEASE_KEYSTORE_PATH") ?: project.findProperty("EASYUI_RELEASE_KEYSTORE_PATH") as? String
+            val keystorePassword = System.getenv("EASYUI_RELEASE_KEYSTORE_PASSWORD") ?: project.findProperty("EASYUI_RELEASE_KEYSTORE_PASSWORD") as? String
+            val keyAlias = System.getenv("EASYUI_RELEASE_KEY_ALIAS") ?: project.findProperty("EASYUI_RELEASE_KEY_ALIAS") as? String
+            val keyPassword = System.getenv("EASYUI_RELEASE_KEY_PASSWORD") ?: project.findProperty("EASYUI_RELEASE_KEY_PASSWORD") as? String
+
+            if (keystorePath != null && file(keystorePath).exists() && keystorePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = file(keystorePath)
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            val devBackendUrl = System.getenv("EASYUI_DEV_BACKEND_URL") ?: project.findProperty("EASYUI_DEV_BACKEND_URL") as? String ?: "http://10.0.2.2:8088"
+            buildConfigField("String", "BACKEND_BASE_URL", "\"$devBackendUrl\"")
+            buildConfigField("String", "ENVIRONMENT", "\"DEVELOPMENT\"")
+        }
         release {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-        }
-        debug {
-            isMinifyEnabled = false
+            val prodBackendUrl = System.getenv("EASYUI_PROD_BACKEND_URL") ?: project.findProperty("EASYUI_PROD_BACKEND_URL") as? String ?: "https://api.easyui.app"
+            buildConfigField("String", "BACKEND_BASE_URL", "\"$prodBackendUrl\"")
+            buildConfigField("String", "ENVIRONMENT", "\"PRODUCTION\"")
+
+            val releaseSigning = signingConfigs.getByName("release")
+            if (releaseSigning.storeFile != null) {
+                signingConfig = releaseSigning
+            }
         }
     }
 

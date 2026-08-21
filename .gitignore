@@ -10,3 +10,12 @@ build/
 captures/
 .externalNativeBuild/
 .cxx/
+
+# Signing & Secrets
+*.jks
+*.keystore
+*.signing.properties
+release-keystore.properties
+secrets.properties
+*.pem
+*.p12

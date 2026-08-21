@@ -1,7 +1,14 @@
 package com.easyui.backend
 
+import java.io.File
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("InMemoryStore")
 
 object InMemoryStore {
     val pendingPairings = ConcurrentHashMap<String, PairingToken>()
@@ -17,12 +24,25 @@ object InMemoryStore {
     val caregiverToSenior = ConcurrentHashMap<String, String>() // caregiverDeviceId -> seniorDeviceId
     val permissions = ConcurrentHashMap<String, List<String>>() // seniorDeviceId -> permissions
 
+    private val json = Json { ignoreUnknownKeys = true; prettyPrint = true }
+    private val storageFile: File? by lazy {
+        val path = System.getenv("EASYUI_STORAGE_FILE")
+        if (!path.isNullOrBlank()) File(path) else null
+    }
+
     init {
-        // Seed dev tokens for local testing
-        // senior side
+        val isProduction = System.getenv("EASYUI_ENV")?.equals("production", ignoreCase = true) == true
+        val seedDev = System.getenv("EASYUI_SEED_DEV_TOKENS")?.toBoolean() ?: !isProduction
+
+        if (seedDev) {
+            seedDevelopmentData()
+        }
+        loadPersistentState()
+    }
+
+    fun seedDevelopmentData() {
         deviceTokens["dev-senior-token"] = "dev-senior-001"
         permissions["dev-senior-001"] = listOf("battery", "checkin", "config", "alerts")
-        // caregiver side
         caregiverTokens["dev-caregiver-token"] = "dev-caregiver-001"
         caregiverToSenior["dev-caregiver-001"] = "dev-senior-001"
     }
@@ -39,11 +59,12 @@ object InMemoryStore {
         caregiverToSenior.clear()
         permissions.clear()
 
-        // Re-seed
-        deviceTokens["dev-senior-token"] = "dev-senior-001"
-        permissions["dev-senior-001"] = listOf("battery", "checkin", "config", "alerts")
-        caregiverTokens["dev-caregiver-token"] = "dev-caregiver-001"
-        caregiverToSenior["dev-caregiver-001"] = "dev-senior-001"
+        val isProduction = System.getenv("EASYUI_ENV")?.equals("production", ignoreCase = true) == true
+        val seedDev = System.getenv("EASYUI_SEED_DEV_TOKENS")?.toBoolean() ?: !isProduction
+        if (seedDev) {
+            seedDevelopmentData()
+        }
+        persistState()
     }
 
     fun generateSeniorDeviceId(): String = UUID.randomUUID().toString()
@@ -65,6 +86,7 @@ object InMemoryStore {
         val expiresAt = now + 600_000 // 10 minutes
         val token = PairingToken(code, seniorDeviceId, expiresAt)
         pendingPairings[code] = token
+        persistState()
         return token
     }
 
@@ -73,6 +95,7 @@ object InMemoryStore {
         val pairing = pendingPairings[code] ?: return null
         if (pairing.expiresAt < now) {
             pendingPairings.remove(code)
+            persistState()
             return null
         }
 
@@ -88,6 +111,7 @@ object InMemoryStore {
 
         val defaultPermissions = listOf("battery", "checkin", "config", "alerts")
         permissions[seniorDeviceId] = defaultPermissions
+        persistState()
 
         return PairResponse(
             deviceToken = token,
@@ -95,4 +119,53 @@ object InMemoryStore {
             permissions = defaultPermissions
         )
     }
+
+    fun persistState() {
+        val file = storageFile ?: return
+        try {
+            val snapshot = StoreSnapshot(
+                deviceTokens = HashMap(deviceTokens),
+                caregiverTokens = HashMap(caregiverTokens),
+                caregiverToSenior = HashMap(caregiverToSenior),
+                permissions = HashMap(permissions),
+                deviceStatus = HashMap(deviceStatus),
+                deviceStatusTimestamp = HashMap(deviceStatusTimestamp),
+                checkIns = HashMap(checkIns)
+            )
+            file.parentFile?.mkdirs()
+            file.writeText(json.encodeToString(snapshot))
+        } catch (e: Exception) {
+            logger.warn("Failed to persist backend store state: ${e.message}")
+        }
+    }
+
+    private fun loadPersistentState() {
+        val file = storageFile ?: return
+        if (!file.exists()) return
+        try {
+            val content = file.readText()
+            val snapshot = json.decodeFromString<StoreSnapshot>(content)
+            deviceTokens.putAll(snapshot.deviceTokens)
+            caregiverTokens.putAll(snapshot.caregiverTokens)
+            caregiverToSenior.putAll(snapshot.caregiverToSenior)
+            permissions.putAll(snapshot.permissions)
+            deviceStatus.putAll(snapshot.deviceStatus)
+            deviceStatusTimestamp.putAll(snapshot.deviceStatusTimestamp)
+            checkIns.putAll(snapshot.checkIns)
+            logger.info("Loaded persistent backend store state from ${file.absolutePath}")
+        } catch (e: Exception) {
+            logger.warn("Failed to load persistent backend store state: ${e.message}")
+        }
+    }
 }
+
+@Serializable
+data class StoreSnapshot(
+    val deviceTokens: Map<String, String> = emptyMap(),
+    val caregiverTokens: Map<String, String> = emptyMap(),
+    val caregiverToSenior: Map<String, String> = emptyMap(),
+    val permissions: Map<String, List<String>> = emptyMap(),
+    val deviceStatus: Map<String, StatusPayload> = emptyMap(),
+    val deviceStatusTimestamp: Map<String, Long> = emptyMap(),
+    val checkIns: Map<String, CheckInPayload> = emptyMap()
+)

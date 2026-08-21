@@ -12,18 +12,16 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
+import com.easyui.senior.BuildConfig
+
 /**
  * Lightweight HTTP client for the Senior Launcher.
  * Uses only java.net (no OkHttp dependency needed) to keep the APK minimal.
  * All calls are suspending and must be called from a coroutine.
- *
- * Dev/local backend URL: http://10.0.2.2:8080  (emulator loopback to host)
  */
 object BackendClient {
 
-    // Dev URL: 10.0.2.2 is the host machine from Android Emulator
-    // For real device testing on the same LAN, replace with host IP
-    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8088"
+    private val DEFAULT_BASE_URL = BuildConfig.BACKEND_BASE_URL
     private const val TIMEOUT_MS = 8_000
 
     private val json = Json {
