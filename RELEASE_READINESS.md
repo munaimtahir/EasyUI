@@ -1,22 +1,23 @@
-# EasyUI v1.0 — Production Release Readiness & Distribution Audit
+# EasyUI v1.0 RC2 — Production Release Readiness & Distribution Audit
 
 ## 1. Release Identification
 
-| Component | Version Name | Version Code | Application ID / Package | Target SDK | Min SDK |
-| --------- | ------------ | ------------ | ------------------------ | ---------- | ------- |
-| **Senior Launcher** | `1.0.0` | `1` | `com.easyui.senior` | 34 (Android 14) | 24 (Android 7.0) |
-| **Caregiver Companion** | `1.0.0` | `1` | `com.easyui.companion` | 34 (Android 14) | 24 (Android 7.0) |
-| **Core Baseline** (Internal Foundation) | `1.0.0` | `1` | `com.easyui.core` | 34 (Android 14) | 24 (Android 7.0) |
-| **Backend Service** | `1.0.0` | N/A | `com.easyui.backend` | JVM 17 | JVM 17 |
+| Component | Version Name | Version Code | Application ID / Package | Target SDK | Min SDK | Compile SDK |
+| --------- | ------------ | ------------ | ------------------------ | ---------- | ------- | ----------- |
+| **Senior Launcher** | `1.0.0` | `1` | `com.easyui.senior` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
+| **Caregiver Companion** | `1.0.0` | `1` | `com.easyui.companion` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
+| **Core Baseline** (Internal Foundation) | `1.0.0` | `1` | `com.easyui.core` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
+| **Backend Service** | `1.0.0` | N/A | `com.easyui.backend` | JVM 17 | JVM 17 | JVM 17 |
 
-- **Baseline GO Commit SHA**: `f8c39883ee57aee5090a154148d17963c6b087f9`
-- **Release Candidate Git Tag**: `easyui-v1.0.0-rc1`
+- **Baseline GO Commit SHA**: `f8c39883ee57aee5090a154148d17963c6b087f9` (Tag: `easyui-v1.0.0-go`)
+- **RC1 Commit SHA**: `301cd0d` (Tag: `easyui-v1.0.0-rc1`)
+- **RC2 Git Tag**: `easyui-v1.0.0-rc2`
 
 ---
 
 ## 2. Release Artifacts Inventory
 
-All release artifacts are minified via R8 and built with release optimization:
+All release artifacts are minified via R8 and built with release optimization for target SDK 36:
 
 | Module | Artifact Type | Path |
 | ------ | ------------- | ---- |
@@ -63,14 +64,27 @@ Signing configurations are completely externalized and decoupled from source con
 | **Cleartext Traffic** | `cleartextTrafficPermitted="false"` in `src/main/res/xml/network_security_config.xml`. Release builds strictly reject unencrypted HTTP. | **SECURE** |
 | **PIN Storage** | Caregiver PIN is hashed using `SHA-256` with salt before storage in encrypted DataStore. PIN is never logged or transmitted remotely. | **SECURE** |
 | **Token Authentication** | All API queries require `Authorization: Bearer <token>`. Scoped permissions (`battery`, `checkin`, `config`, `alerts`) are verified on every request. | **SECURE** |
+| **Tampering & Header Validation** | Negative tests confirm non-bearer headers and cross-senior ID queries are strictly rejected (401/403). | **SECURE** |
 | **Revocation & Deletion** | Revocation immediately invalidates tokens server-side. Deletion purges all device associations from backend store. | **SECURE** |
 | **Embedded Secrets** | Zero hardcoded passwords, tokens, or private keys in repository source code or assets. | **SECURE** |
 
 ---
 
-## 6. Privacy & Google Play Data Safety Reconciliation
+## 6. Accessibility Release Gate & Findings
 
-### 6.1 Data Inventory Table
+| Accessibility Area | Evaluation Standard | Verification Result |
+| ------------------ | ------------------- | ------------------- |
+| **Font Scaling (Large & 2.0x)** | High font scaling (1.5x, 1.75x, 2.0x maximum density) | **PASS**: All keypads, buttons, and titles render without truncation or clipping. |
+| **Touch Target Dimensions** | Android minimum standard >= 48dp | **PASS**: Numeric keypad keys >= 48dp x 48dp; "I'm OK" button >= 200dp; emergency hold button >= 200dp. |
+| **TalkBack Semantics** | Explicit content descriptions and accessible click actions | **PASS**: Keypad digits 0-9, back buttons, status check-in, and trust toggles have semantic actions. |
+| **Visual Contrast** | High contrast readability for older adults | **PASS**: High-contrast theme tokens and dark emergency canvas provide maximum visual clarity. |
+| **Cognitive Clarity** | Simple, unambiguous wording for check-ins and emergency actions | **PASS**: Clear confirmation prompts; missed check-in explicitly denotes "no check-in received" rather than false alarm. |
+
+---
+
+## 7. Privacy & Google Play Data Safety Reconciliation
+
+### 7.1 Data Inventory Table
 
 | Data Category | Collected? | Stored Locally? | Sent Remotely? | Purpose | Retention | Revocable / Deletable? |
 | ------------- | ---------- | --------------- | -------------- | ------- | --------- | ---------------------- |
@@ -89,9 +103,9 @@ Signing configurations are completely externalized and decoupled from source con
 
 ---
 
-## 7. Android Permissions Audit
+## 8. Android Permissions Audit
 
-### 7.1 Senior Launcher (`com.easyui.senior`)
+### 8.1 Senior Launcher (`com.easyui.senior`)
 
 | Permission | Category | Purpose | User Prompt Timing | Behavior if Denied |
 | ---------- | -------- | ------- | ------------------ | ------------------- |
@@ -103,7 +117,7 @@ Signing configurations are completely externalized and decoupled from source con
 | `android.permission.WAKE_LOCK` | Normal | Ensure alarm receiver wakes screen for scheduled reminder | Granted at install | Reminder alert may delay until screen turned on |
 | `android.permission.FOREGROUND_SERVICE` | Normal | Maintain active state during active emergency SOS sequence | Granted at install | Background SOS processing subject to OS limits |
 
-### 7.2 Caregiver Companion (`com.easyui.companion`)
+### 8.2 Caregiver Companion (`com.easyui.companion`)
 
 | Permission | Category | Purpose | User Prompt Timing | Behavior if Denied |
 | ---------- | -------- | ------- | ------------------ | ------------------- |
@@ -113,9 +127,9 @@ Signing configurations are completely externalized and decoupled from source con
 
 ---
 
-## 8. Google Play Store Listing & Distribution Metadata
+## 9. Google Play Store Listing & Distribution Metadata
 
-### 8.1 Senior Launcher (`com.easyui.senior`)
+### 9.1 Senior Launcher (`com.easyui.senior`)
 - **App Name**: EasyUI Senior Launcher
 - **Short Description**: Clean, simple, and accessible Android launcher designed for older adults.
 - **Full Description**:
@@ -123,7 +137,7 @@ Signing configurations are completely externalized and decoupled from source con
 - **Target Audience**: Seniors, older adults, accessibility seekers, and families.
 - **Safety Disclaimer**: *EasyUI Senior Launcher is a comfort and accessibility interface. It is not a medical device, certified personal emergency response system (PERS), or substitute for professional emergency services (911/112).*
 
-### 8.2 Caregiver Companion (`com.easyui.companion`)
+### 9.2 Caregiver Companion (`com.easyui.companion`)
 - **App Name**: EasyUI Caregiver Companion
 - **Short Description**: Companion app for family caregivers linked to an EasyUI Senior Launcher.
 - **Full Description**:
@@ -131,15 +145,16 @@ Signing configurations are completely externalized and decoupled from source con
 
 ---
 
-## 9. Pilot Readiness & Rollout Protocol
+## 10. Pilot Readiness & Rollout Protocol
 
 - Fully documented in [`PILOT_TEST_PLAN.md`](file:///media/munaim/shared1/Documents/github/easyui/PILOT_TEST_PLAN.md).
+- Status: **`PILOT_READY — NOT_YET_EXECUTED`**.
 - Initial cohort: 5–10 pairs over 14 days.
 - Tracking 12 operational metrics including pairing ease, HOME reliability, readability, and OEM battery optimization survival.
 
 ---
 
-## 10. Deferred User Inputs
+## 11. Deferred User Inputs
 
 The following operational credentials and infrastructure ownership items are external and recorded as **`DEFERRED_USER_INPUT`**:
 1. Production release signing keystore & passwords (currently builds clean unsigned release APKs and AABs).
@@ -149,13 +164,15 @@ The following operational credentials and infrastructure ownership items are ext
 
 ---
 
-## 11. Final Verification Gate Summary
+## 12. Final Verification Gate Summary
 
 | Verification Gate | Result | Notes |
 | ----------------- | ------ | ----- |
 | **Unit Tests (`testDebugUnitTest`)** | **PASS** | 100% tests passed across all modules |
-| **Connected Device Tests (`connectedDebugAndroidTest`)** | **PASS** | 19/19 tests passed on Android 15 (API 35) |
-| **Backend Integration Tests (`:backend:test`)** | **PASS** | Authentication, single-use codes, permissions, revocation, deletion |
+| **Android 15 Device Tests (API 35)** | **PASS** | 26/26 tests passed on `Android_15_Test` (Pixel 5) |
+| **Android 16 Device Tests (API 36)** | **PASS** | 26/26 tests passed on `Android_16_Test` (Pixel 8) |
+| **Accessibility Gate** | **PASS** | `SeniorAccessibilityTest` verified font scale 2.0x, touch targets >= 48dp |
+| **Backend Integration Tests (`:backend:test`)** | **PASS** | Authentication, single-use codes, permissions, tampering, revocation, deletion |
 | **Android Lint (`lintDebug`)** | **PASS** | 0 errors |
 | **Release Compilation (`assembleRelease`)** | **PASS** | Signed/minified release APKs generated for all modules |
 | **Release App Bundle (`bundleRelease`)** | **PASS** | Release AABs generated for all modules |
@@ -163,8 +180,9 @@ The following operational credentials and infrastructure ownership items are ext
 
 ---
 
-## 12. Final Release Verdict
+## 13. Final Release Verdict
 
-**CONDITIONAL PRODUCTION GO**
+**CONDITIONAL PRODUCTION GO / RC2**
 
-- **Reason**: 100% of technical engineering, security hardening, release builds, environment separation, privacy reconciliation, automated test suites, and documentation are complete and verified. The sole remaining items are external `DEFERRED_USER_INPUT` assets (production signing keystore, DNS/TLS domain ownership, and Google Play Console publishing credentials).
+- **Reason**: 100% of technical engineering, Android 16 (API 36) target compliance, security revalidation, accessibility release gate, multi-API device instrumentation (Android 15 & 16), release builds, environment separation, privacy reconciliation, and operational documentation are complete and verified. The sole remaining items are external `DEFERRED_USER_INPUT` assets (production signing keystore, DNS/TLS domain ownership, and Google Play Console publishing credentials) and real pilot execution (`PILOT_READY — NOT_YET_EXECUTED`).
+

@@ -220,3 +220,16 @@ adb install caregiver-companion/build/outputs/apk/debug/caregiver-companion-debu
 44. [x] **Backend Health Check**: `GET /health` consistently returns `{"status":"healthy"}`.
 45. [x] **Final Security Sweep**: No hardcoded API keys, passwords, or cleartext credentials in release artifacts.
 
+### 5.3 Multi-API Device Validation Matrix (RC2)
+
+| Target Device / Emulator | OS & API Level | Arch / Profile | Connected Test Suite | Result |
+| ------------------------ | -------------- | -------------- | -------------------- | ------ |
+| `Android_15_Test` (emulator-5554) | Android 15 (API 35, VanillaIceCream) | x86_64 / Pixel 5 | `:senior-launcher` (23), `:caregiver-companion` (1), `:app` (2) | **26/26 PASS** |
+| `Android_16_Test` (emulator-5556) | Android 16 (API 36, Baklava) | x86_64 / Pixel 8 | `:senior-launcher` (23), `:caregiver-companion` (1), `:app` (2) | **26/26 PASS** |
+
+### 5.4 Dedicated Accessibility Acceptance Gate
+
+- `SeniorAccessibilityTest.kt` verifies:
+  * Keypads and navigation render cleanly without clipping under 1.5x, 1.75x, and 2.0x font scaling.
+  * Interactive touch targets meet or exceed 48dp (keypad keys: >= 48dp x 48dp; "I'm OK" button: 200dp; SOS button: 200dp).
+  * Semantics and content descriptions are present for TalkBack screen reader navigation across all senior screens.

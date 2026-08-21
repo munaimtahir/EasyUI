@@ -387,4 +387,48 @@ class BackendTest {
         }
         assertEquals(HttpStatusCode.Unauthorized, statusResCaregiver.status)
     }
+
+    @Test
+    fun testMalformedBearerHeaderRejected() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        val res = client.get("/status/dev-senior-001") {
+            header(HttpHeaders.Authorization, "Basic dXNlcjpwYXNz")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, res.status)
+    }
+
+    @Test
+    fun testCrossSeniorIdTamperingRejected() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        // Setup two distinct senior-caregiver pairs
+        InMemoryStore.deviceTokens["senior-token-A"] = "senior-A"
+        InMemoryStore.caregiverTokens["caregiver-token-A"] = "caregiver-A"
+        InMemoryStore.caregiverToSenior["caregiver-A"] = "senior-A"
+        InMemoryStore.permissions["senior-A"] = listOf("battery", "checkin")
+
+        InMemoryStore.deviceTokens["senior-token-B"] = "senior-B"
+        InMemoryStore.caregiverTokens["caregiver-token-B"] = "caregiver-B"
+        InMemoryStore.caregiverToSenior["caregiver-B"] = "senior-B"
+        InMemoryStore.permissions["senior-B"] = listOf("battery", "checkin")
+
+        // Caregiver A attempts to query Senior B's status -> 403 Forbidden
+        val res = client.get("/status/senior-B") {
+            header(HttpHeaders.Authorization, "Bearer caregiver-token-A")
+        }
+        assertEquals(HttpStatusCode.Forbidden, res.status)
+    }
 }

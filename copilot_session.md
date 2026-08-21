@@ -344,6 +344,81 @@ Document the complete backend deployment architecture, infrastructure requiremen
 ### Final Verdict
 - **GO**
 
+---
+
+## EasyUI v1.0 RC2 — Android 16 Production Compliance & Pilot Readiness Sprint — 2026-08-22
+
+### Starting Baseline
+- **Starting HEAD Commit**: `b4e8498`
+- **RC1 Tag**: `easyui-v1.0.0-rc1`
+- **Branch**: `main`
+- **Working Tree**: Clean
+
+### Goal
+Upgrade EasyUI to RC2:
+1. **Target SDK & Production Compliance**: Upgrade `compileSdk` to 36 and `targetSdk` to 36 across `senior-launcher`, `caregiver-companion`, and `app`. Keep `minSdk = 24`.
+2. **Android 15 / 16 Behavioral Compatibility**: Audit edge-to-edge, window insets, predictive back, notification permissions, background/WorkManager, broadcast receivers, and intent filters.
+3. **Accessibility Acceptance Pass**:
+   - Font scaling (large/maximum scaling test).
+   - Display scaling and long text wrapping/truncation.
+   - Touch targets (minimum 48dp).
+   - TalkBack semantics, content descriptions, actionable control announcements across all senior screens (Home, Onboarding, PIN, Pairing, Emergency, Check-In, Alerts, Reminders, Trust Center, Settings, Companion).
+   - High contrast / visual accessibility.
+4. **Security Revalidation**:
+   - Negative authorization test cases on backend.
+   - Single-use pairing code expiry, replay protection, and revocation.
+   - Salted SHA-256 PIN storage, encrypted local DataStore tokens.
+   - Strict HTTPS enforcement in release.
+5. **Trust Spine Re-run**:
+   - Re-run complete automated E2E trust spine (Workflows A–G) on emulator/device.
+   - Failure and offline resilience checks.
+6. **Multi-API Device Validation**:
+   - Validate on `Android_15_Test` (API 35) and `Android_16_Test` (API 36).
+7. **Release Artifact Generation**:
+   - Build RC2 APKs and AABs via `assembleRelease` and `bundleRelease`.
+8. **Documentation & Tagging**:
+   - Update `RELEASE_READINESS.md`, `PILOT_TEST_PLAN.md`, `DEVICE_TESTING_PLAN.md`, `README.md`, `TASKS.md`.
+   - Create tag `easyui-v1.0.0-rc2`.
+
+### Plan
+- [x] Upgrade `compileSdk` and `targetSdk` to 36 in `senior-launcher/build.gradle.kts`, `caregiver-companion/build.gradle.kts`, and `app/build.gradle.kts`.
+- [x] Review and enhance Compose accessibility semantics & content descriptions across all screens.
+- [x] Add automated accessibility and behavioral verification tests (`SeniorAccessibilityTest.kt`).
+- [x] Execute backend negative authorization and security test suites.
+- [x] Run connected device instrumentation tests on Android 15 & Android 16 targets (26/26 PASS on both).
+- [x] Run full build verification: `testDebugUnitTest`, `lintDebug`, `:backend:test`, `assembleRelease`, `bundleRelease`.
+- [x] Update canonical release documentation with RC2 evidence.
+- [x] Commit, tag `easyui-v1.0.0-rc2`, push to origin, and report final verdict.
+
+### Commands Run
+- `export ANDROID_HOME=/home/munaim/Android/Sdk`
+- `./gradlew assembleDebug testDebugUnitTest`
+- `./gradlew :backend:test`
+- `./gradlew :senior-launcher:connectedDebugAndroidTest :caregiver-companion:connectedDebugAndroidTest :app:connectedDebugAndroidTest` (on Android 15 / API 35)
+- `$ANDROID_HOME/emulator/emulator -avd Android_16_Test -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect`
+- `export ANDROID_SERIAL=emulator-5556 && ./gradlew :senior-launcher:connectedDebugAndroidTest :caregiver-companion:connectedDebugAndroidTest :app:connectedDebugAndroidTest` (on Android 16 / API 36)
+- `./gradlew clean testDebugUnitTest lintDebug :backend:test assembleRelease bundleRelease`
+- `aapt dump badging senior-launcher/build/outputs/apk/release/senior-launcher-release-unsigned.apk`
+- `aapt dump badging caregiver-companion/build/outputs/apk/release/caregiver-companion-release-unsigned.apk`
+
+### Verification Results
+- **Unit Tests (`testDebugUnitTest`)**: 100% PASS across all modules.
+- **Android 15 Device Tests (`Android_15_Test` / API 35)**: 26/26 PASS across `:senior-launcher` (23), `:caregiver-companion` (1), `:app` (2).
+- **Android 16 Device Tests (`Android_16_Test` / API 36)**: 26/26 PASS across `:senior-launcher` (23), `:caregiver-companion` (1), `:app` (2).
+- **Accessibility Gate (`SeniorAccessibilityTest`)**: PASS (2.0x font scaling, >=48dp touch targets, TalkBack actions).
+- **Backend Tests (`:backend:test`)**: 100% PASS (including negative security tests for malformed headers, cross-device tampering, revocation, deletion).
+- **Android Lint (`lintDebug`)**: 0 errors.
+- **Release APKs (`assembleRelease`)**: BUILD SUCCESSFUL (targetSdk = 36 with R8 minification).
+- **Release Bundles (`bundleRelease`)**: BUILD SUCCESSFUL (targetSdk = 36).
+
+### Remaining Issues
+- None (technical). External prerequisites recorded as `DEFERRED_USER_INPUT` (production signing keystore, production domain DNS/TLS, Google Play Console credentials). Pilot status recorded as `PILOT_READY — NOT_YET_EXECUTED`.
+
+### Final Verdict
+- **CONDITIONAL PRODUCTION GO / RC2**
+
+
+
 
 
 

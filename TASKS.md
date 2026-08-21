@@ -52,3 +52,12 @@ This task list tracks the integration, verification, and hardening stages of the
 - [x] Configure secure release signing templates and `.gitignore` exclusions.
 - [x] Finalize Google Play metadata guidelines and Data Safety mapping in `RELEASE_READINESS.md`.
 - [x] Prepare 14-day 10-pair pilot testing protocol in `PILOT_TEST_PLAN.md`.
+
+## Stage 7 — Release Candidate 2 (RC2) & Android 16 Migration
+
+- [x] Upgrade `compileSdk = 36` and `targetSdk = 36` across all Android modules (`senior-launcher`, `caregiver-companion`, `app`).
+- [x] Implement and execute dedicated automated accessibility test gate (`SeniorAccessibilityTest.kt` verifying 2.0x font scaling, >=48dp touch targets, TalkBack actions).
+- [x] Expand backend security test suite with negative authorization cases (malformed headers, cross-device tampering).
+- [x] Run full connected instrumentation test suite (26/26 PASS) on both Android 15 (API 35) and Android 16 (API 36).
+- [x] Re-run full build gates: unit tests, lint, backend tests, R8 release compilation, and App Bundles.
+- [x] Tag and release EasyUI v1.0.0 RC2.

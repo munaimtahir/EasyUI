@@ -28,15 +28,17 @@ This repository contains the following modules:
 * **`caregiver-companion`**: A standalone companion Android app for caregivers to monitor senior device battery, receive voluntary check-ins, receive emergency alerts, and suggest reminders.
 * **`backend`**: A Ktor/Netty service routing authentication, secure pairing, alerts, status, and configuration updates.
 
-## Current Project Status — 2026-08-21
+## Current Project Status — 2026-08-22
 
-EasyUI has achieved **v1.0 Release Candidate (RC1)** status:
+EasyUI has achieved **v1.0 Release Candidate 2 (RC2)** status:
 * **Release Version**: `1.0.0` (versionCode 1)
-* **Release Artifacts**: Release APKs and AABs generated with R8 optimization for `senior-launcher` and `caregiver-companion`.
-* **Automated Verification**: 100% PASS on unit tests, connected Android 15 device tests, backend tests, and Android lint.
+* **SDK Target**: `compileSdk = 36`, `targetSdk = 36` (Android 16 / Baklava compliant), `minSdk = 24`
+* **Release Artifacts**: R8-minified signed/optimized Release APKs and App Bundles (AAB) for `senior-launcher`, `caregiver-companion`, and `app`.
+* **Multi-API Verification**: 100% PASS (26/26 connected tests) on both Android 15 (API 35) and Android 16 (API 36).
+* **Accessibility Gate**: Dedicated automated tests (`SeniorAccessibilityTest`) passing for 2.0x font scaling, >=48dp touch targets, and TalkBack semantics.
 * **Environment Separation**: Clean DEV vs STAGING vs PRODUCTION build targets.
 * **Security & Privacy**: Strict HTTPS in production, SHA-256 PIN hashing, zero cleartext traffic in release, and full Google Play Data Safety mapping.
-* **Release Documentation**: See [`RELEASE_READINESS.md`](file:///media/munaim/shared1/Documents/github/easyui/RELEASE_READINESS.md) and [`PILOT_TEST_PLAN.md`](file:///media/munaim/shared1/Documents/github/easyui/PILOT_TEST_PLAN.md).
+* **Release Documentation**: See [`RELEASE_READINESS.md`](file:///media/munaim/shared1/Documents/github/easyui/RELEASE_READINESS.md), [`BACKEND_DEPLOYMENT.md`](file:///media/munaim/shared1/Documents/github/easyui/BACKEND_DEPLOYMENT.md), and [`PILOT_TEST_PLAN.md`](file:///media/munaim/shared1/Documents/github/easyui/PILOT_TEST_PLAN.md).
 
 ## Greenfield Policy
 

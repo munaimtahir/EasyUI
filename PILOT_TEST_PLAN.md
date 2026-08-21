@@ -1,5 +1,8 @@
 # EasyUI v1.0 — Pilot Test Plan & Operational Protocol
 
+**Status**: `PILOT_READY — NOT_YET_EXECUTED`  
+**Baseline**: EasyUI v1.0.0 RC2 (Target SDK 36, Android 16 Compliant)
+
 ## 1. Executive Summary & Objective
 
 This document outlines the operational test protocol for the EasyUI v1.0 Senior Launcher and Caregiver Companion pilot. The primary objective is to validate real-world usability, accessibility, notification delivery, battery management resilience, and caregiver-senior trust dynamics across diverse Android hardware and OEM form factors prior to public store distribution.
@@ -12,7 +15,7 @@ This document outlines the operational test protocol for the EasyUI v1.0 Senior 
 | --------- | ------------- |
 | **Cohort Size** | 5–10 Senior Devices paired with 5–10 Caregiver Devices |
 | **Duration** | 14 calendar days (2 weeks) |
-| **Target OS Range** | Android 9 (API 28) through Android 15 (API 35) |
+| **Target OS Range** | Android 7.0 (API 24) through Android 16 (API 36) |
 | **OEM Diversity** | Samsung OneUI, Google Pixel / AOSP, Motorola, Xiaomi MIUI/HyperOS |
 | **Network Conditions** | Residential Wi-Fi, 4G LTE, 5G NR, intermittent/low-signal rural connectivity |
 
