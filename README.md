@@ -47,6 +47,7 @@ EasyUI is built upon clean greenfield principles. While we inherit the Core base
 Important files:
 
 * [RELEASE_READINESS.md](file:///media/munaim/shared1/Documents/github/easyui/RELEASE_READINESS.md)
+* [BACKEND_DEPLOYMENT.md](file:///media/munaim/shared1/Documents/github/easyui/BACKEND_DEPLOYMENT.md)
 * [PILOT_TEST_PLAN.md](file:///media/munaim/shared1/Documents/github/easyui/PILOT_TEST_PLAN.md)
 * [DEVICE_TESTING_PLAN.md](file:///media/munaim/shared1/Documents/github/easyui/DEVICE_TESTING_PLAN.md)
 * [AGENTS.md](file:///media/munaim/shared1/Documents/github/easyui/AGENTS.md)
