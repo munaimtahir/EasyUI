@@ -215,3 +215,15 @@ docker compose logs -f backend
 ```bash
 docker compose restart backend
 ```
+
+---
+
+## 7. Active Deployment Configuration (Current Infrastructure)
+
+- **Dedicated Backend VM**: Google Cloud VM (Internal: `vps-clone`, Public IP: `34.46.17.200`)
+  - **Role**: designated hosting runner running the EasyUI Ktor server backend on port `8088`.
+  - **DNS Resolution**: `easyui.alshifalab.pk` and `api.easyui.alshifalab.pk` are routed through the Caddy proxy on this VM.
+- **Signed Release Builds**:
+  - Other developer machines are responsible for pulling updates from `main` and generating production-signed client releases (APKs).
+  - This ensures that VM CPU and memory are reserved exclusively for the live Ktor server runtime.
+
