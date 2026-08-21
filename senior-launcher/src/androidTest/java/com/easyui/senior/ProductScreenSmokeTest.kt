@@ -2,7 +2,7 @@ package com.easyui.senior
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.ext.junit4.runners.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.easyui.senior.storage.CaregiverRepository
 import com.easyui.senior.ui.*
@@ -114,6 +114,9 @@ class ProductScreenSmokeTest {
                 onCancel = {}
             )
         }
+        compose.waitUntil(5000) {
+            compose.onAllNodesWithTag("caregiver_pin_screen").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithTag("caregiver_pin_screen").assertExists()
     }
 
@@ -126,7 +129,9 @@ class ProductScreenSmokeTest {
                 onCancel = {}
             )
         }
-        // PIN keypad keys are tagged "pin_key_1" through "pin_key_9"
+        compose.waitUntil(5000) {
+            compose.onAllNodesWithTag("pin_key_1").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithTag("pin_key_1").assertExists()
         compose.onNodeWithTag("pin_key_5").assertExists()
         compose.onNodeWithTag("pin_key_9").assertExists()
@@ -144,6 +149,9 @@ class ProductScreenSmokeTest {
                 onBack = {}
             )
         }
+        compose.waitUntil(5000) {
+            compose.onAllNodesWithTag("caregiver_settings_screen").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithTag("caregiver_settings_screen").assertExists()
     }
 
@@ -155,6 +163,9 @@ class ProductScreenSmokeTest {
                 caregiverRepo = CaregiverRepository(ctx),
                 onBack = { backCalled = true }
             )
+        }
+        compose.waitUntil(5000) {
+            compose.onAllNodesWithTag("caregiver_settings_back").fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNodeWithTag("caregiver_settings_back").performClick()
         assert(backCalled)

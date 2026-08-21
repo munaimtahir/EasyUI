@@ -1,6 +1,8 @@
 package com.easyui.senior.network
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -98,10 +100,8 @@ object BackendClient {
         return postRaw("/delete-device", "", token) == true
     }
 
-    // ─── Internal Helpers ───────────────────────────────────────────────────
-
-    private fun <T> postJson(path: String, body: String, token: String?, clazz: Class<T>): T? {
-        return try {
+    private suspend fun <T> postJson(path: String, body: String, token: String?, clazz: Class<T>): T? = withContext(Dispatchers.IO) {
+        try {
             val conn = openConnection(path, "POST", token)
             conn.outputStream.use { os ->
                 OutputStreamWriter(os).use { w -> w.write(body) }
@@ -126,8 +126,8 @@ object BackendClient {
         }
     }
 
-    private fun postRaw(path: String, body: String, token: String?): Boolean? {
-        return try {
+    private suspend fun postRaw(path: String, body: String, token: String?): Boolean? = withContext(Dispatchers.IO) {
+        try {
             val conn = openConnection(path, "POST", token)
             conn.outputStream.use { os ->
                 OutputStreamWriter(os).use { w -> w.write(body) }
@@ -143,8 +143,8 @@ object BackendClient {
         }
     }
 
-    private fun <T> getJson(path: String, token: String?, clazz: Class<T>): T? {
-        return try {
+    private suspend fun <T> getJson(path: String, token: String?, clazz: Class<T>): T? = withContext(Dispatchers.IO) {
+        try {
             val conn = openConnection(path, "GET", token)
             val code = conn.responseCode
             if (code in 200..299) {

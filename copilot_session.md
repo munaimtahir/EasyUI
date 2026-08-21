@@ -125,3 +125,97 @@ Planned phases: Phases 0 to 18 (Orientation to Final Validation/Handoff) complet
 
 Final Sprint Status: **GO** (Full Trust Integration Spine established and fully verified via automated tests).
 
+---
+
+## Device Testing Session — 2026-08-20
+
+### Goal
+Execute end-to-end device testing according to `DEVICE_TESTING_PLAN.md` using ADB, Android emulator (`Android_15_Test`), and live Ktor/Netty backend server.
+
+### Plan
+- [x] Inspect available ADB devices and emulators. Booted `Android_15_Test` (API 35).
+- [x] Build all artifacts (`:backend`, `:senior-launcher:assembleDebug`, `:caregiver-companion:assembleDebug`, `:app:assembleDebug`).
+- [x] Start the backend service in background on port `8088` and verify `/health`.
+- [x] Install Senior Launcher and Caregiver Companion onto target emulator.
+- [x] Execute Workflow A: Pairing Code Generation & Trust Establishment.
+- [x] Execute Workflow B: Status Report Synchronization.
+- [x] Execute Workflow C: Senior "I'm OK" Manual Check-In.
+- [x] Execute Workflow D: SOS Emergency Alert Flow.
+- [x] Execute Workflow E: Remote Configuration / Reminders Sync.
+- [x] Execute Workflow F: Trust / Pairing Revocation.
+- [x] Execute Workflow G: Caregiver Account / Link Deletion.
+- [x] Run full build, unit test, lint, and connected device test verifications.
+- [x] Document all execution results, logs, and artifacts in `copilot_session.md`.
+- [x] Provide final report with verdict.
+
+### Checklist
+- [x] KVM permissions configured and Android 15 emulator (`emulator-5554`) booted.
+- [x] Backend running on port 8088 (`/health` responding 200 OK).
+- [x] `senior-launcher-debug.apk` and `caregiver-companion-debug.apk` installed and tested on device.
+- [x] Fixed `Dispatchers.IO` dispatching in `CompanionBackendClient.kt` and `BackendClient.kt` to avoid `NetworkOnMainThreadException`.
+- [x] Added trimming to pairing code input in `caregiver-companion` `MainActivity.kt`.
+- [x] Added automated end-to-end device test suites `TrustSpineE2ETest.kt` and `CompanionSpineE2ETest.kt`.
+- [x] All 19 connected on-device tests passed across `:senior-launcher`, `:caregiver-companion`, and `:app`.
+- [x] Full `./gradlew clean assembleDebug testDebugUnitTest lintDebug :backend:test` passed.
+
+### Files Inspected
+- `DEVICE_TESTING_PLAN.md`
+- `README.md`
+- `docs/TESTING/TESTING_STRATEGY.md`
+- `caregiver-companion/src/main/AndroidManifest.xml`
+- `caregiver-companion/src/main/res/xml/network_security_config.xml`
+- `caregiver-companion/src/main/java/com/easyui/companion/MainActivity.kt`
+- `caregiver-companion/src/main/java/com/easyui/companion/network/CompanionBackendClient.kt`
+- `senior-launcher/src/main/AndroidManifest.xml`
+- `senior-launcher/src/main/java/com/easyui/senior/MainActivity.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/ui/TrustCenterScreen.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/ui/CaregiverPinScreen.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/PairingManager.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/BackendClient.kt`
+- `backend/src/main/kotlin/com/easyui/backend/Router.kt`
+
+### Files Changed
+- `caregiver-companion/src/main/java/com/easyui/companion/network/CompanionBackendClient.kt` (wrapped all network I/O in `withContext(Dispatchers.IO)`)
+- `senior-launcher/src/main/java/com/easyui/senior/network/BackendClient.kt` (wrapped all network I/O in `withContext(Dispatchers.IO)`)
+- `caregiver-companion/src/main/java/com/easyui/companion/MainActivity.kt` (trimmed pairing code input)
+- `senior-launcher/src/androidTest/java/com/easyui/senior/ProductScreenSmokeTest.kt` (fixed JUnit runner import, added waitUntil for asynchronous state)
+- `senior-launcher/src/androidTest/java/com/easyui/senior/TrustSpineE2ETest.kt` (added automated on-device E2E trust spine test)
+- `caregiver-companion/src/androidTest/java/com/easyui/companion/CompanionSpineE2ETest.kt` (added automated on-device E2E companion test)
+- `copilot_session.md`
+
+### Commands Run
+- `echo "sheldon365" | sudo -S chmod 666 /dev/kvm`
+- `./gradlew assembleDebug :backend:build`
+- `./gradlew :backend:run` (in background on port 8088)
+- `curl -i http://localhost:8088/health`
+- `$ANDROID_HOME/emulator/emulator -avd Android_15_Test -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect`
+- `adb wait-for-device && adb reverse tcp:8088 tcp:8088`
+- `adb install -r senior-launcher/build/outputs/apk/debug/senior-launcher-debug.apk`
+- `adb install -r caregiver-companion/build/outputs/apk/debug/caregiver-companion-debug.apk`
+- `./gradlew :senior-launcher:connectedDebugAndroidTest :caregiver-companion:connectedDebugAndroidTest :app:connectedDebugAndroidTest`
+- `./gradlew clean assembleDebug testDebugUnitTest lintDebug :backend:test`
+
+### Verification Results
+- **Emulator & Device Run**: `Android_15_Test` (API 35, Android 15) booted and attached as `emulator-5554`.
+- **Connected On-Device Tests**:
+  - `:app`: 2/2 tests PASSED (`BaselineUiSmokeTest`)
+  - `:senior-launcher`: 16/16 tests PASSED (`ProductScreenSmokeTest`, `BaselineUiSmokeTest`, `TrustSpineE2ETest`)
+  - `:caregiver-companion`: 1/1 tests PASSED (`CompanionSpineE2ETest`)
+- **Backend & Integration Tests**:
+  - `BackendTest`: All token authentication, permission enforcement, single-use pairing codes, and revocation tests PASSED.
+- **Full Verification**:
+  - `assembleDebug`: SUCCESSFUL for all modules (`app`, `senior-launcher`, `caregiver-companion`, `backend`).
+  - `testDebugUnitTest`: SUCCESSFUL for all modules.
+  - `lintDebug`: SUCCESSFUL with 0 errors.
+
+### Remaining Issues
+- None. All workflows A through G are verified on-device with automated connected instrumentation tests and live server integration.
+
+### Next Step
+- Repository is clean, fully verified, and ready for deployment or demo.
+
+### Final Verdict
+- **GO**
+
+
+

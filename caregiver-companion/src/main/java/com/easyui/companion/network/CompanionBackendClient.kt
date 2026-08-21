@@ -4,6 +4,8 @@ import android.util.Log
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -53,8 +55,8 @@ object CompanionBackendClient {
         return postRaw("/delete-account", "", token) == true
     }
 
-    private fun <T> postJson(path: String, body: String, token: String?, clazz: Class<T>): T? {
-        return try {
+    private suspend fun <T> postJson(path: String, body: String, token: String?, clazz: Class<T>): T? = withContext(Dispatchers.IO) {
+        try {
             val conn = openConnection(path, "POST", token)
             conn.outputStream.use { os ->
                 OutputStreamWriter(os).use { w -> w.write(body) }
@@ -78,8 +80,8 @@ object CompanionBackendClient {
         }
     }
 
-    private fun postRaw(path: String, body: String, token: String?): Boolean? {
-        return try {
+    private suspend fun postRaw(path: String, body: String, token: String?): Boolean? = withContext(Dispatchers.IO) {
+        try {
             val conn = openConnection(path, "POST", token)
             conn.outputStream.use { os ->
                 OutputStreamWriter(os).use { w -> w.write(body) }
@@ -95,8 +97,8 @@ object CompanionBackendClient {
         }
     }
 
-    private fun <T> getJson(path: String, token: String?, clazz: Class<T>): T? {
-        return try {
+    private suspend fun <T> getJson(path: String, token: String?, clazz: Class<T>): T? = withContext(Dispatchers.IO) {
+        try {
             val conn = openConnection(path, "GET", token)
             val code = conn.responseCode
             if (code in 200..299) {

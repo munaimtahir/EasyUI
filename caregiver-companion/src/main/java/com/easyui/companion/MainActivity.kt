@@ -193,7 +193,8 @@ fun PairingScreen(sessionManager: CompanionSession, onPaired: () -> Unit) {
 
         Button(
             onClick = {
-                if (codeInput.length != 8) {
+                val trimmedCode = codeInput.trim().uppercase()
+                if (trimmedCode.length != 8) {
                     errorText = "Pairing code must be exactly 8 characters."
                     return@Button
                 }
@@ -201,7 +202,7 @@ fun PairingScreen(sessionManager: CompanionSession, onPaired: () -> Unit) {
                     isPairing = true
                     errorText = null
                     val state = sessionManager.getSession()
-                    val res = CompanionBackendClient.pairWithSenior(codeInput, state.caregiverDeviceId)
+                    val res = CompanionBackendClient.pairWithSenior(trimmedCode, state.caregiverDeviceId)
                     if (res != null) {
                         sessionManager.saveSession(res.deviceToken, res.seniorDeviceId, res.permissions)
                         onPaired()
