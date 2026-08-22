@@ -34,7 +34,7 @@ The backend persists device pairing state, active tokens, status snapshots, chec
 ### 2.3 Networking & Domains
 
 Android release builds strictly reject cleartext HTTP traffic. All production communication requires valid HTTPS:
-- **Domain Name**: e.g., `api.easyui.app` (Production) or `staging-api.easyui.app` (Staging).
+- **Domain Name**: e.g., `api.easyui.vexel.pk` (Production) or `staging-api.easyui.vexel.pk` (Staging).
 - **Public Inbound Ports**:
   - `80/tcp` (HTTP — redirects to HTTPS)
   - `443/tcp` (HTTPS — TLS termination with valid CA certificate)
@@ -90,9 +90,9 @@ Android release builds strictly reject cleartext HTTP traffic. All production co
 
 ## 5. Deployment Options & Step-by-Step Guides
 
-### Option A: Docker Compose with Automatic HTTPS via Caddy (Recommended for VPS)
+### Option A: Docker Compose behind a shared host-level Caddy (used on the active VM)
 
-This method provides a single-command setup on any cloud VPS (DigitalOcean, Hetzner, AWS Lightsail, Linode, etc.) with automatic Let's Encrypt SSL.
+`docker-compose.yml` in this repo only runs the `backend` container — it does **not** run its own Caddy. On a fresh single-purpose VPS you could add a containerized Caddy in front of it (bind `80`/`443`, reverse-proxy to `backend:8080` inside the compose network), but the **active deployment VM hosts several unrelated apps behind one shared, host-level Caddy instance** (`/etc/caddy/Caddyfile`), so running a second Caddy inside this compose stack would fight the host Caddy for ports `80`/`443`. Instead, the backend container publishes its port to the host, and the host Caddy reverse-proxies to it — see §7 for the exact wiring.
 
 #### 1. Setup Server
 Provision an Ubuntu 22.04/24.04 VPS ($4–$6/month), install Docker and Docker Compose:
@@ -101,24 +101,22 @@ sudo apt update && sudo apt install -y docker.io docker-compose-v2
 ```
 
 #### 2. Configure DNS
-Create an **A Record** pointing your domain (e.g. `api.easyui.app`) to your VPS public IPv4 address.
+Create an **A Record** pointing your domain (e.g. `api.easyui.vexel.pk`) to your VPS public IPv4 address.
 
 #### 3. Deploy Stack
-Clone the repository and launch the stack:
+Clone the repository and launch the backend container:
 ```bash
 git clone https://github.com/munaimtahir/easyui.git /opt/easyui
 cd /opt/easyui
 
-# Set your domain in Caddy environment
-export DOMAIN=api.easyui.app
-
-# Build and start services in background
+# Build and start the backend in background (published on host port 8088)
 docker compose up -d --build
 ```
+Then point the host-level Caddy at `127.0.0.1:8088` for your domain (see §7). If you're running EasyUI on a dedicated single-purpose VPS instead, use the standalone `Caddyfile` in this repo with a containerized Caddy service of your own instead of the shared host Caddy.
 
 #### 4. Verify Health
 ```bash
-curl -i https://api.easyui.app/health
+curl -i https://api.easyui.vexel.pk/health
 # Expected Output:
 # HTTP/2 200
 # {"status": "healthy"}
@@ -147,7 +145,7 @@ gcloud run deploy easyui-backend \
 ```
 
 #### 3. Map Custom Domain
-In the Cloud Run Console, navigate to **Custom Domains** and map `api.easyui.app`.
+In the Cloud Run Console, navigate to **Custom Domains** and map `api.easyui.vexel.pk`.
 
 ---
 
@@ -192,7 +190,7 @@ primary_region = "ord"
 #### 4. Deploy
 ```bash
 fly deploy
-fly certs add api.easyui.app
+fly certs add api.easyui.vexel.pk
 ```
 
 ---
@@ -222,7 +220,27 @@ docker compose restart backend
 
 - **Dedicated Backend VM**: Google Cloud VM (Internal: `vps-clone`, Public IP: `34.46.17.200`)
   - **Role**: designated hosting runner running the EasyUI Ktor server backend on port `8088`.
-  - **DNS Resolution**: `easyui.alshifalab.pk` and `api.easyui.alshifalab.pk` are routed through the Caddy proxy on this VM.
+  - **Production domain**: `easyui.vexel.pk` / `api.easyui.vexel.pk` (chosen 2026-08-22 as the memorable, relatable production domain over the previously-referenced `api.easyui.app` and `api.easyui.alshifalab.pk`). A records point at this VM's IP; `easyui.vexel.pk` is confirmed fully live over HTTPS with a valid Let's Encrypt cert, `api.easyui.vexel.pk`'s cert is pending automatic retry as DNS propagation finishes across resolvers. Both are routed through the **shared, host-level Caddy** instance on this VM (`/etc/caddy/Caddyfile`), not a per-app containerized Caddy — this VM hosts multiple unrelated apps (lims, rims, phc, sims, pgsims, consult, dashboard, mediq, bika, mbbsprep, adminops, playgrowth) behind that one Caddy process.
+  - **Port allocation**: `8088` is dedicated and exclusive to the EasyUI backend on this VM — confirmed against every port declared elsewhere in `/etc/caddy/Caddyfile` and every port currently listening (`ss -tln`, `docker ps`) with no collisions. `docker-compose.yml`'s `backend` service publishes `8088:8080` specifically so the host Caddy can `reverse_proxy 127.0.0.1:8088`:
+    ```caddyfile
+    easyui.vexel.pk, api.easyui.vexel.pk {
+        encode gzip zstd
+        import std_log easyui
+        import std_headers
+
+        handle /healthz {
+            header Content-Type "application/json"
+            respond "{\"status\":\"ok\",\"service\":\"easyui\"}" 200
+        }
+
+        handle {
+            reverse_proxy 127.0.0.1:8088 {
+                import std_proxy
+            }
+        }
+    }
+    ```
+  - The `caddy` service and its associated volumes were removed from `docker-compose.yml` (2026-08-22) — running it would have bound host ports `80`/`443`, which the shared host Caddy already owns.
 - **Signed Release Builds**:
   - Other developer machines are responsible for pulling updates from `main` and generating production-signed client releases (APKs).
   - This ensures that VM CPU and memory are reserved exclusively for the live Ktor server runtime.

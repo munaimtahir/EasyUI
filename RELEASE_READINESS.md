@@ -157,8 +157,8 @@ Signing configurations are completely externalized and decoupled from source con
 ## 11. Deferred User Inputs
 
 The following operational credentials and infrastructure ownership items are external and recorded as **`DEFERRED_USER_INPUT`**:
-1. Production release signing keystore & passwords (currently builds clean unsigned release APKs and AABs).
-2. Production domain DNS (`api.easyui.app` / `staging-api.easyui.app`) and TLS certificate provisioning.
+1. Production release signing keystore & passwords (currently builds clean unsigned release APKs and AABs) — required on-device to produce the signed release bundle after emulator verification.
+2. ~~Production domain DNS and TLS certificate provisioning~~ — **RESOLVED 2026-08-22**: production domain is `easyui.vexel.pk` / `api.easyui.vexel.pk`, DNS propagated and Let's Encrypt TLS live via the shared host Caddy on the backend VM (see `BACKEND_DEPLOYMENT.md` §7). Both `senior-launcher/build.gradle.kts` and `caregiver-companion/build.gradle.kts` release defaults updated to `https://api.easyui.vexel.pk`.
 3. Google Play Console developer account credentials for store publishing.
 4. Final marketing artwork and localized screenshot assets.
 

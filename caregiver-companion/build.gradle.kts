@@ -50,7 +50,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            val prodBackendUrl = System.getenv("EASYUI_PROD_BACKEND_URL") ?: project.findProperty("EASYUI_PROD_BACKEND_URL") as? String ?: "https://api.easyui.app"
+            val prodBackendUrl = System.getenv("EASYUI_PROD_BACKEND_URL") ?: project.findProperty("EASYUI_PROD_BACKEND_URL") as? String ?: "https://api.easyui.vexel.pk"
             buildConfigField("String", "BACKEND_BASE_URL", "\"$prodBackendUrl\"")
             buildConfigField("String", "ENVIRONMENT", "\"PRODUCTION\"")
 

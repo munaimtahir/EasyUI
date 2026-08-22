@@ -1,4 +1,8 @@
-{$DOMAIN:api.easyui.app} {
+# Standalone Caddy config for a single-purpose VPS running its own
+# containerized Caddy (docker-compose Option A in BACKEND_DEPLOYMENT.md).
+# NOT used on the active shared VM — there, the host-level
+# /etc/caddy/Caddyfile reverse-proxies to 127.0.0.1:8088 instead.
+{$DOMAIN:api.easyui.vexel.pk} {
     reverse_proxy backend:8080 {
         header_up Host {host}
         header_up X-Real-IP {remote}

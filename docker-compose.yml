@@ -1,11 +1,15 @@
-version: '3.8'
-
 services:
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
+    # Published on the host so the shared, host-level Caddy instance
+    # (/etc/caddy/Caddyfile) can reverse_proxy 127.0.0.1:8088 -> this
+    # container. Port 8088 is dedicated to easyui and reserved there
+    # alongside every other app's port (see BACKEND_DEPLOYMENT.md).
+    ports:
+      - "8088:8080"
     environment:
       - PORT=8080
       - HOST=0.0.0.0
@@ -17,27 +21,8 @@ services:
     networks:
       - easyui_net
 
-  caddy:
-    image: caddy:alpine
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      - DOMAIN=${DOMAIN:-api.easyui.app}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - backend
-    networks:
-      - easyui_net
-
 volumes:
   easyui_data:
-  caddy_data:
-  caddy_config:
 
 networks:
   easyui_net:
