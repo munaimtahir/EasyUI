@@ -122,6 +122,22 @@ class StatusReportWorker(
             )
         }
 
+        /** Report the initial device state as soon as a caregiver pairing completes. */
+        fun enqueueImmediate(context: Context) {
+            val request = OneTimeWorkRequestBuilder<StatusReportWorker>()
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
+                .build()
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                "${WORK_NAME}_initial",
+                ExistingWorkPolicy.REPLACE,
+                request
+            )
+        }
+
         fun cancelAll(context: Context) {
             WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
         }

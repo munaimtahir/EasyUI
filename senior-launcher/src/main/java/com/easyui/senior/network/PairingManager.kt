@@ -90,6 +90,7 @@ class PairingManager(private val context: Context) {
         val completion = BackendClient.getPairingCompletion(seniorDeviceId, completionSecret)
             ?: return@withContext false
         applyDeviceToken(completion.deviceToken, completion.permissions)
+        StatusReportWorker.enqueueImmediate(context)
         true
     }
 
