@@ -161,7 +161,7 @@ data class StatusResponseDto(
 @Serializable
 data class CheckInPayloadDto(
     val timestamp: Long,
-    val message: String
+    val message: String = "I'm OK"
 )
 
 @Serializable
