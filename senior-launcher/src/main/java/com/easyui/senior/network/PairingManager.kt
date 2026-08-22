@@ -28,6 +28,7 @@ class PairingManager(private val context: Context) {
         private val KEY_DEVICE_TOKEN = stringPreferencesKey("pairing_device_token")
         private val KEY_PAIRING_CODE = stringPreferencesKey("pairing_pending_code")
         private val KEY_PAIRING_CODE_EXPIRES = longPreferencesKey("pairing_code_expires_at")
+        private val KEY_PAIRING_COMPLETION_SECRET = stringPreferencesKey("pairing_completion_secret")
         private val KEY_PERMISSIONS = stringPreferencesKey("pairing_permissions")
 
         const val PERMISSION_BATTERY = "battery"
@@ -62,6 +63,7 @@ class PairingManager(private val context: Context) {
             context.coreDataStore.edit { prefs ->
                 prefs[KEY_PAIRING_CODE] = result.code
                 prefs[KEY_PAIRING_CODE_EXPIRES] = result.expiresAt
+                prefs[KEY_PAIRING_COMPLETION_SECRET] = result.completionSecret
             }
             result.code
         } else null
@@ -75,7 +77,20 @@ class PairingManager(private val context: Context) {
             prefs[KEY_PERMISSIONS] = permissions.joinToString(",")
             prefs.remove(KEY_PAIRING_CODE)
             prefs.remove(KEY_PAIRING_CODE_EXPIRES)
+            prefs.remove(KEY_PAIRING_COMPLETION_SECRET)
         }
+    }
+
+    /** Complete a caregiver-initiated pairing using the secret retained only on this senior device. */
+    suspend fun refreshPairingCompletion(): Boolean = withContext(Dispatchers.IO) {
+        val prefs = context.coreDataStore.data.first()
+        if (prefs[KEY_DEVICE_TOKEN] != null) return@withContext true
+        val seniorDeviceId = prefs[KEY_SENIOR_DEVICE_ID] ?: return@withContext false
+        val completionSecret = prefs[KEY_PAIRING_COMPLETION_SECRET] ?: return@withContext false
+        val completion = BackendClient.getPairingCompletion(seniorDeviceId, completionSecret)
+            ?: return@withContext false
+        applyDeviceToken(completion.deviceToken, completion.permissions)
+        true
     }
 
     /** Revoke pairing — clears all pairing data locally and remote */
@@ -93,6 +108,7 @@ class PairingManager(private val context: Context) {
             prefs.remove(KEY_DEVICE_TOKEN)
             prefs.remove(KEY_PAIRING_CODE)
             prefs.remove(KEY_PAIRING_CODE_EXPIRES)
+            prefs.remove(KEY_PAIRING_COMPLETION_SECRET)
             prefs.remove(KEY_PERMISSIONS)
         }
     }

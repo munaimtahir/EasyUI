@@ -41,7 +41,7 @@
     <string name="status_selected_theme">Selected theme</string>
     <string name="status_selected_home_slots_count">Home slots filled</string>
     <string name="launcher_state_unknown">Launcher status could not be confirmed on this device.</string>
-    <string name="launcher_state_is_default">Core is set as the default Home app on this device.</string>
+    <string name="launcher_state_is_default">EasyUI Senior Launcher is set as the default Home app on this device.</string>
     <string name="launcher_state_default_other">Default Home app: %1$s</string>
 
     <string name="theme_section_palette">Theme</string>
@@ -84,9 +84,9 @@
     <string name="reset_home_only_confirm">This will clear all home slots but keep your theme.</string>
     <string name="reset_all_settings_confirm">This will clear all home slots and reset the theme to Default.</string>
 
-    <string name="onboarding_title">Set up Core Launcher</string>
+    <string name="onboarding_title">Set up EasyUI Senior Launcher</string>
     <string name="onboarding_step_launcher_title">Step 1: Default launcher</string>
-    <string name="onboarding_step_launcher_body">Choose Core as your default Home app.</string>
+    <string name="onboarding_step_launcher_body">Choose EasyUI Senior Launcher as your default Home app.</string>
     <string name="onboarding_step_appearance_title">Step 2: Theme and text</string>
     <string name="onboarding_step_appearance_body">Pick the palette and launcher text size.</string>
     <string name="onboarding_step_layout_title">Step 3: Pages and placement</string>

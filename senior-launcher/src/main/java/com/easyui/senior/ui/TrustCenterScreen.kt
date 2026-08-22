@@ -95,6 +95,18 @@ fun TrustCenterScreen(
                             }
                             isRequestingCode = false
                         }
+                    },
+                    onCheckPairingStatus = {
+                        scope.launch {
+                            isRequestingCode = true
+                            codeRequestError = null
+                            if (pairingManager.refreshPairingCompletion()) {
+                                pairingState = pairingManager.getState()
+                            } else {
+                                codeRequestError = "Pairing is still waiting for your caregiver."
+                            }
+                            isRequestingCode = false
+                        }
                     }
                 )
             }
@@ -180,7 +192,8 @@ private fun PairingCodeCard(
     pendingCode: String?,
     isLoading: Boolean,
     error: String?,
-    onRequestCode: () -> Unit
+    onRequestCode: () -> Unit,
+    onCheckPairingStatus: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().testTag("pairing_code_card"),
@@ -223,7 +236,12 @@ private fun PairingCodeCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                TextButton(onClick = onRequestCode) { Text("Generate New Code") }
+                Button(
+                    onClick = onCheckPairingStatus,
+                    enabled = !isLoading,
+                    modifier = Modifier.fillMaxWidth().testTag("check_pairing_status_button")
+                ) { Text("I've shared the code — check connection") }
+                TextButton(onClick = onRequestCode, enabled = !isLoading) { Text("Generate New Code") }
             } else {
                 Text(
                     "No caregiver is connected. Generate a pairing code to share with your caregiver.",

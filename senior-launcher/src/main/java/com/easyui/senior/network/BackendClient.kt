@@ -45,6 +45,14 @@ object BackendClient {
         return postJson("/pair", body, null, PairResponseDto::class.java)
     }
 
+    suspend fun getPairingCompletion(seniorDeviceId: String, completionSecret: String): PairingCompletionDto? {
+        return getJson(
+            "/pairing-status/$seniorDeviceId?secret=$completionSecret",
+            null,
+            PairingCompletionDto::class.java
+        )
+    }
+
     // ─── Status ─────────────────────────────────────────────────────────────
 
     suspend fun postStatus(batteryLevel: Int, isCharging: Boolean, appVersion: String): Boolean {
@@ -149,6 +157,7 @@ object BackendClient {
                 val response = conn.inputStream.bufferedReader().readText()
                 val result = when (clazz) {
                     ConfigPayloadDto::class.java -> json.decodeFromString<ConfigPayloadDto>(response)
+                    PairingCompletionDto::class.java -> json.decodeFromString<PairingCompletionDto>(response)
                     else -> throw IllegalArgumentException("Unknown DTO class: ${clazz.name}")
                 }
                 @Suppress("UNCHECKED_CAST")
@@ -197,7 +206,15 @@ data class PairResponseDto(
 data class PairingTokenDto(
     val code: String,
     val seniorDeviceId: String,
-    val expiresAt: Long
+    val expiresAt: Long,
+    val completionSecret: String
+)
+
+@Serializable
+data class PairingCompletionDto(
+    val seniorDeviceId: String,
+    val deviceToken: String,
+    val permissions: List<String>
 )
 
 @Serializable

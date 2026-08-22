@@ -32,6 +32,22 @@ fun Application.configureRouting() {
             }
         }
 
+        get("/pairing-status/{seniorDeviceId}") {
+            val seniorDeviceId = call.parameters["seniorDeviceId"]
+                ?: return@get call.respond(HttpStatusCode.BadRequest, ErrorResponse("Missing seniorDeviceId"))
+            val completionSecret = call.request.queryParameters["secret"]
+                ?: return@get call.respond(HttpStatusCode.BadRequest, ErrorResponse("Missing pairing completion secret"))
+            val completion = InMemoryStore.pairingCompletion(seniorDeviceId, completionSecret)
+                ?: return@get call.respond(HttpStatusCode.NotFound, ErrorResponse("Pairing has not completed"))
+            call.respond(
+                PairingCompletionResponse(
+                    seniorDeviceId = completion.seniorDeviceId,
+                    deviceToken = completion.seniorDeviceToken,
+                    permissions = completion.permissions
+                )
+            )
+        }
+
         // Authenticated routes
         authenticate("bearer-auth") {
             post("/status") {
@@ -257,4 +273,3 @@ private fun hasPermission(token: String, seniorDeviceId: String, permission: Str
     val allowedPerms = InMemoryStore.permissions[seniorDeviceId] ?: emptyList()
     return allowedPerms.contains(permission)
 }
-

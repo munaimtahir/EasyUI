@@ -45,4 +45,25 @@ data class ConfigResponse(val applied: Boolean)
 data class ErrorResponse(val error: String)
 
 @Serializable
-data class PairingToken(val code: String, val seniorDeviceId: String, val expiresAt: Long)
+data class PairingToken(
+    val code: String,
+    val seniorDeviceId: String,
+    val expiresAt: Long,
+    val completionSecret: String
+)
+
+@Serializable
+data class PairingCompletion(
+    val seniorDeviceId: String,
+    val completionSecret: String,
+    val seniorDeviceToken: String,
+    val permissions: List<String>,
+    val expiresAt: Long
+)
+
+@Serializable
+data class PairingCompletionResponse(
+    val seniorDeviceId: String,
+    val deviceToken: String,
+    val permissions: List<String>
+)

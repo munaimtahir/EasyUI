@@ -27,6 +27,10 @@ class StatusReportWorker(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val pairingManager = PairingManager(applicationContext)
+        if (!pairingManager.refreshPairingCompletion()) {
+            Log.d("StatusReportWorker", "Not paired, skipping status report")
+            return@withContext Result.success()
+        }
         val state = pairingManager.getState()
 
         if (!state.isPaired) {

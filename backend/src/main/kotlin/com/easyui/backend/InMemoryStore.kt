@@ -12,6 +12,7 @@ private val logger = LoggerFactory.getLogger("InMemoryStore")
 
 object InMemoryStore {
     val pendingPairings = ConcurrentHashMap<String, PairingToken>()
+    val completedPairings = ConcurrentHashMap<String, PairingCompletion>()
     val deviceTokens = ConcurrentHashMap<String, String>() // token -> seniorDeviceId
     val caregiverTokens = ConcurrentHashMap<String, String>() // token -> caregiverDeviceId
 
@@ -49,6 +50,7 @@ object InMemoryStore {
 
     fun clearAll() {
         pendingPairings.clear()
+        completedPairings.clear()
         deviceTokens.clear()
         caregiverTokens.clear()
         deviceStatus.clear()
@@ -81,11 +83,13 @@ object InMemoryStore {
         // Clean up expired pairings first
         val now = System.currentTimeMillis()
         pendingPairings.entries.removeIf { it.value.expiresAt < now }
+        completedPairings.entries.removeIf { it.value.expiresAt < now }
 
         val code = generatePairingCode()
         val expiresAt = now + 600_000 // 10 minutes
-        val token = PairingToken(code, seniorDeviceId, expiresAt)
+        val token = PairingToken(code, seniorDeviceId, expiresAt, generateToken())
         pendingPairings[code] = token
+        completedPairings.remove(seniorDeviceId)
         persistState()
         return token
     }
@@ -101,29 +105,48 @@ object InMemoryStore {
 
         // Complete pairing
         pendingPairings.remove(code)
-        val token = generateToken()
+        val seniorToken = generateToken()
+        val caregiverToken = generateToken()
         val seniorDeviceId = pairing.seniorDeviceId
 
-        deviceTokens[token] = seniorDeviceId
-        // Also map this token to the caregiver device ID so Ktor auth works for both
-        caregiverTokens[token] = caregiverDeviceId
+        deviceTokens[seniorToken] = seniorDeviceId
+        caregiverTokens[caregiverToken] = caregiverDeviceId
         caregiverToSenior[caregiverDeviceId] = seniorDeviceId
 
         val defaultPermissions = listOf("battery", "checkin", "config", "alerts")
         permissions[seniorDeviceId] = defaultPermissions
+        completedPairings[seniorDeviceId] = PairingCompletion(
+            seniorDeviceId = seniorDeviceId,
+            completionSecret = pairing.completionSecret,
+            seniorDeviceToken = seniorToken,
+            permissions = defaultPermissions,
+            expiresAt = pairing.expiresAt
+        )
         persistState()
 
         return PairResponse(
-            deviceToken = token,
+            deviceToken = caregiverToken,
             seniorDeviceId = seniorDeviceId,
             permissions = defaultPermissions
         )
+    }
+
+    fun pairingCompletion(seniorDeviceId: String, completionSecret: String): PairingCompletion? {
+        val completion = completedPairings[seniorDeviceId] ?: return null
+        if (completion.expiresAt < System.currentTimeMillis()) {
+            completedPairings.remove(seniorDeviceId)
+            persistState()
+            return null
+        }
+        return completion.takeIf { it.completionSecret == completionSecret }
     }
 
     fun persistState() {
         val file = storageFile ?: return
         try {
             val snapshot = StoreSnapshot(
+                pendingPairings = HashMap(pendingPairings),
+                completedPairings = HashMap(completedPairings),
                 deviceTokens = HashMap(deviceTokens),
                 caregiverTokens = HashMap(caregiverTokens),
                 caregiverToSenior = HashMap(caregiverToSenior),
@@ -145,6 +168,8 @@ object InMemoryStore {
         try {
             val content = file.readText()
             val snapshot = json.decodeFromString<StoreSnapshot>(content)
+            pendingPairings.putAll(snapshot.pendingPairings)
+            completedPairings.putAll(snapshot.completedPairings)
             deviceTokens.putAll(snapshot.deviceTokens)
             caregiverTokens.putAll(snapshot.caregiverTokens)
             caregiverToSenior.putAll(snapshot.caregiverToSenior)
@@ -161,6 +186,8 @@ object InMemoryStore {
 
 @Serializable
 data class StoreSnapshot(
+    val pendingPairings: Map<String, PairingToken> = emptyMap(),
+    val completedPairings: Map<String, PairingCompletion> = emptyMap(),
     val deviceTokens: Map<String, String> = emptyMap(),
     val caregiverTokens: Map<String, String> = emptyMap(),
     val caregiverToSenior: Map<String, String> = emptyMap(),

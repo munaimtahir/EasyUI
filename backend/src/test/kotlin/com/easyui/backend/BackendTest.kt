@@ -86,6 +86,45 @@ class BackendTest {
     }
 
     @Test
+    fun testSeniorCompletesPairingWithItsPrivateCompletionSecret() = testApplication {
+        application { module() }
+        val client = createClient {
+            install(ContentNegotiation) { json() }
+        }
+
+        val pairing = InMemoryStore.initiatePairing("test-senior-1")
+        val pairResponse = client.post("/pair") {
+            contentType(ContentType.Application.Json)
+            setBody(PairRequest(pairing.code, "caregiver-1"))
+        }
+        val caregiverSession = Json.decodeFromString<PairResponse>(pairResponse.bodyAsText())
+
+        val completionResponse = client.get(
+            "/pairing-status/test-senior-1?secret=${pairing.completionSecret}"
+        )
+        assertEquals(HttpStatusCode.OK, completionResponse.status)
+        val completion = Json.decodeFromString<PairingCompletionResponse>(completionResponse.bodyAsText())
+        assertEquals("test-senior-1", completion.seniorDeviceId)
+        assertEquals(caregiverSession.permissions, completion.permissions)
+        assertTrue(completion.deviceToken != caregiverSession.deviceToken)
+
+        val statusPost = client.post("/status") {
+            header(HttpHeaders.Authorization, "Bearer ${completion.deviceToken}")
+            contentType(ContentType.Application.Json)
+            setBody(StatusPayload(80, false, "1.0.1", System.currentTimeMillis()))
+        }
+        assertEquals(HttpStatusCode.OK, statusPost.status)
+
+        val caregiverStatus = client.get("/status/test-senior-1") {
+            header(HttpHeaders.Authorization, "Bearer ${caregiverSession.deviceToken}")
+        }
+        assertEquals(HttpStatusCode.OK, caregiverStatus.status)
+
+        val rejectedSecret = client.get("/pairing-status/test-senior-1?secret=wrong-secret")
+        assertEquals(HttpStatusCode.NotFound, rejectedSecret.status)
+    }
+
+    @Test
     fun testStatusAuthenticationRequired() = testApplication {
         application {
             module()
