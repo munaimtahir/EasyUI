@@ -1,5 +1,9 @@
 package com.easyui.senior.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -107,6 +111,11 @@ fun TrustCenterScreen(
                             }
                             isRequestingCode = false
                         }
+                    },
+                    onCopyCode = { code ->
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        clipboard.setPrimaryClip(ClipData.newPlainText("EasyUI pairing code", code))
+                        Toast.makeText(context, "Pairing code copied. Paste it in Caregiver Companion.", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
@@ -193,7 +202,8 @@ private fun PairingCodeCard(
     isLoading: Boolean,
     error: String?,
     onRequestCode: () -> Unit,
-    onCheckPairingStatus: () -> Unit
+    onCheckPairingStatus: () -> Unit,
+    onCopyCode: (String) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().testTag("pairing_code_card"),
@@ -236,6 +246,12 @@ private fun PairingCodeCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = { onCopyCode(pendingCode) },
+                    enabled = !isLoading,
+                    modifier = Modifier.fillMaxWidth().testTag("copy_pairing_code_button")
+                ) { Text("Copy Pairing Code") }
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = onCheckPairingStatus,
                     enabled = !isLoading,

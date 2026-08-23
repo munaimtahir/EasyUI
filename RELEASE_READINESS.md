@@ -1,17 +1,17 @@
-# EasyUI v1.0 RC2 — Production Release Readiness & Distribution Audit
+# EasyUI v1.0.1 (Version 2) — Closed-Testing Release Readiness
 
 ## 1. Release Identification
 
 | Component | Version Name | Version Code | Application ID / Package | Target SDK | Min SDK | Compile SDK |
 | --------- | ------------ | ------------ | ------------------------ | ---------- | ------- | ----------- |
-| **Senior Launcher** | `1.0.0` | `1` | `com.easyui.senior` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
-| **Caregiver Companion** | `1.0.0` | `1` | `com.easyui.companion` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
-| **Core Baseline** (Internal Foundation) | `1.0.0` | `1` | `com.easyui.core` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
-| **Backend Service** | `1.0.0` | N/A | `com.easyui.backend` | JVM 17 | JVM 17 | JVM 17 |
+| **Senior Launcher** | `1.0.1` | `2` | `com.easyui.senior` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
+| **Caregiver Companion** | `1.0.1` | `2` | `com.easyui.companion` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
+| **Core Baseline** (Internal Foundation) | `1.0.1` | `2` | `com.easyui.core` | **36 (Android 16 / Baklava)** | 24 (Android 7.0) | 36 |
+| **Backend Service** | `1.0.1` | N/A | `com.easyui.backend` | JVM 17 | JVM 17 | JVM 17 |
 
 - **Baseline GO Commit SHA**: `f8c39883ee57aee5090a154148d17963c6b087f9` (Tag: `easyui-v1.0.0-go`)
 - **RC1 Commit SHA**: `301cd0d` (Tag: `easyui-v1.0.0-rc1`)
-- **RC2 Git Tag**: `easyui-v1.0.0-rc2`
+- **Version 2 release commits**: `4078171`, `e49ef92`, `ef2846e`
 
 ---
 
@@ -21,12 +21,9 @@ All release artifacts are minified via R8 and built with release optimization fo
 
 | Module | Artifact Type | Path |
 | ------ | ------------- | ---- |
-| **Senior Launcher** | Release APK | `senior-launcher/build/outputs/apk/release/senior-launcher-release-unsigned.apk` |
-| **Senior Launcher** | Release App Bundle (AAB) | `senior-launcher/build/outputs/bundle/release/senior-launcher-release.aab` |
-| **Caregiver Companion** | Release APK | `caregiver-companion/build/outputs/apk/release/caregiver-companion-release-unsigned.apk` |
-| **Caregiver Companion** | Release App Bundle (AAB) | `caregiver-companion/build/outputs/bundle/release/caregiver-companion-release.aab` |
-| **Core Baseline** | Release APK | `app/build/outputs/apk/release/app-release-unsigned.apk` |
-| **Core Baseline** | Release App Bundle (AAB) | `app/build/outputs/bundle/release/app-release.aab` |
+| **Senior Launcher** | Signed release App Bundle (AAB) | `senior-launcher/build/outputs/bundle/release/senior-launcher-release.aab` |
+| **Caregiver Companion** | Signed release App Bundle (AAB) | `caregiver-companion/build/outputs/bundle/release/caregiver-companion-release.aab` |
+| **Core Baseline** | Internal module; no separate Play listing | N/A |
 
 ---
 
@@ -37,8 +34,8 @@ Environment switching is fully automated at build time via Gradle `buildConfigFi
 | Environment | Backend Base URL Source | Network Security Policy | Seed Tokens |
 | ----------- | ----------------------- | ----------------------- | ----------- |
 | **Development** (`debug`) | `http://10.0.2.2:8088` (or `-PEASYUI_DEV_BACKEND_URL`) | Cleartext permitted on localhost/10.0.2.2 | Enabled |
-| **Staging** (`release`) | `-PEASYUI_PROD_BACKEND_URL=https://staging-api.easyui.app` | Strict HTTPS only (system CA trust anchors) | Disabled |
-| **Production** (`release`) | `https://api.easyui.app` (or `-PEASYUI_PROD_BACKEND_URL`) | Strict HTTPS only (system CA trust anchors) | Disabled |
+| **Staging** (`release`) | Explicit `-PEASYUI_PROD_BACKEND_URL` only | Strict HTTPS only (system CA trust anchors) | Disabled |
+| **Production** (`release`) | `https://api.easyui.vexel.pk` (or `-PEASYUI_PROD_BACKEND_URL`) | Strict HTTPS only (system CA trust anchors) | Disabled |
 
 ---
 
@@ -52,7 +49,7 @@ Signing configurations are completely externalized and decoupled from source con
   * `EASYUI_RELEASE_KEYSTORE_PASSWORD`
   * `EASYUI_RELEASE_KEY_ALIAS`
   * `EASYUI_RELEASE_KEY_PASSWORD`
-- When unprovided, release tasks generate clean unsigned APKs/AABs ready for CI/CD signing or Google Play App Signing.
+- Version 2 AABs were built using the on-device release keystore and passed local `jarsigner -verify` integrity checks. Signing credentials remain untracked.
 
 ---
 
@@ -157,9 +154,9 @@ Signing configurations are completely externalized and decoupled from source con
 ## 11. Deferred User Inputs
 
 The following operational credentials and infrastructure ownership items are external and recorded as **`DEFERRED_USER_INPUT`**:
-1. Production release signing keystore & passwords (currently builds clean unsigned release APKs and AABs) — required on-device to produce the signed release bundle after emulator verification.
+1. ~~Production release signing keystore & passwords~~ — **RESOLVED 2026-08-23**: Version 2 signed AABs were produced locally; credentials remain excluded from source control.
 2. ~~Production domain DNS and TLS certificate provisioning~~ — **RESOLVED 2026-08-22**: production domain is `easyui.vexel.pk` / `api.easyui.vexel.pk`, DNS propagated and Let's Encrypt TLS live via the shared host Caddy on the backend VM (see `BACKEND_DEPLOYMENT.md` §7). Both `senior-launcher/build.gradle.kts` and `caregiver-companion/build.gradle.kts` release defaults updated to `https://api.easyui.vexel.pk`.
-3. Google Play Console developer account credentials for store publishing.
+3. Closed-testing publication of Version 2: Version 1 was already released to each app's internal testing track. The Version 2 AABs are signed and ready for upload to the respective closed-testing tracks; publish only after the Console session is available.
 4. Final marketing artwork and localized screenshot assets.
 
 ---
@@ -174,15 +171,14 @@ The following operational credentials and infrastructure ownership items are ext
 | **Accessibility Gate** | **PASS** | `SeniorAccessibilityTest` verified font scale 2.0x, touch targets >= 48dp |
 | **Backend Integration Tests (`:backend:test`)** | **PASS** | Authentication, single-use codes, permissions, tampering, revocation, deletion |
 | **Android Lint (`lintDebug`)** | **PASS** | 0 errors |
-| **Release Compilation (`assembleRelease`)** | **PASS** | Signed/minified release APKs generated for all modules |
-| **Release App Bundle (`bundleRelease`)** | **PASS** | Release AABs generated for all modules |
+| **Release Compilation (`assembleRelease`)** | **PASS** | Debug and release compilation completed with minification |
+| **Release App Bundle (`bundleRelease`)** | **PASS** | Signed, integrity-verified Version 2 AABs generated for Senior and Caregiver |
 | **R8 Obfuscation & Minification** | **PASS** | Zero missing serializer or reflection issues |
 
 ---
 
 ## 13. Final Release Verdict
 
-**CONDITIONAL PRODUCTION GO / RC2**
+**CONDITIONAL GO — CLOSED-TESTING UPLOAD READY**
 
-- **Reason**: 100% of technical engineering, Android 16 (API 36) target compliance, security revalidation, accessibility release gate, multi-API device instrumentation (Android 15 & 16), release builds, environment separation, privacy reconciliation, and operational documentation are complete and verified. The sole remaining items are external `DEFERRED_USER_INPUT` assets (production signing keystore, DNS/TLS domain ownership, and Google Play Console publishing credentials) and real pilot execution (`PILOT_READY — NOT_YET_EXECUTED`).
-
+- **Reason**: Version 2 fixes the production pairing-completion path, uses the live HTTPS backend default, and passed the API 35 production-backend pairing, battery, check-in, and SOS round trip. Signed versionCode 2 AABs are ready for both store records. The only remaining release action is the external Play Console closed-track upload; do not describe the release as published until that upload succeeds.

@@ -1,5 +1,329 @@
 # Copilot Session
 
+## Version 2 Release — 2026-08-23
+
+### Pairing-code clipboard update
+- [x] Added and verified a Senior Launcher action that copies the active pairing code to Android clipboard for paste into Caregiver Companion. `:senior-launcher:compileDebugKotlin :senior-launcher:testDebugUnitTest` passed.
+- [x] Built and verified signed release APKs for Senior and Caregiver plus a signed Senior release AAB. APK Signature Scheme v2 verification and AAB `jarsigner` integrity verification passed.
+- [x] Bumped Senior Launcher to `versionName = "1.1.2"` / `versionCode = 3` and regenerated matching signed APK/AAB artifacts. APK Signature Scheme v2 and AAB integrity verification passed.
+
+### Caregiver republish update
+- [x] Changed Caregiver Companion only to `versionName = "1.1.2"` / `versionCode = 3`, regenerated its signed AAB, and verified it for republishing after the prior bundle was deleted before publication. The signed artifact is `caregiver-companion/build/outputs/bundle/release/caregiver-companion-release.aab` (SHA-256 `779f5b1ae5eeaf2be5a08e399d77aec79501e8149582a1f74b08eb7fc770552d`).
+
+### Goal
+Validate, build, sign, and publish Version 2 (`1.0.1`, versionCode `2`) of the EasyUI Senior Launcher and Caregiver Companion only after the live-backend emulator golden path succeeds.
+
+### Plan
+- [ ] Pull and verify the required backend and signing commits plus production backend defaults.
+- [ ] Update release version metadata and validate debug builds against the production backend on an emulator.
+- [ ] Build and cryptographically verify signed AABs, then publish them to the closed-testing track.
+- [ ] Record the actual published state in release documentation, tag, commit, and push.
+
+### Scope Note
+This is a configuration-fix patch release. It changes no product behavior or Android system-UI scope, and no signing material will be committed.
+
+### Checklist
+- [x] Pull and verify the required backend and signing commits plus production backend defaults.
+- [x] Update all three Android application modules to `versionCode = 2` / `versionName = "1.0.1"` for consistent Version 2 metadata.
+- [x] Build and install both debug applications using the HTTPS production-backend override.
+- [ ] Complete the emulator production-backend golden path. **Blocked: pairing does not establish a Senior-side session, so telemetry cannot round-trip.**
+- [ ] Build/sign/verify/publish AABs. **Not attempted, per the required pre-signing emulator gate.**
+- [ ] Update release readiness documentation, tag, commit, and push. **Not attempted; no release is ready.**
+
+### Files Inspected
+- `README.md`
+- `docs/PROJECT_CONTEXT.md`
+- `docs/GREENFIELD_POLICY.md`
+- `docs/BASELINE_SCOPE.md`
+- `docs/PRODUCT_GUARDRAILS.md`
+- `docs/ARCHITECTURE.md`
+- `docs/TESTING/TESTING_STRATEGY.md`
+- `docs/DEFINITION_OF_DONE.md`
+- `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`
+- `app/build.gradle.kts`
+- `senior-launcher/build.gradle.kts`
+- `caregiver-companion/build.gradle.kts`
+- `RELEASE_READINESS.md`
+- `senior-launcher/src/main/java/com/easyui/senior/network/PairingManager.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/BackendClient.kt`
+- `caregiver-companion/src/main/java/com/easyui/companion/network/CompanionBackendClient.kt`
+
+### Files Changed
+- `copilot_session.md`
+- `app/build.gradle.kts`
+- `senior-launcher/build.gradle.kts`
+- `caregiver-companion/build.gradle.kts`
+
+### Commands Run
+- `git fetch origin main && git pull --ff-only origin main`
+- `grep -n -A0 'EASYUI_PROD_BACKEND_URL' senior-launcher/build.gradle.kts caregiver-companion/build.gradle.kts`
+- `curl --fail --silent --show-error --max-time 15 https://api.easyui.vexel.pk/health`
+- `./gradlew :senior-launcher:installDebug :caregiver-companion:installDebug -PEASYUI_DEV_BACKEND_URL=https://api.easyui.vexel.pk`
+- Emulator ADB/UIAutomator workflow on `Android_15_Test` (API 35): fresh data, HOME role assignment, onboarding, Senior pairing-code generation, Caregiver code entry, dashboard checks.
+- Direct production-backend pairing diagnostic: `curl ... https://api.easyui.vexel.pk/pair`.
+
+### Verification Results
+- **Required source state**: PASS — `HEAD` is `398e283`, which includes `835249d`; both release defaults are exactly `https://api.easyui.vexel.pk`. Remote updated to `git@github.com:munaimtahir/EasyUI.git`.
+- **Production health**: PASS — `GET /health` returned `200 {"status":"healthy"}`.
+- **Version metadata**: UPDATED — all three Android application modules now use versionCode 2/versionName 1.0.1. The debug APKs installed with those values.
+- **Debug production override**: PASS — generated debug `BuildConfig` for both apps contains `BACKEND_BASE_URL = "https://api.easyui.vexel.pk"`.
+- **Senior pairing-code generation**: PASS — the Senior app generated production codes over HTTPS (for example, `2KXSXG66` and `F2GCZG41`).
+- **Caregiver pairing**: PASS on retry — entering the current code took the Caregiver app to its Senior Device Status dashboard. A first attempt timed out after the app's 8-second request timeout; direct host `/pair` diagnostic immediately returned HTTP 200.
+- **Telemetry golden path**: FAIL — directly after UI pairing, Caregiver dashboard requests `GET /status/<senior-id>` and `GET /checkin/<senior-id>` returned HTTP 404. The Senior `PairingManager` persists a token only through `applyDeviceToken`, but no production UI/worker calls it after the caregiver completes `/pair`; only instrumentation tests call it. The Senior therefore remains unpaired and does not post status, check-ins, or SOS alerts.
+
+### Remaining Issues
+- **Release blocker:** the real pairing flow does not transfer or retrieve the pairing token for the Senior Launcher. Implement a secure Senior-side pairing-completion mechanism, then verify state persistence, battery status, check-in, and SOS end-to-end against the production backend.
+- **Secondary issue:** the Senior onboarding strings still call the product “Core” (for example, “Choose Core as your default Home app”), although the actual API 35 HOME role workflow can advance when the role is assigned.
+- No signed release bundles were produced, no Play Console action was taken, and no signing credential was read, copied, or committed.
+
+### Next Step
+Fix and test the Senior-side pairing-completion/token persistence flow, then repeat the complete API 35 production-backend golden path before resuming signing and closed-track publishing.
+
+### Final Verdict
+- **NO-GO** — Version 2 source metadata is prepared, but the required live backend telemetry flow fails after real UI pairing. Do not sign or upload this release.
+
+### Resolution Update — 2026-08-23
+
+#### Goal
+Resolve the live-pairing blocker, complete the Version 2 release gate, and prepare signed closed-testing bundles.
+
+#### Checklist
+- [x] Implement a secret-protected Senior-side pairing-completion endpoint and persist separate Senior/Caregiver tokens.
+- [x] Trigger an immediate status report when Senior pairing completion is detected.
+- [x] Correct Caregiver parsing of the backend's omitted default check-in message.
+- [x] Deploy the backend pairing-completion implementation to the production VM.
+- [x] Re-run the production HTTPS golden path on `Android_15_Test` (API 35): pairing, battery, check-in, and SOS.
+- [x] Produce signed, integrity-verified Version 2 AABs for both Play-listed apps.
+- [ ] Upload both AABs to Play Console closed testing (blocked by an unavailable local Console browser integration; no upload was claimed or attempted outside the authenticated Console).
+
+#### Files Changed
+- `backend/src/main/kotlin/com/easyui/backend/Models.kt`
+- `backend/src/main/kotlin/com/easyui/backend/InMemoryStore.kt`
+- `backend/src/main/kotlin/com/easyui/backend/Router.kt`
+- `backend/src/test/kotlin/com/easyui/backend/BackendTest.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/BackendClient.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/PairingManager.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/network/StatusReportWorker.kt`
+- `senior-launcher/src/main/java/com/easyui/senior/ui/TrustCenterScreen.kt`
+- `senior-launcher/src/main/res/values/strings.xml`
+- `caregiver-companion/src/main/java/com/easyui/companion/network/CompanionBackendClient.kt`
+- `app/build.gradle.kts`, `senior-launcher/build.gradle.kts`, `caregiver-companion/build.gradle.kts`
+- `RELEASE_READINESS.md`, `copilot_session.md`
+
+#### Commands Run
+- `./gradlew :backend:test :senior-launcher:testDebugUnitTest :caregiver-companion:testDebugUnitTest`
+- `./gradlew clean assembleDebug testDebugUnitTest lintDebug`
+- `./gradlew :senior-launcher:installDebug :caregiver-companion:installDebug -PEASYUI_DEV_BACKEND_URL=https://api.easyui.vexel.pk`
+- `./gradlew :senior-launcher:bundleRelease :caregiver-companion:bundleRelease` (with on-device signing configuration)
+- `jarsigner -verify` for both generated AABs
+
+#### Verification Results
+- Production backend health returned `200 {"status":"healthy"}` and the deployed backend supports secure pairing completion.
+- API 35 live HTTPS golden path passed: Senior generated a code; Caregiver paired; Senior showed Caregiver Connected; Caregiver received battery level, check-in, and SOS alert data.
+- Backend regression suite passed (17 tests); Android unit tests and lint passed with only non-blocking toolchain/deprecation warnings.
+- Both `1.0.1` / versionCode `2` AABs have `https://api.easyui.vexel.pk` baked in and passed local signature-integrity verification.
+- Native-symbol extraction was enabled at `FULL` level for both release variants. The only packaged native libraries are pre-stripped third-party DataStore libraries; Android Gradle Plugin produced no symbol ZIP because no unstripped native metadata exists. A fabricated ZIP was deliberately not created.
+
+#### Remaining Issues
+- The Version 2 AABs still require upload to the corresponding Play Console closed-testing tracks. Existing Version 1 internal-testing releases were previously uploaded; this is not a first-release prerequisite.
+- The local Play Console browser integration cannot initialize because its installed component references a missing runtime file. This prevents authenticated upload automation in this session.
+
+#### Next Step
+In Google Play Console, upload the signed Version 2 Senior and Caregiver AABs to their closed-testing tracks, review the generated release, and publish it. Then tag and push the release-record documentation commit.
+
+#### Final Verdict
+- **CONDITIONAL GO — CLOSED-TESTING UPLOAD READY.** The technical release gate is complete; final publication depends only on the external Play Console upload.
+
+
+## Android API 36 Basic Functional Test — 2026-08-23
+
+### Goal
+Run the current EasyUI Senior Launcher and Caregiver Companion on the latest installed Android API 36 emulator, then record basic end-to-end functional results.
+
+### Plan
+- [x] Read the required project, scope, architecture, testing, and completion documentation.
+- [x] Verify API 36 emulator and build artifacts; build/install the current debug applications.
+- [x] Exercise the Senior Launcher’s basic launcher flow.
+- [x] Exercise the Caregiver Companion’s basic pairing flow.
+- [x] Record commands, observed results, blockers, and final verdict.
+
+### Scope Note
+This is a verification session only. It tests normal launcher-level behavior and the consent-controlled caregiver relationship; it does not add restricted system-UI controls or managed-device behavior.
+
+### Files Inspected
+- `README.md`
+- `docs/PROJECT_CONTEXT.md`
+- `docs/GREENFIELD_POLICY.md`
+- `docs/BASELINE_SCOPE.md`
+- `docs/PRODUCT_GUARDRAILS.md`
+- `docs/ARCHITECTURE.md`
+- `docs/TESTING/TESTING_STRATEGY.md`
+- `docs/DEFINITION_OF_DONE.md`
+- `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`
+- `DEVICE_TESTING_PLAN.md`
+- `senior-launcher/src/main/res/values/strings.xml`
+
+### Files Changed
+- `copilot_session.md`
+
+### Commands Run
+- Started `Android_16_Test` with the installed Android 16 / API 36 Google Play x86_64 system image and verified `ro.build.version.sdk=36`.
+- `./gradlew clean assembleDebug testDebugUnitTest lintDebug`
+- Installed the freshly built debug APKs on the API 36 emulator after removing only the two prior EasyUI test packages, whose signatures were incompatible.
+- Started the local backend with `./gradlew :backend:run`; `GET /health` returned HTTP 200 and `{ "status": "healthy" }`.
+- Ran `./gradlew :senior-launcher:connectedDebugAndroidTest :caregiver-companion:connectedDebugAndroidTest`.
+
+### Verification Results
+- **Build, unit tests, lint**: PASS — `BUILD SUCCESSFUL in 9m`; all requested tasks completed. There are non-blocking AGP compileSdk 36 compatibility, Kotlin implicit-cast, and deprecated Wi-Fi API warnings.
+- **API 36 target**: PASS — Android 16 / API 36 booted and accepted both freshly built debug APKs.
+- **Caregiver Companion basic launch**: PASS on API 36 — the pairing page displayed its title, instructions, pairing-code field, and “Pair with Launcher Device” action without an application crash.
+- **Senior Launcher basic launch**: FAIL on API 36 — it displayed onboarding but calls itself **Core** (both “Choose Core as your default Home app” and “Core is set …”).  After assigning `com.easyui.senior` the HOME role, onboarding still stayed on step 1; attempting to continue returned to the previously selected launcher. This blocks reaching Privacy & Trust and prevents an end-to-end pairing test.
+- **Connected Android tests**: NOT RUN — Gradle reported `No connected devices` after the API 36 emulator exited during the test setup. This is an emulator/test-environment failure, not a passing connected-test result.
+
+### Remaining Issues
+- **Release blocker:** Senior Launcher onboarding has stale Core branding in `senior-launcher/src/main/res/values/strings.xml` and does not recognize/advance from its default-launcher state on API 36, even when `com.easyui.senior` holds `android.app.role.HOME`.
+- Because onboarding cannot complete, pairing, status synchronization, check-in, SOS, reminders, and revocation could not be retested end-to-end on the fresh API 36 install.
+- The API 36 emulator exited before instrumentation could begin; stabilize/restart it after resolving onboarding, then rerun the two connected suites.
+
+### Next Step
+Correct the Senior Launcher’s product strings and default-HOME role detection/onboarding transition, add a regression test for the API 36 ROLE_HOME path, then repeat the API 36 pairing and trust-spine test plan.
+
+### Final Verdict
+- **NO-GO** — the Caregiver Companion starts, but the Senior Launcher onboarding blocks core launcher completion and therefore the two-sided trust flow.
+
+
+## Caregiver Companion Google Play Asset Preparation — 2026-08-22
+
+### Goal
+Capture current Caregiver Companion emulator screenshots suitable for a Google Play listing and create separate Play Store feature-graphic and icon deliverables.
+
+### Plan
+- [x] Read the image-generation workflow and inspect the existing companion release outputs.
+- [x] Run the companion app on an Android emulator and capture representative screens.
+- [x] Generate and validate a 1024 × 500 feature graphic and a 512 × 512 store icon.
+- [x] Record the assets, screenshot selection, and verification results.
+
+### Scope Note
+This work creates listing media only. It does not alter companion behavior or make claims beyond consent-controlled pairing, battery status, check-ins, SOS alerts, and reminder suggestions.
+
+### Files Changed
+- `playstore_uploads/caregiver-companion/feature-graphic-1024x500.png`
+- `playstore_uploads/caregiver-companion/store-icon-512x512.png`
+- `playstore_uploads/caregiver-companion/screenshots/01-pairing.png`
+- `playstore_uploads/caregiver-companion/screenshots/02-senior-status.png`
+- `playstore_uploads/caregiver-companion/screenshots/03-emergency-alerts.png`
+- `playstore_uploads/caregiver-companion/screenshots/04-reminder-suggestions.png`
+- `playstore_uploads/caregiver-companion/README.md`
+- `copilot_session.md`
+
+### Commands Run
+- Started `Android_15_Test` (Android 15 / API 35) emulator.
+- Ran the local EasyUI backend on port 8088 and mapped it to the emulator with ADB reverse.
+- Launched `com.easyui.senior`, generated a short-lived pairing code, then paired `com.easyui.companion`.
+- Captured PNG screenshots via ADB and validated all media dimensions and color modes with Pillow.
+
+### Verification Results
+- Feature graphic: PASS — 1024 × 500 RGB PNG, 505,285 bytes.
+- Store icon: PASS — 512 × 512 RGB PNG, 214,201 bytes.
+- Phone screenshots: PASS — four 1080 × 2340 PNGs captured from the Android 15 emulator.
+- Visual QA: PASS — feature graphic and store icon inspected after final resizing.
+
+### Remaining Issues
+- None for the listing-media deliverable.
+
+### Next Step
+Upload the six files listed under “Upload-ready assets” in `playstore_uploads/caregiver-companion/README.md` to the Caregiver Companion Play Console listing.
+
+### Final Verdict
+- **GO** — listing assets are ready for upload.
+
+## Google Play Store Asset Preparation — 2026-08-22
+
+### Goal
+Capture current EasyUI Senior Launcher emulator screenshots suitable for a Google Play listing and create new, separate Play Store feature-graphic and app-icon deliverables.
+
+### Plan
+- [x] Read the required project, scope, architecture, testing, and completion documentation.
+- [x] Inspect the current Play Store asset folder and Android emulator availability.
+- [x] Launch the current Senior Launcher build and capture clean, representative screen images.
+- [x] Generate and validate a 1024×500 feature graphic and a 512×512 store icon.
+- [x] Record deliverables and verification results.
+
+### Scope Note
+This work creates listing media only. It does not change launcher behavior or make claims beyond the documented senior launcher and caregiver-consent boundaries.
+
+### Files Changed
+- `playstore_uploads/senior-launcher/feature-graphic-1024x500.png`
+- `playstore_uploads/senior-launcher/store-icon-512x512.png`
+- `playstore_uploads/senior-launcher/screenshots/01-home.png` (reference capture)
+- `playstore_uploads/senior-launcher/screenshots/02-check-in.png`
+- `playstore_uploads/senior-launcher/screenshots/03-app-drawer.png`
+- `playstore_uploads/senior-launcher/screenshots/04-privacy-and-trust.png`
+- `playstore_uploads/senior-launcher/README.md`
+- `copilot_session.md`
+
+### Commands Run
+- Started `Android_15_Test` (Android 15 / API 35) emulator.
+- Installed and launched `senior-launcher-debug.apk` (`com.easyui.senior`).
+- Captured PNG screenshots via ADB.
+- Validated media dimensions and color modes with Pillow.
+
+### Verification Results
+- Feature graphic: PASS — 1024 × 500 RGB PNG, 511,975 bytes.
+- Store icon: PASS — 512 × 512 RGB PNG, 200,133 bytes.
+- Suggested phone screenshots: PASS — each 1080 × 2340 PNG, captured from the running Android 15 emulator.
+- Visual QA: PASS — feature graphic and icon inspected after final resizing; screenshots inspected to select the three recommended public images.
+
+### Remaining Issues
+- `screenshots/01-home.png` is intentionally excluded from the recommended public upload set because labels wrap in the emulator's current grid configuration. This is a presentation issue to resolve before using that particular image publicly, not a blocker for the provided set.
+
+### Next Step
+Upload the five files listed under “Upload-ready assets” in `playstore_uploads/senior-launcher/README.md` to the EasyUI Senior Launcher Play Console listing.
+
+### Final Verdict
+- **GO** — listing assets are ready for upload.
+
+
+## Google Play Internal Testing Session — 2026-08-22
+
+### Goal
+Verify and complete the Google Play Console internal-testing workflow for `com.easyui.senior` (EasyUI Launcher) and `com.easyui.companion` (EasyUI Caregiver Companion), using the repository's documented product scope and privacy inventory.
+
+### Plan
+- [x] Read the required project, architecture, scope, testing, and release-readiness documentation.
+- [x] Verify both Play Console app records and their active internal-test releases.
+- [x] Inspect internal tester configuration and the remaining Console setup tasks.
+- [ ] Obtain action-time authorization and the missing policy/listing inputs before making Console declarations or changing tester access.
+- [ ] Complete applicable Play Console content, listing, and release metadata.
+
+### Files Inspected
+- `README.md`
+- `docs/PROJECT_CONTEXT.md`
+- `docs/GREENFIELD_POLICY.md`
+- `docs/BASELINE_SCOPE.md`
+- `docs/PRODUCT_GUARDRAILS.md`
+- `docs/ARCHITECTURE.md`
+- `docs/TESTING/TESTING_STRATEGY.md`
+- `docs/DEFINITION_OF_DONE.md`
+- `docs/LAUNCHER_CUSTOMIZATION_SCOPE.md`
+- `RELEASE_READINESS.md`
+- `copilot_session.md`
+
+### Verification Results
+- **EasyUI Launcher (`com.easyui.senior`)**: Internal testing track is active with release `1 (1.0.0)`, one version code, and availability to internal testers. It was released on 2026-08-22 02:58 and is not reviewed (normal for this track). No email list is currently configured; its web opt-in link is available in Play Console.
+- **EasyUI Caregiver Companion (`com.easyui.companion`)**: Internal testing track is active with release `1 (1.0.0)`, one version code, and availability to internal testers. It was released on 2026-08-22 03:33 and is not reviewed. The selected `Tester1` email list contains 7 users; its web opt-in link is available in Play Console.
+- **App information**: Both dashboards remain draft and list unfinished app-content/store-listing tasks. The documented release inventory supplies proposed descriptions, privacy data inventory, and product positioning, but does not include required final public assets or a confirmed support/contact identity.
+- **Console updates saved during this session**: Launcher: `No` ads; `No` government-app status. Caregiver Companion: `No` ads. These changes are queued in Play Console Publishing overview and have not been sent for review.
+
+### Remaining Issues
+- The browser-control connection repeatedly reset while processing the remaining Play Console tasks, including financial features, health, target audience, Data Safety, content rating, category/contact details, and store listing.
+- The repository declares final marketing artwork and localized screenshots as deferred user inputs; these are absent.
+- The saved changes are queued in Publishing overview; the final "send changes for review" action was not reached.
+- Senior Launcher store-listing text was entered but could not be saved or paired with its visual assets because Chrome's extension lacked file-URL upload access; no listing assets were uploaded.
+
+### Next Step
+Restore a stable Play Console browser connection, complete the remaining declarations with the approved metadata, and submit the queued changes. The user supplied `contact@vexel.pk`, `https://vexel.pk/apps/easyui/privacy/`, and `https://vexel.pk/apps/easyui/support/`; the Launcher tester page shows the selected shared `Tester1` list with 7 users.
+
 ## Goal
 
 Normalize the EasyUI project documentation to clarify the separation from the frozen Core project, and perform a detailed Feature Inventory audit of the existing codebase.
@@ -520,4 +844,29 @@ Set up a production-ready 2048-bit RSA release keystore, configure release signi
 ### Final Verdict
 - **PRODUCTION GO**
 
+---
 
+## EasyUI Launcher Play Store Listing Finalization — 2026-08-23
+
+### Goal
+Finalize the EasyUI Launcher default Google Play store listing with the supplied assets and approved listing copy.
+
+### Result
+- [x] Confirmed app icon, feature graphic, and four phone screenshots are present.
+- [x] Saved app name, short description, and full description.
+- [x] Completed the listing review step and saved the listing.
+- [x] Confirmed Play Console status: “Ready to send for review.”
+
+### Remaining issue
+Play Console keeps “Send app for review” disabled until required app-dashboard items are completed (content rating, data safety, health apps declaration, ads declaration, and app category are shown as pending).
+
+## Caregiver Companion Play Store Listing Finalization — 2026-08-23
+
+### Result
+- [x] Confirmed app icon, feature graphic, and four phone screenshots are present.
+- [x] Added and saved the Caregiver Companion short and full descriptions.
+- [x] Completed the listing review and saved the listing.
+- [x] Confirmed the listing change appears in Publishing overview.
+
+### Remaining issue
+Play Console keeps “Send app for review” disabled until the same required dashboard items are completed for this app: content rating, data safety, health apps declaration, ads declaration, and app category.

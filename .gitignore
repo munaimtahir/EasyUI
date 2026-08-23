@@ -19,3 +19,6 @@ release-keystore.properties
 secrets.properties
 *.pem
 *.p12
+
+# Play Store upload artifacts
+playstore_uploads/
