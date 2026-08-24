@@ -164,7 +164,10 @@ private sealed interface Screen {
     data object QuickAccess : Screen
     data object Contacts : Screen
     data object Widgets : Screen
-    data class CaregiverVerification(val targetScreen: Screen) : Screen
+    data class CaregiverVerification(
+        val targetScreen: Screen,
+        val mode: com.easyui.senior.ui.CaregiverPinMode = com.easyui.senior.ui.CaregiverPinMode.Auto
+    ) : Screen
     data object CaregiverSettings : Screen
     data object Emergency : Screen
     data object Notifications : Screen
@@ -308,7 +311,10 @@ private fun AppRoot(
                 lastError = null
                 screen = Screen.CaregiverVerification(targetScreen = Screen.CaregiverSettings)
             },
-            onOpenTrustCenter = { lastError = null; screen = Screen.TrustCenter },
+            onOpenTrustCenter = {
+                lastError = null
+                screen = Screen.CaregiverVerification(targetScreen = Screen.TrustCenter)
+            },
             onOpenCheckIn = { lastError = null; screen = Screen.CheckIn },
         )
 
@@ -423,12 +429,19 @@ private fun AppRoot(
         is Screen.CaregiverVerification -> com.easyui.senior.ui.CaregiverPinScreen(
             caregiverRepo = com.easyui.senior.storage.CaregiverRepository(context),
             onSuccess = { screen = (screen as Screen.CaregiverVerification).targetScreen },
-            onCancel = { screen = Screen.Home }
+            onCancel = { screen = Screen.Home },
+            mode = (screen as Screen.CaregiverVerification).mode
         )
 
         Screen.CaregiverSettings -> com.easyui.senior.ui.CaregiverSettingsScreen(
             caregiverRepo = com.easyui.senior.storage.CaregiverRepository(context),
-            onBack = { screen = Screen.Home }
+            onBack = { screen = Screen.Home },
+            onRequestPinChange = {
+                screen = Screen.CaregiverVerification(
+                    targetScreen = Screen.CaregiverSettings,
+                    mode = com.easyui.senior.ui.CaregiverPinMode.ChangePin
+                )
+            }
         )
 
         Screen.Emergency -> com.easyui.senior.ui.EmergencyScreen(

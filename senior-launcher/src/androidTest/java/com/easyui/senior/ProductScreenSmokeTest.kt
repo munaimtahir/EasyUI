@@ -146,7 +146,8 @@ class ProductScreenSmokeTest {
         compose.setContent {
             CaregiverSettingsScreen(
                 caregiverRepo = CaregiverRepository(ctx),
-                onBack = {}
+                onBack = {},
+                onRequestPinChange = {}
             )
         }
         compose.waitUntil(5000) {
@@ -161,7 +162,8 @@ class ProductScreenSmokeTest {
         compose.setContent {
             CaregiverSettingsScreen(
                 caregiverRepo = CaregiverRepository(ctx),
-                onBack = { backCalled = true }
+                onBack = { backCalled = true },
+                onRequestPinChange = {}
             )
         }
         compose.waitUntil(5000) {

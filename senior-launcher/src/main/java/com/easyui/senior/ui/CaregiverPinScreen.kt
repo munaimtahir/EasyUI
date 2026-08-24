@@ -20,11 +20,22 @@ import com.easyui.senior.storage.CaregiverRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * [Auto] verifies the existing PIN (or sets one if none exists) and calls [CaregiverPinScreen.onSuccess].
+ * [ChangePin] always requires the current PIN to be re-entered first (when one is set) before letting
+ * the user choose a new one, so a PIN can never be replaced without proving the old one.
+ */
+enum class CaregiverPinMode {
+    Auto,
+    ChangePin
+}
+
 @Composable
 fun CaregiverPinScreen(
     caregiverRepo: CaregiverRepository,
     onSuccess: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    mode: CaregiverPinMode = CaregiverPinMode.Auto
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -34,6 +45,8 @@ fun CaregiverPinScreen(
     var errorText by remember { mutableStateOf("") }
     var confirmPinInput by remember { mutableStateOf("") }
     var isConfirming by remember { mutableStateOf(false) }
+    // ChangePin mode: true once the user has re-entered their existing PIN correctly.
+    var oldPinVerified by remember { mutableStateOf(false) }
 
     // Lockout countdown state
     var remainingLockoutSeconds by remember { mutableStateOf(0L) }
@@ -66,6 +79,8 @@ fun CaregiverPinScreen(
     }
 
     val isPinSet = state!!.isPinSet
+    // Whether we're currently collecting a brand-new PIN (vs. verifying an existing one).
+    val settingNewPin = if (mode == CaregiverPinMode.ChangePin) (!isPinSet || oldPinVerified) else !isPinSet
 
     Column(
         modifier = Modifier
@@ -86,10 +101,11 @@ fun CaregiverPinScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = if (!isPinSet) {
-                if (isConfirming) "Confirm your 4-digit Caregiver PIN" else "Set up a new 4-digit Caregiver PIN"
-            } else {
-                "Enter Caregiver PIN to access settings"
+            text = when {
+                settingNewPin && isConfirming -> "Confirm your new 4-digit Caregiver PIN"
+                settingNewPin -> "Set up a new 4-digit Caregiver PIN"
+                mode == CaregiverPinMode.ChangePin -> "Enter your current PIN to continue"
+                else -> "Enter Caregiver PIN to access settings"
             },
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
@@ -154,7 +170,7 @@ fun CaregiverPinScreen(
 
                     if (newInput.length == 4) {
                         scope.launch {
-                            if (!isPinSet) {
+                            if (settingNewPin) {
                                 if (!isConfirming) {
                                     isConfirming = true
                                 } else {
@@ -171,7 +187,16 @@ fun CaregiverPinScreen(
                             } else {
                                 val success = caregiverRepo.verifyPin(newInput)
                                 if (success) {
-                                    onSuccess()
+                                    if (mode == CaregiverPinMode.ChangePin) {
+                                        // Old PIN confirmed — move on to collecting the new one.
+                                        // No PIN is cleared here; setPin() below atomically
+                                        // replaces the old PIN only once a new one is chosen.
+                                        oldPinVerified = true
+                                        pinInput = ""
+                                        errorText = ""
+                                    } else {
+                                        onSuccess()
+                                    }
                                 } else {
                                     errorText = "Incorrect PIN."
                                     pinInput = ""

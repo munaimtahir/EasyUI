@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CaregiverSettingsScreen(
     caregiverRepo: CaregiverRepository,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onRequestPinChange: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val state by caregiverRepo.stateFlow.collectAsState(initial = null)
@@ -123,15 +124,19 @@ fun CaregiverSettingsScreen(
             onDismissRequest = { showChangePinDialog = false },
             title = { Text("Set PIN") },
             text = {
-                Text("You will be taken to the PIN setup screen to set a new 4-digit PIN.")
+                Text(
+                    if (isPinSet) {
+                        "You will be taken to the PIN setup screen. You'll need to enter your current PIN before choosing a new one."
+                    } else {
+                        "You will be taken to the PIN setup screen to set a new 4-digit PIN."
+                    }
+                )
             },
             confirmButton = {
                 Button(
                     onClick = {
-                        scope.launch {
-                            caregiverRepo.clearPin()
-                        }
                         showChangePinDialog = false
+                        onRequestPinChange()
                     },
                     modifier = Modifier.testTag("confirm_set_pin")
                 ) {
