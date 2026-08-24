@@ -214,6 +214,16 @@ private fun AppRoot(
             }
         )
     }
+    // The activity is singleTask, so a later Home-button press while it's already
+    // running only delivers a fresh intent via onNewIntent — it doesn't recreate this
+    // composition, so the `remember` initializer above never re-runs. Without this,
+    // pressing Home from a subscreen (e.g. CustomizeHome) would leave the launcher
+    // stuck there instead of returning to Screen.Home like a Home launcher should.
+    LaunchedEffect(launchOrigin) {
+        if (launchOrigin == LaunchOrigin.HomeLauncher) {
+            screen = Screen.Home
+        }
+    }
     var lastError by remember { mutableStateOf<String?>(null) }
 
     var apps by remember { mutableStateOf<List<LaunchableApp>>(emptyList()) }

@@ -21,6 +21,29 @@ class HomeLayoutRepository(
     private fun keyFor(slot: HomeSlotId): Preferences.Key<String> =
         stringPreferencesKey("home_slot_${slot.pageIndex}_${slot.slotIndex}")
 
+    private val slotKeyRegex = Regex("^home_slot_(\\d+)_(\\d+)$")
+
+    private fun parseSlotKey(name: String): HomeSlotId? {
+        val match = slotKeyRegex.matchEntire(name) ?: return null
+        val (page, slot) = match.destructured
+        return HomeSlotId(page.toInt(), slot.toInt())
+    }
+
+    /**
+     * Collects existing home-slot entries in visual (pageIndex, slotIndex) order — DataStore's
+     * own map iteration order does not match that order, so reading it unsorted would scramble
+     * item positions whenever the page count or grid size changes.
+     */
+    private fun collectItemsInVisualOrder(prefs: Preferences): List<HomeTileContent> =
+        prefs.asMap().entries
+            .mapNotNull { (key, value) ->
+                val slotId = parseSlotKey(key.name) ?: return@mapNotNull null
+                val content = (value as? String)?.let { homeTileContentFromStorageString(it) } ?: return@mapNotNull null
+                slotId to content
+            }
+            .sortedWith(compareBy({ it.first.pageIndex }, { it.first.slotIndex }))
+            .map { it.second }
+
     val layoutFlow: Flow<HomeLayout> = context.coreDataStore.data.map { prefs ->
         val storedPageCount = prefs[pageCountKey]?.coerceIn(1, 9) ?: fallbackSpec.pageCount
         val storedColumns = prefs[gridColumnsKey] ?: fallbackSpec.columns
@@ -64,16 +87,8 @@ class HomeLayoutRepository(
                 val rows = prefs[gridRowsKey] ?: fallbackSpec.rows
                 val slotsPerPage = columns * rows
 
-                val allItems = mutableListOf<HomeTileContent>()
-                val keysToRemove = mutableListOf<Preferences.Key<*>>()
-
-                prefs.asMap().forEach { (key, value) ->
-                    if (key.name.startsWith("home_slot_") && value is String) {
-                        homeTileContentFromStorageString(value)?.let { allItems.add(it) }
-                        keysToRemove.add(key)
-                    }
-                }
-
+                val allItems = collectItemsInVisualOrder(prefs)
+                val keysToRemove = prefs.asMap().keys.filter { it.name.startsWith("home_slot_") }
                 keysToRemove.forEach { prefs.remove(it) }
                 prefs[pageCountKey] = clamped
 
@@ -99,17 +114,10 @@ class HomeLayoutRepository(
             if (oldColumns == validColumns && oldRows == validRows) return@edit
 
             // Collect all assigned items (Option A: Move to valid slots)
-            val allItems = mutableListOf<HomeTileContent>()
-            val keysToRemove = mutableListOf<Preferences.Key<*>>()
-
-            prefs.asMap().forEach { (key, value) ->
-                if (key.name.startsWith("home_slot_") && value is String) {
-                    homeTileContentFromStorageString(value)?.let { allItems.add(it) }
-                    keysToRemove.add(key)
-                }
-            }
+            val allItems = collectItemsInVisualOrder(prefs)
 
             // Remove all old slots
+            val keysToRemove = prefs.asMap().keys.filter { it.name.startsWith("home_slot_") }
             keysToRemove.forEach { prefs.remove(it) }
 
             // Update grid size

@@ -21,13 +21,38 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.easyui.senior.storage.coreDataStore
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
+@Serializable
 data class Reminder(
     val id: String,
     val title: String,
     val type: String,
     val time: String
 )
+
+internal val remindersJson = Json { ignoreUnknownKeys = true; isLenient = true }
+
+/**
+ * Decodes the stored reminders list, falling back to the legacy ";"/"|"-joined format
+ * (unescaped, so a title containing either character used to corrupt the whole list) for
+ * data written before reminders were JSON-encoded. The next [saveReminders] call rewrites
+ * whatever's loaded in the safe JSON format.
+ */
+internal fun decodeReminders(raw: String): List<Reminder> {
+    if (raw.isBlank()) return emptyList()
+    return try {
+        remindersJson.decodeFromString<List<Reminder>>(raw)
+    } catch (e: Exception) {
+        raw.split(";").mapNotNull { line ->
+            val parts = line.split("|")
+            if (parts.size >= 4) Reminder(parts[0], parts[1], parts[2], parts[3]) else null
+        }
+    }
+}
 
 @Composable
 fun RemindersScreen(
@@ -38,18 +63,7 @@ fun RemindersScreen(
     val remindersKey = stringPreferencesKey("local_reminders")
 
     val remindersFlow = remember(context) {
-        context.coreDataStore.data.map { prefs ->
-            val raw = prefs[remindersKey] ?: ""
-            if (raw.isEmpty()) emptyList()
-            else {
-                raw.split(";").mapNotNull { line ->
-                    val parts = line.split("|")
-                    if (parts.size >= 4) {
-                        Reminder(parts[0], parts[1], parts[2], parts[3])
-                    } else null
-                }
-            }
-        }
+        context.coreDataStore.data.map { prefs -> decodeReminders(prefs[remindersKey] ?: "") }
     }
 
     val remindersList by remindersFlow.collectAsState(initial = emptyList())
@@ -60,7 +74,7 @@ fun RemindersScreen(
     var timeInput by remember { mutableStateOf("08:00") }
 
     fun saveReminders(newList: List<Reminder>) {
-        val raw = newList.joinToString(";") { "${it.id}|${it.title}|${it.type}|${it.time}" }
+        val raw = remindersJson.encodeToString(newList)
         scope.launch {
             context.coreDataStore.edit { it[remindersKey] = raw }
         }

@@ -11,9 +11,36 @@ sealed interface HomeTileContent {
 enum class ContactAction { Dial, SMS }
 enum class LocalWidgetType { Clock, Date, Note }
 
+/** Escapes '\' and '|' so a literal '|' in [value] can never be mistaken for the field delimiter. */
+private fun escapePipeField(value: String): String =
+    value.replace("\\", "\\\\").replace("|", "\\|")
+
+/** Splits [value] on '|' that isn't escaped, unescaping "\|" and "\\" back to their literal form. */
+private fun splitEscapedPipeFields(value: String): List<String> {
+    val parts = mutableListOf<String>()
+    val current = StringBuilder()
+    var i = 0
+    while (i < value.length) {
+        val c = value[i]
+        if (c == '\\' && i + 1 < value.length) {
+            current.append(value[i + 1])
+            i += 2
+        } else if (c == '|') {
+            parts.add(current.toString())
+            current.clear()
+            i++
+        } else {
+            current.append(c)
+            i++
+        }
+    }
+    parts.add(current.toString())
+    return parts
+}
+
 fun HomeTileContent.toStorageString(): String = when (this) {
     is HomeTileContent.App -> "app:${ref.toStorageString()}"
-    is HomeTileContent.Contact -> "contact:${name}|${phone}|${action.name}"
+    is HomeTileContent.Contact -> "contact:${escapePipeField(name)}|${escapePipeField(phone)}|${action.name}"
     is HomeTileContent.Widget -> "widget:${type.name}"
 }
 
@@ -33,7 +60,7 @@ fun homeTileContentFromStorageString(raw: String?): HomeTileContent? {
     return when (type) {
         "app" -> appComponentRefFromStorageString(data)?.let { HomeTileContent.App(it) }
         "contact" -> {
-            val contactParts = data.split("|")
+            val contactParts = splitEscapedPipeFields(data)
             if (contactParts.size >= 3) {
                 val action = try { ContactAction.valueOf(contactParts[2]) } catch (e: Exception) { ContactAction.Dial }
                 HomeTileContent.Contact(contactParts[0], contactParts[1], action)
