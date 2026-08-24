@@ -74,11 +74,10 @@ fun CoreTheme(
         }
     }
 
-    val typography = when (settings.textSize) {
-        TextSize.Small -> scaleTypography(MaterialTheme.typography, 0.9f)
-        TextSize.Normal -> MaterialTheme.typography
-        TextSize.Large -> scaleTypography(MaterialTheme.typography, 1.18f)
-        TextSize.Larger -> scaleTypography(MaterialTheme.typography, 1.32f)
+    val typography = if (settings.textSize == TextSize.Normal) {
+        MaterialTheme.typography
+    } else {
+        scaleTypography(MaterialTheme.typography, settings.textSize.scaleFactor)
     }
 
     MaterialTheme(
