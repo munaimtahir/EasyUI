@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Excludes the DataStore file holding the caregiver device's backend bearer
+    token (CompanionSession's device_token, in companion_settings) from cloud
+    backup and device-to-device transfer, so a live credential can't be
+    recovered from a restored backup.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="datastore/companion_settings.preferences_pb" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="datastore/companion_settings.preferences_pb" />
+    </device-transfer>
+</data-extraction-rules>

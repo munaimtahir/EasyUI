@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Excludes the DataStore file holding the senior device's backend bearer token
+    (PairingManager's pairing_device_token, in core_preferences) from cloud backup
+    and device-to-device transfer, so a live credential can't be recovered from a
+    restored backup. This file also holds non-sensitive settings (theme, home
+    layout, reminders, caregiver PIN hash) that are excluded as a side effect,
+    since DataStore Preferences files can only be excluded as a whole, not by key.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="datastore/core_preferences.preferences_pb" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="datastore/core_preferences.preferences_pb" />
+    </device-transfer>
+</data-extraction-rules>

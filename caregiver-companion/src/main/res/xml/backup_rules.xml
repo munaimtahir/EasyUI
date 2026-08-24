@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pre-Android-12 equivalent of data_extraction_rules.xml — see that file for why
+    companion_settings is excluded.
+-->
+<full-backup-content>
+    <exclude domain="file" path="datastore/companion_settings.preferences_pb" />
+</full-backup-content>
