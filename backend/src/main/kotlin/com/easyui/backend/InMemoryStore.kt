@@ -95,19 +95,24 @@ object InMemoryStore {
     }
 
     fun completePairing(code: String, caregiverDeviceId: String): PairResponse? {
+        // Atomic fetch-and-invalidate: remove first so a second concurrent
+        // redemption of the same single-use code sees null immediately,
+        // instead of racing a separate read against a later remove().
+        val pairing = pendingPairings.remove(code) ?: return null
         val now = System.currentTimeMillis()
-        val pairing = pendingPairings[code] ?: return null
         if (pairing.expiresAt < now) {
-            pendingPairings.remove(code)
             persistState()
             return null
         }
 
         // Complete pairing
-        pendingPairings.remove(code)
         val seniorToken = generateToken()
         val caregiverToken = generateToken()
         val seniorDeviceId = pairing.seniorDeviceId
+
+        // Revoke any token(s) previously issued to this caregiver device so a
+        // stale token can't keep authorizing access after a re-pair.
+        caregiverTokens.entries.removeIf { it.value == caregiverDeviceId }
 
         deviceTokens[seniorToken] = seniorDeviceId
         caregiverTokens[caregiverToken] = caregiverDeviceId

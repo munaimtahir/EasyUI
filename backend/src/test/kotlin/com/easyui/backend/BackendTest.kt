@@ -9,6 +9,9 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import org.junit.Before
 import org.junit.Test
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -249,6 +252,66 @@ class BackendTest {
             setBody(PairRequest(token.code, "caregiver-1"))
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
+    }
+
+    @Test
+    fun testConcurrentPairingCodeRedemptionOnlySucceedsOnce() {
+        val token = InMemoryStore.initiatePairing("test-senior-concurrent")
+
+        val startLatch = CountDownLatch(1)
+        val results = java.util.Collections.synchronizedList(mutableListOf<PairResponse?>())
+        val executor = Executors.newFixedThreadPool(2)
+        val futures = (1..2).map { i ->
+            executor.submit {
+                startLatch.await()
+                results.add(InMemoryStore.completePairing(token.code, "caregiver-race-$i"))
+            }
+        }
+        startLatch.countDown()
+        futures.forEach { it.get(5, TimeUnit.SECONDS) }
+        executor.shutdown()
+
+        assertEquals(1, results.count { it != null }, "Exactly one concurrent redemption of the same code should succeed")
+    }
+
+    @Test
+    fun testStaleCaregiverTokenRevokedOnRepair() = testApplication {
+        application {
+            module()
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        val tokenA = InMemoryStore.initiatePairing("senior-A-repair")
+        val pairResA = client.post("/pair") {
+            contentType(ContentType.Application.Json)
+            setBody(PairRequest(tokenA.code, "caregiver-repair-device"))
+        }
+        val sessionA = Json.decodeFromString<PairResponse>(pairResA.bodyAsText())
+
+        // Same caregiver device re-pairs, this time to a different senior.
+        val tokenB = InMemoryStore.initiatePairing("senior-B-repair")
+        val pairResB = client.post("/pair") {
+            contentType(ContentType.Application.Json)
+            setBody(PairRequest(tokenB.code, "caregiver-repair-device"))
+        }
+        val sessionB = Json.decodeFromString<PairResponse>(pairResB.bodyAsText())
+
+        // The token minted for the original pairing must no longer authorize anything.
+        val staleRes = client.get("/status/senior-A-repair") {
+            header(HttpHeaders.Authorization, "Bearer ${sessionA.deviceToken}")
+        }
+        assertEquals(HttpStatusCode.Unauthorized, staleRes.status)
+
+        // The freshly issued token authorizes the new senior.
+        InMemoryStore.deviceStatus["senior-B-repair"] = StatusPayload(50, false, "1.0", 0L)
+        val freshRes = client.get("/status/senior-B-repair") {
+            header(HttpHeaders.Authorization, "Bearer ${sessionB.deviceToken}")
+        }
+        assertEquals(HttpStatusCode.OK, freshRes.status)
     }
 
     @Test
