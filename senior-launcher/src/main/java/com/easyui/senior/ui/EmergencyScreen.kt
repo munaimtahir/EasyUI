@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EmergencyScreen(
     onBack: () -> Unit,
-    onSosTriggered: () -> Unit // Will notify caregiver (if paired)
+    onSosTriggered: suspend () -> Boolean // Will notify caregiver (if paired); returns true on success
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -56,6 +56,8 @@ fun EmergencyScreen(
     // SOS press progress state (from 0.0f to 1.0f)
     var pressProgress by remember { mutableStateOf(0f) }
     var isPressing by remember { mutableStateOf(false) }
+    var alertFailed by remember { mutableStateOf(false) }
+    var callFailed by remember { mutableStateOf(false) }
 
     LaunchedEffect(isPressing) {
         if (isPressing) {
@@ -68,8 +70,8 @@ fun EmergencyScreen(
             }
             if (pressProgress >= 1f) {
                 // SOS triggered!
-                onSosTriggered()
-                triggerCall(context, phone1)
+                alertFailed = !onSosTriggered()
+                callFailed = !triggerCall(context, phone1)
                 pressProgress = 0f
                 isPressing = false
             }
@@ -120,6 +122,24 @@ fun EmergencyScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
+
+        if (alertFailed || callFailed) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = when {
+                    alertFailed && callFailed -> "Could not notify your caregiver or open the phone dialer. Try again or call your emergency contact directly."
+                    alertFailed -> "Could not notify your caregiver. Try again, or call your emergency contact directly."
+                    else -> "Could not open the phone dialer. Try again, or call your emergency contact directly."
+                },
+                color = Color.Yellow,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .testTag("sos_failure_warning")
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -214,13 +234,14 @@ private fun EmergencyContactRow(
     }
 }
 
-private fun triggerCall(context: Context, phone: String) {
+private fun triggerCall(context: Context, phone: String): Boolean {
     val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
-    try {
+    return try {
         context.startActivity(intent)
+        true
     } catch (e: Exception) {
-        // Fallback
+        false
     }
 }

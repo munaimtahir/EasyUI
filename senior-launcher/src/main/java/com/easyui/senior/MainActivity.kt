@@ -434,11 +434,11 @@ private fun AppRoot(
         Screen.Emergency -> com.easyui.senior.ui.EmergencyScreen(
             onBack = { screen = Screen.Home },
             onSosTriggered = {
-                scope.launch {
-                    val pState = com.easyui.senior.network.PairingManager(context).getState()
-                    if (pState.isPaired && pState.permissions.contains(com.easyui.senior.network.PairingManager.PERMISSION_ALERTS)) {
-                        com.easyui.senior.network.BackendClient.postAlert("SOS", "User triggered manual SOS button")
-                    }
+                val pState = com.easyui.senior.network.PairingManager(context).getState()
+                if (pState.isPaired && pState.permissions.contains(com.easyui.senior.network.PairingManager.PERMISSION_ALERTS)) {
+                    com.easyui.senior.network.BackendClient.postAlert("SOS", "User triggered manual SOS button")
+                } else {
+                    false
                 }
             }
         )

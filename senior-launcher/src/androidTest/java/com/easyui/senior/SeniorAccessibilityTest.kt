@@ -76,7 +76,7 @@ class SeniorAccessibilityTest {
             CompositionLocalProvider(
                 LocalDensity provides Density(currentDensity.density, fontScale = 2.0f)
             ) {
-                EmergencyScreen(onBack = {}, onSosTriggered = {})
+                EmergencyScreen(onBack = {}, onSosTriggered = { true })
             }
         }
         compose.onNodeWithTag("emergency_screen").assertExists().assertIsDisplayed()

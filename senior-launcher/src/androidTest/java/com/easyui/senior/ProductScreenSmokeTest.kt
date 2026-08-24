@@ -31,7 +31,7 @@ class ProductScreenSmokeTest {
     @Test
     fun emergencyScreen_showsSosHoldButton() {
         compose.setContent {
-            EmergencyScreen(onBack = {}, onSosTriggered = {})
+            EmergencyScreen(onBack = {}, onSosTriggered = { true })
         }
         compose.onNodeWithTag("sos_hold_button").assertExists()
     }
@@ -40,7 +40,7 @@ class ProductScreenSmokeTest {
     fun emergencyScreen_backButtonInvokesCallback() {
         var backCalled = false
         compose.setContent {
-            EmergencyScreen(onBack = { backCalled = true }, onSosTriggered = {})
+            EmergencyScreen(onBack = { backCalled = true }, onSosTriggered = { true })
         }
         compose.onNodeWithTag("emergency_back").performClick()
         assert(backCalled) { "Back callback was not invoked" }
