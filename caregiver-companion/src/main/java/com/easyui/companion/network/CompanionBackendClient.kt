@@ -13,7 +13,7 @@ import java.net.URL
 
 object CompanionBackendClient {
     private val DEFAULT_BASE_URL = BuildConfig.BACKEND_BASE_URL
-    private const val TIMEOUT_MS = 8_000
+    private const val TIMEOUT_MS = 25_000
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -35,6 +35,21 @@ object CompanionBackendClient {
 
     suspend fun fetchStatus(seniorDeviceId: String): StatusResponseDto? {
         return getJson("/status/$seniorDeviceId", deviceToken, StatusResponseDto::class.java)
+    }
+
+    /**
+     * Like [fetchStatus], but preserves *why* the fetch failed — 403 (permission not granted
+     * or revoked) and 404 (senior hasn't reported status yet) are otherwise indistinguishable
+     * from a plain network failure to the caller.
+     */
+    suspend fun fetchStatusResult(seniorDeviceId: String): SeniorStatusResult {
+        val (code, data) = getJsonWithStatus("/status/$seniorDeviceId", deviceToken, StatusResponseDto::class.java)
+        return when {
+            data != null -> SeniorStatusResult.Success(data)
+            code == 403 -> SeniorStatusResult.NotAuthorized
+            code == 404 -> SeniorStatusResult.NoStatusYet
+            else -> SeniorStatusResult.NetworkError
+        }
     }
 
     suspend fun fetchCheckIn(seniorDeviceId: String): CheckInPayloadDto? {
@@ -98,7 +113,11 @@ object CompanionBackendClient {
         }
     }
 
-    private suspend fun <T> getJson(path: String, token: String?, clazz: Class<T>): T? = withContext(Dispatchers.IO) {
+    private suspend fun <T> getJson(path: String, token: String?, clazz: Class<T>): T? =
+        getJsonWithStatus(path, token, clazz).second
+
+    /** Returns the HTTP status code alongside the decoded body (0 = no response / network error). */
+    private suspend fun <T> getJsonWithStatus(path: String, token: String?, clazz: Class<T>): Pair<Int, T?> = withContext(Dispatchers.IO) {
         try {
             val conn = openConnection(path, "GET", token)
             val code = conn.responseCode
@@ -111,14 +130,14 @@ object CompanionBackendClient {
                     else -> throw IllegalArgumentException("Unknown DTO class: ${clazz.name}")
                 }
                 @Suppress("UNCHECKED_CAST")
-                result as T
+                code to (result as T)
             } else {
                 Log.w("CompanionBackend", "GET $path returned $code")
-                null
+                code to null
             }
         } catch (e: Exception) {
             Log.e("CompanionBackend", "GET $path failed: ${e.message}")
-            null
+            0 to null
         }
     }
 
@@ -149,6 +168,13 @@ data class PairResponseDto(
     val seniorDeviceId: String,
     val permissions: List<String>
 )
+
+sealed class SeniorStatusResult {
+    data class Success(val status: StatusResponseDto) : SeniorStatusResult()
+    data object NotAuthorized : SeniorStatusResult() // 403: permission not granted or revoked
+    data object NoStatusYet : SeniorStatusResult() // 404: senior hasn't reported status yet
+    data object NetworkError : SeniorStatusResult() // request failed or returned an unexpected code
+}
 
 @Serializable
 data class StatusResponseDto(

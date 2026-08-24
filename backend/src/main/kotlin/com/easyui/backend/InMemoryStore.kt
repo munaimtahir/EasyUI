@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger("InMemoryStore")
 
 object InMemoryStore {
+    private const val PAIRING_WINDOW_MS = 600_000L // 10 minutes
+
     val pendingPairings = ConcurrentHashMap<String, PairingToken>()
     val completedPairings = ConcurrentHashMap<String, PairingCompletion>()
     val deviceTokens = ConcurrentHashMap<String, String>() // token -> seniorDeviceId
@@ -86,7 +88,7 @@ object InMemoryStore {
         completedPairings.entries.removeIf { it.value.expiresAt < now }
 
         val code = generatePairingCode()
-        val expiresAt = now + 600_000 // 10 minutes
+        val expiresAt = now + PAIRING_WINDOW_MS
         val token = PairingToken(code, seniorDeviceId, expiresAt, generateToken())
         pendingPairings[code] = token
         completedPairings.remove(seniorDeviceId)
@@ -125,7 +127,10 @@ object InMemoryStore {
             completionSecret = pairing.completionSecret,
             seniorDeviceToken = seniorToken,
             permissions = defaultPermissions,
-            expiresAt = pairing.expiresAt
+            // Fresh window starting now, not pairing.expiresAt — a caregiver who redeems
+            // the code near the end of its 10-minute window shouldn't leave the senior
+            // with a completion record that's already about to expire.
+            expiresAt = now + PAIRING_WINDOW_MS
         )
         persistState()
 

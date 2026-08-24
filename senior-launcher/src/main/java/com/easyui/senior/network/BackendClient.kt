@@ -22,7 +22,7 @@ import com.easyui.senior.BuildConfig
 object BackendClient {
 
     private val DEFAULT_BASE_URL = BuildConfig.BACKEND_BASE_URL
-    private const val TIMEOUT_MS = 8_000
+    private const val TIMEOUT_MS = 25_000
 
     private val json = Json {
         ignoreUnknownKeys = true

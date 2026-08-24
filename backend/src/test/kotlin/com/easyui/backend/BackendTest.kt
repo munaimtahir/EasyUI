@@ -315,6 +315,24 @@ class BackendTest {
     }
 
     @Test
+    fun testPairingCompletionGetsFreshExpiryNotInheritedFromCode() {
+        val token = InMemoryStore.initiatePairing("test-senior-fresh-expiry")
+
+        // Simulate redeeming the code right before it would have expired.
+        val now = System.currentTimeMillis()
+        val nearlyExpired = token.copy(expiresAt = now + 500)
+        InMemoryStore.pendingPairings[token.code] = nearlyExpired
+
+        val response = InMemoryStore.completePairing(token.code, "caregiver-fresh-expiry")
+        assertNotNull(response)
+
+        val completion = InMemoryStore.completedPairings["test-senior-fresh-expiry"]
+        assertNotNull(completion)
+        // A fresh ~10-minute window, not the ~500ms that was left on the original code.
+        assertTrue(completion.expiresAt > now + 500_000)
+    }
+
+    @Test
     fun testPermissionsEnforcedForCaregiver() = testApplication {
         application {
             module()

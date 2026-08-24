@@ -240,13 +240,22 @@ fun SeniorsTab(seniorDeviceId: String) {
         scope.launch {
             isRefreshing = true
             errorText = null
-            val status = CompanionBackendClient.fetchStatus(seniorDeviceId)
-            val checkin = CompanionBackendClient.fetchCheckIn(seniorDeviceId)
-            statusState = status
-            checkInState = checkin
-            if (status == null) {
-                errorText = "No response from device or permission missing."
+            when (val result = CompanionBackendClient.fetchStatusResult(seniorDeviceId)) {
+                is com.easyui.companion.network.SeniorStatusResult.Success -> statusState = result.status
+                com.easyui.companion.network.SeniorStatusResult.NotAuthorized -> {
+                    statusState = null
+                    errorText = "Battery permission not granted or was revoked by the senior."
+                }
+                com.easyui.companion.network.SeniorStatusResult.NoStatusYet -> {
+                    statusState = null
+                    errorText = "No status reported yet — the senior device hasn't synced."
+                }
+                com.easyui.companion.network.SeniorStatusResult.NetworkError -> {
+                    statusState = null
+                    errorText = "Could not reach the server. Check your connection and try again."
+                }
             }
+            checkInState = CompanionBackendClient.fetchCheckIn(seniorDeviceId)
             isRefreshing = false
         }
     }
